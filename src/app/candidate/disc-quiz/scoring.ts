@@ -141,8 +141,8 @@ export const DISC_TYPE_INFO: Record<
     motto: string;
     descriptors: string[];
     description: string;
-    strengths: string;
-    blindSpots: string;
+    strengths: string[];
+    blindSpots: string[];
   }
 > = {
   D: {
@@ -152,8 +152,18 @@ export const DISC_TYPE_INFO: Record<
     descriptors: ["Results-oriented", "Decisive", "Competitive"],
     description:
       "Takes charge to get things done. Makes decisions and takes action. At work: Results-oriented and decisive; a competitive risk-taker; confident and a natural leader.",
-    strengths: "Determination, efficiency, decisiveness",
-    blindSpots: "Can be impatient, insensitive, or overly controlling",
+    strengths: [
+      "Makes quick, confident decisions under pressure",
+      "Drives projects forward and holds people accountable",
+      "Tackles challenges head-on without hesitation",
+      "Sets ambitious goals and delivers results efficiently",
+    ],
+    blindSpots: [
+      "May come across as impatient or dismissive of others' input",
+      "Can prioritise speed over people's feelings",
+      "Tendency to take over instead of delegating",
+      "May overlook details when focused on the big picture",
+    ],
   },
   I: {
     name: "I",
@@ -162,8 +172,18 @@ export const DISC_TYPE_INFO: Record<
     descriptors: ["Enthusiastic", "Collaborative", "Optimistic"],
     description:
       "Engages others and shares enthusiasm. Inspires and persuades others. At work: Enthusiastic and optimistic; a natural communicator; collaborative and people-focused.",
-    strengths: "Persuasion, creativity, team energy",
-    blindSpots: "Can be disorganized, overly talkative, or impulsive",
+    strengths: [
+      "Energises teams and creates a positive atmosphere",
+      "Builds rapport quickly and connects people together",
+      "Generates creative ideas and inspires new directions",
+      "Communicates persuasively and rallies support for initiatives",
+    ],
+    blindSpots: [
+      "May struggle with follow-through on routine tasks",
+      "Can over-commit by saying yes to too many things",
+      "Tendency to talk more than listen in discussions",
+      "May avoid detailed planning or structured processes",
+    ],
   },
   S: {
     name: "S",
@@ -172,9 +192,18 @@ export const DISC_TYPE_INFO: Record<
     descriptors: ["Patient", "Dependable", "Supportive"],
     description:
       "Is helpful and shows care for others. Looks for ways to assist and serve. At work: Patient and dependable; a steady team player; warm and supportive.",
-    strengths: "Reliability, patience, team harmony",
-    blindSpots:
-      "Can be overly accommodating, resistant to change, or conflict-avoidant",
+    strengths: [
+      "Creates a stable, supportive environment for the team",
+      "Listens carefully and makes others feel heard",
+      "Follows through consistently — people can count on them",
+      "Keeps calm during stressful or chaotic situations",
+    ],
+    blindSpots: [
+      "May agree to things they're not comfortable with to avoid conflict",
+      "Can be slow to adapt when plans or priorities shift",
+      "Tendency to put others' needs ahead of their own too often",
+      "May hold back opinions even when their input is valuable",
+    ],
   },
   C: {
     name: "C",
@@ -183,8 +212,18 @@ export const DISC_TYPE_INFO: Record<
     descriptors: ["Detail-oriented", "Analytical", "Thorough"],
     description:
       "Works steadily within systems. Focuses on order, accuracy, and precision. At work: Detail-oriented and thorough; a quality-focused thinker; careful and systematic.",
-    strengths: "Accuracy, analysis, thoroughness",
-    blindSpots: "Can be overly critical, perfectionistic, or slow to act",
+    strengths: [
+      "Catches errors and inconsistencies others miss",
+      "Produces high-quality, well-researched work",
+      "Brings logical structure to complex problems",
+      "Maintains high standards and ensures compliance",
+    ],
+    blindSpots: [
+      "May spend too long perfecting when 'good enough' would do",
+      "Can come across as overly critical or nitpicky",
+      "Tendency to delay decisions while gathering more data",
+      "May struggle to delegate when others' standards differ",
+    ],
   },
   Di: {
     name: "Di",
@@ -193,8 +232,18 @@ export const DISC_TYPE_INFO: Record<
     descriptors: ["Charismatic", "Resourceful", "Action-oriented"],
     description:
       "Resourceful and charismatic. Takes charge of social situations. Builds rapport and brings people together while driving toward results.",
-    strengths: "Leadership, social confidence, initiative",
-    blindSpots: "Can be overly dominant or impatient with details",
+    strengths: [
+      "Inspires confidence and gets people on board quickly",
+      "Takes initiative and leads by example in high-pressure moments",
+      "Balances people skills with a strong results focus",
+      "Adapts approach to win support from different personalities",
+    ],
+    blindSpots: [
+      "May dominate conversations or push ideas too forcefully",
+      "Can lose patience with slower, more methodical colleagues",
+      "Tendency to move on before fully completing current tasks",
+      "May underestimate risks when enthusiasm runs high",
+    ],
   },
   Dc: {
     name: "Dc",
@@ -203,8 +252,18 @@ export const DISC_TYPE_INFO: Record<
     descriptors: ["Focused", "Efficient", "High-standards"],
     description:
       "Focused on realistic results more than relationships. Maintains efficiency and continuous improvement. Has high expectations.",
-    strengths: "Focus, quality standards, independence",
-    blindSpots: "Can be blunt, critical, or dismissive of feelings",
+    strengths: [
+      "Combines speed with precision — gets quality results fast",
+      "Sets and maintains very high standards for output",
+      "Works independently and stays focused without oversight",
+      "Identifies inefficiencies and streamlines processes",
+    ],
+    blindSpots: [
+      "Can come across as cold or unapproachable",
+      "May dismiss others' ideas if they seem impractical",
+      "Tendency to be blunt in feedback, hurting team morale",
+      "May resist collaborative approaches, preferring to work alone",
+    ],
   },
   Id: {
     name: "Id",
@@ -213,8 +272,18 @@ export const DISC_TYPE_INFO: Record<
     descriptors: ["Adventurous", "Energetic", "Big-picture"],
     description:
       "Approaches relationships and tasks with equal energy. Discusses big-picture ideas. Adventurous and able to create novel solutions.",
-    strengths: "Creativity, energy, vision",
-    blindSpots: "Can be scattered, impulsive, or overlook details",
+    strengths: [
+      "Brings infectious energy that motivates the whole team",
+      "Sees opportunities and possibilities others overlook",
+      "Moves quickly from idea to action with enthusiasm",
+      "Creates an exciting, dynamic work environment",
+    ],
+    blindSpots: [
+      "May jump between ideas without finishing what was started",
+      "Can overlook practical details and logistics",
+      "Tendency to act on impulse rather than careful analysis",
+      "May underestimate timelines and overcommit resources",
+    ],
   },
   Is: {
     name: "Is",
@@ -223,8 +292,18 @@ export const DISC_TYPE_INFO: Record<
     descriptors: ["Inclusive", "Adaptable", "Collaborative"],
     description:
       "Fosters a collaborative environment where everyone belongs. Adapts easily to different work styles. Involves people in discussions.",
-    strengths: "Inclusivity, flexibility, warmth",
-    blindSpots: "Can avoid confrontation or struggle with tough decisions",
+    strengths: [
+      "Makes everyone feel included and valued in the team",
+      "Reads the room well and adapts communication style",
+      "Builds strong, trusting relationships across the organisation",
+      "Creates psychological safety that encourages open dialogue",
+    ],
+    blindSpots: [
+      "May avoid giving direct feedback to preserve harmony",
+      "Can struggle with making unpopular but necessary decisions",
+      "Tendency to prioritise consensus over speed",
+      "May take criticism personally and dwell on it",
+    ],
   },
   Si: {
     name: "Si",
@@ -233,8 +312,18 @@ export const DISC_TYPE_INFO: Record<
     descriptors: ["Empathetic", "Encouraging", "Team-oriented"],
     description:
       "Shows support and empathy. Helps people achieve their goals. Easily adapts to difficult situations. Promotes teamwork.",
-    strengths: "Empathy, adaptability, encouragement",
-    blindSpots: "Can be overly agreeable or avoid necessary conflict",
+    strengths: [
+      "Naturally empathetic — understands what people need",
+      "Encourages and uplifts teammates during tough times",
+      "Adapts smoothly to changing situations and group dynamics",
+      "Builds strong team cohesion through genuine care",
+    ],
+    blindSpots: [
+      "May agree too readily to keep everyone happy",
+      "Can avoid raising issues until they become serious",
+      "Tendency to absorb others' stress and burn out quietly",
+      "May hesitate to take the lead even when it's needed",
+    ],
   },
   Sc: {
     name: "Sc",
@@ -243,8 +332,18 @@ export const DISC_TYPE_INFO: Record<
     descriptors: ["Careful", "Consistent", "Organized"],
     description:
       "Seeks predictability and consistency. Makes decisions carefully. Organized and attentive to details. Accommodates others.",
-    strengths: "Reliability, organization, attention to detail",
-    blindSpots: "Can be resistant to change or overly cautious",
+    strengths: [
+      "Brings order and reliability to every project they touch",
+      "Plans carefully and anticipates potential issues early",
+      "Delivers consistent, high-quality work without drama",
+      "Creates stable systems and processes the team can rely on",
+    ],
+    blindSpots: [
+      "May resist change even when it's clearly beneficial",
+      "Can get stuck in analysis paralysis on decisions",
+      "Tendency to play it safe rather than take calculated risks",
+      "May struggle to speak up in fast-moving group settings",
+    ],
   },
   Cs: {
     name: "Cs",
@@ -253,8 +352,18 @@ export const DISC_TYPE_INFO: Record<
     descriptors: ["Responsible", "Reliable", "Exacting"],
     description:
       "Responsible, reliable and accountable. Exacting in their work. Considers many factors when deciding. Appreciates guidance.",
-    strengths: "Accountability, precision, dependability",
-    blindSpots: "Can be overly cautious or rigid with procedures",
+    strengths: [
+      "Takes full ownership and follows through on commitments",
+      "Produces meticulous, well-considered work every time",
+      "Balances quality standards with consideration for the team",
+      "Documents processes and ensures knowledge is shared",
+    ],
+    blindSpots: [
+      "May be overly cautious and miss time-sensitive opportunities",
+      "Can get rigid about procedures when flexibility is needed",
+      "Tendency to need reassurance before making decisions",
+      "May struggle to push back on unreasonable requests",
+    ],
   },
   Cd: {
     name: "Cd",
@@ -263,7 +372,17 @@ export const DISC_TYPE_INFO: Record<
     descriptors: ["Purposeful", "Efficient", "Rational"],
     description:
       "Purposeful, efficient and focused. Focused on goals rather than relationships. Extremely rational. Strives to improve performance.",
-    strengths: "Logic, efficiency, strategic thinking",
-    blindSpots: "Can be cold, overly critical, or dismissive of others",
+    strengths: [
+      "Combines analytical rigour with drive to execute",
+      "Identifies the most efficient path to any goal",
+      "Makes tough, data-driven decisions without hesitation",
+      "Continuously improves systems and raises the performance bar",
+    ],
+    blindSpots: [
+      "May come across as emotionally detached or aloof",
+      "Can be overly critical of others' work and methods",
+      "Tendency to undervalue relationship-building and team morale",
+      "May push too hard for efficiency at the expense of people",
+    ],
   },
 };

@@ -143,30 +143,40 @@ export default async function DiscResultsPage() {
       {typeInfo && (
         <div className="grid gap-4 sm:grid-cols-2">
           <div className="rounded-2xl border border-emerald-100 bg-emerald-50/50 p-5">
-            <div className="mb-2 flex items-center gap-2">
-              <span className="flex h-6 w-6 items-center justify-center rounded-full bg-emerald-100 text-xs">
+            <div className="mb-3 flex items-center gap-2">
+              <span className="flex h-6 w-6 items-center justify-center rounded-full bg-emerald-100 text-xs font-bold text-emerald-700">
                 +
               </span>
               <h3 className="text-sm font-semibold text-emerald-800">
                 Strengths
               </h3>
             </div>
-            <p className="text-sm leading-relaxed text-emerald-700/80">
-              {typeInfo.strengths}
-            </p>
+            <ul className="space-y-2">
+              {typeInfo.strengths.map((s) => (
+                <li key={s} className="flex gap-2 text-sm leading-relaxed text-emerald-700/80">
+                  <span className="mt-1.5 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-emerald-400" />
+                  {s}
+                </li>
+              ))}
+            </ul>
           </div>
           <div className="rounded-2xl border border-amber-100 bg-amber-50/50 p-5">
-            <div className="mb-2 flex items-center gap-2">
-              <span className="flex h-6 w-6 items-center justify-center rounded-full bg-amber-100 text-xs">
+            <div className="mb-3 flex items-center gap-2">
+              <span className="flex h-6 w-6 items-center justify-center rounded-full bg-amber-100 text-xs font-bold text-amber-700">
                 !
               </span>
               <h3 className="text-sm font-semibold text-amber-800">
                 Blind Spots
               </h3>
             </div>
-            <p className="text-sm leading-relaxed text-amber-700/80">
-              {typeInfo.blindSpots}
-            </p>
+            <ul className="space-y-2">
+              {typeInfo.blindSpots.map((b) => (
+                <li key={b} className="flex gap-2 text-sm leading-relaxed text-amber-700/80">
+                  <span className="mt-1.5 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-amber-400" />
+                  {b}
+                </li>
+              ))}
+            </ul>
           </div>
         </div>
       )}

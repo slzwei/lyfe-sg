@@ -1,11 +1,43 @@
 "use client";
 
-const COLORS = {
-  D: "#2B8C8C",
-  I: "#7B5EA7",
-  S: "#D4876C",
-  C: "#4A7FB5",
-};
+import { useState } from "react";
+
+const QUADRANTS = {
+  D: {
+    color: "#2B8C8C",
+    label: "Drive",
+    desc: "Decisive, competitive, and results-oriented. Focuses on getting things done.",
+    startAngle: 90,
+    endAngle: 180,
+    labelOffset: { x: -0.45, y: -0.45 },
+  },
+  I: {
+    color: "#7B5EA7",
+    label: "Influence",
+    desc: "Enthusiastic, optimistic, and people-oriented. Loves collaboration and energy.",
+    startAngle: 0,
+    endAngle: 90,
+    labelOffset: { x: 0.45, y: -0.45 },
+  },
+  S: {
+    color: "#D4876C",
+    label: "Support",
+    desc: "Patient, reliable, and team-oriented. Values harmony and consistency.",
+    startAngle: 270,
+    endAngle: 360,
+    labelOffset: { x: 0.45, y: 0.52 },
+  },
+  C: {
+    color: "#4A7FB5",
+    label: "Clarity",
+    desc: "Analytical, precise, and quality-focused. Prioritises accuracy and logic.",
+    startAngle: 180,
+    endAngle: 270,
+    labelOffset: { x: -0.45, y: 0.52 },
+  },
+} as const;
+
+type QuadrantKey = keyof typeof QUADRANTS;
 
 interface CircumplexChartProps {
   d: number;
@@ -22,27 +54,18 @@ export default function CircumplexChart({
   c,
   angle,
 }: CircumplexChartProps) {
-  const cx = 200;
-  const cy = 200;
-  const outerR = 160;
+  const [hovered, setHovered] = useState<QuadrantKey | null>(null);
 
-  // Scale scores to radii (min 30% of outer, max 100%)
+  const cx = 230;
+  const cy = 210;
+  const outerR = 150;
+  const maxR = outerR * 0.88; // wedges stay inside the circle
+
+  const scores: Record<QuadrantKey, number> = { D: d, I: i, S: s, C: c };
   const maxPct = Math.max(d, i, s, c, 1);
-  const scale = (pct: number) => 50 + (pct / maxPct) * (outerR - 50);
+  const scale = (pct: number) => 40 + (pct / maxPct) * (maxR - 40);
 
-  const rD = scale(d);
-  const rI = scale(i);
-  const rS = scale(s);
-  const rC = scale(c);
-
-  // Quadrant arcs — each is a pie wedge
-  // D = upper-left (90°–180°), I = upper-right (0°–90°)
-  // S = lower-right (270°–360°), C = lower-left (180°–270°)
-  function wedgePath(
-    startAngle: number,
-    endAngle: number,
-    radius: number
-  ): string {
+  function wedgePath(startAngle: number, endAngle: number, radius: number) {
     const startRad = (startAngle * Math.PI) / 180;
     const endRad = (endAngle * Math.PI) / 180;
     const x1 = cx + radius * Math.cos(startRad);
@@ -52,7 +75,7 @@ export default function CircumplexChart({
     return `M ${cx} ${cy} L ${x1} ${y1} A ${radius} ${radius} 0 0 0 ${x2} ${y2} Z`;
   }
 
-  // Dot position from angle
+  // User dot
   const dotR = outerR * 0.65;
   const dotAngleRad = (angle * Math.PI) / 180;
   const dotX = cx + dotR * Math.cos(dotAngleRad);
@@ -60,8 +83,8 @@ export default function CircumplexChart({
 
   return (
     <div className="mx-auto w-full max-w-sm">
-      <svg viewBox="0 0 400 400" className="w-full">
-        {/* Background circle */}
+      <svg viewBox="0 0 460 440" className="w-full">
+        {/* Outer circle */}
         <circle
           cx={cx}
           cy={cy}
@@ -72,20 +95,22 @@ export default function CircumplexChart({
         />
 
         {/* Quadrant wedges */}
-        {/* I = upper-right: 0° to 90° */}
-        <path d={wedgePath(0, 90, rI)} fill={COLORS.I} opacity={0.25} />
-        {/* D = upper-left: 90° to 180° */}
-        <path d={wedgePath(90, 180, rD)} fill={COLORS.D} opacity={0.25} />
-        {/* C = lower-left: 180° to 270° */}
-        <path d={wedgePath(180, 270, rC)} fill={COLORS.C} opacity={0.25} />
-        {/* S = lower-right: 270° to 360° */}
-        <path d={wedgePath(270, 360, rS)} fill={COLORS.S} opacity={0.25} />
-
-        {/* Filled wedges proportional to score */}
-        <path d={wedgePath(0, 90, rI)} fill={COLORS.I} opacity={0.5} />
-        <path d={wedgePath(90, 180, rD)} fill={COLORS.D} opacity={0.5} />
-        <path d={wedgePath(180, 270, rC)} fill={COLORS.C} opacity={0.5} />
-        <path d={wedgePath(270, 360, rS)} fill={COLORS.S} opacity={0.5} />
+        {(Object.keys(QUADRANTS) as QuadrantKey[]).map((key) => {
+          const q = QUADRANTS[key];
+          const r = scale(scores[key]);
+          const isHovered = hovered === key;
+          return (
+            <path
+              key={key}
+              d={wedgePath(q.startAngle, q.endAngle, r)}
+              fill={q.color}
+              opacity={isHovered ? 0.7 : 0.4}
+              className="cursor-pointer transition-opacity duration-200"
+              onMouseEnter={() => setHovered(key)}
+              onMouseLeave={() => setHovered(null)}
+            />
+          );
+        })}
 
         {/* Axis lines */}
         <line
@@ -105,7 +130,7 @@ export default function CircumplexChart({
           strokeWidth="1"
         />
 
-        {/* Inner circles for reference */}
+        {/* Reference circles */}
         <circle
           cx={cx}
           cy={cy}
@@ -126,79 +151,59 @@ export default function CircumplexChart({
         />
 
         {/* Quadrant labels */}
-        <text
-          x={cx - outerR * 0.5}
-          y={cy - outerR * 0.5}
-          textAnchor="middle"
-          className="text-2xl font-bold"
-          fill={COLORS.D}
-        >
-          D
-        </text>
-        <text
-          x={cx + outerR * 0.5}
-          y={cy - outerR * 0.5}
-          textAnchor="middle"
-          className="text-2xl font-bold"
-          fill={COLORS.I}
-        >
-          I
-        </text>
-        <text
-          x={cx + outerR * 0.5}
-          y={cy + outerR * 0.55}
-          textAnchor="middle"
-          className="text-2xl font-bold"
-          fill={COLORS.S}
-        >
-          S
-        </text>
-        <text
-          x={cx - outerR * 0.5}
-          y={cy + outerR * 0.55}
-          textAnchor="middle"
-          className="text-2xl font-bold"
-          fill={COLORS.C}
-        >
-          C
-        </text>
+        {(Object.keys(QUADRANTS) as QuadrantKey[]).map((key) => {
+          const q = QUADRANTS[key];
+          return (
+            <text
+              key={key}
+              x={cx + outerR * q.labelOffset.x}
+              y={cy + outerR * q.labelOffset.y}
+              textAnchor="middle"
+              className="pointer-events-none select-none text-2xl font-bold"
+              fill={q.color}
+              opacity={hovered && hovered !== key ? 0.3 : 1}
+            >
+              {key}
+            </text>
+          );
+        })}
 
         {/* Axis labels */}
         <text
           x={cx}
-          y={cy - outerR - 12}
+          y={cy - outerR - 16}
           textAnchor="middle"
-          className="text-[10px]"
+          className="text-[10px] uppercase tracking-widest"
           fill="#78716c"
         >
-          ACTIVE
+          Active
         </text>
         <text
           x={cx}
-          y={cy + outerR + 20}
+          y={cy + outerR + 24}
           textAnchor="middle"
-          className="text-[10px]"
+          className="text-[10px] uppercase tracking-widest"
           fill="#78716c"
         >
-          RECEPTIVE
+          Receptive
         </text>
         <text
-          x={cx - outerR - 8}
+          x={cx - outerR - 12}
           y={cy + 4}
           textAnchor="end"
-          className="text-[10px]"
+          className="text-[10px] uppercase tracking-widest"
           fill="#78716c"
         >
-          SKEPTICAL
+          Skeptical
         </text>
         <text
-          x={cx + outerR + 8}
+          x={cx + outerR + 12}
           y={cy + 4}
           textAnchor="start"
-          className="text-[10px]"
+          className="text-[10px] uppercase tracking-widest"
           fill="#78716c"
         >
-          AGREEABLE
+          Agreeable
         </text>
 
         {/* User dot */}
@@ -212,6 +217,25 @@ export default function CircumplexChart({
         />
         <circle cx={dotX} cy={dotY} r={4} fill="#1c1917" />
       </svg>
+
+      {/* Hover tooltip */}
+      <div
+        className={`mx-auto max-w-xs rounded-xl border border-stone-200 bg-white px-4 py-3 text-center shadow-sm transition-all duration-200 ${
+          hovered ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-1 pointer-events-none"
+        }`}
+        style={{ minHeight: 72 }}
+      >
+        {hovered && (
+          <>
+            <p className="text-sm font-semibold" style={{ color: QUADRANTS[hovered].color }}>
+              {QUADRANTS[hovered].label} — {scores[hovered]}%
+            </p>
+            <p className="mt-1 text-xs text-stone-500">
+              {QUADRANTS[hovered].desc}
+            </p>
+          </>
+        )}
+      </div>
     </div>
   );
 }

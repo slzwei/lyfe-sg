@@ -188,26 +188,49 @@ function WordPair({
   const answered = value !== undefined;
   return (
     <div className={`rounded-2xl border p-4 transition-colors ${answered ? "border-stone-200 bg-stone-50" : "border-stone-100 bg-white"}`}>
-      <div className="flex items-center gap-3">
-        <span className="w-28 shrink-0 text-right text-sm font-medium text-stone-700 sm:w-32">
-          {q.left}
-        </span>
-        <div className="flex flex-1 items-center justify-center gap-2 sm:gap-3">
+      {/* Mobile: stacked layout */}
+      <div className="flex flex-col gap-2 sm:hidden">
+        <div className="flex items-center justify-between text-xs font-medium text-stone-500">
+          <span>{q.left}</span>
+          <span>{q.right}</span>
+        </div>
+        <div className="flex items-center justify-between">
           {[5, 4, 3, 2, 1].map((v) => (
             <button
               key={v}
               type="button"
               onClick={() => onChange(v)}
-              className={`h-8 w-8 rounded-full border-2 transition-all sm:h-9 sm:w-9 ${
+              className={`h-9 w-9 rounded-full border-2 transition-all ${
                 value === v
                   ? "border-orange-500 bg-orange-500"
                   : "border-stone-300 bg-white hover:border-orange-300"
-              } ${v === 3 ? "h-7 w-7 sm:h-8 sm:w-8" : ""}`}
+              } ${v === 3 ? "h-8 w-8" : ""}`}
               aria-label={`${v}`}
             />
           ))}
         </div>
-        <span className="w-28 shrink-0 text-left text-sm font-medium text-stone-700 sm:w-32">
+      </div>
+      {/* Desktop: inline layout */}
+      <div className="hidden sm:flex sm:items-center sm:gap-3">
+        <span className="w-32 shrink-0 text-right text-sm font-medium text-stone-700">
+          {q.left}
+        </span>
+        <div className="flex flex-1 items-center justify-center gap-3">
+          {[5, 4, 3, 2, 1].map((v) => (
+            <button
+              key={v}
+              type="button"
+              onClick={() => onChange(v)}
+              className={`h-9 w-9 rounded-full border-2 transition-all ${
+                value === v
+                  ? "border-orange-500 bg-orange-500"
+                  : "border-stone-300 bg-white hover:border-orange-300"
+              } ${v === 3 ? "h-8 w-8" : ""}`}
+              aria-label={`${v}`}
+            />
+          ))}
+        </div>
+        <span className="w-32 shrink-0 text-left text-sm font-medium text-stone-700">
           {q.right}
         </span>
       </div>

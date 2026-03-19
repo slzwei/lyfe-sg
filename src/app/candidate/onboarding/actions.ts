@@ -128,7 +128,9 @@ export async function saveProfile(formData: Record<string, unknown>) {
     additional_prev_applied_detail: profile.additional_prev_applied_detail,
     declaration_agreed: profile.declaration_agreed,
     declaration_date: profile.declaration_date,
-  }).catch(() => {});
+  }).catch((err) => {
+    console.error("[email] sendProfileSubmissionEmail failed:", err);
+  });
 
   redirect("/candidate/disc-quiz");
 }

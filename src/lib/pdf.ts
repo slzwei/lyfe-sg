@@ -1,7 +1,11 @@
 import PDFDocument from "pdfkit";
+import fs from "fs";
 import path from "path";
 
-const PACIFICO_PATH = path.join(process.cwd(), "src/lib/fonts/Pacifico-Regular.ttf");
+// Pre-read the font as a Buffer so it works on Vercel serverless
+const PACIFICO_FONT = fs.readFileSync(
+  path.join(process.cwd(), "src/lib/fonts/Pacifico-Regular.ttf")
+);
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 
@@ -133,7 +137,7 @@ export async function generateProfilePdf(
     let y = doc.y;
 
     // ── Header ────────────────────────────────────────────────────────────
-    doc.registerFont("Pacifico", PACIFICO_PATH);
+    doc.registerFont("Pacifico", PACIFICO_FONT);
     doc.font("Pacifico").fontSize(26).fillColor(ORANGE).text("Lyfe", MARGIN, y);
     doc.font("Helvetica"); // reset to default
     y = doc.y + 8;

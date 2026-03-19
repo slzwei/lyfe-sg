@@ -253,9 +253,13 @@ function SingleWord({
       <p className="mb-3 text-center text-sm font-semibold text-stone-800">
         {q.word}
       </p>
+      <div className="flex items-center justify-between text-xs text-stone-400 mb-1 sm:hidden">
+        <span>Not Like Me</span>
+        <span>Like Me</span>
+      </div>
       <div className="flex items-center gap-2">
-        <span className="shrink-0 text-xs text-stone-400">Not Like Me</span>
-        <div className="flex flex-1 items-center justify-center gap-2 sm:gap-3">
+        <span className="hidden shrink-0 text-xs text-stone-400 sm:block">Not Like Me</span>
+        <div className="flex flex-1 items-center justify-between sm:justify-center sm:gap-3">
           {[1, 2, 3, 4, 5].map((v) => (
             <button
               key={v}
@@ -271,7 +275,7 @@ function SingleWord({
             </button>
           ))}
         </div>
-        <span className="shrink-0 text-xs text-stone-400">Like Me</span>
+        <span className="hidden shrink-0 text-xs text-stone-400 sm:block">Like Me</span>
       </div>
     </div>
   );

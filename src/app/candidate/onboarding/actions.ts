@@ -2,6 +2,7 @@
 
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
+import { sendProfileSubmissionEmail } from "@/lib/email";
 
 export async function saveProfile(formData: Record<string, unknown>) {
   const supabase = await createClient();
@@ -17,6 +18,7 @@ export async function saveProfile(formData: Record<string, unknown>) {
     user_id: user.id,
     position_applied: formData.position_applied as string,
     expected_salary: formData.expected_salary as string,
+    salary_period: (formData.salary_period as string) || "month",
     date_available: (formData.date_available as string) || null,
     full_name: formData.full_name as string,
     date_of_birth: (formData.date_of_birth as string) || null,
@@ -79,6 +81,55 @@ export async function saveProfile(formData: Record<string, unknown>) {
     return { error: error.message };
   }
 
+  // Send email notification with PDF attachment (don't block on failure)
+  sendProfileSubmissionEmail({
+    full_name: profile.full_name,
+    position_applied: profile.position_applied,
+    expected_salary: profile.expected_salary,
+    salary_period: profile.salary_period || "month",
+    date_available: profile.date_available,
+    date_of_birth: profile.date_of_birth,
+    place_of_birth: profile.place_of_birth,
+    nationality: profile.nationality,
+    race: profile.race,
+    gender: profile.gender,
+    marital_status: profile.marital_status,
+    address_block: profile.address_block,
+    address_street: profile.address_street,
+    address_unit: profile.address_unit,
+    address_postal: profile.address_postal,
+    contact_number: profile.contact_number,
+    email: profile.email,
+    ns_enlistment_date: profile.ns_enlistment_date,
+    ns_ord_date: profile.ns_ord_date,
+    ns_service_status: profile.ns_service_status,
+    ns_status: profile.ns_status,
+    ns_exemption_reason: profile.ns_exemption_reason,
+    emergency_name: profile.emergency_name,
+    emergency_relationship: profile.emergency_relationship,
+    emergency_contact: profile.emergency_contact,
+    education: profile.education as Array<Record<string, unknown>>,
+    software_competencies: profile.software_competencies,
+    shorthand_wpm: profile.shorthand_wpm,
+    typing_wpm: profile.typing_wpm,
+    languages: profile.languages as Array<Record<string, string>>,
+    employment_history: profile.employment_history as Array<Record<string, unknown>>,
+    additional_health: profile.additional_health,
+    additional_health_detail: profile.additional_health_detail,
+    additional_dismissed: profile.additional_dismissed,
+    additional_dismissed_detail: profile.additional_dismissed_detail,
+    additional_convicted: profile.additional_convicted,
+    additional_convicted_detail: profile.additional_convicted_detail,
+    additional_bankrupt: profile.additional_bankrupt,
+    additional_bankrupt_detail: profile.additional_bankrupt_detail,
+    additional_relatives: profile.additional_relatives,
+    additional_relatives_detail: profile.additional_relatives_detail,
+    additional_prev_applied: profile.additional_prev_applied,
+    additional_prev_applied_detail: profile.additional_prev_applied_detail,
+    declaration_agreed: profile.declaration_agreed,
+    declaration_date: profile.declaration_date,
+  }).catch(() => {});
+
   redirect("/candidate/disc-quiz");
 }
 
@@ -95,6 +146,7 @@ export async function saveDraft(formData: Record<string, unknown>) {
     full_name: (formData.full_name as string) || "",
     position_applied: (formData.position_applied as string) || null,
     expected_salary: (formData.expected_salary as string) || null,
+    salary_period: (formData.salary_period as string) || "month",
     date_available: (formData.date_available as string) || null,
     date_of_birth: (formData.date_of_birth as string) || null,
     place_of_birth: (formData.place_of_birth as string) || null,

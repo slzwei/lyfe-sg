@@ -1,0 +1,136 @@
+"use server";
+
+import { createClient } from "@/lib/supabase/server";
+import { redirect } from "next/navigation";
+
+export async function saveProfile(formData: Record<string, unknown>) {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    return { error: "Not authenticated." };
+  }
+
+  const profile = {
+    user_id: user.id,
+    position_applied: formData.position_applied as string,
+    expected_salary: formData.expected_salary as string,
+    date_available: (formData.date_available as string) || null,
+    full_name: formData.full_name as string,
+    date_of_birth: (formData.date_of_birth as string) || null,
+    place_of_birth: formData.place_of_birth as string,
+    nationality: formData.nationality as string,
+    race: formData.race as string,
+    gender: formData.gender as string,
+    marital_status: formData.marital_status as string,
+    address_block: formData.address_block as string,
+    address_street: formData.address_street as string,
+    address_unit: (formData.address_unit as string) || null,
+    address_postal: formData.address_postal as string,
+    contact_number: formData.contact_number as string,
+    email: formData.email as string,
+    ns_enlistment_date: (formData.ns_enlistment_date as string) || null,
+    ns_ord_date: (formData.ns_ord_date as string) || null,
+    ns_service_status: (formData.ns_service_status as string) || null,
+    ns_status: (formData.ns_status as string) || null,
+    ns_exemption_reason: (formData.ns_exemption_reason as string) || null,
+    emergency_name: formData.emergency_name as string,
+    emergency_relationship: formData.emergency_relationship as string,
+    emergency_contact: formData.emergency_contact as string,
+    education: formData.education,
+    software_competencies: (formData.software_competencies as string) || null,
+    shorthand_wpm: formData.shorthand_wpm
+      ? Number(formData.shorthand_wpm)
+      : null,
+    typing_wpm: formData.typing_wpm ? Number(formData.typing_wpm) : null,
+    languages: formData.languages,
+    employment_history: formData.employment_history,
+    additional_health: formData.additional_health as boolean,
+    additional_health_detail:
+      (formData.additional_health_detail as string) || null,
+    additional_dismissed: formData.additional_dismissed as boolean,
+    additional_dismissed_detail:
+      (formData.additional_dismissed_detail as string) || null,
+    additional_convicted: formData.additional_convicted as boolean,
+    additional_convicted_detail:
+      (formData.additional_convicted_detail as string) || null,
+    additional_bankrupt: formData.additional_bankrupt as boolean,
+    additional_bankrupt_detail:
+      (formData.additional_bankrupt_detail as string) || null,
+    additional_relatives: formData.additional_relatives as boolean,
+    additional_relatives_detail:
+      (formData.additional_relatives_detail as string) || null,
+    additional_prev_applied: formData.additional_prev_applied as boolean,
+    additional_prev_applied_detail:
+      (formData.additional_prev_applied_detail as string) || null,
+    declaration_agreed: formData.declaration_agreed as boolean,
+    declaration_date: new Date().toISOString(),
+    completed: true,
+    updated_at: new Date().toISOString(),
+  };
+
+  const { error } = await supabase
+    .from("candidate_profiles")
+    .upsert(profile, { onConflict: "user_id" });
+
+  if (error) {
+    return { error: error.message };
+  }
+
+  redirect("/candidate/disc-quiz");
+}
+
+export async function saveDraft(formData: Record<string, unknown>) {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) return;
+
+  const draft = {
+    user_id: user.id,
+    full_name: (formData.full_name as string) || "",
+    position_applied: (formData.position_applied as string) || null,
+    expected_salary: (formData.expected_salary as string) || null,
+    date_available: (formData.date_available as string) || null,
+    date_of_birth: (formData.date_of_birth as string) || null,
+    place_of_birth: (formData.place_of_birth as string) || null,
+    nationality: (formData.nationality as string) || null,
+    race: (formData.race as string) || null,
+    gender: (formData.gender as string) || null,
+    marital_status: (formData.marital_status as string) || null,
+    address_block: (formData.address_block as string) || null,
+    address_street: (formData.address_street as string) || null,
+    address_unit: (formData.address_unit as string) || null,
+    address_postal: (formData.address_postal as string) || null,
+    contact_number: (formData.contact_number as string) || null,
+    email: (formData.email as string) || null,
+    ns_enlistment_date: (formData.ns_enlistment_date as string) || null,
+    ns_ord_date: (formData.ns_ord_date as string) || null,
+    ns_service_status: (formData.ns_service_status as string) || null,
+    ns_status: (formData.ns_status as string) || null,
+    ns_exemption_reason: (formData.ns_exemption_reason as string) || null,
+    emergency_name: (formData.emergency_name as string) || null,
+    emergency_relationship:
+      (formData.emergency_relationship as string) || null,
+    emergency_contact: (formData.emergency_contact as string) || null,
+    education: formData.education || [],
+    software_competencies:
+      (formData.software_competencies as string) || null,
+    shorthand_wpm: formData.shorthand_wpm
+      ? Number(formData.shorthand_wpm)
+      : null,
+    typing_wpm: formData.typing_wpm ? Number(formData.typing_wpm) : null,
+    languages: formData.languages || [],
+    employment_history: formData.employment_history || [],
+    completed: false,
+    updated_at: new Date().toISOString(),
+  };
+
+  await supabase
+    .from("candidate_profiles")
+    .upsert(draft, { onConflict: "user_id" });
+}

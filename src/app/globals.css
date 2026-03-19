@@ -1,0 +1,40 @@
+@import "tailwindcss";
+
+@theme inline {
+  --color-orange-50: #FFF1E5;
+  --color-orange-100: #FFE0C2;
+  --color-orange-200: #FFB366;
+  --color-orange-300: #FF9933;
+  --color-orange-400: #FF8519;
+  --color-orange-500: #FF7600;
+  --color-orange-600: #CC5E00;
+  --color-orange-700: #994700;
+  --color-orange-800: #663000;
+  --color-orange-900: #331800;
+
+  --color-background: #ffffff;
+  --color-foreground: #1c1917;
+  --font-sans: var(--font-plus-jakarta);
+  --font-display: var(--font-pacifico);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--color-background);
+  color: var(--color-foreground);
+}
+
+/* Decorative gradient blobs */
+.blob {
+  border-radius: 50%;
+  filter: blur(80px);
+  pointer-events: none;
+}
+
+/* Warm section divider */
+.section-fade {
+  background: linear-gradient(to bottom, transparent, var(--color-orange-50) 50%, transparent);
+}

@@ -3,8 +3,9 @@
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import { calculateDiscScores } from "./scoring";
+import { sendDiscResultsEmail } from "@/lib/email";
 
-export async function submitDiscQuiz(responses: Record<string, number>) {
+export async function submitDiscQuiz(responses: Record<string, number>, resultsEmail?: string) {
   const supabase = await createClient();
   const {
     data: { user },
@@ -45,6 +46,7 @@ export async function submitDiscQuiz(responses: Record<string, number>) {
     .upsert(
       {
         user_id: user.id,
+        results_email: resultsEmail || null,
         ...scores,
       },
       { onConflict: "user_id" }
@@ -53,6 +55,25 @@ export async function submitDiscQuiz(responses: Record<string, number>) {
   if (resultError) {
     return { error: resultError.message };
   }
+
+  // Fetch candidate name for the email
+  const { data: profile } = await supabase
+    .from("candidate_profiles")
+    .select("full_name, contact_number")
+    .eq("user_id", user.id)
+    .single();
+
+  // Send email notification (don't block on failure)
+  sendDiscResultsEmail({
+    full_name: profile?.full_name || "Unknown",
+    disc_type: scores.disc_type,
+    d_pct: scores.d_pct,
+    i_pct: scores.i_pct,
+    s_pct: scores.s_pct,
+    c_pct: scores.c_pct,
+    results_email: resultsEmail || "",
+    contact_number: profile?.contact_number || "",
+  }).catch(() => {});
 
   redirect("/candidate/disc-results");
 }

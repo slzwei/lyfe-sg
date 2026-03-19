@@ -34,7 +34,7 @@ export default async function OnboardingPage() {
           Complete all sections below. Your progress is saved automatically.
         </p>
       </div>
-      <OnboardingForm initialData={profile} />
+      <OnboardingForm initialData={profile} userPhone={user.phone ? `+${user.phone}` : ""} />
     </div>
   );
 }

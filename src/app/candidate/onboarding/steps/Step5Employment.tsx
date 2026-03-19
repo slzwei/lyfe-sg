@@ -3,6 +3,7 @@
 interface EmploymentRow {
   from: string;
   to: string;
+  is_current: boolean;
   company: string;
   position: string;
   salary: string;
@@ -22,6 +23,7 @@ const LABEL_CLASS = "mb-1 block text-xs font-medium text-stone-600";
 const EMPTY_ROW: EmploymentRow = {
   from: "",
   to: "",
+  is_current: false,
   company: "",
   position: "",
   salary: "",
@@ -33,14 +35,19 @@ export default function Step5Employment({
   onChange,
   errors,
 }: Step5Props) {
-  const rows = (data.employment_history as EmploymentRow[]) || [
-    { ...EMPTY_ROW },
-  ];
+  const rows = (data.employment_history as EmploymentRow[]) || [];
 
-  function updateRow(index: number, field: string, value: string) {
-    const updated = rows.map((row, i) =>
-      i === index ? { ...row, [field]: value } : row
-    );
+  function updateRow(index: number, field: string, value: unknown) {
+    const updated = rows.map((row, i) => {
+      if (i !== index) return row;
+      const newRow = { ...row, [field]: value };
+      // If marking as current, clear "to" date and reason for leaving
+      if (field === "is_current" && value === true) {
+        newRow.to = "";
+        newRow.reason_leaving = "";
+      }
+      return newRow;
+    });
     onChange("employment_history", updated);
   }
 
@@ -49,7 +56,6 @@ export default function Step5Employment({
   }
 
   function removeRow(index: number) {
-    if (rows.length <= 1) return;
     onChange(
       "employment_history",
       rows.filter((_, i) => i !== index)
@@ -57,48 +63,42 @@ export default function Step5Employment({
   }
 
   return (
-    <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-lg font-semibold text-stone-800">
-            Employment History
-          </h2>
-          <p className="text-sm text-stone-500">
-            Start with your latest or present company.
-          </p>
-        </div>
-        <button
-          type="button"
-          onClick={addRow}
-          className="rounded-lg bg-orange-50 px-3 py-1.5 text-sm font-medium text-orange-600 hover:bg-orange-100"
-        >
-          + Add
-        </button>
+    <div className="space-y-5">
+      <div>
+        <h2 className="text-lg font-semibold text-stone-800">
+          Employment History
+        </h2>
+        <p className="mt-1 text-sm text-stone-500">
+          Start with your latest or present company. Include internships and
+          part-time roles.
+        </p>
       </div>
 
       {errors.employment_history && (
         <p className="text-xs text-red-500">{errors.employment_history}</p>
       )}
 
-      <div className="space-y-4">
-        {rows.map((row, i) => (
-          <div
-            key={i}
-            className="rounded-2xl border border-stone-200 bg-white p-4"
-          >
+      {rows.map((row, i) => (
+        <div key={i}>
+          <div className="rounded-2xl border border-stone-200 bg-white p-4">
             <div className="mb-3 flex items-center justify-between">
-              <span className="text-sm font-medium text-stone-500">
-                Position {i + 1}
-              </span>
-              {rows.length > 1 && (
-                <button
-                  type="button"
-                  onClick={() => removeRow(i)}
-                  className="text-xs text-red-400 hover:text-red-600"
-                >
-                  Remove
-                </button>
-              )}
+              <div className="flex items-center gap-2">
+                <span className="flex h-6 w-6 items-center justify-center rounded-full bg-orange-100 text-xs font-bold text-orange-600">
+                  {i + 1}
+                </span>
+                <span className="text-sm font-medium text-stone-700">
+                  {i === 0
+                    ? "Most Recent Position"
+                    : `Position ${i + 1}`}
+                </span>
+              </div>
+              <button
+                type="button"
+                onClick={() => removeRow(i)}
+                className="text-xs text-red-400 hover:text-red-600"
+              >
+                Remove
+              </button>
             </div>
             <div className="grid gap-3 sm:grid-cols-2">
               <div>
@@ -112,12 +112,31 @@ export default function Step5Employment({
               </div>
               <div>
                 <label className={LABEL_CLASS}>To (mm/yyyy)</label>
-                <input
-                  type="month"
-                  className={INPUT_CLASS}
-                  value={row.to}
-                  onChange={(e) => updateRow(i, "to", e.target.value)}
-                />
+                {row.is_current ? (
+                  <div className="flex h-10 items-center rounded-xl border border-stone-100 bg-stone-100 px-3 text-sm text-stone-500">
+                    Present
+                  </div>
+                ) : (
+                  <input
+                    type="month"
+                    className={INPUT_CLASS}
+                    value={row.to}
+                    onChange={(e) => updateRow(i, "to", e.target.value)}
+                  />
+                )}
+                <label className="mt-1.5 flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    checked={row.is_current || false}
+                    onChange={(e) =>
+                      updateRow(i, "is_current", e.target.checked)
+                    }
+                    className="h-3.5 w-3.5 accent-orange-500"
+                  />
+                  <span className="text-xs text-stone-500">
+                    I currently work here
+                  </span>
+                </label>
               </div>
               <div>
                 <label className={LABEL_CLASS}>Company / Country *</label>
@@ -125,6 +144,7 @@ export default function Step5Employment({
                   className={INPUT_CLASS}
                   value={row.company}
                   onChange={(e) => updateRow(i, "company", e.target.value)}
+                  placeholder="e.g. DBS Bank Singapore"
                 />
               </div>
               <div>
@@ -144,20 +164,70 @@ export default function Step5Employment({
                   placeholder="e.g. $2,500"
                 />
               </div>
-              <div>
-                <label className={LABEL_CLASS}>Reason for Leaving</label>
-                <input
-                  className={INPUT_CLASS}
-                  value={row.reason_leaving}
-                  onChange={(e) =>
-                    updateRow(i, "reason_leaving", e.target.value)
-                  }
-                />
-              </div>
+              {!row.is_current && (
+                <div>
+                  <label className={LABEL_CLASS}>Reason for Leaving</label>
+                  <input
+                    className={INPUT_CLASS}
+                    value={row.reason_leaving}
+                    onChange={(e) =>
+                      updateRow(i, "reason_leaving", e.target.value)
+                    }
+                  />
+                </div>
+              )}
             </div>
           </div>
-        ))}
-      </div>
+
+          {/* Add button below last entry */}
+          {i === rows.length - 1 && rows.length > 0 && (
+            <button
+              type="button"
+              onClick={addRow}
+              className="mt-3 flex w-full items-center justify-center gap-2 rounded-2xl border-2 border-dashed border-stone-200 py-3 text-sm font-medium text-stone-400 transition-colors hover:border-orange-300 hover:text-orange-500"
+            >
+              <svg
+                className="h-4 w-4"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={2}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M12 4v16m8-8H4"
+                />
+              </svg>
+              Add another position
+            </button>
+          )}
+        </div>
+      ))}
+
+      {/* Add button when no entries */}
+      {rows.length === 0 && (
+        <button
+          type="button"
+          onClick={addRow}
+          className="flex w-full items-center justify-center gap-2 rounded-2xl border-2 border-dashed border-stone-200 py-3 text-sm font-medium text-stone-400 transition-colors hover:border-orange-300 hover:text-orange-500"
+        >
+          <svg
+            className="h-4 w-4"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            strokeWidth={2}
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M12 4v16m8-8H4"
+            />
+          </svg>
+          Add a position
+        </button>
+      )}
     </div>
   );
 }

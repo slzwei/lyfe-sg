@@ -3,7 +3,10 @@ import { z } from "zod";
 export const step1Schema = z.object({
   position_applied: z.string().min(1, "Required"),
   expected_salary: z.string().min(1, "Required"),
-  date_available: z.string().min(1, "Required"),
+  date_available: z.string().min(1, "Required").refine(
+    (val) => new Date(val) >= new Date(new Date().toDateString()),
+    "Must be today or a future date"
+  ),
   full_name: z.string().min(1, "Full name is required"),
   date_of_birth: z.string().min(1, "Date of birth is required"),
   place_of_birth: z.string().min(1, "Required"),
@@ -54,13 +57,26 @@ export const step2Schema = z
     }
   });
 
-const educationRowSchema = z.object({
-  qualification: z.string().min(1, "Required"),
-  institution: z.string().min(1, "Required"),
-  year_commenced: z.string().optional(),
-  year_completed: z.string().optional(),
-  remarks: z.string().optional(),
-});
+const educationRowSchema = z
+  .object({
+    qualification: z.string().min(1, "Required"),
+    institution: z.string().min(1, "Required"),
+    year_commenced: z.string().optional(),
+    year_completed: z.string().optional(),
+    expected_graduation: z.string().optional(),
+    remarks: z.string().optional(),
+  })
+  .refine(
+    (row) => {
+      if (!row.year_commenced || !row.year_completed) return true;
+      if (row.year_completed === "Present") return true;
+      return parseInt(row.year_completed) >= parseInt(row.year_commenced);
+    },
+    {
+      message: "Year completed cannot be before year commenced.",
+      path: ["year_completed"],
+    }
+  );
 
 export const step3Schema = z.object({
   education: z.array(educationRowSchema).min(1, "Add at least one entry"),
@@ -82,8 +98,9 @@ export const step4Schema = z.object({
 const employmentRowSchema = z.object({
   from: z.string().optional(),
   to: z.string().optional(),
-  company: z.string().min(1, "Required"),
-  position: z.string().min(1, "Required"),
+  is_current: z.boolean().optional(),
+  company: z.string().optional(),
+  position: z.string().optional(),
   salary: z.string().optional(),
   reason_leaving: z.string().optional(),
 });

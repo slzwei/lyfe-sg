@@ -41,6 +41,13 @@ export default async function DiscQuizPage() {
     .eq("user_id", user.id)
     .single();
 
+  // Get email from candidate profile
+  const { data: candidateProfile } = await supabase
+    .from("candidate_profiles")
+    .select("email")
+    .eq("user_id", user.id)
+    .single();
+
   return (
     <div>
       <div className="mb-6">
@@ -56,6 +63,7 @@ export default async function DiscQuizPage() {
         initialResponses={
           savedResponses?.responses as Record<string, number> | null
         }
+        initialEmail={candidateProfile?.email || ""}
       />
     </div>
   );

@@ -110,14 +110,6 @@ export default function Step2NSEmergency({
         </div>
       )}
 
-      {!isSGMale && (
-        <div className="rounded-xl border border-stone-100 bg-stone-50/50 p-4">
-          <p className="text-sm text-stone-400">
-            National Service section — not applicable.
-          </p>
-        </div>
-      )}
-
       {/* Emergency Contact */}
       <div className="space-y-4">
         <h2 className="text-lg font-semibold text-stone-800">

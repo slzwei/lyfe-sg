@@ -15,13 +15,15 @@ const STEP_LABELS = ["Pairs 1", "Pairs 2", "Pairs 3", "Ratings", "Scenarios"];
 
 interface DiscQuizProps {
   initialResponses?: Record<string, number> | null;
+  initialEmail?: string;
 }
 
-export default function DiscQuiz({ initialResponses }: DiscQuizProps) {
+export default function DiscQuiz({ initialResponses, initialEmail }: DiscQuizProps) {
   const [currentStep, setCurrentStep] = useState(1);
   const [responses, setResponses] = useState<Record<string, number>>(
     initialResponses || {}
   );
+  const [resultsEmail, setResultsEmail] = useState(initialEmail || "");
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
@@ -51,7 +53,7 @@ export default function DiscQuiz({ initialResponses }: DiscQuizProps) {
     } else {
       // Final submit
       setSubmitting(true);
-      const result = await submitDiscQuiz(responses);
+      const result = await submitDiscQuiz(responses, resultsEmail);
       if (result?.error) {
         setError(result.error);
         setSubmitting(false);
@@ -107,6 +109,25 @@ export default function DiscQuiz({ initialResponses }: DiscQuizProps) {
             />
           ))}
         </div>
+
+        {/* Email field on final step */}
+        {currentStep === 5 && (
+          <div className="mt-8 rounded-2xl border border-stone-200 bg-stone-50 p-5">
+            <label className="mb-2 block text-sm font-medium text-stone-700">
+              Save my results to this email:
+            </label>
+            <input
+              type="email"
+              value={resultsEmail}
+              onChange={(e) => setResultsEmail(e.target.value)}
+              className="h-12 w-full rounded-xl border border-stone-200 bg-white px-4 text-sm outline-none transition-colors focus:border-orange-400 focus:ring-2 focus:ring-orange-100"
+              placeholder="you@example.com"
+            />
+            <p className="mt-1.5 text-xs italic text-stone-400">
+              Enter your email to save your results and get more info on your personality type.
+            </p>
+          </div>
+        )}
 
         {error && (
           <p className="mt-4 rounded-lg bg-red-50 px-3 py-2 text-sm text-red-600">
@@ -164,8 +185,9 @@ function WordPair({
   value: number | undefined;
   onChange: (val: number) => void;
 }) {
+  const answered = value !== undefined;
   return (
-    <div className="rounded-2xl border border-stone-100 p-4">
+    <div className={`rounded-2xl border p-4 transition-colors ${answered ? "border-stone-200 bg-stone-50" : "border-stone-100 bg-white"}`}>
       <div className="flex items-center gap-3">
         <span className="w-28 shrink-0 text-right text-sm font-medium text-stone-700 sm:w-32">
           {q.left}
@@ -202,8 +224,9 @@ function SingleWord({
   value: number | undefined;
   onChange: (val: number) => void;
 }) {
+  const answered = value !== undefined;
   return (
-    <div className="rounded-2xl border border-stone-100 p-4">
+    <div className={`rounded-2xl border p-4 transition-colors ${answered ? "border-stone-200 bg-stone-50" : "border-stone-100 bg-white"}`}>
       <p className="mb-3 text-center text-sm font-semibold text-stone-800">
         {q.word}
       </p>
@@ -240,8 +263,9 @@ function Scenario({
   value: number | undefined;
   onChange: (val: number) => void;
 }) {
+  const answered = value !== undefined;
   return (
-    <div className="rounded-2xl border border-stone-100 p-4">
+    <div className={`rounded-2xl border p-4 transition-colors ${answered ? "border-stone-200 bg-stone-50" : "border-stone-100 bg-white"}`}>
       <p className="mb-3 text-sm font-medium text-stone-800">{q.stem}</p>
       <div className="space-y-2">
         <button

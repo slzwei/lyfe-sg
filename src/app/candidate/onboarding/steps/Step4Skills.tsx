@@ -71,84 +71,31 @@ export default function Step4Skills({ data, onChange, errors }: Step4Props) {
             </p>
           )}
         </div>
-        <div className="grid gap-4 sm:grid-cols-2">
-          <div>
-            <label className={LABEL_CLASS}>Shorthand (wpm)</label>
-            <input
-              type="number"
-              className={INPUT_CLASS}
-              value={v("shorthand_wpm")}
-              onChange={(e) => onChange("shorthand_wpm", e.target.value)}
-            />
-          </div>
-          <div>
-            <label className={LABEL_CLASS}>Typing (wpm)</label>
-            <input
-              type="number"
-              className={INPUT_CLASS}
-              value={v("typing_wpm")}
-              onChange={(e) => onChange("typing_wpm", e.target.value)}
-            />
-          </div>
-        </div>
       </div>
 
       {/* Language Profile */}
       <div className="space-y-4">
-        <div className="flex items-center justify-between">
+        <div>
           <h2 className="text-lg font-semibold text-stone-800">
             Language Profile
           </h2>
-          <button
-            type="button"
-            onClick={addLang}
-            className="rounded-lg bg-orange-50 px-3 py-1.5 text-sm font-medium text-orange-600 hover:bg-orange-100"
-          >
-            + Add
-          </button>
+          <p className="mt-1 text-sm text-stone-500">
+            Rate your proficiency for each language.
+          </p>
         </div>
 
-        <div className="space-y-3">
-          {languages.map((row, i) => (
-            <div
-              key={i}
-              className="grid items-end gap-3 rounded-2xl border border-stone-200 bg-white p-4 sm:grid-cols-4"
-            >
-              <div>
-                <label className={LABEL_CLASS}>Language</label>
-                <input
-                  className={INPUT_CLASS}
-                  value={row.language}
-                  onChange={(e) => updateLang(i, "language", e.target.value)}
-                />
-              </div>
-              <div>
-                <label className={LABEL_CLASS}>Spoken</label>
-                <select
-                  className={SELECT_CLASS}
-                  value={row.spoken}
-                  onChange={(e) => updateLang(i, "spoken", e.target.value)}
-                >
-                  <option value="">Select</option>
-                  <option value="Good">Good</option>
-                  <option value="Fair">Fair</option>
-                  <option value="Poor">Poor</option>
-                </select>
-              </div>
-              <div>
-                <label className={LABEL_CLASS}>Written</label>
-                <select
-                  className={SELECT_CLASS}
-                  value={row.written}
-                  onChange={(e) => updateLang(i, "written", e.target.value)}
-                >
-                  <option value="">Select</option>
-                  <option value="Good">Good</option>
-                  <option value="Fair">Fair</option>
-                  <option value="Poor">Poor</option>
-                </select>
-              </div>
-              <div className="flex justify-end">
+        {languages.map((row, i) => (
+          <div key={i}>
+            <div className="rounded-2xl border border-stone-200 bg-white p-4">
+              <div className="mb-3 flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <span className="flex h-6 w-6 items-center justify-center rounded-full bg-orange-100 text-xs font-bold text-orange-600">
+                    {i + 1}
+                  </span>
+                  <span className="text-sm font-medium text-stone-700">
+                    Language {i + 1}
+                  </span>
+                </div>
                 {languages.length > 1 && (
                   <button
                     type="button"
@@ -159,9 +106,70 @@ export default function Step4Skills({ data, onChange, errors }: Step4Props) {
                   </button>
                 )}
               </div>
+              <div className="grid gap-3 sm:grid-cols-3">
+                <div>
+                  <label className={LABEL_CLASS}>Language</label>
+                  <input
+                    className={INPUT_CLASS}
+                    value={row.language}
+                    onChange={(e) => updateLang(i, "language", e.target.value)}
+                    placeholder="e.g. English"
+                  />
+                </div>
+                <div>
+                  <label className={LABEL_CLASS}>Spoken</label>
+                  <select
+                    className={SELECT_CLASS}
+                    value={row.spoken}
+                    onChange={(e) => updateLang(i, "spoken", e.target.value)}
+                  >
+                    <option value="">Select</option>
+                    <option value="Good">Good</option>
+                    <option value="Fair">Fair</option>
+                    <option value="Poor">Poor</option>
+                  </select>
+                </div>
+                <div>
+                  <label className={LABEL_CLASS}>Written</label>
+                  <select
+                    className={SELECT_CLASS}
+                    value={row.written}
+                    onChange={(e) => updateLang(i, "written", e.target.value)}
+                  >
+                    <option value="">Select</option>
+                    <option value="Good">Good</option>
+                    <option value="Fair">Fair</option>
+                    <option value="Poor">Poor</option>
+                  </select>
+                </div>
+              </div>
             </div>
-          ))}
-        </div>
+
+            {/* Add button below last entry */}
+            {i === languages.length - 1 && (
+              <button
+                type="button"
+                onClick={addLang}
+                className="mt-3 flex w-full items-center justify-center gap-2 rounded-2xl border-2 border-dashed border-stone-200 py-3 text-sm font-medium text-stone-400 transition-colors hover:border-orange-300 hover:text-orange-500"
+              >
+                <svg
+                  className="h-4 w-4"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth={2}
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M12 4v16m8-8H4"
+                  />
+                </svg>
+                Add another language
+              </button>
+            )}
+          </div>
+        ))}
       </div>
     </div>
   );

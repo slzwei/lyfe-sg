@@ -41,6 +41,7 @@ function getDefaultData(): Record<string, unknown> {
   return {
     position_applied: "",
     expected_salary: "",
+    salary_period: "month",
     date_available: "",
     full_name: "",
     date_of_birth: "",
@@ -76,16 +77,7 @@ function getDefaultData(): Record<string, unknown> {
     shorthand_wpm: "",
     typing_wpm: "",
     languages: [{ language: "English", spoken: "", written: "" }],
-    employment_history: [
-      {
-        from: "",
-        to: "",
-        company: "",
-        position: "",
-        salary: "",
-        reason_leaving: "",
-      },
-    ],
+    employment_history: [],
     additional_health: undefined,
     additional_health_detail: "",
     additional_dismissed: undefined,
@@ -104,9 +96,10 @@ function getDefaultData(): Record<string, unknown> {
 
 interface OnboardingFormProps {
   initialData?: Record<string, unknown> | null;
+  userPhone?: string;
 }
 
-export default function OnboardingForm({ initialData }: OnboardingFormProps) {
+export default function OnboardingForm({ initialData, userPhone }: OnboardingFormProps) {
   const router = useRouter();
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState<Record<string, unknown>>(() => {
@@ -118,6 +111,10 @@ export default function OnboardingForm({ initialData }: OnboardingFormProps) {
           defaults[key] = initialData[key];
         }
       }
+    }
+    // Auto-populate contact number from login phone
+    if (userPhone && !defaults.contact_number) {
+      defaults.contact_number = userPhone;
     }
     return defaults;
   });
@@ -183,44 +180,18 @@ export default function OnboardingForm({ initialData }: OnboardingFormProps) {
     }
   }
 
-  const stepComponents = [
-    <Step1Personal
-      key={1}
-      data={formData}
-      onChange={handleChange}
-      errors={errors}
-    />,
-    <Step2NSEmergency
-      key={2}
-      data={formData}
-      onChange={handleChange}
-      errors={errors}
-    />,
-    <Step3Education
-      key={3}
-      data={formData}
-      onChange={handleChange}
-      errors={errors}
-    />,
-    <Step4Skills
-      key={4}
-      data={formData}
-      onChange={handleChange}
-      errors={errors}
-    />,
-    <Step5Employment
-      key={5}
-      data={formData}
-      onChange={handleChange}
-      errors={errors}
-    />,
-    <Step6Declaration
-      key={6}
-      data={formData}
-      onChange={handleChange}
-      errors={errors}
-    />,
-  ];
+  function renderStep() {
+    const props = { data: formData, onChange: handleChange, errors };
+    switch (currentStep) {
+      case 1: return <Step1Personal {...props} />;
+      case 2: return <Step2NSEmergency {...props} />;
+      case 3: return <Step3Education {...props} />;
+      case 4: return <Step4Skills {...props} />;
+      case 5: return <Step5Employment {...props} />;
+      case 6: return <Step6Declaration {...props} />;
+      default: return null;
+    }
+  }
 
   return (
     <div>
@@ -231,7 +202,7 @@ export default function OnboardingForm({ initialData }: OnboardingFormProps) {
       />
 
       <div className="rounded-3xl border border-stone-200 bg-white p-6 sm:p-8">
-        {stepComponents[currentStep - 1]}
+        {renderStep()}
 
         {errors._form && (
           <p className="mt-4 rounded-lg bg-red-50 px-3 py-2 text-sm text-red-600">

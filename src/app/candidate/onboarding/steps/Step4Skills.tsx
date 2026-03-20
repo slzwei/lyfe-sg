@@ -22,9 +22,11 @@ const EMPTY_LANG: LanguageRow = { language: "", spoken: "", written: "" };
 
 export default function Step4Skills({ data, onChange, errors }: Step4Props) {
   const v = (key: string) => (data[key] as string) || "";
-  const languages = (data.languages as LanguageRow[]) || [
-    { language: "English", spoken: "", written: "" },
-  ];
+  const rawLangs = data.languages as LanguageRow[] | undefined;
+  const languages =
+    rawLangs && rawLangs.length > 0
+      ? rawLangs
+      : [{ language: "English", spoken: "", written: "" }];
 
   function updateLang(index: number, field: string, value: string) {
     const updated = languages.map((row, i) =>

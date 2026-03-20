@@ -86,6 +86,7 @@ export default function CircumplexChart({
       <svg
         viewBox="0 -14 400 428"
         className="mx-auto w-full max-w-[340px]"
+        style={{ overflow: "visible" }}
         role="img"
         aria-label={`DISC personality map. Drive ${d}%, Influence ${i}%, Support ${s}%, Clarity ${c}%.`}
         onClick={() => setActive(null)}
@@ -130,8 +131,10 @@ export default function CircumplexChart({
           );
         })}
 
-        {/* Bloom overlay */}
-        <circle cx={dotX} cy={dotY} r={bloomR} fill="url(#bloom)" />
+        {/* Bloom overlay — hide for balanced profiles where it's just noise */}
+        {profileStrength !== "balanced" && (
+          <circle cx={dotX} cy={dotY} r={bloomR} fill="url(#bloom)" />
+        )}
 
         {/* Outer circle */}
         <circle cx={cx} cy={cy} r={outerR} fill="none" stroke="#d6d3d1" strokeWidth="1.5" />

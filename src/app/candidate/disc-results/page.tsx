@@ -121,7 +121,7 @@ export default async function DiscResultsPage() {
       {/* Chart + Score breakdown side by side on desktop */}
       <div className="grid gap-6 lg:grid-cols-5">
         {/* Chart */}
-        <div className="rounded-3xl border border-stone-200 bg-white p-5 lg:col-span-3">
+        <div className="rounded-3xl border border-stone-200 bg-white px-8 py-5 lg:col-span-3">
           <h2 className="mb-1 text-center text-xs font-semibold uppercase tracking-[0.15em] text-stone-400">
             Personality Map
           </h2>

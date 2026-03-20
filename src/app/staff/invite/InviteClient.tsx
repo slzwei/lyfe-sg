@@ -72,6 +72,17 @@ export default function InviteClient() {
           if (payload.state === "quiz" || payload.state === "form") {
             refreshUser(payload.userId);
           }
+          // Auto-clear "signed-out" to "completed" after 1 minute
+          if (payload.state === "signed-out") {
+            setTimeout(() => {
+              setLiveStates((prev) => {
+                if (prev[payload.userId] !== "signed-out") return prev;
+                const next = { ...prev };
+                delete next[payload.userId];
+                return next;
+              });
+            }, 60_000);
+          }
         }
       },
       (connected) => setLive(connected)

@@ -83,14 +83,24 @@ export async function sendInvite(data: {
   return { success: true };
 }
 
+export interface InvitationProgress {
+  profile_completed: boolean;
+  quiz_answered: number;
+  quiz_completed: boolean;
+  disc_type?: string;
+}
+
 export interface Invitation {
   id: string;
   email: string;
   candidate_name: string | null;
   position_applied: string | null;
   status: string;
+  user_id: string | null;
   created_at: string;
   expires_at: string;
+  accepted_at: string | null;
+  progress: InvitationProgress | null;
 }
 
 export async function listInvitations(): Promise<{
@@ -104,7 +114,7 @@ export async function listInvitations(): Promise<{
   const admin = getAdminClient();
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { data, error } = await (admin.from("invitations") as any)
-    .select("id, email, candidate_name, position_applied, status, created_at, expires_at")
+    .select("id, email, candidate_name, position_applied, status, user_id, created_at, expires_at, accepted_at")
     .order("created_at", { ascending: false })
     .limit(100);
 
@@ -112,7 +122,76 @@ export async function listInvitations(): Promise<{
     return { success: false, error: (error as { message: string }).message };
   }
 
-  return { success: true, data: data as Invitation[] };
+  const invitations = data as Array<{
+    id: string;
+    email: string;
+    candidate_name: string | null;
+    position_applied: string | null;
+    status: string;
+    user_id: string | null;
+    created_at: string;
+    expires_at: string;
+    accepted_at: string | null;
+  }>;
+
+  // Collect user_ids for accepted invitations
+  const userIds = invitations
+    .filter((inv) => inv.user_id)
+    .map((inv) => inv.user_id as string);
+
+  const profileMap = new Map<string, boolean>();
+  const quizProgressMap = new Map<string, number>();
+  const resultsMap = new Map<string, string>();
+
+  if (userIds.length > 0) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { data: profiles } = await (admin.from("candidate_profiles") as any)
+      .select("user_id, completed")
+      .in("user_id", userIds);
+
+    if (profiles) {
+      for (const p of profiles as Array<{ user_id: string; completed: boolean }>) {
+        profileMap.set(p.user_id, p.completed);
+      }
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { data: responses } = await (admin.from("disc_responses") as any)
+      .select("user_id, responses")
+      .in("user_id", userIds);
+
+    if (responses) {
+      for (const r of responses as Array<{ user_id: string; responses: Record<string, unknown> }>) {
+        const count = r.responses ? Object.keys(r.responses).length : 0;
+        quizProgressMap.set(r.user_id, count);
+      }
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { data: results } = await (admin.from("disc_results") as any)
+      .select("user_id, disc_type")
+      .in("user_id", userIds);
+
+    if (results) {
+      for (const r of results as Array<{ user_id: string; disc_type: string }>) {
+        resultsMap.set(r.user_id, r.disc_type);
+      }
+    }
+  }
+
+  const enriched: Invitation[] = invitations.map((inv) => ({
+    ...inv,
+    progress: inv.user_id
+      ? {
+          profile_completed: profileMap.get(inv.user_id) || false,
+          quiz_answered: quizProgressMap.get(inv.user_id) || 0,
+          quiz_completed: resultsMap.has(inv.user_id),
+          disc_type: resultsMap.get(inv.user_id),
+        }
+      : null,
+  }));
+
+  return { success: true, data: enriched };
 }
 
 export async function revokeInvitation(id: string) {
@@ -129,6 +208,63 @@ export async function revokeInvitation(id: string) {
   if (error) {
     return { success: false, error: error.message };
   }
+
+  return { success: true };
+}
+
+export async function resetApplication(invitationId: string) {
+  const staff = await requireStaff();
+  if (!staff) return { success: false, error: "Not authenticated." };
+
+  const admin = getAdminClient();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { data: invitation, error: fetchError } = await (admin.from("invitations") as any)
+    .select("user_id")
+    .eq("id", invitationId)
+    .single();
+
+  if (fetchError || !invitation?.user_id) {
+    return { success: false, error: "No candidate linked to this invitation." };
+  }
+
+  const userId = invitation.user_id as string;
+
+  // Clear quiz data
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  await (admin.from("disc_results") as any).delete().eq("user_id", userId);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  await (admin.from("disc_responses") as any).delete().eq("user_id", userId);
+
+  // Reset profile to incomplete so candidate can re-edit and re-submit
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  await (admin.from("candidate_profiles") as any)
+    .update({ completed: false, updated_at: new Date().toISOString() })
+    .eq("user_id", userId);
+
+  return { success: true };
+}
+
+export async function resetQuiz(invitationId: string) {
+  const staff = await requireStaff();
+  if (!staff) return { success: false, error: "Not authenticated." };
+
+  const admin = getAdminClient();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { data: invitation, error: fetchError } = await (admin.from("invitations") as any)
+    .select("user_id")
+    .eq("id", invitationId)
+    .single();
+
+  if (fetchError || !invitation?.user_id) {
+    return { success: false, error: "No candidate linked to this invitation." };
+  }
+
+  const userId = invitation.user_id as string;
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  await (admin.from("disc_results") as any).delete().eq("user_id", userId);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  await (admin.from("disc_responses") as any).delete().eq("user_id", userId);
 
   return { success: true };
 }

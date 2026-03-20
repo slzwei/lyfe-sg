@@ -5,6 +5,8 @@ import {
   sendInvite,
   listInvitations,
   revokeInvitation,
+  resetApplication,
+  resetQuiz,
   type Invitation,
 } from "../actions";
 
@@ -16,6 +18,7 @@ export default function InviteClient() {
   const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
   const [invitations, setInvitations] = useState<Invitation[]>([]);
   const [loadingList, setLoadingList] = useState(true);
+  const [actionLoading, setActionLoading] = useState<string | null>(null);
 
   const fetchInvitations = useCallback(async () => {
     const result = await listInvitations();
@@ -53,30 +56,87 @@ export default function InviteClient() {
   }
 
   async function handleRevoke(id: string) {
+    if (!confirm("Revoke this invitation? The candidate will no longer be able to use it.")) return;
+    setActionLoading(id);
     const result = await revokeInvitation(id);
-    if (result.success) {
-      fetchInvitations();
-    }
+    if (result.success) fetchInvitations();
+    setActionLoading(null);
   }
 
-  function statusBadge(inv: Invitation) {
+  async function handleResetApp(id: string) {
+    if (!confirm("Reset this candidate's application? Their form will be marked incomplete and quiz data will be cleared. They will need to re-submit.")) return;
+    setActionLoading(id);
+    const result = await resetApplication(id);
+    if (result.success) fetchInvitations();
+    setActionLoading(null);
+  }
+
+  async function handleResetQuiz(id: string) {
+    if (!confirm("Reset this candidate's quiz? They will need to retake the DISC personality test.")) return;
+    setActionLoading(id);
+    const result = await resetQuiz(id);
+    if (result.success) fetchInvitations();
+    setActionLoading(null);
+  }
+
+  function progressDisplay(inv: Invitation) {
     const isExpired =
       inv.status === "pending" && new Date(inv.expires_at) < new Date();
-    const status = isExpired ? "expired" : inv.status;
 
-    const styles: Record<string, string> = {
-      pending: "bg-yellow-50 text-yellow-700 border-yellow-200",
-      accepted: "bg-green-50 text-green-700 border-green-200",
-      expired: "bg-stone-50 text-stone-500 border-stone-200",
-      revoked: "bg-red-50 text-red-600 border-red-200",
-    };
+    // Non-accepted: simple badge
+    if (isExpired || inv.status === "revoked" || inv.status === "pending") {
+      const status = isExpired ? "expired" : inv.status;
+      const styles: Record<string, string> = {
+        pending: "bg-yellow-50 text-yellow-700 border-yellow-200",
+        expired: "bg-stone-50 text-stone-500 border-stone-200",
+        revoked: "bg-red-50 text-red-600 border-red-200",
+      };
+      return (
+        <span
+          className={`inline-block rounded-full border px-2 py-0.5 text-xs font-medium ${styles[status]}`}
+        >
+          {status}
+        </span>
+      );
+    }
+
+    // Accepted: show progress bar + label
+    const progress = inv.progress;
+    let step = 1;
+    let label = "Filling application";
+    const quizInProgress =
+      progress && progress.quiz_answered > 0 && !progress.quiz_completed;
+
+    if (progress) {
+      if (progress.quiz_completed) {
+        step = 3;
+        label = `Completed · ${progress.disc_type}`;
+      } else if (progress.profile_completed) {
+        step = 2;
+        label = quizInProgress
+          ? `Taking quiz (${progress.quiz_answered}/38)`
+          : "Application submitted";
+      }
+    }
 
     return (
-      <span
-        className={`inline-block rounded-full border px-2 py-0.5 text-xs font-medium ${styles[status] || styles.pending}`}
-      >
-        {status}
-      </span>
+      <div className="flex flex-col gap-1">
+        <div className="flex gap-0.5">
+          {[1, 2, 3].map((s) => (
+            <div
+              key={s}
+              className={`h-1.5 w-5 rounded-full ${
+                s <= step
+                  ? "bg-green-400"
+                  : s === 3 && quizInProgress
+                  ? "bg-blue-400"
+                  : "bg-stone-200"
+              }`}
+            />
+          ))}
+        </div>
+        <span className="text-xs text-stone-600">{label}</span>
+      </div>
     );
   }
 
@@ -157,7 +217,7 @@ export default function InviteClient() {
             disabled={sending || !email}
             className="h-10 rounded-xl bg-orange-500 px-6 font-semibold text-white transition-colors hover:bg-orange-600 disabled:cursor-not-allowed disabled:opacity-50"
           >
-            {sending ? "Sending…" : "Send Invitation"}
+            {sending ? "Sending..." : "Send Invitation"}
           </button>
         </form>
       </div>
@@ -169,7 +229,7 @@ export default function InviteClient() {
         </h2>
 
         {loadingList ? (
-          <p className="text-sm text-stone-400">Loading…</p>
+          <p className="text-sm text-stone-400">Loading...</p>
         ) : invitations.length === 0 ? (
           <p className="text-sm text-stone-400">No invitations sent yet.</p>
         ) : (
@@ -180,9 +240,9 @@ export default function InviteClient() {
                   <th className="pb-2 pr-4">Name</th>
                   <th className="pb-2 pr-4">Email</th>
                   <th className="pb-2 pr-4">Position</th>
-                  <th className="pb-2 pr-4">Status</th>
+                  <th className="pb-2 pr-4">Progress</th>
                   <th className="pb-2 pr-4">Sent</th>
-                  <th className="pb-2"></th>
+                  <th className="pb-2">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-stone-50">
@@ -190,28 +250,55 @@ export default function InviteClient() {
                   const isExpired =
                     inv.status === "pending" &&
                     new Date(inv.expires_at) < new Date();
+                  const isAccepted = inv.status === "accepted";
+                  const isLoading = actionLoading === inv.id;
+
                   return (
-                    <tr key={inv.id} className="text-stone-600">
+                    <tr
+                      key={inv.id}
+                      className={`text-stone-600 ${isLoading ? "opacity-50 pointer-events-none" : ""}`}
+                    >
                       <td className="py-2.5 pr-4 font-medium text-stone-800">
-                        {inv.candidate_name || "—"}
+                        {inv.candidate_name || "\u2014"}
                       </td>
                       <td className="py-2.5 pr-4">{inv.email}</td>
                       <td className="py-2.5 pr-4">
-                        {inv.position_applied || "—"}
+                        {inv.position_applied || "\u2014"}
                       </td>
-                      <td className="py-2.5 pr-4">{statusBadge(inv)}</td>
+                      <td className="py-2.5 pr-4">{progressDisplay(inv)}</td>
                       <td className="py-2.5 pr-4 text-stone-400">
                         {new Date(inv.created_at).toLocaleDateString()}
                       </td>
                       <td className="py-2.5">
-                        {inv.status === "pending" && !isExpired && (
-                          <button
-                            onClick={() => handleRevoke(inv.id)}
-                            className="text-xs text-red-500 hover:text-red-700"
-                          >
-                            Revoke
-                          </button>
-                        )}
+                        <div className="flex items-center gap-2">
+                          {inv.status === "pending" && !isExpired && (
+                            <button
+                              onClick={() => handleRevoke(inv.id)}
+                              disabled={isLoading}
+                              className="text-xs text-red-500 hover:text-red-700 disabled:opacity-50"
+                            >
+                              Revoke
+                            </button>
+                          )}
+                          {isAccepted && inv.progress?.quiz_completed && (
+                            <button
+                              onClick={() => handleResetQuiz(inv.id)}
+                              disabled={isLoading}
+                              className="text-xs text-blue-600 hover:text-blue-800 disabled:opacity-50"
+                            >
+                              Retrigger Quiz
+                            </button>
+                          )}
+                          {isAccepted && (
+                            <button
+                              onClick={() => handleResetApp(inv.id)}
+                              disabled={isLoading}
+                              className="text-xs text-orange-600 hover:text-orange-800 disabled:opacity-50"
+                            >
+                              Retrigger App
+                            </button>
+                          )}
+                        </div>
                       </td>
                     </tr>
                   );

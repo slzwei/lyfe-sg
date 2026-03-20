@@ -322,9 +322,10 @@ export default function Step1Personal({ data, onChange, errors }: Step1Props) {
             <label className={LABEL_CLASS}>Email *</label>
             <input
               type="email"
-              className={INPUT_CLASS}
+              className={READONLY_CLASS}
               value={v("email")}
-              onChange={(e) => onChange("email", e.target.value)}
+              readOnly
+              tabIndex={-1}
             />
             <FieldError error={errors.email} />
           </div>

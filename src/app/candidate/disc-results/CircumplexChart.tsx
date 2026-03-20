@@ -229,26 +229,23 @@ export default function CircumplexChart({
         )}
       </svg>
 
-      {/* Tooltip for priority labels */}
-      <div
-        className={`mx-auto mt-1 max-w-[260px] rounded-xl border px-4 py-2.5 text-center transition-all duration-200 ${
-          activePriority ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-1 pointer-events-none"
-        }`}
-        style={{
-          borderColor: activeColor ? activeColor + "30" : "transparent",
-          backgroundColor: activeColor ? activeColor + "08" : "transparent",
-          minHeight: 48,
-        }}
-      >
-        {activePriority && activeColor && (
+      {/* Tooltip for priority labels — only rendered when active */}
+      {activePriority && activeColor && (
+        <div
+          className="mx-auto mt-1 max-w-[260px] rounded-xl border px-4 py-2.5 text-center animate-in fade-in duration-200"
+          style={{
+            borderColor: activeColor + "30",
+            backgroundColor: activeColor + "08",
+          }}
+        >
           <p className="text-sm font-semibold" style={{ color: activeColor }}>
             {activePriority.name}
             {priorities.includes(activePriority.name) && (
               <span className="ml-1.5 text-[10px] font-medium opacity-60">Your priority</span>
             )}
           </p>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -2,6 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import CircumplexChart from "./CircumplexChart";
 import { DISC_TYPE_INFO, computeDerivedFields, DISC_PRIORITIES } from "../disc-quiz/scoring";
+import { signOut } from "../actions";
 
 const DISC_COLORS: Record<string, { hex: string; text: string; bg: string; bar: string; border: string }> = {
   D: { hex: "#2B8C8C", text: "text-[#2B8C8C]", bg: "bg-[#2B8C8C]/5", bar: "bg-[#2B8C8C]", border: "border-[#2B8C8C]/20" },
@@ -258,15 +259,29 @@ export default async function DiscResultsPage() {
         </div>
       )}
 
-      {/* Disclaimer + status */}
-      <div className="space-y-3 text-center">
-        <p className="text-xs leading-relaxed text-stone-400">
-          This assessment is for personal reflection only. Your work style may
-          vary across situations and over time.
+      {/* Disclaimer */}
+      <p className="text-center text-xs leading-relaxed text-stone-400">
+        This assessment is for personal reflection only. Your work style may
+        vary across situations and over time.
+      </p>
+
+      {/* Completion */}
+      <div className="rounded-3xl border border-orange-200/60 bg-gradient-to-br from-orange-50 to-amber-50/50 p-6 text-center">
+        <h2 className="text-lg font-semibold text-stone-800">
+          Application Complete
+        </h2>
+        <p className="mx-auto mt-2 max-w-md text-sm text-stone-500">
+          Thank you for completing your application and personality assessment.
+          Our team will review your profile and get back to you soon.
         </p>
-        <p className="text-sm text-stone-500">
-          Application complete — our team will review your profile and reach out soon.
-        </p>
+        <form action={signOut} className="mt-4">
+          <button
+            type="submit"
+            className="rounded-xl border border-stone-200 bg-white px-6 py-2.5 text-sm font-medium text-stone-600 shadow-sm transition-colors hover:bg-stone-50"
+          >
+            Sign Out
+          </button>
+        </form>
       </div>
     </div>
   );

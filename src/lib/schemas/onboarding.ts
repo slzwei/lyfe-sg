@@ -57,29 +57,45 @@ export const step2Schema = z
     }
   });
 
-const educationRowSchema = z
+const educationSchema = z
   .object({
-    qualification: z.string().min(1, "Required"),
-    institution: z.string().min(1, "Required"),
-    year_commenced: z.string().optional(),
-    year_completed: z.string().optional(),
-    expected_graduation: z.string().optional(),
-    remarks: z.string().optional(),
+    currently_studying: z.boolean(),
+    current_qualification: z.string().optional(),
+    current_institution: z.string().optional(),
+    current_year_commenced: z.string().optional(),
+    current_expected_end_date: z.string().optional(),
+    highest_qualification: z.string().min(1, "Required"),
+    highest_institution: z.string().min(1, "Required"),
+    highest_year_completed: z.string().min(1, "Required"),
   })
-  .refine(
-    (row) => {
-      if (!row.year_commenced || !row.year_completed) return true;
-      if (row.year_completed === "Present") return true;
-      return parseInt(row.year_completed) >= parseInt(row.year_commenced);
-    },
-    {
-      message: "Year completed cannot be before year commenced.",
-      path: ["year_completed"],
+  .superRefine((data, ctx) => {
+    if (data.currently_studying) {
+      if (!data.current_qualification) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Required",
+          path: ["current_qualification"],
+        });
+      }
+      if (!data.current_institution) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Required",
+          path: ["current_institution"],
+        });
+      }
+      if (!data.current_expected_end_date) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Required",
+          path: ["current_expected_end_date"],
+        });
+      }
     }
-  );
+  });
 
 export const step3Schema = z.object({
-  education: z.array(educationRowSchema).min(1, "Add at least one entry"),
+  education: educationSchema,
 });
 
 const languageRowSchema = z.object({

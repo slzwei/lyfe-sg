@@ -64,15 +64,16 @@ function getDefaultData(): Record<string, unknown> {
     emergency_name: "",
     emergency_relationship: "",
     emergency_contact: "",
-    education: [
-      {
-        qualification: "",
-        institution: "",
-        year_commenced: "",
-        year_completed: "",
-        remarks: "",
-      },
-    ],
+    education: {
+      currently_studying: false,
+      current_qualification: "",
+      current_institution: "",
+      current_year_commenced: "",
+      current_expected_end_date: "",
+      highest_qualification: "",
+      highest_institution: "",
+      highest_year_completed: "",
+    },
     software_competencies: "",
     shorthand_wpm: "",
     typing_wpm: "",
@@ -123,11 +124,16 @@ export default function OnboardingForm({ initialData, userPhone }: OnboardingFor
 
   function handleChange(field: string, value: unknown) {
     setFormData((prev) => ({ ...prev, [field]: value }));
-    // Clear field error on change
-    if (errors[field]) {
+    // Clear field error and any nested errors on change
+    const hasRelated = Object.keys(errors).some(
+      (k) => k === field || k.startsWith(field + ".")
+    );
+    if (hasRelated) {
       setErrors((prev) => {
         const next = { ...prev };
-        delete next[field];
+        for (const k of Object.keys(next)) {
+          if (k === field || k.startsWith(field + ".")) delete next[k];
+        }
         return next;
       });
     }

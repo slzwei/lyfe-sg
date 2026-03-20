@@ -30,14 +30,9 @@ const QUESTIONS = [
     text: "Have you ever been served with a garnishee order or been declared a bankrupt?",
   },
   {
-    key: "additional_relatives",
-    detailKey: "additional_relatives_detail",
-    text: "Do you have any relatives working in LYFE or in the insurance industry?",
-  },
-  {
-    key: "additional_prev_applied",
-    detailKey: "additional_prev_applied_detail",
-    text: "Have you ever applied for any employment in LYFE?",
+    key: "additional_prev_applied_fs",
+    detailKey: "additional_prev_applied_fs_detail",
+    text: "Have you ever applied for any employment in a financial services company?",
   },
 ];
 

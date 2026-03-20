@@ -9,13 +9,15 @@ const PACIFICO_FONT = fs.readFileSync(
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 
-interface EducationRow {
-  qualification: string;
-  institution: string;
-  year_commenced?: string;
-  year_completed?: string;
-  expected_graduation?: string;
-  remarks?: string;
+interface EducationData {
+  currently_studying: boolean;
+  current_qualification?: string;
+  current_institution?: string;
+  current_year_commenced?: string;
+  current_expected_end_date?: string;
+  highest_qualification: string;
+  highest_institution: string;
+  highest_year_completed: string;
 }
 
 interface LanguageRow {
@@ -60,7 +62,7 @@ export interface FullProfileData {
   emergency_name: string;
   emergency_relationship: string;
   emergency_contact: string;
-  education: EducationRow[];
+  education: EducationData;
   software_competencies: string | null;
   shorthand_wpm: number | null;
   typing_wpm: number | null;
@@ -268,40 +270,63 @@ export async function generateProfilePdf(
     spacer();
 
     // ── 7. Education ──────────────────────────────────────────────────────
-    const edu = (profile.education || []) as EducationRow[];
-    if (edu.length > 0) {
+    const edu = profile.education as EducationData | undefined;
+    if (edu) {
       sectionHeader("Education");
-      for (const e of edu) {
+
+      // Currently studying
+      if (edu.currently_studying && edu.current_qualification) {
         if (y > 710) {
           doc.addPage();
           y = MARGIN;
         }
-        doc.fontSize(10).fillColor(DARK).text(e.qualification, MARGIN, y);
-        y = doc.y + 2;
         doc
-          .fontSize(9)
-          .fillColor(MUTED)
+          .fontSize(10)
+          .fillColor(DARK)
+          .text(`Currently Studying: ${edu.current_qualification}`, MARGIN, y);
+        y = doc.y + 2;
+        const currentLine = [
+          edu.current_institution,
+          edu.current_year_commenced
+            ? `From ${edu.current_year_commenced}`
+            : null,
+          edu.current_expected_end_date
+            ? `Expected completion: ${edu.current_expected_end_date}`
+            : null,
+        ]
+          .filter(Boolean)
+          .join("  ·  ");
+        doc.fontSize(9).fillColor(MUTED).text(currentLine, MARGIN, y);
+        y = doc.y + 10;
+      }
+
+      // Highest attained
+      if (edu.highest_qualification) {
+        if (y > 710) {
+          doc.addPage();
+          y = MARGIN;
+        }
+        doc
+          .fontSize(10)
+          .fillColor(DARK)
           .text(
-            `${e.institution}  ·  ${val(e.year_commenced, "?")} - ${val(e.year_completed, "?")}`,
+            `Highest Attained: ${edu.highest_qualification}`,
             MARGIN,
             y
           );
-        if (e.expected_graduation) {
-          y = doc.y + 2;
-          doc
-            .fontSize(9)
-            .fillColor(MUTED)
-            .text(`Expected graduation: ${e.expected_graduation}`, MARGIN, y);
-        }
-        if (e.remarks) {
-          y = doc.y + 2;
-          doc
-            .fontSize(9)
-            .fillColor(MUTED)
-            .text(`Remarks: ${e.remarks}`, MARGIN, y);
-        }
+        y = doc.y + 2;
+        const highestLine = [
+          edu.highest_institution,
+          edu.highest_year_completed
+            ? `Completed ${edu.highest_year_completed}`
+            : null,
+        ]
+          .filter(Boolean)
+          .join("  ·  ");
+        doc.fontSize(9).fillColor(MUTED).text(highestLine, MARGIN, y);
         y = doc.y + 10;
       }
+
       spacer(6);
     }
 

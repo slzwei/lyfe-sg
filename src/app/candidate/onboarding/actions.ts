@@ -3,6 +3,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import { sendProfileSubmissionEmail } from "@/lib/email";
+import type { FullProfileData } from "@/lib/pdf";
 
 export async function saveProfile(formData: Record<string, unknown>) {
   const supabase = await createClient();
@@ -108,7 +109,7 @@ export async function saveProfile(formData: Record<string, unknown>) {
     emergency_name: profile.emergency_name,
     emergency_relationship: profile.emergency_relationship,
     emergency_contact: profile.emergency_contact,
-    education: profile.education as unknown as { qualification: string; institution: string }[],
+    education: profile.education as FullProfileData["education"],
     software_competencies: profile.software_competencies,
     shorthand_wpm: profile.shorthand_wpm,
     typing_wpm: profile.typing_wpm,
@@ -171,7 +172,7 @@ export async function saveDraft(formData: Record<string, unknown>) {
     emergency_relationship:
       (formData.emergency_relationship as string) || null,
     emergency_contact: (formData.emergency_contact as string) || null,
-    education: formData.education || [],
+    education: formData.education || {},
     software_competencies:
       (formData.software_competencies as string) || null,
     shorthand_wpm: formData.shorthand_wpm

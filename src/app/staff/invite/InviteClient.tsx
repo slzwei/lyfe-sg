@@ -128,7 +128,7 @@ export default function InviteClient() {
     const isExpired =
       inv.status === "pending" && new Date(inv.expires_at) < new Date();
 
-    // Non-accepted: simple badge
+    // Non-accepted: simple pill badge
     if (isExpired || inv.status === "revoked" || inv.status === "pending") {
       const status = isExpired ? "expired" : inv.status;
       const styles: Record<string, string> = {
@@ -138,55 +138,78 @@ export default function InviteClient() {
       };
       return (
         <span
-          className={`inline-block rounded-full border px-2 py-0.5 text-xs font-medium ${styles[status]}`}
+          className={`inline-block rounded-full border px-2.5 py-0.5 text-xs font-medium ${styles[status]}`}
         >
           {status}
         </span>
       );
     }
 
-    // Accepted: show progress bar + label
+    // Accepted: pill bar showing progress
     const progress = inv.progress;
-    let step = 1;
-    let label = "Starting application";
     const quizInProgress =
       progress && progress.quiz_answered > 0 && !progress.quiz_completed;
     const stepLabels = ["Personal", "NS & Emergency", "Education", "Skills", "Employment", "Declaration"];
 
-    if (progress) {
-      if (progress.quiz_completed) {
-        step = 4;
-        label = `Completed\nDISC: ${progress.disc_type?.toUpperCase()}`;
-      } else if (progress.profile_completed && quizInProgress) {
-        step = 3;
-        label = `Taking quiz (${progress.quiz_answered}/39)`;
-      } else if (progress.profile_completed) {
-        step = 3;
-        label = "Application submitted";
-      } else {
-        step = 2;
-        const s = progress.onboarding_step || 1;
-        label = `Step ${s}/6 · ${stepLabels[s - 1]}`;
-      }
+    type PillStatus = "done" | "active" | "pending";
+    let pillLabel: string;
+    let pillStyle: string;
+    let subLabel = "";
+
+    if (progress?.quiz_completed) {
+      pillLabel = `Completed · DISC: ${progress.disc_type?.toUpperCase()}`;
+      pillStyle = "bg-green-50 text-green-700 border-green-200";
+    } else if (progress?.profile_completed && quizInProgress) {
+      pillLabel = `Quiz · ${progress.quiz_answered}/39`;
+      pillStyle = "bg-blue-50 text-blue-700 border-blue-200";
+    } else if (progress?.profile_completed) {
+      pillLabel = "Application submitted";
+      pillStyle = "bg-orange-50 text-orange-700 border-orange-200";
+    } else if (progress) {
+      const s = progress.onboarding_step || 1;
+      pillLabel = `Form · ${stepLabels[s - 1]}`;
+      pillStyle = "bg-stone-50 text-stone-600 border-stone-200";
+      subLabel = `Step ${s}/6`;
+    } else {
+      pillLabel = "Starting";
+      pillStyle = "bg-stone-50 text-stone-500 border-stone-200";
     }
 
+    // Determine segment statuses for the pill bar
+    let segments: PillStatus[];
+    if (progress?.quiz_completed) {
+      segments = ["done", "done", "done"];
+    } else if (progress?.profile_completed && quizInProgress) {
+      segments = ["done", "done", "active"];
+    } else if (progress?.profile_completed) {
+      segments = ["done", "done", "pending"];
+    } else if (progress) {
+      segments = ["done", "active", "pending"];
+    } else {
+      segments = ["active", "pending", "pending"];
+    }
+
+    const segmentStyles: Record<PillStatus, string> = {
+      done: "bg-green-400",
+      active: "bg-orange-400",
+      pending: "bg-stone-200",
+    };
+
     return (
-      <div className="flex flex-col gap-1">
+      <div className="flex items-center gap-2">
+        {/* Mini bar segments */}
         <div className="flex gap-0.5">
-          {[1, 2, 3, 4].map((s) => (
-            <div
-              key={s}
-              className={`h-1.5 w-5 rounded-full ${
-                s <= step
-                  ? "bg-green-400"
-                  : s === 3 && quizInProgress
-                  ? "bg-blue-400"
-                  : "bg-stone-200"
-              }`}
-            />
+          {segments.map((s, i) => (
+            <div key={i} className={`h-1.5 w-3 first:rounded-l-full last:rounded-r-full ${segmentStyles[s]}`} />
           ))}
         </div>
-        <span className="whitespace-pre-line text-xs text-stone-600">{label}</span>
+        {/* Pill label */}
+        <span className={`inline-block whitespace-nowrap rounded-full border px-2.5 py-0.5 text-xs font-medium ${pillStyle}`}>
+          {pillLabel}
+        </span>
+        {subLabel && (
+          <span className="text-[10px] text-stone-400">{subLabel}</span>
+        )}
       </div>
     );
   }

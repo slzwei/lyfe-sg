@@ -3,49 +3,31 @@
 import { useState } from "react";
 
 const QUADRANTS = {
-  D: {
-    color: "#2B8C8C",
-    bg: "#2B8C8C15",
-    label: "Drive",
-    letter: "D",
-    desc: "Decisive, competitive, and results-oriented.",
-    startAngle: 90,
-    endAngle: 180,
-    labelPos: { x: -0.48, y: -0.48 },
-  },
-  I: {
-    color: "#7B5EA7",
-    bg: "#7B5EA715",
-    label: "Influence",
-    letter: "I",
-    desc: "Enthusiastic, optimistic, and people-oriented.",
-    startAngle: 0,
-    endAngle: 90,
-    labelPos: { x: 0.48, y: -0.48 },
-  },
-  S: {
-    color: "#D4876C",
-    bg: "#D4876C15",
-    label: "Support",
-    letter: "S",
-    desc: "Patient, reliable, and team-oriented.",
-    startAngle: 270,
-    endAngle: 360,
-    labelPos: { x: 0.48, y: 0.55 },
-  },
-  C: {
-    color: "#4A7FB5",
-    bg: "#4A7FB515",
-    label: "Clarity",
-    letter: "C",
-    desc: "Analytical, precise, and quality-focused.",
-    startAngle: 180,
-    endAngle: 270,
-    labelPos: { x: -0.48, y: 0.55 },
-  },
+  D: { color: "#2B8C8C", startAngle: 90, endAngle: 180, labelPos: { x: -0.42, y: -0.42 } },
+  I: { color: "#7B5EA7", startAngle: 0, endAngle: 90, labelPos: { x: 0.42, y: -0.42 } },
+  S: { color: "#D4876C", startAngle: 270, endAngle: 360, labelPos: { x: 0.42, y: 0.48 } },
+  C: { color: "#4A7FB5", startAngle: 180, endAngle: 270, labelPos: { x: -0.42, y: 0.48 } },
 } as const;
 
 type QuadrantKey = keyof typeof QUADRANTS;
+
+/** Compute SVG text layout from a priority's angle. */
+function labelLayout(angleDeg: number) {
+  const rad = (angleDeg * Math.PI) / 180;
+  const cos = Math.cos(rad);
+  const sin = Math.sin(rad);
+  const anchor: "start" | "middle" | "end" =
+    Math.abs(cos) < 0.4 ? "middle" : cos > 0 ? "start" : "end";
+  const dx = Math.round(cos * 8);
+  const dy = sin > 0.9 ? -8 : sin > 0.3 ? -2 : sin < -0.9 ? 14 : sin < -0.3 ? 10 : 4;
+  return { anchor, dx, dy };
+}
+
+interface PriorityDef {
+  name: string;
+  angle: number;
+  dimension: string;
+}
 
 interface CircumplexChartProps {
   d: number;
@@ -53,6 +35,10 @@ interface CircumplexChartProps {
   s: number;
   c: number;
   angle: number;
+  priorities: string[];
+  priorityDefs: PriorityDef[];
+  profileStrength: "strong" | "moderate" | "balanced";
+  strengthPct: number;
 }
 
 export default function CircumplexChart({
@@ -61,44 +47,63 @@ export default function CircumplexChart({
   s,
   c,
   angle,
+  priorities,
+  priorityDefs,
+  profileStrength,
+  strengthPct,
 }: CircumplexChartProps) {
-  const [hovered, setHovered] = useState<QuadrantKey | null>(null);
+  const [active, setActive] = useState<string | null>(null);
 
   const cx = 200;
   const cy = 200;
   const outerR = 140;
-  const maxR = outerR * 0.85;
 
-  const scores: Record<QuadrantKey, number> = { D: d, I: i, S: s, C: c };
-  const maxPct = Math.max(d, i, s, c, 1);
-  const scale = (pct: number) => 30 + (pct / maxPct) * (maxR - 30);
-
-  function wedgePath(startAngle: number, endAngle: number, radius: number) {
-    const startRad = (startAngle * Math.PI) / 180;
-    const endRad = (endAngle * Math.PI) / 180;
-    const x1 = cx + radius * Math.cos(startRad);
-    const y1 = cy - radius * Math.sin(startRad);
-    const x2 = cx + radius * Math.cos(endRad);
-    const y2 = cy - radius * Math.sin(endRad);
-    return `M ${cx} ${cy} L ${x1} ${y1} A ${radius} ${radius} 0 0 0 ${x2} ${y2} Z`;
-  }
-
-  // Dot distance from center encodes profile strength (differentiation)
-  const vScore = d + i - (s + c);
-  const hScore = i + s - (d + c);
-  const rawMag = Math.sqrt(vScore ** 2 + hScore ** 2);
-  const normalizedMag = Math.min(rawMag / 120, 1);
-  const dotR = outerR * (0.2 + normalizedMag * 0.65);
+  // Dot distance from center encodes profile strength
+  const normalizedMag = Math.min(strengthPct / 100, 1);
+  const dotR = outerR * (0.15 + normalizedMag * 0.7);
   const dotAngleRad = (angle * Math.PI) / 180;
   const dotX = cx + dotR * Math.cos(dotAngleRad);
   const dotY = cy - dotR * Math.sin(dotAngleRad);
 
+  // Primary dimension for bloom color
+  const primaryDim: QuadrantKey = (() => {
+    if (angle >= 0 && angle < 90) return "I";
+    if (angle >= 90 && angle < 180) return "D";
+    if (angle >= 180 && angle < 270) return "C";
+    return "S";
+  })();
+  const bloomColor = QUADRANTS[primaryDim].color;
+  const bloomR = outerR * (0.3 + normalizedMag * 0.5);
+
+  // Pre-compute active tooltip data once
+  const activePriority = active ? priorityDefs.find((p) => p.name === active) : null;
+  const activeColor = activePriority
+    ? QUADRANTS[activePriority.dimension as QuadrantKey]?.color
+    : null;
+
   return (
     <div className="relative">
-      <svg viewBox="0 0 400 400" className="mx-auto w-full max-w-[320px]">
+      <svg
+        viewBox="0 -14 400 428"
+        className="mx-auto w-full max-w-[340px]"
+        role="img"
+        aria-label={`DISC personality map. Drive ${d}%, Influence ${i}%, Support ${s}%, Clarity ${c}%.`}
+        onClick={() => setActive(null)}
+      >
         <defs>
-          <filter id="glow">
-            <feGaussianBlur stdDeviation="3" result="blur" />
+          <radialGradient
+            id="bloom"
+            cx={dotX / 400}
+            cy={dotY / 400}
+            r={bloomR / 400}
+            gradientUnits="objectBoundingBox"
+          >
+            <stop offset="0%" stopColor={bloomColor} stopOpacity={0.22} />
+            <stop offset="50%" stopColor={bloomColor} stopOpacity={0.08} />
+            <stop offset="100%" stopColor={bloomColor} stopOpacity={0} />
+          </radialGradient>
+          <filter id="dotGlow">
+            <feGaussianBlur stdDeviation="2.5" result="blur" />
             <feMerge>
               <feMergeNode in="blur" />
               <feMergeNode in="SourceGraphic" />
@@ -106,28 +111,30 @@ export default function CircumplexChart({
           </filter>
         </defs>
 
-        {/* Subtle background quadrant tints */}
+        {/* Background quadrant tints */}
         {(Object.keys(QUADRANTS) as QuadrantKey[]).map((key) => {
           const q = QUADRANTS[key];
+          const startRad = (q.startAngle * Math.PI) / 180;
+          const endRad = (q.endAngle * Math.PI) / 180;
+          const x1 = cx + outerR * Math.cos(startRad);
+          const y1 = cy - outerR * Math.sin(startRad);
+          const x2 = cx + outerR * Math.cos(endRad);
+          const y2 = cy - outerR * Math.sin(endRad);
           return (
             <path
               key={`bg-${key}`}
-              d={wedgePath(q.startAngle, q.endAngle, outerR)}
+              d={`M ${cx} ${cy} L ${x1} ${y1} A ${outerR} ${outerR} 0 0 0 ${x2} ${y2} Z`}
               fill={q.color}
               opacity={0.06}
             />
           );
         })}
 
+        {/* Bloom overlay */}
+        <circle cx={dotX} cy={dotY} r={bloomR} fill="url(#bloom)" />
+
         {/* Outer circle */}
-        <circle
-          cx={cx}
-          cy={cy}
-          r={outerR}
-          fill="none"
-          stroke="#d6d3d1"
-          strokeWidth="1.5"
-        />
+        <circle cx={cx} cy={cy} r={outerR} fill="none" stroke="#d6d3d1" strokeWidth="1.5" />
 
         {/* Reference circles */}
         {[0.33, 0.66].map((f) => (
@@ -143,93 +150,103 @@ export default function CircumplexChart({
           />
         ))}
 
-        {/* Score wedges */}
-        {(Object.keys(QUADRANTS) as QuadrantKey[]).map((key) => {
-          const q = QUADRANTS[key];
-          const r = scale(scores[key]);
-          const isHovered = hovered === key;
-          return (
-            <path
-              key={key}
-              d={wedgePath(q.startAngle, q.endAngle, r)}
-              fill={q.color}
-              opacity={isHovered ? 0.65 : 0.35}
-              className="cursor-pointer transition-opacity duration-200"
-              filter={isHovered ? "url(#glow)" : undefined}
-              onMouseEnter={() => setHovered(key)}
-              onMouseLeave={() => setHovered(null)}
-            />
-          );
-        })}
-
         {/* Axis lines */}
-        <line
-          x1={cx - outerR}
-          y1={cy}
-          x2={cx + outerR}
-          y2={cy}
-          stroke="#d6d3d1"
-          strokeWidth="0.75"
-        />
-        <line
-          x1={cx}
-          y1={cy - outerR}
-          x2={cx}
-          y2={cy + outerR}
-          stroke="#d6d3d1"
-          strokeWidth="0.75"
-        />
+        <line x1={cx - outerR} y1={cy} x2={cx + outerR} y2={cy} stroke="#d6d3d1" strokeWidth="0.75" />
+        <line x1={cx} y1={cy - outerR} x2={cx} y2={cy + outerR} stroke="#d6d3d1" strokeWidth="0.75" />
 
         {/* Quadrant letters */}
         {(Object.keys(QUADRANTS) as QuadrantKey[]).map((key) => {
           const q = QUADRANTS[key];
-          const dimmed = hovered !== null && hovered !== key;
+          const dimmed = active !== null && active !== key;
           return (
             <text
               key={key}
               x={cx + outerR * q.labelPos.x}
               y={cy + outerR * q.labelPos.y}
               textAnchor="middle"
-              className="pointer-events-none select-none text-xl font-bold transition-opacity duration-200"
+              className="pointer-events-none select-none text-lg font-bold transition-opacity duration-200"
               fill={q.color}
-              opacity={dimmed ? 0.25 : 0.8}
+              opacity={dimmed ? 0.2 : 0.6}
             >
               {key}
             </text>
           );
         })}
 
-        {/* Axis labels */}
-        <text x={cx} y={cy - outerR - 10} textAnchor="middle" className="text-[9px] font-medium uppercase tracking-[0.15em]" fill="#a8a29e">Active</text>
-        <text x={cx} y={cy + outerR + 16} textAnchor="middle" className="text-[9px] font-medium uppercase tracking-[0.15em]" fill="#a8a29e">Receptive</text>
-        <text x={cx - outerR - 8} y={cy + 3} textAnchor="end" className="text-[9px] font-medium uppercase tracking-[0.15em]" fill="#a8a29e">Skeptical</text>
-        <text x={cx + outerR + 8} y={cy + 3} textAnchor="start" className="text-[9px] font-medium uppercase tracking-[0.15em]" fill="#a8a29e">Agreeable</text>
+        {/* Priority labels around the edge */}
+        {priorityDefs.map((p) => {
+          const isUserPriority = priorities.includes(p.name);
+          const isSelected = active === p.name;
+          const layout = labelLayout(p.angle);
+          const labelR = outerR + 16;
+          const rad = (p.angle * Math.PI) / 180;
+          const lx = cx + labelR * Math.cos(rad) + layout.dx;
+          const ly = cy - labelR * Math.sin(rad) + layout.dy;
+          const dim = p.dimension as QuadrantKey;
+
+          return (
+            <text
+              key={p.name}
+              x={lx}
+              y={ly}
+              textAnchor={layout.anchor}
+              className={`cursor-pointer select-none transition-all duration-200 ${
+                isUserPriority ? "text-[10px] font-bold" : "text-[9px] font-medium"
+              }`}
+              fill={isUserPriority ? QUADRANTS[dim].color : "#c4c0b8"}
+              opacity={isSelected ? 1 : isUserPriority ? 0.9 : 0.4}
+              onClick={(e) => {
+                e.stopPropagation();
+                setActive((prev) => (prev === p.name ? null : p.name));
+              }}
+              onMouseEnter={() => setActive(p.name)}
+              onMouseLeave={() => setActive(null)}
+            >
+              {p.name}
+            </text>
+          );
+        })}
 
         {/* User dot */}
-        <circle cx={dotX} cy={dotY} r={7} fill="white" stroke="#292524" strokeWidth="2.5" />
+        <circle cx={dotX} cy={dotY} r={7} fill="white" stroke="#292524" strokeWidth="2.5" filter="url(#dotGlow)" />
         <circle cx={dotX} cy={dotY} r={3} fill="#292524" />
+
+        {/* Balanced pulse ring */}
+        {profileStrength === "balanced" && (
+          <circle
+            cx={dotX}
+            cy={dotY}
+            r={14}
+            fill="none"
+            stroke="#a8a29e"
+            strokeWidth="1"
+            opacity={0.4}
+            strokeDasharray="2 2"
+          >
+            <animate attributeName="r" values="12;18;12" dur="3s" repeatCount="indefinite" />
+            <animate attributeName="opacity" values="0.4;0.1;0.4" dur="3s" repeatCount="indefinite" />
+          </circle>
+        )}
       </svg>
 
-      {/* Hover tooltip */}
+      {/* Tooltip for priority labels */}
       <div
-        className={`mx-auto mt-2 max-w-[240px] rounded-xl border px-4 py-2.5 text-center transition-all duration-200 ${
-          hovered
-            ? "opacity-100 translate-y-0"
-            : "opacity-0 -translate-y-1 pointer-events-none"
+        className={`mx-auto mt-1 max-w-[260px] rounded-xl border px-4 py-2.5 text-center transition-all duration-200 ${
+          activePriority ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-1 pointer-events-none"
         }`}
         style={{
-          borderColor: hovered ? QUADRANTS[hovered].color + "30" : "transparent",
-          backgroundColor: hovered ? QUADRANTS[hovered].color + "08" : "transparent",
-          minHeight: 56,
+          borderColor: activeColor ? activeColor + "30" : "transparent",
+          backgroundColor: activeColor ? activeColor + "08" : "transparent",
+          minHeight: 48,
         }}
       >
-        {hovered && (
-          <>
-            <p className="text-sm font-semibold" style={{ color: QUADRANTS[hovered].color }}>
-              {QUADRANTS[hovered].label} &middot; {scores[hovered]}%
-            </p>
-            <p className="mt-0.5 text-xs text-stone-500">{QUADRANTS[hovered].desc}</p>
-          </>
+        {activePriority && activeColor && (
+          <p className="text-sm font-semibold" style={{ color: activeColor }}>
+            {activePriority.name}
+            {priorities.includes(activePriority.name) && (
+              <span className="ml-1.5 text-[10px] font-medium opacity-60">Your priority</span>
+            )}
+          </p>
         )}
       </div>
     </div>

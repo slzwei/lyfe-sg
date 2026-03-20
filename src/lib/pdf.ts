@@ -486,6 +486,9 @@ export interface DiscPdfData {
   s_pct: number;
   c_pct: number;
   angle: number;
+  profile_strength: "strong" | "moderate" | "balanced";
+  strength_pct: number;
+  priorities: string[];
   typeInfo: {
     fullName: string;
     motto: string;
@@ -517,6 +520,17 @@ const DISC_DESCS: Record<string, string> = {
   C: "Analytical, precise, quality-focused",
 };
 
+const PRIORITY_DEFS: { name: string; angle: number; dimension: string }[] = [
+  { name: "Collaboration", angle: 0, dimension: "I" },
+  { name: "Enthusiasm", angle: 45, dimension: "I" },
+  { name: "Action", angle: 90, dimension: "D" },
+  { name: "Results", angle: 135, dimension: "D" },
+  { name: "Challenge", angle: 180, dimension: "C" },
+  { name: "Accuracy", angle: 225, dimension: "C" },
+  { name: "Stability", angle: 270, dimension: "S" },
+  { name: "Support", angle: 315, dimension: "S" },
+];
+
 // ─── Circumflex Chart Drawing ───────────────────────────────────────────────
 
 function drawCircumplexChart(
@@ -525,12 +539,10 @@ function drawCircumplexChart(
   centerY: number,
   outerR: number,
   scores: { D: number; I: number; S: number; C: number },
-  angle: number
+  angle: number,
+  priorities: string[],
+  strengthPct: number
 ) {
-  const maxPct = Math.max(scores.D, scores.I, scores.S, scores.C, 1);
-  const maxR = outerR * 0.85;
-  const scaleR = (pct: number) => 30 + (pct / maxPct) * (maxR - 30);
-
   // Quadrant definitions: startAngle, endAngle (math convention, CCW from +x)
   const quadrants: {
     key: string;
@@ -611,13 +623,7 @@ function drawCircumplexChart(
       .restore();
   }
 
-  // 4. Score wedges
-  for (const q of quadrants) {
-    const r = scaleR(scores[q.key as keyof typeof scores]);
-    drawWedge(centerX, centerY, r, q.start, q.end, DISC_COLORS[q.key], 0.35);
-  }
-
-  // 5. Axis lines
+  // 4. Axis lines
   doc
     .save()
     .moveTo(centerX - outerR, centerY)
@@ -636,7 +642,7 @@ function drawCircumplexChart(
     .stroke()
     .restore();
 
-  // 6. Quadrant letters
+  // 5. Quadrant letters
   for (const q of quadrants) {
     const lx = centerX + outerR * q.labelX;
     const ly = centerY + outerR * q.labelY;
@@ -650,28 +656,62 @@ function drawCircumplexChart(
       .restore();
   }
 
-  // 7. Axis labels
-  doc.save().font("Helvetica").fontSize(7).fillColor("#a8a29e");
-  doc.text("ACTIVE", centerX - 20, centerY - outerR - 14, {
-    width: 40,
-    align: "center",
-  });
-  doc.text("RECEPTIVE", centerX - 25, centerY + outerR + 5, {
-    width: 50,
-    align: "center",
-  });
-  doc.text("SKEPTICAL", centerX - outerR - 50, centerY - 4, {
-    width: 46,
-    align: "right",
-  });
-  doc.text("AGREEABLE", centerX + outerR + 5, centerY - 4, {
-    width: 52,
-    align: "left",
-  });
-  doc.restore();
+  // 6. Priority labels around the outside
+  const activePriorities = new Set(priorities);
+  for (const p of PRIORITY_DEFS) {
+    const isActive = activePriorities.has(p.name);
+    const labelR = outerR + 18;
+    const pRad = (p.angle * Math.PI) / 180;
+    const lx = centerX + labelR * Math.cos(pRad);
+    const ly = centerY - labelR * Math.sin(pRad);
 
-  // 8. User position dot
-  const dotR = outerR * 0.6;
+    const dimColor = DISC_COLORS[p.dimension] || MUTED;
+    const fontSize = isActive ? 6.5 : 6;
+    const fontName = isActive ? "Helvetica-Bold" : "Helvetica";
+    const color = isActive ? dimColor : MUTED;
+    const labelW = 60;
+
+    doc.save().font(fontName).fontSize(fontSize).fillColor(color);
+
+    // Determine text alignment based on angle position
+    if (p.angle === 0) {
+      // Right
+      doc.text(p.name, lx + 2, ly - fontSize / 2, { width: labelW, align: "left" });
+    } else if (p.angle === 180) {
+      // Left
+      doc.text(p.name, lx - labelW - 2, ly - fontSize / 2, { width: labelW, align: "right" });
+    } else if (p.angle === 90) {
+      // Top
+      doc.text(p.name, lx - labelW / 2, ly - fontSize - 2, { width: labelW, align: "center" });
+    } else if (p.angle === 270) {
+      // Bottom
+      doc.text(p.name, lx - labelW / 2, ly + 2, { width: labelW, align: "center" });
+    } else if (p.angle > 0 && p.angle < 180) {
+      // Upper half
+      if (p.angle < 90) {
+        // Upper-right
+        doc.text(p.name, lx + 2, ly - fontSize / 2, { width: labelW, align: "left" });
+      } else {
+        // Upper-left
+        doc.text(p.name, lx - labelW - 2, ly - fontSize / 2, { width: labelW, align: "right" });
+      }
+    } else {
+      // Lower half
+      if (p.angle > 270) {
+        // Lower-right
+        doc.text(p.name, lx + 2, ly - fontSize / 2, { width: labelW, align: "left" });
+      } else {
+        // Lower-left
+        doc.text(p.name, lx - labelW - 2, ly - fontSize / 2, { width: labelW, align: "right" });
+      }
+    }
+
+    doc.restore();
+  }
+
+  // 7. User position dot
+  const normalizedMag = Math.min(strengthPct / 100, 1);
+  const dotR = outerR * (0.15 + normalizedMag * 0.7);
   const dotAngleRad = (angle * Math.PI) / 180;
   const dotX = centerX + dotR * Math.cos(dotAngleRad);
   const dotY = centerY - dotR * Math.sin(dotAngleRad);
@@ -768,96 +808,205 @@ export async function generateDiscPdf(data: DiscPdfData): Promise<Buffer> {
     let y = doc.y;
     const primaryDim = data.disc_type.charAt(0).toUpperCase();
     const primaryColor = DISC_COLORS[primaryDim] || DISC_COLORS.D;
+    const isBalanced = data.profile_strength === "balanced";
+    const displayName = isBalanced ? "Balanced" : data.typeInfo.fullName;
+    const displayColor = isBalanced ? "#78716c" : primaryColor;
 
-    // ── Header ──────────────────────────────────────────────────────────
+    // ── Header (logo left, subtitle right, same line) ───────────────────
     doc.registerFont("Pacifico", PACIFICO_FONT);
+    const headerY = y;
     doc
       .font("Pacifico")
       .fontSize(22)
       .fillColor(ORANGE)
-      .text("Lyfe", MARGIN, y);
-    doc.font("Helvetica");
-    y = doc.y + 4;
+      .text("Lyfe", MARGIN, headerY);
 
-    // Orange accent line
+    // Orange accent line under logo
+    const accentY = doc.y + 4;
     doc
-      .moveTo(MARGIN, y)
-      .lineTo(MARGIN + 24, y)
+      .moveTo(MARGIN, accentY)
+      .lineTo(MARGIN + 24, accentY)
       .lineWidth(2)
       .strokeColor(ORANGE)
       .stroke();
-    y += 12;
 
-    // Subtitle
+    // Subtitle aligned right, vertically centered with logo
     doc
+      .font("Helvetica")
       .fontSize(8)
       .fillColor(MUTED)
-      .text("DISC PERSONALITY PROFILE", MARGIN, y, { characterSpacing: 1.2 });
-    y = doc.y + 12;
+      .text("DISC PERSONALITY PROFILE", MARGIN, headerY + 8, {
+        width: CONTENT_W,
+        align: "right",
+        characterSpacing: 1.2,
+      });
 
-    // ── Hero Section ────────────────────────────────────────────────────
-    // Colored background card
-    const heroH = 90;
-    doc
-      .save()
-      .roundedRect(MARGIN, y, CONTENT_W, heroH, 8)
-      .fillColor(primaryColor)
-      .opacity(0.07)
-      .fill()
-      .restore();
+    y = accentY + 12;
 
-    // Candidate name
+    // ── Hero Section (two-column: info left, description bubble right) ──
+    const heroPad = 16;
+    const heroTopY = y;
+    const heroGap = 14;
+    const leftColW = CONTENT_W * 0.48;
+    const rightColW = CONTENT_W - leftColW - heroGap;
+    const leftX = MARGIN + heroPad;
+    const rightX = MARGIN + leftColW + heroGap;
+
+    // ── Left column: name, type, motto, descriptors, strength ──
     doc
       .font("Helvetica-Bold")
       .fontSize(18)
       .fillColor(DARK)
-      .text(data.full_name, MARGIN + 16, y + 12, { width: CONTENT_W - 32 });
+      .text(data.full_name, leftX, heroTopY + 14, { width: leftColW - heroPad });
 
-    // Type label + code on same line
-    doc
-      .font("Helvetica-Bold")
-      .fontSize(14)
-      .fillColor(primaryColor)
-      .text(data.typeInfo.fullName, MARGIN + 16, doc.y + 2, {
-        width: CONTENT_W - 32,
-        continued: true,
-      });
-    doc
-      .font("Helvetica")
-      .fontSize(10)
-      .fillColor(MUTED)
-      .text(`  (${data.disc_type})`, { continued: false });
+    if (isBalanced) {
+      doc
+        .font("Helvetica-Bold")
+        .fontSize(14)
+        .fillColor(displayColor)
+        .text(displayName, leftX, doc.y + 2, { width: leftColW - heroPad });
+    } else {
+      doc
+        .font("Helvetica-Bold")
+        .fontSize(14)
+        .fillColor(displayColor)
+        .text(`${displayName}  `, leftX, doc.y + 2, {
+          width: leftColW - heroPad,
+          continued: true,
+        });
+      doc
+        .font("Helvetica")
+        .fontSize(9)
+        .fillColor(MUTED)
+        .text(`(${data.disc_type})`, { continued: false });
+    }
 
-    // Motto + descriptors on same line
     doc
       .font("Helvetica-Oblique")
-      .fontSize(9)
+      .fontSize(8)
       .fillColor(MUTED)
-      .text(`"${data.typeInfo.motto}"`, MARGIN + 16, doc.y + 2, {
-        width: CONTENT_W - 32,
-      });
+      .text(`"${data.typeInfo.motto}"`, leftX, doc.y + 2, { width: leftColW - heroPad });
 
     const descriptorLine = data.typeInfo.descriptors.join("  ·  ");
     doc
       .font("Helvetica")
-      .fontSize(8)
-      .fillColor(primaryColor)
-      .text(descriptorLine, MARGIN + 16, doc.y + 3, {
-        width: CONTENT_W - 32,
-      });
+      .fontSize(7.5)
+      .fillColor(displayColor)
+      .text(descriptorLine, leftX, doc.y + 4, { width: leftColW - heroPad });
 
-    y += heroH + 10;
+    // Strength dots
+    const strengthLabel =
+      data.profile_strength === "strong" ? "Strong inclination"
+        : data.profile_strength === "moderate" ? "Moderate inclination"
+          : "Balanced profile";
+    if (isBalanced) {
+      // No dots for balanced — just the label
+      doc
+        .font("Helvetica")
+        .fontSize(7)
+        .fillColor(MUTED)
+        .text(strengthLabel, leftX, doc.y + 6, { width: 120 });
+    } else {
+      const filledCount = data.profile_strength === "strong" ? 3 : 2;
+      const dotSpacing = 9;
+      const dotSize = 2.5;
+      const dotBaseY = doc.y + 7;
 
-    // ── Description ─────────────────────────────────────────────────────
+      for (let idx = 0; idx < 3; idx++) {
+        const dcx = leftX + idx * dotSpacing + dotSize;
+        const dcy = dotBaseY + dotSize;
+        if (idx < filledCount) {
+          doc.save().circle(dcx, dcy, dotSize).fillColor(displayColor).fill().restore();
+        } else {
+          doc.save().circle(dcx, dcy, dotSize).lineWidth(0.7).strokeColor(MUTED).stroke().restore();
+        }
+      }
+      doc
+        .font("Helvetica")
+        .fontSize(7)
+        .fillColor(MUTED)
+        .text(strengthLabel, leftX + 3 * dotSpacing + 4, dotBaseY - 0.5, { width: 120 });
+    }
+
+    let leftBottomY = doc.y;
+
+    // Closest style for balanced
+    if (isBalanced) {
+      const closestName = DISC_LABELS[data.disc_type.charAt(0)] || data.disc_type;
+      doc
+        .font("Helvetica")
+        .fontSize(7)
+        .fillColor(MUTED)
+        .text(`Closest style: ${closestName}`, leftX, doc.y + 3, { width: leftColW - heroPad });
+      leftBottomY = doc.y;
+    }
+
+    // ── Right column: description bubble ──
+    const bubblePad = 12;
+    const bubbleX = rightX;
+    const bubbleY = heroTopY + 14;
+    const bubbleW = rightColW;
+
+    // Render description text to measure height
+    doc.font("Helvetica").fontSize(7.5);
+    const descH = doc.heightOfString(data.typeInfo.description, {
+      width: bubbleW - bubblePad * 2,
+      lineGap: 2,
+    });
+    const bubbleH = descH + bubblePad * 2;
+
+    // Draw bubble background
+    doc
+      .save()
+      .roundedRect(bubbleX, bubbleY, bubbleW, bubbleH, 6)
+      .fillColor(displayColor)
+      .opacity(0.06)
+      .fill()
+      .restore();
+
+    // Bubble border
+    doc
+      .save()
+      .roundedRect(bubbleX, bubbleY, bubbleW, bubbleH, 6)
+      .lineWidth(0.5)
+      .strokeColor(displayColor)
+      .opacity(0.15)
+      .stroke()
+      .restore();
+
+    // Description text inside bubble
     doc
       .font("Helvetica")
-      .fontSize(9)
+      .fontSize(7.5)
       .fillColor(DARK)
-      .text(data.typeInfo.description, MARGIN, y, {
-        width: CONTENT_W,
+      .text(data.typeInfo.description, bubbleX + bubblePad, bubbleY + bubblePad, {
+        width: bubbleW - bubblePad * 2,
         lineGap: 2,
       });
-    y = doc.y + 12;
+
+    const heroBottomY = Math.max(leftBottomY, bubbleY + bubbleH) + 10;
+    const heroH = heroBottomY - heroTopY;
+
+    // Draw outer hero card background behind everything
+    doc
+      .save()
+      .roundedRect(MARGIN, heroTopY, CONTENT_W, heroH, 8)
+      .fillColor(displayColor)
+      .opacity(0.04)
+      .fill()
+      .restore();
+
+    // Colored accent line at left edge of hero
+    doc
+      .save()
+      .moveTo(MARGIN, heroTopY + 8)
+      .lineTo(MARGIN, heroTopY + heroH - 8)
+      .lineWidth(3)
+      .strokeColor(displayColor)
+      .stroke()
+      .restore();
+
+    y = heroBottomY + 4;
 
     // Thin divider
     doc
@@ -866,30 +1015,12 @@ export async function generateDiscPdf(data: DiscPdfData): Promise<Buffer> {
       .lineWidth(0.5)
       .strokeColor(LIGHT_LINE)
       .stroke();
-    y += 12;
+    y += 14;
 
-    // ── Personality Map + Score Breakdown side by side ───────────────────
-    const chartSize = 85; // radius (compact)
-    const chartCenterX = MARGIN + chartSize + 28;
-    const chartBlockW = (chartSize + 28) * 2;
-    const scoreBlockX = MARGIN + chartBlockW + 16;
-    const scoreBlockW = CONTENT_W - chartBlockW - 16;
-
-    // Section header: Personality Map
-    doc
-      .font("Helvetica")
-      .fontSize(8)
-      .fillColor(MUTED)
-      .text("PERSONALITY MAP", MARGIN, y, { characterSpacing: 1 });
-
-    // Section header: Score Breakdown
-    doc
-      .font("Helvetica")
-      .fontSize(8)
-      .fillColor(MUTED)
-      .text("SCORE BREAKDOWN", scoreBlockX, y, { characterSpacing: 1 });
-
-    y += 10;
+    // ── Personality Map (full width, centered) ──────────────────────────
+    const chartSize = 70;
+    const chartCenterX = MARGIN + CONTENT_W / 2;
+    y += 20; // room for "Action" label above the circle
 
     // Draw the circumflex chart
     drawCircumplexChart(
@@ -898,10 +1029,21 @@ export async function generateDiscPdf(data: DiscPdfData): Promise<Buffer> {
       y + chartSize,
       chartSize,
       { D: data.d_pct, I: data.i_pct, S: data.s_pct, C: data.c_pct },
-      data.angle
+      data.angle,
+      data.priorities,
+      data.strength_pct
     );
 
-    // Score bars on the right
+    y = y + chartSize * 2 + 30;
+
+    // ── Style Tendencies (4 bars in a row below chart) ──────────────────
+    doc
+      .font("Helvetica")
+      .fontSize(8)
+      .fillColor(MUTED)
+      .text("STYLE TENDENCIES", MARGIN, y, { characterSpacing: 1 });
+    y += 12;
+
     const scores = [
       { key: "D", pct: data.d_pct },
       { key: "I", pct: data.i_pct },
@@ -916,15 +1058,13 @@ export async function generateDiscPdf(data: DiscPdfData): Promise<Buffer> {
       C: "#E9F0F7",
     };
 
-    // Position score bars vertically centered with the chart
-    const barStartY = y + chartSize - 38;
     for (let idx = 0; idx < scores.length; idx++) {
       const s = scores[idx];
       drawScoreBar(
         doc,
-        scoreBlockX,
-        barStartY + idx * 22,
-        scoreBlockW,
+        MARGIN,
+        y + idx * 18,
+        CONTENT_W,
         DISC_LABELS[s.key],
         s.pct,
         DISC_COLORS[s.key],
@@ -932,7 +1072,21 @@ export async function generateDiscPdf(data: DiscPdfData): Promise<Buffer> {
       );
     }
 
-    y = y + chartSize * 2 + 18;
+    y = y + scores.length * 18 + 6;
+
+    // ── Priorities ──────────────────────────────────────────────────────
+    doc.font("Helvetica").fontSize(8).fillColor(MUTED)
+      .text("YOUR PRIORITIES", MARGIN, y, { characterSpacing: 1 });
+    y = doc.y + 6;
+    doc.font("Helvetica").fontSize(8).fillColor(DARK)
+      .text(data.priorities.slice(0, 3).join("  \u00B7  "), MARGIN, y);
+    y = doc.y + 2;
+    if (data.priorities.length > 3) {
+      doc.font("Helvetica").fontSize(7).fillColor(MUTED)
+        .text(`Also: ${data.priorities.slice(3).join(", ")}`, MARGIN, y);
+      y = doc.y + 2;
+    }
+    y += 6;
 
     // ── Strengths & Blind Spots ─────────────────────────────────────────
     // Thin divider
@@ -942,41 +1096,33 @@ export async function generateDiscPdf(data: DiscPdfData): Promise<Buffer> {
       .lineWidth(0.5)
       .strokeColor(LIGHT_LINE)
       .stroke();
-    y += 10;
+    y += 8;
 
     const colW = (CONTENT_W - 14) / 2;
     const strengthsColor = "#059669";
     const strengthsBg = "#ecfdf5";
     const blindColor = "#d97706";
     const blindBg = "#fffbeb";
-    const cardPad = 10;
+    const cardPad = 8;
+    const textW = colW - cardPad * 2;
 
-    // Render strengths text to measure actual height
     const sTopY = y;
 
-    // Strengths: render text first to measure, then draw background behind
-    // Use a two-pass approach: measure then draw
-    // Pass 1: measure strengths height
-    let sMeasureY = sTopY + cardPad;
-    sMeasureY += 14; // header
-    for (const s of data.typeInfo.strengths) {
-      const charsPerLine = Math.floor((colW - cardPad * 2) / 4.2);
-      const lines = Math.ceil((`•  ${s}`).length / charsPerLine);
-      sMeasureY += lines * 11 + 2;
+    // Measure actual heights using PDFKit
+    function measureListHeight(items: string[]): number {
+      let h = 0;
+      doc.font("Helvetica-Bold").fontSize(8);
+      h += doc.heightOfString("Header", { width: textW }) + 3; // header
+      doc.font("Helvetica").fontSize(7);
+      for (const item of items) {
+        h += doc.heightOfString(`•  ${item}`, { width: textW, lineGap: 1 }) + 1;
+      }
+      return h;
     }
-    sMeasureY += cardPad;
 
-    // Pass 1: measure blind spots height
-    let bMeasureY = sTopY + cardPad;
-    bMeasureY += 14; // header
-    for (const b of data.typeInfo.blindSpots) {
-      const charsPerLine = Math.floor((colW - cardPad * 2) / 4.2);
-      const lines = Math.ceil((`•  ${b}`).length / charsPerLine);
-      bMeasureY += lines * 11 + 2;
-    }
-    bMeasureY += cardPad;
-
-    const cardH = Math.max(sMeasureY - sTopY, bMeasureY - sTopY);
+    const sContentH = measureListHeight(data.typeInfo.strengths);
+    const bContentH = measureListHeight(data.typeInfo.blindSpots);
+    const cardH = Math.max(sContentH, bContentH) + cardPad * 2;
 
     // Strengths card
     doc
@@ -988,18 +1134,15 @@ export async function generateDiscPdf(data: DiscPdfData): Promise<Buffer> {
 
     doc
       .font("Helvetica-Bold")
-      .fontSize(9)
+      .fontSize(8)
       .fillColor(strengthsColor)
-      .text("Strengths", MARGIN + cardPad, y + cardPad, { width: colW - cardPad * 2 });
+      .text("Strengths", MARGIN + cardPad, y + cardPad, { width: textW });
     let sy = doc.y + 3;
 
-    doc.font("Helvetica").fontSize(7.5).fillColor("#065f46");
+    doc.font("Helvetica").fontSize(7).fillColor("#065f46");
     for (const s of data.typeInfo.strengths) {
-      doc.text(`•  ${s}`, MARGIN + cardPad, sy, {
-        width: colW - cardPad * 2,
-        lineGap: 1,
-      });
-      sy = doc.y + 2;
+      doc.text(`•  ${s}`, MARGIN + cardPad, sy, { width: textW, lineGap: 1 });
+      sy = doc.y + 1;
     }
 
     // Blind Spots card
@@ -1013,21 +1156,18 @@ export async function generateDiscPdf(data: DiscPdfData): Promise<Buffer> {
 
     doc
       .font("Helvetica-Bold")
-      .fontSize(9)
+      .fontSize(8)
       .fillColor(blindColor)
-      .text("Blind Spots", bsX + cardPad, y + cardPad, { width: colW - cardPad * 2 });
+      .text("Blind Spots", bsX + cardPad, y + cardPad, { width: textW });
     let by = doc.y + 3;
 
-    doc.font("Helvetica").fontSize(7.5).fillColor("#92400e");
+    doc.font("Helvetica").fontSize(7).fillColor("#92400e");
     for (const b of data.typeInfo.blindSpots) {
-      doc.text(`•  ${b}`, bsX + cardPad, by, {
-        width: colW - cardPad * 2,
-        lineGap: 1,
-      });
-      by = doc.y + 2;
+      doc.text(`•  ${b}`, bsX + cardPad, by, { width: textW, lineGap: 1 });
+      by = doc.y + 1;
     }
 
-    y += cardH + 12;
+    y += cardH + 8;
 
     // ── Understanding the DISC Model ────────────────────────────────────
     doc
@@ -1036,7 +1176,7 @@ export async function generateDiscPdf(data: DiscPdfData): Promise<Buffer> {
       .lineWidth(0.5)
       .strokeColor(LIGHT_LINE)
       .stroke();
-    y += 10;
+    y += 6;
 
     doc
       .font("Helvetica")
@@ -1062,6 +1202,13 @@ export async function generateDiscPdf(data: DiscPdfData): Promise<Buffer> {
       .join("   |   ");
     doc.font("Helvetica").fontSize(6.5).fillColor(MUTED);
     doc.text(dimLegend, MARGIN, y, { width: CONTENT_W });
+    y = doc.y + 6;
+
+    if (isBalanced) {
+      doc.font("Helvetica").fontSize(7).fillColor(MUTED)
+        .text("Note: This candidate shows a balanced profile across all four dimensions, suggesting high adaptability.", MARGIN, y, { width: CONTENT_W });
+      y = doc.y + 4;
+    }
 
     // ── Footer ──────────────────────────────────────────────────────────
     y = Math.max(y, doc.y) + 16;

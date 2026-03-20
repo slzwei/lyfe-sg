@@ -1,14 +1,13 @@
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import CircumplexChart from "./CircumplexChart";
-import { DISC_TYPE_INFO } from "../disc-quiz/scoring";
-import { signOut } from "../actions";
+import { DISC_TYPE_INFO, computeDerivedFields, DISC_PRIORITIES } from "../disc-quiz/scoring";
 
-const DISC_COLORS: Record<string, { text: string; bg: string; bar: string; border: string }> = {
-  D: { text: "text-[#2B8C8C]", bg: "bg-[#2B8C8C]/5", bar: "bg-[#2B8C8C]", border: "border-[#2B8C8C]/20" },
-  I: { text: "text-[#7B5EA7]", bg: "bg-[#7B5EA7]/5", bar: "bg-[#7B5EA7]", border: "border-[#7B5EA7]/20" },
-  S: { text: "text-[#D4876C]", bg: "bg-[#D4876C]/5", bar: "bg-[#D4876C]", border: "border-[#D4876C]/20" },
-  C: { text: "text-[#4A7FB5]", bg: "bg-[#4A7FB5]/5", bar: "bg-[#4A7FB5]", border: "border-[#4A7FB5]/20" },
+const DISC_COLORS: Record<string, { hex: string; text: string; bg: string; bar: string; border: string }> = {
+  D: { hex: "#2B8C8C", text: "text-[#2B8C8C]", bg: "bg-[#2B8C8C]/5", bar: "bg-[#2B8C8C]", border: "border-[#2B8C8C]/20" },
+  I: { hex: "#7B5EA7", text: "text-[#7B5EA7]", bg: "bg-[#7B5EA7]/5", bar: "bg-[#7B5EA7]", border: "border-[#7B5EA7]/20" },
+  S: { hex: "#D4876C", text: "text-[#D4876C]", bg: "bg-[#D4876C]/5", bar: "bg-[#D4876C]", border: "border-[#D4876C]/20" },
+  C: { hex: "#4A7FB5", text: "text-[#4A7FB5]", bg: "bg-[#4A7FB5]/5", bar: "bg-[#4A7FB5]", border: "border-[#4A7FB5]/20" },
 };
 
 const DISC_LABELS: Record<string, string> = {
@@ -38,7 +37,14 @@ export default async function DiscResultsPage() {
     redirect("/candidate/disc-quiz");
   }
 
-  const typeInfo = DISC_TYPE_INFO[results.disc_type];
+  const { profile_strength, strength_pct, priorities } = computeDerivedFields(
+    results.d_raw, results.i_raw, results.s_raw, results.c_raw, results.angle
+  );
+
+  const isBalanced = profile_strength === "balanced";
+  const displayTypeInfo = isBalanced ? DISC_TYPE_INFO["Balanced"] : DISC_TYPE_INFO[results.disc_type];
+  const angleTypeInfo = DISC_TYPE_INFO[results.disc_type];
+
   const scores = [
     { key: "D", pct: results.d_pct },
     { key: "I", pct: results.i_pct },
@@ -46,8 +52,9 @@ export default async function DiscResultsPage() {
     { key: "C", pct: results.c_pct },
   ].sort((a, b) => b.pct - a.pct);
 
-  const primary = results.disc_type.charAt(0);
-  const primaryColor = DISC_COLORS[primary] || DISC_COLORS.D;
+  const primaryColor = isBalanced
+    ? { hex: "#78716c", text: "text-stone-700", bg: "bg-stone-50", bar: "bg-stone-400", border: "border-stone-200" }
+    : (DISC_COLORS[results.disc_type.charAt(0)] || DISC_COLORS.D);
 
   return (
     <div className="space-y-6">
@@ -55,7 +62,6 @@ export default async function DiscResultsPage() {
       <div
         className={`relative overflow-hidden rounded-3xl border ${primaryColor.border} ${primaryColor.bg} px-6 py-8 text-center`}
       >
-        {/* Decorative circles */}
         <div className="pointer-events-none absolute -right-10 -top-10 h-40 w-40 rounded-full bg-gradient-to-br from-white/60 to-transparent" />
         <div className="pointer-events-none absolute -bottom-8 -left-8 h-32 w-32 rounded-full bg-gradient-to-tr from-white/40 to-transparent" />
 
@@ -63,18 +69,17 @@ export default async function DiscResultsPage() {
           Your DISC Profile
         </p>
         <h1 className={`relative mt-3 text-4xl font-bold ${primaryColor.text}`}>
-          {typeInfo?.fullName || results.disc_type}
+          {displayTypeInfo?.fullName || results.disc_type}
         </h1>
-        {typeInfo && (
+        {displayTypeInfo && (
           <p className="relative mt-2 text-base italic text-stone-500">
-            &ldquo;{typeInfo.motto}&rdquo;
+            &ldquo;{displayTypeInfo.motto}&rdquo;
           </p>
         )}
 
-        {/* Descriptor pills */}
-        {typeInfo && (
+        {displayTypeInfo && (
           <div className="relative mt-5 flex flex-wrap justify-center gap-2">
-            {typeInfo.descriptors.map((d) => (
+            {displayTypeInfo.descriptors.map((d) => (
               <span
                 key={d}
                 className={`rounded-full border ${primaryColor.border} bg-white/70 px-3.5 py-1 text-xs font-medium ${primaryColor.text}`}
@@ -85,10 +90,30 @@ export default async function DiscResultsPage() {
           </div>
         )}
 
-        {typeInfo && (
+        {displayTypeInfo && (
           <p className="relative mx-auto mt-4 max-w-md text-sm leading-relaxed text-stone-600">
-            {typeInfo.description}
+            {displayTypeInfo.description}
           </p>
+        )}
+
+        {isBalanced ? (
+          <p className="relative mt-2 text-xs text-stone-400">
+            Your closest style: {angleTypeInfo?.fullName || results.disc_type}
+          </p>
+        ) : (
+          <div className={`relative mt-3 flex items-center justify-center gap-1.5 text-xs font-medium ${primaryColor.text}`}>
+            {profile_strength === "strong" ? (
+              <>
+                <span className="tracking-wider">&#9679;&#9679;&#9679;</span>
+                <span>Strong inclination</span>
+              </>
+            ) : (
+              <>
+                <span className="tracking-wider">&#9679;&#9679;&#9675;</span>
+                <span>Moderate inclination</span>
+              </>
+            )}
+          </div>
         )}
       </div>
 
@@ -105,13 +130,17 @@ export default async function DiscResultsPage() {
             s={results.s_pct}
             c={results.c_pct}
             angle={results.angle}
+            priorities={priorities}
+            priorityDefs={DISC_PRIORITIES.map(({ name, angle, dimension }) => ({ name, angle, dimension }))}
+            profileStrength={profile_strength}
+            strengthPct={strength_pct}
           />
         </div>
 
         {/* Score bars */}
         <div className="flex flex-col justify-center rounded-3xl border border-stone-200 bg-white p-5 lg:col-span-2">
           <h2 className="mb-4 text-xs font-semibold uppercase tracking-[0.15em] text-stone-400">
-            Score Breakdown
+            Style Tendencies
           </h2>
           <div className="space-y-4">
             {scores.map(({ key, pct }) => {
@@ -126,21 +155,69 @@ export default async function DiscResultsPage() {
                       {pct}%
                     </span>
                   </div>
-                  <div className="h-2.5 overflow-hidden rounded-full bg-stone-100">
-                    <div
-                      className={`h-2.5 rounded-full ${colors.bar} transition-all duration-700`}
-                      style={{ width: `${pct}%` }}
-                    />
+                  <div className="relative">
+                    <div className="h-2.5 overflow-hidden rounded-full bg-stone-100">
+                      <div
+                        className={`h-2.5 rounded-full ${colors.bar}`}
+                        style={{ width: `${pct}%` }}
+                      />
+                    </div>
+                    {/* Midline at 50% */}
+                    <div className="absolute top-0 left-1/2 h-2.5 w-px border-l border-dashed border-stone-300" />
                   </div>
                 </div>
               );
             })}
           </div>
+          <p className="mt-1 text-center text-[10px] text-stone-300">50% midline</p>
+          {isBalanced && (
+            <p className="mt-3 text-center text-xs text-stone-400">
+              Your scores are closely balanced — you naturally adapt across all four styles.
+            </p>
+          )}
         </div>
       </div>
 
+      {/* Your Priorities */}
+      <div className="rounded-3xl border border-stone-200 bg-white p-5">
+        <h2 className="mb-1 text-xs font-semibold uppercase tracking-[0.15em] text-stone-400">
+          Your Priorities
+        </h2>
+        <p className="mb-4 text-xs text-stone-400">
+          The areas where you focus your energy
+        </p>
+        <div className="grid gap-3 sm:grid-cols-3">
+          {priorities.slice(0, 3).map((name) => {
+            const pDef = DISC_PRIORITIES.find((p) => p.name === name)!;
+            return (
+              <div
+                key={name}
+                className="overflow-hidden rounded-2xl border border-stone-100 bg-stone-50/50"
+              >
+                <div className="h-1" style={{ backgroundColor: DISC_COLORS[pDef.dimension].hex }} />
+                <div className="p-4">
+                  <div className="mb-1.5 flex items-center gap-2">
+                    <span className="h-2 w-2 rounded-full" style={{ backgroundColor: DISC_COLORS[pDef.dimension].hex }} />
+                    <span className="text-sm font-semibold text-stone-800">{name}</span>
+                  </div>
+                  <p className="text-xs leading-relaxed text-stone-500">{pDef.description}</p>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+        {priorities.length > 3 && (
+          <p className="mt-3 text-xs text-stone-400">
+            Also relevant:{" "}
+            <span className="font-medium text-stone-500">
+              {priorities.slice(3).join(", ")}
+            </span>
+          </p>
+        )}
+      </div>
+
       {/* Strengths & Blind Spots */}
-      {typeInfo && (
+      {displayTypeInfo && (
         <div className="grid gap-4 sm:grid-cols-2">
           <div className="rounded-2xl border border-emerald-100 bg-emerald-50/50 p-5">
             <div className="mb-3 flex items-center gap-2">
@@ -152,7 +229,7 @@ export default async function DiscResultsPage() {
               </h3>
             </div>
             <ul className="space-y-2">
-              {typeInfo.strengths.map((s) => (
+              {displayTypeInfo.strengths.map((s) => (
                 <li key={s} className="flex gap-2 text-sm leading-relaxed text-emerald-700/80">
                   <span className="mt-1.5 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-emerald-400" />
                   {s}
@@ -170,7 +247,7 @@ export default async function DiscResultsPage() {
               </h3>
             </div>
             <ul className="space-y-2">
-              {typeInfo.blindSpots.map((b) => (
+              {displayTypeInfo.blindSpots.map((b) => (
                 <li key={b} className="flex gap-2 text-sm leading-relaxed text-amber-700/80">
                   <span className="mt-1.5 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-amber-400" />
                   {b}
@@ -181,29 +258,15 @@ export default async function DiscResultsPage() {
         </div>
       )}
 
-      {/* Disclaimer */}
-      <p className="text-center text-xs leading-relaxed text-stone-400">
-        This assessment is for personal reflection only. Your work style may
-        vary across situations and over time.
-      </p>
-
-      {/* Completion */}
-      <div className="rounded-3xl border border-orange-200/60 bg-gradient-to-br from-orange-50 to-amber-50/50 p-6 text-center">
-        <h2 className="text-lg font-semibold text-stone-800">
-          Application Complete
-        </h2>
-        <p className="mx-auto mt-2 max-w-md text-sm text-stone-500">
-          Thank you for completing your application and personality assessment.
-          Our team will review your profile and get back to you soon.
+      {/* Disclaimer + status */}
+      <div className="space-y-3 text-center">
+        <p className="text-xs leading-relaxed text-stone-400">
+          This assessment is for personal reflection only. Your work style may
+          vary across situations and over time.
         </p>
-        <form action={signOut} className="mt-4">
-          <button
-            type="submit"
-            className="rounded-xl border border-stone-200 bg-white px-6 py-2.5 text-sm font-medium text-stone-600 shadow-sm transition-colors hover:bg-stone-50"
-          >
-            Sign Out
-          </button>
-        </form>
+        <p className="text-sm text-stone-500">
+          Application complete — our team will review your profile and reach out soon.
+        </p>
       </div>
     </div>
   );

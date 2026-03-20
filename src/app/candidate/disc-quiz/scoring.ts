@@ -59,6 +59,8 @@ function computeDimensionRanges(): Record<DISCType, { min: number; max: number }
 
 const DIMENSION_RANGES = computeDimensionRanges();
 
+export type ProfileStrength = "strong" | "moderate" | "balanced";
+
 export interface DISCScores {
   d_raw: number;
   i_raw: number;
@@ -70,6 +72,71 @@ export interface DISCScores {
   c_pct: number;
   disc_type: string;
   angle: number;
+  profile_strength: ProfileStrength;
+  strength_pct: number;
+  priorities: string[];
+}
+
+// ─── Priority definitions ─────────────────────────────────────────────────
+// 8 priorities positioned at 45° intervals around the circumplex.
+// Angles in math convention (CCW from +x / Agreeable axis).
+
+export interface PriorityDef {
+  name: string;
+  angle: number;
+  dimension: string; // primary DISC quadrant for coloring
+  description: string;
+}
+
+export const DISC_PRIORITIES: PriorityDef[] = [
+  { name: "Collaboration", angle: 0, dimension: "I", description: "You value working together, building relationships, and inclusivity." },
+  { name: "Enthusiasm", angle: 45, dimension: "I", description: "You bring energy, positivity, and excitement to every interaction." },
+  { name: "Action", angle: 90, dimension: "D", description: "You focus on starting quickly and making things happen." },
+  { name: "Results", angle: 135, dimension: "D", description: "You focus on outcomes, efficiency, and achieving goals quickly." },
+  { name: "Challenge", angle: 180, dimension: "C", description: "You question assumptions, drive improvement, and hold high standards." },
+  { name: "Accuracy", angle: 225, dimension: "C", description: "You value precision, quality, and getting the details right." },
+  { name: "Stability", angle: 270, dimension: "S", description: "You prefer consistency, careful processes, and reliable outcomes." },
+  { name: "Support", angle: 315, dimension: "S", description: "You focus on helping others, creating stability, and being dependable." },
+];
+
+function angularDistance(a: number, b: number): number {
+  let diff = Math.abs(a - b);
+  if (diff > 180) diff = 360 - diff;
+  return diff;
+}
+
+function computePriorities(angle: number): string[] {
+  const ranked = DISC_PRIORITIES
+    .map((p) => ({ name: p.name, dist: angularDistance(p.angle, angle) }))
+    .sort((a, b) => a.dist - b.dist);
+
+  // Always include 3 closest; include 4th/5th if within 60°
+  const names = ranked.slice(0, 3).map((r) => r.name);
+  for (let i = 3; i < Math.min(5, ranked.length); i++) {
+    if (ranked[i].dist <= 60) names.push(ranked[i].name);
+  }
+  return names;
+}
+
+/**
+ * Compute derived display fields from raw scores and angle.
+ * Use this on the results page to avoid needing extra DB columns.
+ */
+export function computeDerivedFields(
+  d_raw: number,
+  i_raw: number,
+  s_raw: number,
+  c_raw: number,
+  angle: number
+): { profile_strength: ProfileStrength; strength_pct: number; priorities: string[] } {
+  const vScore = d_raw + i_raw - (s_raw + c_raw);
+  const hScore = i_raw + s_raw - (d_raw + c_raw);
+  const magnitude = Math.sqrt(vScore ** 2 + hScore ** 2);
+  const strengthPct = Math.min(100, Math.round((magnitude / 120) * 100));
+  const profileStrength: ProfileStrength =
+    strengthPct < 15 ? "balanced" : strengthPct < 45 ? "moderate" : "strong";
+  const priorities = computePriorities(angle);
+  return { profile_strength: profileStrength, strength_pct: strengthPct, priorities };
 }
 
 export function calculateDiscScores(
@@ -126,6 +193,8 @@ export function calculateDiscScores(
   // Map angle to one of 12 types
   const discType = getCircumplexType(angle);
 
+  const derived = computeDerivedFields(raw.D, raw.I, raw.S, raw.C, angle);
+
   return {
     d_raw: raw.D,
     i_raw: raw.I,
@@ -137,6 +206,7 @@ export function calculateDiscScores(
     c_pct: pct.C,
     disc_type: discType,
     angle,
+    ...derived,
   };
 }
 
@@ -408,6 +478,26 @@ export const DISC_TYPE_INFO: Record<
       "Can be overly critical of others' work and methods",
       "Tendency to undervalue relationship-building and team morale",
       "May push too hard for efficiency at the expense of people",
+    ],
+  },
+  Balanced: {
+    name: "Balanced",
+    fullName: "Balanced",
+    motto: "Versatile across all styles.",
+    descriptors: ["Adaptable", "Flexible", "Perceptive"],
+    description:
+      "Your scores are closely balanced across all four DISC styles. You naturally adapt your approach to fit different situations — drawing on Drive, Influence, Support, or Clarity as needed. This versatility is a rare and valuable quality.",
+    strengths: [
+      "Adapts naturally to different work situations and team dynamics",
+      "Relates effectively with all personality types",
+      "Can fill multiple roles and switch between leadership and support",
+      "Brings a balanced perspective to problem-solving",
+    ],
+    blindSpots: [
+      "May find it harder to identify a single strongest contribution",
+      "Can experience indecision about which approach to use",
+      "Others may find it difficult to predict your communication style",
+      "May spread energy across too many areas rather than specialising",
     ],
   },
 };

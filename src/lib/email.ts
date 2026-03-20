@@ -55,8 +55,8 @@ function wrapHtml(body: string): string {
 
           <!-- Header: Wordmark + accent line -->
           <tr>
-            <td style="padding:48px 40px 0 24px;">
-              <img src="https://lyfe.sg/email-logo.png" alt="Lyfe" width="120" style="display:block;border:0;" />
+            <td style="padding:32px 40px 0 36px;">
+              <img src="https://lyfe.sg/email-logo.png" alt="Lyfe" width="120" style="display:block;border:0;height:auto;" />
             </td>
           </tr>
           <tr>
@@ -320,6 +320,9 @@ interface DiscResultData {
   s_pct: number;
   c_pct: number;
   angle: number;
+  profile_strength: "strong" | "moderate" | "balanced";
+  strength_pct: number;
+  priorities: string[];
   results_email: string;
   contact_number: string;
 }
@@ -407,6 +410,13 @@ export async function sendDiscResultsEmail(result: DiscResultData) {
   const bgTint = `${primaryColor}08`;
   const borderTint = `${primaryColor}20`;
 
+  const isBalanced = result.profile_strength === "balanced";
+
+  const displayName = isBalanced ? "Balanced" : typeName;
+  const displayColor = isBalanced ? "#78716c" : primaryColor; // stone-500 for balanced
+  const displayBgTint = isBalanced ? "#f5f5f408" : bgTint;
+  const displayBorderTint = isBalanced ? "#d6d3d120" : borderTint;
+
   console.log(
     `[email] Preparing DISC results email for ${result.full_name} (${typeName})`
   );
@@ -414,6 +424,7 @@ export async function sendDiscResultsEmail(result: DiscResultData) {
   // Import type info for PDF
   const { DISC_TYPE_INFO } = await import("@/app/candidate/disc-quiz/scoring");
   const typeInfo = DISC_TYPE_INFO[result.disc_type];
+  const displayTypeInfo = isBalanced ? DISC_TYPE_INFO["Balanced"] : typeInfo;
 
   // Generate PDF attachment
   let pdfBuffer: Buffer | null = null;
@@ -427,7 +438,10 @@ export async function sendDiscResultsEmail(result: DiscResultData) {
         s_pct: result.s_pct,
         c_pct: result.c_pct,
         angle: result.angle,
-        typeInfo,
+        profile_strength: result.profile_strength,
+        strength_pct: result.strength_pct,
+        priorities: result.priorities,
+        typeInfo: displayTypeInfo || typeInfo,
       });
       console.log(`[email] DISC PDF generated (${pdfBuffer.length} bytes)`);
     } catch (err) {
@@ -436,18 +450,18 @@ export async function sendDiscResultsEmail(result: DiscResultData) {
   }
 
   // Build descriptor pills HTML
-  const descriptorPills = typeInfo
-    ? typeInfo.descriptors
+  const descriptorPills = displayTypeInfo
+    ? displayTypeInfo.descriptors
         .map(
           (d: string) =>
-            `<span style="display:inline-block;padding:4px 12px;border-radius:20px;font-size:11px;font-weight:600;color:${primaryColor};background-color:${bgTint};border:1px solid ${borderTint};margin:0 4px 4px 0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">${d}</span>`
+            `<span style="display:inline-block;padding:4px 12px;border-radius:20px;font-size:11px;font-weight:600;color:${displayColor};background-color:${displayBgTint};border:1px solid ${displayBorderTint};margin:0 4px 4px 0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">${d}</span>`
         )
         .join("")
     : "";
 
   // Build strengths list
-  const strengthsList = typeInfo
-    ? typeInfo.strengths
+  const strengthsList = displayTypeInfo
+    ? displayTypeInfo.strengths
         .map(
           (s: string) =>
             `<tr><td style="padding:4px 0 4px 0;vertical-align:top;width:16px;"><span style="display:inline-block;width:6px;height:6px;border-radius:3px;background-color:#34d399;margin-top:5px;"></span></td><td style="padding:4px 0;font-size:12px;color:#065f46;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;line-height:1.5;">${s}</td></tr>`
@@ -456,8 +470,8 @@ export async function sendDiscResultsEmail(result: DiscResultData) {
     : "";
 
   // Build blind spots list
-  const blindSpotsList = typeInfo
-    ? typeInfo.blindSpots
+  const blindSpotsList = displayTypeInfo
+    ? displayTypeInfo.blindSpots
         .map(
           (b: string) =>
             `<tr><td style="padding:4px 0 4px 0;vertical-align:top;width:16px;"><span style="display:inline-block;width:6px;height:6px;border-radius:3px;background-color:#fbbf24;margin-top:5px;"></span></td><td style="padding:4px 0;font-size:12px;color:#92400e;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;line-height:1.5;">${b}</td></tr>`
@@ -477,36 +491,45 @@ export async function sendDiscResultsEmail(result: DiscResultData) {
               <!-- Hero card -->
               <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;">
                 <tr>
-                  <td style="padding:24px;background-color:${bgTint};border-radius:12px;border:1px solid ${borderTint};">
+                  <td style="padding:24px;background-color:${displayBgTint};border-radius:12px;border:1px solid ${displayBorderTint};">
                     <!-- Candidate name -->
                     <p style="margin:0 0 4px 0;font-size:22px;color:#2C2925;font-family:'Georgia','Times New Roman',serif;font-weight:normal;line-height:1.3;letter-spacing:-0.3px;">
                       ${result.full_name}
                     </p>
 
                     <!-- DISC type -->
-                    <p style="margin:0 0 2px 0;font-size:18px;color:${primaryColor};font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;font-weight:700;letter-spacing:0.3px;">
-                      ${typeName}
+                    <p style="margin:0 0 2px 0;font-size:18px;color:${displayColor};font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;font-weight:700;letter-spacing:0.3px;">
+                      ${displayName}
                     </p>
+                    ${isBalanced ? `
+                    <p style="margin:4px 0 0 0;font-size:11px;color:#A09B93;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
+                      Closest style: ${typeName}
+                    </p>` : ""}
 
-                    ${typeInfo ? `
+                    ${displayTypeInfo ? `
                     <!-- Motto -->
                     <p style="margin:0 0 12px 0;font-size:13px;color:#A09B93;font-family:'Georgia','Times New Roman',serif;font-style:italic;">
-                      &ldquo;${typeInfo.motto}&rdquo;
+                      &ldquo;${displayTypeInfo.motto}&rdquo;
                     </p>
 
                     <!-- Descriptor pills -->
                     <div style="margin:0 0 0 0;">
                       ${descriptorPills}
                     </div>
+
+                    <!-- Strength indicator -->
+                    <p style="margin:8px 0 0 0;font-size:11px;color:${displayColor};font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;font-weight:500;">
+                      ${result.profile_strength === "strong" ? "\u25CF\u25CF\u25CF Strong inclination" : result.profile_strength === "moderate" ? "\u25CF\u25CF\u25CB Moderate inclination" : "\u25CB\u25CB\u25CB Balanced profile"}
+                    </p>
                     ` : ""}
                   </td>
                 </tr>
               </table>
 
-              ${typeInfo ? `
+              ${displayTypeInfo ? `
               <!-- Description -->
               <p style="margin:20px 0 0 0;font-size:13px;color:#57534e;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;line-height:1.6;">
-                ${typeInfo.description}
+                ${displayTypeInfo.description}
               </p>
               ` : ""}
 
@@ -521,7 +544,7 @@ export async function sendDiscResultsEmail(result: DiscResultData) {
 
               <!-- Score section -->
               <p style="margin:28px 0 16px 0;font-size:11px;color:#A09B93;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;text-transform:uppercase;letter-spacing:1px;font-weight:600;">
-                Score Breakdown
+                Style Tendencies
               </p>
 
               <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;">
@@ -531,7 +554,19 @@ export async function sendDiscResultsEmail(result: DiscResultData) {
                 ${scoreBar("Clarity", result.c_pct, "C")}
               </table>
 
-              ${typeInfo ? `
+              <!-- Priorities -->
+              <p style="margin:28px 0 12px 0;font-size:11px;color:#A09B93;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;text-transform:uppercase;letter-spacing:1px;font-weight:600;">
+                Priorities
+              </p>
+              <p style="margin:0 0 4px 0;font-size:12px;color:#57534e;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;line-height:1.6;">
+                ${result.priorities.slice(0, 3).join("  \u00B7  ")}
+              </p>
+              ${result.priorities.length > 3 ? `
+              <p style="margin:0;font-size:11px;color:#A09B93;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
+                Also: ${result.priorities.slice(3).join(", ")}
+              </p>` : ""}
+
+              ${displayTypeInfo ? `
               <!-- Strengths & Blind Spots -->
               <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;margin-top:28px;">
                 <tr>
@@ -589,10 +624,12 @@ export async function sendDiscResultsEmail(result: DiscResultData) {
       ]
     : undefined;
 
+  const subjectType = isBalanced ? `Balanced (closest: ${typeName})` : `${typeName} (${result.disc_type})`;
+
   await sendEmail({
     to: NOTIFY_TO,
     bcc: NOTIFY_BCC,
-    subject: `DISC Result: ${result.full_name} — ${typeName} (${result.disc_type})`,
+    subject: `DISC Result: ${result.full_name} — ${subjectType}`,
     html: wrapHtml(body),
     text: `DISC quiz completed by ${result.full_name}. Type: ${typeName}. D:${result.d_pct}% I:${result.i_pct}% S:${result.s_pct}% C:${result.c_pct}%`,
     attachments,

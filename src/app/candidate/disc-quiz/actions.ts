@@ -40,14 +40,16 @@ export async function submitDiscQuiz(responses: Record<string, number>, resultsE
   // Calculate scores
   const scores = calculateDiscScores(responses);
 
-  // Save results
+  // Save results (exclude derived fields that aren't DB columns)
+  const { profile_strength, strength_pct, priorities, ...dbScores } = scores;
+
   const { error: resultError } = await supabase
     .from("disc_results")
     .upsert(
       {
         user_id: user.id,
         results_email: resultsEmail || null,
-        ...scores,
+        ...dbScores,
       },
       { onConflict: "user_id" }
     );
@@ -72,6 +74,9 @@ export async function submitDiscQuiz(responses: Record<string, number>, resultsE
     s_pct: scores.s_pct,
     c_pct: scores.c_pct,
     angle: scores.angle,
+    profile_strength,
+    strength_pct,
+    priorities,
     results_email: resultsEmail || "",
     contact_number: profile?.contact_number || "",
   }).catch(() => {});

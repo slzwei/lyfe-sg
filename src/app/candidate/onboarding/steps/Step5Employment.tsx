@@ -109,6 +109,11 @@ export default function Step5Employment({
                   value={row.from}
                   onChange={(e) => updateRow(i, "from", e.target.value)}
                 />
+                {errors[`employment_history.${i}.from`] && (
+                  <p className="mt-1 text-xs text-red-500">
+                    {errors[`employment_history.${i}.from`]}
+                  </p>
+                )}
               </div>
               <div>
                 <label className={LABEL_CLASS}>To (mm/yyyy)</label>
@@ -117,12 +122,19 @@ export default function Step5Employment({
                     Present
                   </div>
                 ) : (
-                  <input
-                    type="month"
-                    className={INPUT_CLASS}
-                    value={row.to}
-                    onChange={(e) => updateRow(i, "to", e.target.value)}
-                  />
+                  <>
+                    <input
+                      type="month"
+                      className={INPUT_CLASS}
+                      value={row.to}
+                      onChange={(e) => updateRow(i, "to", e.target.value)}
+                    />
+                    {errors[`employment_history.${i}.to`] && (
+                      <p className="mt-1 text-xs text-red-500">
+                        {errors[`employment_history.${i}.to`]}
+                      </p>
+                    )}
+                  </>
                 )}
                 <label className="mt-1.5 flex items-center gap-2">
                   <input
@@ -137,6 +149,11 @@ export default function Step5Employment({
                     I currently work here
                   </span>
                 </label>
+                {errors[`employment_history.${i}.is_current`] && (
+                  <p className="mt-1 text-xs text-red-500">
+                    {errors[`employment_history.${i}.is_current`]}
+                  </p>
+                )}
               </div>
               <div>
                 <label className={LABEL_CLASS}>Company / Country *</label>
@@ -146,6 +163,11 @@ export default function Step5Employment({
                   onChange={(e) => updateRow(i, "company", e.target.value)}
                   placeholder="e.g. DBS Bank Singapore"
                 />
+                {errors[`employment_history.${i}.company`] && (
+                  <p className="mt-1 text-xs text-red-500">
+                    {errors[`employment_history.${i}.company`]}
+                  </p>
+                )}
               </div>
               <div>
                 <label className={LABEL_CLASS}>Position Held *</label>
@@ -154,6 +176,11 @@ export default function Step5Employment({
                   value={row.position}
                   onChange={(e) => updateRow(i, "position", e.target.value)}
                 />
+                {errors[`employment_history.${i}.position`] && (
+                  <p className="mt-1 text-xs text-red-500">
+                    {errors[`employment_history.${i}.position`]}
+                  </p>
+                )}
               </div>
               <div>
                 <label className={LABEL_CLASS}>Salary</label>

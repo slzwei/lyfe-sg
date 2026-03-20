@@ -30,9 +30,14 @@ const QUESTIONS = [
     text: "Have you ever been served with a garnishee order or been declared a bankrupt?",
   },
   {
-    key: "additional_prev_applied_fs",
-    detailKey: "additional_prev_applied_fs_detail",
-    text: "Have you ever applied for any employment in a financial services company?",
+    key: "additional_relatives",
+    detailKey: "additional_relatives_detail",
+    text: "Do you have any relatives currently employed by the Company?",
+  },
+  {
+    key: "additional_prev_applied",
+    detailKey: "additional_prev_applied_detail",
+    text: "Have you previously applied for employment with the Company?",
   },
 ];
 
@@ -83,13 +88,20 @@ export default function Step6Declaration({
                   </label>
                 </div>
                 {answer === true && (
-                  <textarea
-                    className="mt-3 w-full rounded-xl border border-stone-200 bg-stone-50 px-3 py-2.5 text-sm outline-none transition-colors focus:border-orange-400 focus:ring-2 focus:ring-orange-100"
-                    rows={2}
-                    placeholder="Please provide details…"
-                    value={(data[q.detailKey] as string) || ""}
-                    onChange={(e) => onChange(q.detailKey, e.target.value)}
-                  />
+                  <div>
+                    <textarea
+                      className="mt-3 w-full rounded-xl border border-stone-200 bg-stone-50 px-3 py-2.5 text-sm outline-none transition-colors focus:border-orange-400 focus:ring-2 focus:ring-orange-100"
+                      rows={2}
+                      placeholder="Please provide details…"
+                      value={(data[q.detailKey] as string) || ""}
+                      onChange={(e) => onChange(q.detailKey, e.target.value)}
+                    />
+                    {errors[q.detailKey] && (
+                      <p className="mt-1 text-xs text-red-500">
+                        {errors[q.detailKey]}
+                      </p>
+                    )}
+                  </div>
                 )}
               </div>
             );

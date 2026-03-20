@@ -50,6 +50,7 @@ export default function Step2NSEmergency({
                   onChange("ns_enlistment_date", e.target.value)
                 }
               />
+              <FieldError error={errors.ns_enlistment_date} />
             </div>
             <div>
               <label className={LABEL_CLASS}>ORD Date</label>
@@ -59,6 +60,7 @@ export default function Step2NSEmergency({
                 value={v("ns_ord_date")}
                 onChange={(e) => onChange("ns_ord_date", e.target.value)}
               />
+              <FieldError error={errors.ns_ord_date} />
             </div>
           </div>
 

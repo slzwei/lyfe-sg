@@ -2,13 +2,25 @@ import { z } from "zod";
 
 export const step1Schema = z.object({
   position_applied: z.string().min(1, "Required"),
-  expected_salary: z.string().min(1, "Required"),
+  expected_salary: z.string().min(1, "Required").refine(
+    (val) => !isNaN(Number(val)) && Number(val) > 0,
+    "Must be a valid positive number"
+  ),
   date_available: z.string().min(1, "Required").refine(
     (val) => new Date(val) >= new Date(new Date().toDateString()),
     "Must be today or a future date"
   ),
   full_name: z.string().min(1, "Full name is required"),
-  date_of_birth: z.string().min(1, "Date of birth is required"),
+  date_of_birth: z.string().min(1, "Date of birth is required").refine(
+    (val) => {
+      const dob = new Date(val);
+      const today = new Date();
+      const age = today.getFullYear() - dob.getFullYear() -
+        (today < new Date(today.getFullYear(), dob.getMonth(), dob.getDate()) ? 1 : 0);
+      return dob <= today && age >= 18;
+    },
+    "Applicant must be at least 18 years old"
+  ),
   place_of_birth: z.string().min(1, "Required"),
   nationality: z.string().min(1, "Required"),
   race: z.string().min(1, "Required"),
@@ -33,7 +45,10 @@ export const step2Schema = z
     ns_exemption_reason: z.string().optional(),
     emergency_name: z.string().min(1, "Required"),
     emergency_relationship: z.string().min(1, "Required"),
-    emergency_contact: z.string().min(1, "Required"),
+    emergency_contact: z.string().min(1, "Required").regex(
+      /^\+?\d{8,15}$/,
+      "Must be a valid phone number (8-15 digits, optional + prefix)"
+    ),
   })
   .superRefine((data, ctx) => {
     const isSGMale =
@@ -47,12 +62,44 @@ export const step2Schema = z
           path: ["ns_service_status"],
         });
       }
-      if (!data.ns_status) {
+      // NS status only required if not exempted
+      if (data.ns_service_status !== "Exempted" && !data.ns_status) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           message: "Required for SG males",
           path: ["ns_status"],
         });
+      }
+      // Enlistment & ORD dates required for served personnel
+      const served =
+        data.ns_service_status === "Part-time" ||
+        data.ns_service_status === "Full Time";
+      if (served) {
+        if (!data.ns_enlistment_date) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: "Required",
+            path: ["ns_enlistment_date"],
+          });
+        }
+        if (!data.ns_ord_date) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: "Required",
+            path: ["ns_ord_date"],
+          });
+        }
+        if (
+          data.ns_enlistment_date &&
+          data.ns_ord_date &&
+          data.ns_ord_date <= data.ns_enlistment_date
+        ) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: "ORD date must be after enlistment date",
+            path: ["ns_ord_date"],
+          });
+        }
       }
     }
   });
@@ -91,6 +138,19 @@ const educationSchema = z
           path: ["current_expected_end_date"],
         });
       }
+      // Expected end must be after year commenced
+      if (
+        data.current_year_commenced &&
+        data.current_expected_end_date &&
+        Number(data.current_expected_end_date) <
+          Number(data.current_year_commenced)
+      ) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Must be after year commenced",
+          path: ["current_expected_end_date"],
+        });
+      }
     }
   });
 
@@ -111,37 +171,106 @@ export const step4Schema = z.object({
   languages: z.array(languageRowSchema),
 });
 
-const employmentRowSchema = z.object({
-  from: z.string().optional(),
-  to: z.string().optional(),
-  is_current: z.boolean().optional(),
-  company: z.string().optional(),
-  position: z.string().optional(),
-  salary: z.string().optional(),
-  reason_leaving: z.string().optional(),
-});
+const employmentRowSchema = z
+  .object({
+    from: z.string().optional(),
+    to: z.string().optional(),
+    is_current: z.boolean().optional(),
+    company: z.string().min(1, "Required"),
+    position: z.string().min(1, "Required"),
+    salary: z.string().optional(),
+    reason_leaving: z.string().optional(),
+  })
+  .superRefine((data, ctx) => {
+    // "From" must not be in the future
+    if (data.from) {
+      const now = new Date();
+      const currentMonth = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
+      if (data.from > currentMonth) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Start date cannot be in the future",
+          path: ["from"],
+        });
+      }
+    }
+    // "To" must be after "From"
+    if (data.from && data.to && !data.is_current && data.to < data.from) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "End date must be after start date",
+        path: ["to"],
+      });
+    }
+  });
 
-export const step5Schema = z.object({
-  employment_history: z.array(employmentRowSchema),
-});
+export const step5Schema = z
+  .object({
+    employment_history: z.array(employmentRowSchema),
+  })
+  .superRefine((data, ctx) => {
+    const currentCount = data.employment_history.filter(
+      (row) => row.is_current
+    ).length;
+    if (currentCount > 1) {
+      // Find the second "is_current" row and flag it
+      let seen = 0;
+      for (let i = 0; i < data.employment_history.length; i++) {
+        if (data.employment_history[i].is_current) {
+          seen++;
+          if (seen > 1) {
+            ctx.addIssue({
+              code: z.ZodIssueCode.custom,
+              message: "Only one position can be marked as current",
+              path: ["employment_history", i, "is_current"],
+            });
+          }
+        }
+      }
+    }
+  });
 
-export const step6Schema = z.object({
-  additional_health: z.boolean(),
-  additional_health_detail: z.string().optional(),
-  additional_dismissed: z.boolean(),
-  additional_dismissed_detail: z.string().optional(),
-  additional_convicted: z.boolean(),
-  additional_convicted_detail: z.string().optional(),
-  additional_bankrupt: z.boolean(),
-  additional_bankrupt_detail: z.string().optional(),
-  additional_relatives: z.boolean(),
-  additional_relatives_detail: z.string().optional(),
-  additional_prev_applied: z.boolean(),
-  additional_prev_applied_detail: z.string().optional(),
-  declaration_agreed: z.literal(true, {
-    error: "You must agree to the declaration",
-  }),
-});
+export const step6Schema = z
+  .object({
+    additional_health: z.boolean(),
+    additional_health_detail: z.string().optional(),
+    additional_dismissed: z.boolean(),
+    additional_dismissed_detail: z.string().optional(),
+    additional_convicted: z.boolean(),
+    additional_convicted_detail: z.string().optional(),
+    additional_bankrupt: z.boolean(),
+    additional_bankrupt_detail: z.string().optional(),
+    additional_relatives: z.boolean(),
+    additional_relatives_detail: z.string().optional(),
+    additional_prev_applied: z.boolean(),
+    additional_prev_applied_detail: z.string().optional(),
+    declaration_agreed: z.literal(true, {
+      error: "You must agree to the declaration",
+    }),
+  })
+  .superRefine((data, ctx) => {
+    const pairs: Array<{ flag: keyof typeof data; detail: keyof typeof data }> =
+      [
+        { flag: "additional_health", detail: "additional_health_detail" },
+        { flag: "additional_dismissed", detail: "additional_dismissed_detail" },
+        { flag: "additional_convicted", detail: "additional_convicted_detail" },
+        { flag: "additional_bankrupt", detail: "additional_bankrupt_detail" },
+        { flag: "additional_relatives", detail: "additional_relatives_detail" },
+        {
+          flag: "additional_prev_applied",
+          detail: "additional_prev_applied_detail",
+        },
+      ];
+    for (const { flag, detail } of pairs) {
+      if (data[flag] === true && !data[detail]) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Please provide details",
+          path: [detail],
+        });
+      }
+    }
+  });
 
 export type Step1Data = z.infer<typeof step1Schema>;
 export type Step2Data = z.infer<typeof step2Schema>;

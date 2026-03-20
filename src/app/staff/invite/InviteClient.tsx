@@ -134,7 +134,7 @@ export default function InviteClient() {
     if (progress) {
       if (progress.quiz_completed) {
         step = 4;
-        label = `Completed · ${progress.disc_type}`;
+        label = `Completed · DISC: ${progress.disc_type?.toUpperCase()}`;
       } else if (progress.profile_completed && quizInProgress) {
         step = 3;
         label = `Taking quiz (${progress.quiz_answered}/38)`;

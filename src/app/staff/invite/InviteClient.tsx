@@ -278,9 +278,9 @@ export default function InviteClient() {
       barColor = "bg-green-500";
       textColor = "text-green-700";
     } else if (progress?.profile_completed && quizInProgress) {
-      pct = 50 + Math.round((progress.quiz_answered / 38) * 50);
+      pct = 50 + Math.round((progress.quiz_answered / 39) * 50);
       label = "Quiz";
-      detail = `${progress.quiz_answered}/38`;
+      detail = `${progress.quiz_answered}/39`;
       barColor = "bg-blue-500";
       textColor = "text-blue-700";
     } else if (progress?.profile_completed) {

@@ -1,30 +1,30 @@
 "use client";
 
 import { createClient } from "./client";
-import type { RealtimeChannel } from "@supabase/supabase-js";
 
 const CHANNEL_NAME = "candidate-progress";
 
-let channel: RealtimeChannel | null = null;
-let subscribed = false;
+/** Lazily creates & subscribes a channel. Resolves once connected. */
+let ready: Promise<ReturnType<ReturnType<typeof createClient>["channel"]>> | null = null;
 
-function getChannel() {
-  if (!channel) {
+function getSenderChannel() {
+  if (!ready) {
     const supabase = createClient();
-    channel = supabase.channel(CHANNEL_NAME);
-    channel.subscribe((status) => {
-      subscribed = status === "SUBSCRIBED";
+    const ch = supabase.channel(CHANNEL_NAME);
+    ready = new Promise((resolve) => {
+      ch.subscribe((status) => {
+        if (status === "SUBSCRIBED") resolve(ch);
+      });
     });
   }
-  return channel;
+  return ready;
 }
 
 /** Broadcast a progress event to the staff portal (fire-and-forget). */
 export function broadcastProgress() {
-  const ch = getChannel();
-  if (subscribed) {
+  getSenderChannel().then((ch) => {
     ch.send({ type: "broadcast", event: "progress", payload: {} });
-  }
+  });
 }
 
 /**

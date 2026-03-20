@@ -298,7 +298,7 @@ export default function Step5Employment({
                 )}
               </div>
               <div>
-                <label className={LABEL_CLASS}>Salary</label>
+                <label className={LABEL_CLASS}>Monthly Salary</label>
                 <input
                   className={INPUT_CLASS}
                   value={row.salary}

@@ -97,11 +97,12 @@ function getDefaultData(): Record<string, unknown> {
 }
 
 interface OnboardingFormProps {
+  userId: string;
   initialData?: Record<string, unknown> | null;
   userPhone?: string;
 }
 
-export default function OnboardingForm({ initialData, userPhone }: OnboardingFormProps) {
+export default function OnboardingForm({ userId, initialData, userPhone }: OnboardingFormProps) {
   const router = useRouter();
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState<Record<string, unknown>>(() => {
@@ -180,7 +181,7 @@ export default function OnboardingForm({ initialData, userPhone }: OnboardingFor
 
     // Auto-save draft on step navigation and notify staff portal
     saveDraft(formData, currentStep + 1).catch(() => {});
-    broadcastProgress();
+    broadcastProgress(userId, "form");
 
     if (currentStep < 6) {
       setCurrentStep(currentStep + 1);

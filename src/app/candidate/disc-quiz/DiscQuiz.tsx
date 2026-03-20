@@ -48,11 +48,12 @@ function CalculatingOverlay({ progress, stage }: { progress: number; stage: stri
 }
 
 interface DiscQuizProps {
+  userId: string;
   initialResponses?: Record<string, number> | null;
   initialEmail?: string;
 }
 
-export default function DiscQuiz({ initialResponses, initialEmail }: DiscQuizProps) {
+export default function DiscQuiz({ userId, initialResponses, initialEmail }: DiscQuizProps) {
   const hasProgress = initialResponses && Object.keys(initialResponses).length > 0;
   const [showIntro, setShowIntro] = useState(!hasProgress);
   const [currentStep, setCurrentStep] = useState(1);
@@ -83,7 +84,7 @@ export default function DiscQuiz({ initialResponses, initialEmail }: DiscQuizPro
   useEffect(() => {
     if (Object.keys(responses).length === 0) return;
     saveQuizProgress(responses).catch(() => {});
-    broadcastProgress();
+    broadcastProgress(userId, "quiz");
   }, [responses]);
 
   const questions = DISC_STEPS[currentStep - 1];

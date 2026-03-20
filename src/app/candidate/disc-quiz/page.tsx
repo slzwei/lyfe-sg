@@ -60,6 +60,7 @@ export default async function DiscQuizPage() {
         </p>
       </div>
       <DiscQuiz
+        userId={user.id}
         initialResponses={
           savedResponses?.responses as Record<string, number> | null
         }

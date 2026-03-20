@@ -3,6 +3,8 @@ import { redirect } from "next/navigation";
 import CircumplexChart from "./CircumplexChart";
 import { DISC_TYPE_INFO, computeDerivedFields, DISC_PRIORITIES } from "../disc-quiz/scoring";
 import { signOut } from "../actions";
+import ResultsLive from "./ResultsLive";
+import SignOutButton from "./SignOutButton";
 
 const DISC_COLORS: Record<string, { hex: string; text: string; bg: string; bar: string; border: string }> = {
   D: { hex: "#2B8C8C", text: "text-[#2B8C8C]", bg: "bg-[#2B8C8C]/5", bar: "bg-[#2B8C8C]", border: "border-[#2B8C8C]/20" },
@@ -59,6 +61,7 @@ export default async function DiscResultsPage() {
 
   return (
     <div className="space-y-6">
+      <ResultsLive userId={user.id} />
       {/* Hero card — type result */}
       <div
         className={`relative overflow-hidden rounded-3xl border ${primaryColor.border} ${primaryColor.bg} px-6 py-8 text-center`}
@@ -274,14 +277,9 @@ export default async function DiscResultsPage() {
           Thank you for completing your application and personality assessment.
           Our team will review your profile and get back to you soon.
         </p>
-        <form action={signOut} className="mt-4">
-          <button
-            type="submit"
-            className="rounded-xl border border-stone-200 bg-white px-6 py-2.5 text-sm font-medium text-stone-600 shadow-sm transition-colors hover:bg-stone-50"
-          >
-            Sign Out
-          </button>
-        </form>
+        <div className="mt-4">
+          <SignOutButton userId={user.id} signOutAction={signOut} />
+        </div>
       </div>
     </div>
   );

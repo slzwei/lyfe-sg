@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback, useRef } from "react";
-import { onProgress } from "@/lib/supabase/progress-broadcast";
+import { onProgress, type CandidateState } from "@/lib/supabase/progress-broadcast";
 import {
   sendInvite,
   listInvitations,
@@ -27,6 +27,7 @@ export default function InviteClient() {
   const [lastRefreshed, setLastRefreshed] = useState<Date | null>(null);
   const [pastOpen, setPastOpen] = useState(false);
   const [live, setLive] = useState(false);
+  const [liveStates, setLiveStates] = useState<Record<string, CandidateState>>({});
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const fetchInvitations = useCallback(async () => {
@@ -53,7 +54,12 @@ export default function InviteClient() {
   // Listen for realtime broadcasts from candidate browsers
   useEffect(() => {
     const unsub = onProgress(
-      () => debouncedRefresh(),
+      (payload) => {
+        if (payload.userId && payload.state) {
+          setLiveStates((prev) => ({ ...prev, [payload.userId]: payload.state }));
+        }
+        debouncedRefresh();
+      },
       (connected) => setLive(connected)
     );
 
@@ -271,7 +277,22 @@ export default function InviteClient() {
     let barColor = "bg-stone-300";
     let textColor = "text-stone-500";
 
-    if (progress?.quiz_completed) {
+    // Check for live broadcast state
+    const liveState = inv.user_id ? liveStates[inv.user_id] : undefined;
+
+    if (liveState === "signed-out" && progress?.quiz_completed) {
+      pct = 100;
+      label = "Signed out";
+      detail = progress.disc_type?.toUpperCase() || "";
+      barColor = "bg-stone-400";
+      textColor = "text-stone-500";
+    } else if (liveState === "viewing-results" && progress?.quiz_completed) {
+      pct = 100;
+      label = "Viewing results";
+      detail = progress.disc_type?.toUpperCase() || "";
+      barColor = "bg-green-500";
+      textColor = "text-green-700";
+    } else if (progress?.quiz_completed) {
       pct = 100;
       label = "Completed";
       detail = progress.disc_type?.toUpperCase() || "";

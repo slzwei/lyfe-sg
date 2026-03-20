@@ -544,12 +544,10 @@ export default function InviteClient() {
             Candidate List
           </h2>
           <div className="flex items-center gap-2">
-            {live && (
-              <span className="flex items-center gap-1 text-xs text-green-600">
-                <span className="inline-block h-1.5 w-1.5 animate-pulse rounded-full bg-green-500" />
-                Live
-              </span>
-            )}
+            <span className={`flex items-center gap-1 text-xs ${live ? "text-green-600" : "text-stone-400"}`}>
+              <span className={`inline-block h-1.5 w-1.5 rounded-full ${live ? "bg-green-500 animate-pulse" : "bg-stone-300"}`} />
+              {live ? "Live" : "Offline"}
+            </span>
             <button
               type="button"
               onClick={handleRefresh}

@@ -109,7 +109,17 @@ export default function OnboardingForm({ initialData, userPhone }: OnboardingFor
       // Merge initial data, preferring non-null values
       for (const key of Object.keys(defaults)) {
         if (initialData[key] !== null && initialData[key] !== undefined) {
-          defaults[key] = initialData[key];
+          // Deep-merge objects (e.g. education) so defaults are preserved
+          if (
+            typeof defaults[key] === "object" &&
+            !Array.isArray(defaults[key]) &&
+            typeof initialData[key] === "object" &&
+            !Array.isArray(initialData[key])
+          ) {
+            defaults[key] = { ...(defaults[key] as Record<string, unknown>), ...(initialData[key] as Record<string, unknown>) };
+          } else {
+            defaults[key] = initialData[key];
+          }
         }
       }
     }

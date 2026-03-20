@@ -72,8 +72,8 @@ export const step2Schema = z
       }
       // Enlistment & ORD dates required for served personnel
       const served =
-        data.ns_service_status === "Part-time" ||
-        data.ns_service_status === "Full Time";
+        data.ns_service_status === "NSF" ||
+        data.ns_service_status === "NSman";
       if (served) {
         if (!data.ns_enlistment_date) {
           ctx.addIssue({
@@ -106,7 +106,7 @@ export const step2Schema = z
 
 const educationSchema = z
   .object({
-    currently_studying: z.boolean(),
+    currently_studying: z.preprocess((v) => v === true, z.boolean()),
     current_qualification: z.string().optional(),
     current_institution: z.string().optional(),
     current_year_commenced: z.string().optional(),

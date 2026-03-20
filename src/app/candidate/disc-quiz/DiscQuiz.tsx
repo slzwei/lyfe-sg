@@ -10,6 +10,7 @@ import {
   type Question,
 } from "./questions";
 import { submitDiscQuiz, saveQuizProgress } from "./actions";
+import { broadcastProgress } from "@/lib/supabase/progress-broadcast";
 
 const STEP_LABELS = ["Pairs 1", "Pairs 2", "Pairs 3", "Ratings", "Scenarios"];
 
@@ -78,10 +79,11 @@ export default function DiscQuiz({ initialResponses, initialEmail }: DiscQuizPro
     return () => clearInterval(interval);
   }, [submitting]);
 
-  // Save progress to DB after every answer
+  // Save progress to DB after every answer and notify staff portal
   useEffect(() => {
     if (Object.keys(responses).length === 0) return;
     saveQuizProgress(responses).catch(() => {});
+    broadcastProgress();
   }, [responses]);
 
   const questions = DISC_STEPS[currentStep - 1];

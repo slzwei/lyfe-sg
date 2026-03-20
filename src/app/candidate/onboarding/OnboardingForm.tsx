@@ -18,6 +18,7 @@ import {
   step6Schema,
 } from "@/lib/schemas/onboarding";
 import { saveProfile, saveDraft } from "./actions";
+import { broadcastProgress } from "@/lib/supabase/progress-broadcast";
 
 const STEP_LABELS = [
   "Personal",
@@ -177,8 +178,9 @@ export default function OnboardingForm({ initialData, userPhone }: OnboardingFor
   async function handleNext() {
     if (!validateStep(currentStep)) return;
 
-    // Auto-save draft on step navigation
+    // Auto-save draft on step navigation and notify staff portal
     saveDraft(formData, currentStep + 1).catch(() => {});
+    broadcastProgress();
 
     if (currentStep < 6) {
       setCurrentStep(currentStep + 1);

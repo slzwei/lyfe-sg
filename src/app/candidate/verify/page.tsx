@@ -36,7 +36,8 @@ export default function VerifyPage() {
       setError("");
       setLoading(true);
 
-      const result = await verifyOtp(phone, token);
+      const inviteToken = sessionStorage.getItem("invite_token") || undefined;
+      const result = await verifyOtp(phone, token, inviteToken);
       // If verifyOtp succeeds, it redirects. We only reach here on error.
       if (!result.success) {
         setError(result.error || "Verification failed.");

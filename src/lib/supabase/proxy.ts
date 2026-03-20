@@ -25,11 +25,23 @@ export async function updateSession(request: NextRequest) {
     }
   );
 
+  const path = request.nextUrl.pathname;
+
+  // Staff routes — cookie-based auth, no Supabase user needed
+  if (path.startsWith("/staff/") && !path.startsWith("/staff/login")) {
+    const staffSession = request.cookies.get("staff_session")?.value;
+    if (!staffSession || staffSession !== process.env.STAFF_SECRET) {
+      const url = request.nextUrl.clone();
+      url.pathname = "/staff/login";
+      return NextResponse.redirect(url);
+    }
+    return supabaseResponse;
+  }
+
   const {
     data: { user },
   } = await supabase.auth.getUser();
 
-  const path = request.nextUrl.pathname;
   const role = user?.app_metadata?.role as string | undefined;
   const isCandidate = role === "candidate";
 

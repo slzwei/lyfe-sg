@@ -5,6 +5,7 @@ import { onProgress, type CandidateState } from "@/lib/supabase/progress-broadca
 import {
   sendInvite,
   listInvitations,
+  getProgressForUser,
   revokeInvitation,
   resetApplication,
   resetQuiz,
@@ -28,7 +29,7 @@ export default function InviteClient() {
   const [pastOpen, setPastOpen] = useState(false);
   const [live, setLive] = useState(false);
   const [liveStates, setLiveStates] = useState<Record<string, CandidateState>>({});
-  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const debounceMap = useRef<Map<string, ReturnType<typeof setTimeout>>>(new Map());
 
   const fetchInvitations = useCallback(async () => {
     const result = await listInvitations();
@@ -43,13 +44,23 @@ export default function InviteClient() {
     fetchInvitations();
   }, [fetchInvitations]);
 
-  // Debounced refresh — collapses rapid-fire broadcasts into a single fetch
-  const debouncedRefresh = useCallback(() => {
-    if (debounceRef.current) clearTimeout(debounceRef.current);
-    debounceRef.current = setTimeout(() => {
-      fetchInvitations();
-    }, 500);
-  }, [fetchInvitations]);
+  // Targeted refresh: only fetch progress for the candidate that changed
+  const refreshUser = useCallback((userId: string) => {
+    const existing = debounceMap.current.get(userId);
+    if (existing) clearTimeout(existing);
+
+    debounceMap.current.set(userId, setTimeout(async () => {
+      debounceMap.current.delete(userId);
+      const result = await getProgressForUser(userId);
+      if (result.success && result.progress) {
+        setInvitations((prev) =>
+          prev.map((inv) =>
+            inv.user_id === userId ? { ...inv, progress: result.progress! } : inv
+          )
+        );
+      }
+    }, 500));
+  }, []);
 
   // Listen for realtime broadcasts from candidate browsers
   useEffect(() => {
@@ -57,8 +68,8 @@ export default function InviteClient() {
       (payload) => {
         if (payload.userId && payload.state) {
           setLiveStates((prev) => ({ ...prev, [payload.userId]: payload.state }));
+          refreshUser(payload.userId);
         }
-        debouncedRefresh();
       },
       (connected) => setLive(connected)
     );
@@ -70,12 +81,13 @@ export default function InviteClient() {
     window.addEventListener("online", goOnline);
 
     return () => {
-      if (debounceRef.current) clearTimeout(debounceRef.current);
+      debounceMap.current.forEach((t) => clearTimeout(t));
+      debounceMap.current.clear();
       window.removeEventListener("offline", goOffline);
       window.removeEventListener("online", goOnline);
       unsub();
     };
-  }, [debouncedRefresh]);
+  }, [refreshUser]);
 
   // Fallback poll every 30s in case broadcast is missed
   useEffect(() => {

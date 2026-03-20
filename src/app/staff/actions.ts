@@ -216,6 +216,50 @@ export async function listInvitations(): Promise<{
   return { success: true, data: enriched };
 }
 
+export async function getProgressForUser(userId: string): Promise<{
+  success: boolean;
+  progress?: InvitationProgress;
+}> {
+  const staff = await requireStaff();
+  if (!staff) return { success: false };
+
+  const admin = getAdminClient();
+
+  // 3 parallel queries for a single user
+  const [profileRes, responsesRes, resultsRes] = await Promise.all([
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (admin.from("candidate_profiles") as any)
+      .select("completed, onboarding_step")
+      .eq("user_id", userId)
+      .single(),
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (admin.from("disc_responses") as any)
+      .select("responses")
+      .eq("user_id", userId)
+      .single(),
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (admin.from("disc_results") as any)
+      .select("disc_type")
+      .eq("user_id", userId)
+      .single(),
+  ]);
+
+  const profile = profileRes.data as { completed: boolean; onboarding_step: number } | null;
+  const responses = responsesRes.data as { responses: Record<string, unknown> } | null;
+  const results = resultsRes.data as { disc_type: string } | null;
+
+  return {
+    success: true,
+    progress: {
+      profile_completed: profile?.completed || false,
+      onboarding_step: profile?.onboarding_step || 1,
+      quiz_answered: responses?.responses ? Object.keys(responses.responses).length : 0,
+      quiz_completed: !!results,
+      disc_type: results?.disc_type,
+    },
+  };
+}
+
 export async function revokeInvitation(id: string) {
   const staff = await requireStaff();
   if (!staff) return { success: false, error: "Not authenticated." };

@@ -20,6 +20,8 @@ export default function InviteClient() {
   const [loadingList, setLoadingList] = useState(true);
   const [actionLoading, setActionLoading] = useState<string | null>(null);
   const [copiedId, setCopiedId] = useState<string | null>(null);
+  const [refreshing, setRefreshing] = useState(false);
+  const [lastRefreshed, setLastRefreshed] = useState<Date | null>(null);
 
   const fetchInvitations = useCallback(async () => {
     const result = await listInvitations();
@@ -27,11 +29,24 @@ export default function InviteClient() {
       setInvitations(result.data);
     }
     setLoadingList(false);
+    setLastRefreshed(new Date());
   }, []);
 
   useEffect(() => {
     fetchInvitations();
   }, [fetchInvitations]);
+
+  // Auto-poll every 30 seconds
+  useEffect(() => {
+    const interval = setInterval(fetchInvitations, 30_000);
+    return () => clearInterval(interval);
+  }, [fetchInvitations]);
+
+  async function handleRefresh() {
+    setRefreshing(true);
+    await fetchInvitations();
+    setRefreshing(false);
+  }
 
   async function handleSend(e: React.FormEvent) {
     e.preventDefault();
@@ -232,9 +247,35 @@ export default function InviteClient() {
 
       {/* Invitation List */}
       <div className="rounded-2xl border border-stone-200 bg-white p-6 shadow-sm">
-        <h2 className="mb-4 text-lg font-semibold text-stone-800">
-          Recent Invitations
-        </h2>
+        <div className="mb-4 flex items-center justify-between">
+          <h2 className="text-lg font-semibold text-stone-800">
+            Recent Invitations
+          </h2>
+          <div className="flex items-center gap-2">
+            {lastRefreshed && (
+              <span className="text-xs text-stone-400">
+                Updated {lastRefreshed.toLocaleTimeString()}
+              </span>
+            )}
+            <button
+              type="button"
+              onClick={handleRefresh}
+              disabled={refreshing}
+              title="Refresh"
+              className="rounded-lg p-1.5 text-stone-400 transition-colors hover:bg-stone-100 hover:text-stone-600 disabled:opacity-50"
+            >
+              <svg
+                className={`h-4 w-4 ${refreshing ? "animate-spin" : ""}`}
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={2}
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+              </svg>
+            </button>
+          </div>
+        </div>
 
         {loadingList ? (
           <p className="text-sm text-stone-400">Loading...</p>

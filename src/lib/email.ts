@@ -55,7 +55,7 @@ function wrapHtml(body: string): string {
 
           <!-- Header: Wordmark + accent line -->
           <tr>
-            <td style="padding:36px 40px 0 40px;">
+            <td style="padding:36px 40px 0 34px;">
               <img src="https://lyfe.sg/email-logo.png" alt="Lyfe" width="120" height="50" style="display:block;border:0;" />
             </td>
           </tr>
@@ -150,6 +150,83 @@ export async function sendEmail({
       message: error instanceof Error ? error.message : "Send failed",
     };
   }
+}
+
+// ─── Specialized: Invitation Email ───────────────────────────────────────────
+
+interface InvitationEmailParams {
+  email: string;
+  candidateName?: string;
+  position?: string;
+  token: string;
+}
+
+export async function sendInvitationEmail({
+  email,
+  candidateName,
+  position,
+  token,
+}: InvitationEmailParams) {
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://lyfe.sg";
+  const link = `${baseUrl}/candidate/login?token=${token}`;
+
+  const greeting = candidateName
+    ? `Hi ${candidateName},`
+    : "Hi,";
+
+  const positionLine = position
+    ? `<p style="margin:0 0 20px 0;font-size:14px;color:#57534e;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;line-height:1.6;">
+        You&rsquo;ve been invited to apply for <strong>${position}</strong> at Lyfe.
+      </p>`
+    : `<p style="margin:0 0 20px 0;font-size:14px;color:#57534e;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;line-height:1.6;">
+        You&rsquo;ve been invited to apply at Lyfe.
+      </p>`;
+
+  const body = `
+              <p style="margin:0 0 6px 0;font-size:15px;color:#2C2925;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;font-weight:600;line-height:1.5;">
+                ${greeting}
+              </p>
+
+              ${positionLine}
+
+              <p style="margin:0 0 24px 0;font-size:14px;color:#57534e;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;line-height:1.6;">
+                Click the button below to start your application. You&rsquo;ll verify your identity with a phone OTP before proceeding.
+              </p>
+
+              <!-- CTA Button -->
+              <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 24px 0;">
+                <tr>
+                  <td style="background-color:#f97316;border-radius:12px;">
+                    <!--[if mso]>
+                    <v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="${link}" style="height:48px;v-text-anchor:middle;width:220px;" arcsize="25%" fillcolor="#f97316" stroke="f">
+                      <w:anchorlock/>
+                      <center style="color:#ffffff;font-family:sans-serif;font-size:15px;font-weight:bold;">Start Application</center>
+                    </v:roundrect>
+                    <![endif]-->
+                    <!--[if !mso]><!-->
+                    <a href="${link}" style="display:inline-block;padding:14px 32px;background-color:#f97316;color:#ffffff;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;font-size:15px;font-weight:600;text-decoration:none;border-radius:12px;">
+                      Start Application
+                    </a>
+                    <!--<![endif]-->
+                  </td>
+                </tr>
+              </table>
+
+              <p style="margin:0;font-size:12px;color:#A09B93;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;line-height:1.6;">
+                This link expires in 14 days. If you have any questions, reply to this email.
+              </p>
+  `;
+
+  const subject = position
+    ? `You're invited to apply for ${position} at Lyfe`
+    : "You're invited to apply at Lyfe";
+
+  return sendEmail({
+    to: email,
+    subject,
+    html: wrapHtml(body),
+    text: `${greeting} You've been invited to apply${position ? ` for ${position}` : ""} at Lyfe. Click here to start: ${link} — This link expires in 14 days.`,
+  });
 }
 
 // ─── Specialized: Profile Submission ─────────────────────────────────────────

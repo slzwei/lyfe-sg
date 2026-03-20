@@ -52,8 +52,10 @@ export default function InviteClient() {
 
   // Listen for realtime broadcasts from candidate browsers
   useEffect(() => {
-    setLive(true);
-    const unsub = onProgress(() => debouncedRefresh());
+    const unsub = onProgress(
+      () => debouncedRefresh(),
+      (connected) => setLive(connected)
+    );
     return () => {
       if (debounceRef.current) clearTimeout(debounceRef.current);
       unsub();
@@ -537,11 +539,6 @@ export default function InviteClient() {
               <span className="flex items-center gap-1 text-xs text-green-600">
                 <span className="inline-block h-1.5 w-1.5 animate-pulse rounded-full bg-green-500" />
                 Live
-              </span>
-            )}
-            {lastRefreshed && (
-              <span className="text-xs text-stone-400">
-                {lastRefreshed.toLocaleTimeString()}
               </span>
             )}
             <button

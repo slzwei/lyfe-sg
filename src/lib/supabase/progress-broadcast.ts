@@ -30,12 +30,20 @@ export function broadcastProgress() {
 /**
  * Subscribe to progress broadcasts. Returns an unsubscribe function.
  * Used by the staff portal to listen for candidate activity.
+ * onStatus is called with true/false when the connection state changes.
  */
-export function onProgress(callback: () => void): () => void {
+export function onProgress(
+  callback: () => void,
+  onStatus?: (connected: boolean) => void
+): () => void {
   const supabase = createClient();
   const ch = supabase.channel(CHANNEL_NAME);
 
-  ch.on("broadcast", { event: "progress" }, () => callback()).subscribe();
+  ch.on("broadcast", { event: "progress" }, () => callback()).subscribe(
+    (status) => {
+      onStatus?.(status === "SUBSCRIBED");
+    }
+  );
 
   return () => {
     supabase.removeChannel(ch);

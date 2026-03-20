@@ -283,19 +283,16 @@ export default function InviteClient() {
     if (liveState === "signed-out" && progress?.quiz_completed) {
       pct = 100;
       label = "Signed out";
-      detail = progress.disc_type?.toUpperCase() || "";
       barColor = "bg-stone-400";
       textColor = "text-stone-500";
     } else if (liveState === "viewing-results" && progress?.quiz_completed) {
       pct = 100;
       label = "Viewing results";
-      detail = progress.disc_type?.toUpperCase() || "";
       barColor = "bg-green-500";
       textColor = "text-green-700";
     } else if (progress?.quiz_completed) {
       pct = 100;
       label = "Completed";
-      detail = progress.disc_type?.toUpperCase() || "";
       barColor = "bg-green-500";
       textColor = "text-green-700";
     } else if (progress?.profile_completed && quizInProgress) {
@@ -319,6 +316,8 @@ export default function InviteClient() {
       textColor = "text-stone-600";
     }
 
+    const discType = progress?.disc_type?.toUpperCase();
+
     return (
       <div className="w-28">
         <div className="mb-1 flex items-baseline justify-between">
@@ -331,6 +330,11 @@ export default function InviteClient() {
             style={{ width: `${pct}%` }}
           />
         </div>
+        {discType && (
+          <p className="mt-1 text-[10px] text-stone-400">
+            DISC Result: <span className="font-semibold text-stone-600">{discType}</span>
+          </p>
+        )}
       </div>
     );
   }

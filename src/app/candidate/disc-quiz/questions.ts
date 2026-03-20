@@ -36,7 +36,7 @@ const step1: FormatAQuestion[] = [
   { id: 5, format: "A", left: "Generous", right: "Strict", leftType: "S", rightType: "C" },
   { id: 6, format: "A", left: "Focused", right: "Cheerful", leftType: "D", rightType: "I" },
   { id: 7, format: "A", left: "Vibrant", right: "Steady", leftType: "I", rightType: "S" },
-  { id: 8, format: "A", left: "Modest", right: "Ambitious", leftType: "S", rightType: "D" },
+  { id: 8, format: "A", left: "Reliable", right: "Confident", leftType: "S", rightType: "D" },
 ];
 
 // Step 2 — Format A: Word Pairs (8 questions)
@@ -49,6 +49,7 @@ const step2: FormatAQuestion[] = [
   { id: 14, format: "A", left: "Independent", right: "Engaging", leftType: "D", rightType: "I" },
   { id: 15, format: "A", left: "Purposeful", right: "Charming", leftType: "D", rightType: "I" },
   { id: 16, format: "A", left: "Even-Tempered", right: "Driven", leftType: "S", rightType: "D" },
+  { id: 39, format: "A", left: "Warm", right: "Logical", leftType: "S", rightType: "C" },
 ];
 
 // Step 3 — Format A: Word Pairs (8 questions)
@@ -57,10 +58,10 @@ const step3: FormatAQuestion[] = [
   { id: 18, format: "A", left: "Persuasive", right: "Meticulous", leftType: "I", rightType: "C" },
   { id: 19, format: "A", left: "Reflective", right: "Expressive", leftType: "C", rightType: "I" },
   { id: 20, format: "A", left: "Cooperative", right: "Assertive", leftType: "S", rightType: "D" },
-  { id: 21, format: "A", left: "Outgoing", right: "Thoughtful", leftType: "I", rightType: "C" },
+  { id: 21, format: "A", left: "Outgoing", right: "Measured", leftType: "I", rightType: "C" },
   { id: 22, format: "A", left: "Animated", right: "Precise", leftType: "I", rightType: "C" },
   { id: 23, format: "A", left: "Cautious", right: "Adventurous", leftType: "C", rightType: "D" },
-  { id: 24, format: "A", left: "Receptive", right: "Decisive", leftType: "S", rightType: "D" },
+  { id: 24, format: "A", left: "Receptive", right: "Proactive", leftType: "S", rightType: "D" },
 ];
 
 // Step 4 — Format B: Single-Word Ratings (8 questions)
@@ -81,8 +82,8 @@ const step5: FormatCQuestion[] = [
     id: 33,
     format: "C",
     stem: "In a group, I am…",
-    optionA: { text: "Likely to speak up", axis: "n" },
-    optionB: { text: "Likely to stay quiet and listen", axis: "s" },
+    optionA: { text: "Likely to share my ideas first", axis: "n" },
+    optionB: { text: "Likely to listen to others first", axis: "s" },
   },
   {
     id: 34,
@@ -95,8 +96,8 @@ const step5: FormatCQuestion[] = [
     id: 35,
     format: "C",
     stem: "I am most comfortable…",
-    optionA: { text: "Taking command to make a decision", axis: "n" },
-    optionB: { text: "Letting others make the final decision", axis: "s" },
+    optionA: { text: "Making the call when a decision is needed", axis: "n" },
+    optionB: { text: "Building consensus before deciding", axis: "s" },
   },
   {
     id: 36,
@@ -116,8 +117,8 @@ const step5: FormatCQuestion[] = [
     id: 38,
     format: "C",
     stem: "When someone presents a plan, I'm more likely to…",
-    optionA: { text: "Analyze and point out the flaws in the plan", axis: "e" },
-    optionB: { text: "Think about how I can be helpful in making the plan happen", axis: "w" },
+    optionA: { text: "Evaluate the plan's risks and gaps", axis: "e" },
+    optionB: { text: "Think about how to support the plan's success", axis: "w" },
   },
 ];
 

@@ -1,12 +1,5 @@
 import { DISC_STEPS, type Question, type DISCType, type AxisCode } from "./questions";
 
-const DIAGONAL_OPPOSITE: Record<DISCType, DISCType> = {
-  D: "S",
-  S: "D",
-  I: "C",
-  C: "I",
-};
-
 const AXIS_EFFECTS: Record<AxisCode, [DISCType, DISCType]> = {
   n: ["D", "I"], // Active
   s: ["S", "C"], // Receptive
@@ -32,12 +25,9 @@ function computeDimensionRanges(): Record<DISCType, { min: number; max: number }
       ranges[q.rightType].min += -2;
       ranges[q.rightType].max += 2;
     } else if (q.format === "B") {
-      // discType gets [-2, +2], diagonal opposite gets [-1, +1]
+      // discType gets [-2, +2]
       ranges[q.discType].min += -2;
       ranges[q.discType].max += 2;
-      const opp = DIAGONAL_OPPOSITE[q.discType];
-      ranges[opp].min += -1;
-      ranges[opp].max += 1;
     } else if (q.format === "C") {
       const typesA = new Set(AXIS_EFFECTS[q.optionA.axis]);
       const typesB = new Set(AXIS_EFFECTS[q.optionB.axis]);
@@ -132,7 +122,7 @@ export function computeDerivedFields(
   const vScore = d_raw + i_raw - (s_raw + c_raw);
   const hScore = i_raw + s_raw - (d_raw + c_raw);
   const magnitude = Math.sqrt(vScore ** 2 + hScore ** 2);
-  const strengthPct = Math.min(100, Math.round((magnitude / 120) * 100));
+  const strengthPct = Math.min(100, Math.round((magnitude / 100) * 100));
   const profileStrength: ProfileStrength =
     strengthPct < 15 ? "balanced" : strengthPct < 45 ? "moderate" : "strong";
   const priorities = computePriorities(angle);
@@ -156,10 +146,9 @@ export function calculateDiscScores(
       raw[q.leftType] += contribution;
       raw[q.rightType] -= contribution;
     } else if (q.format === "B") {
-      // Format B: Single-Word — primary type + diagonal opposite penalty
+      // Format B: Single-Word — primary type only
       const contribution = answer - 3;
       raw[q.discType] += contribution;
-      raw[DIAGONAL_OPPOSITE[q.discType]] -= contribution * 0.5;
     } else if (q.format === "C") {
       // Format C: Scenario — chosen axis adds +1 to two adjacent types
       const chosenAxis = answer === 1 ? q.optionA.axis : q.optionB.axis;

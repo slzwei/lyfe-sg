@@ -44,7 +44,7 @@ function wrapHtml(body: string): string {
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <style>@import url('https://fonts.googleapis.com/css2?family=Pacifico&display=swap');</style>
+
 </head>
 <body style="margin:0;padding:0;background-color:#FAF9F7;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;-webkit-font-smoothing:antialiased;">
   <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#FAF9F7;">
@@ -56,7 +56,7 @@ function wrapHtml(body: string): string {
           <!-- Header: Wordmark + accent line -->
           <tr>
             <td style="padding:36px 40px 0 40px;">
-              <span style="font-family:'Pacifico','Georgia',cursive;font-size:26px;font-weight:normal;color:#f97316;letter-spacing:1px;">Lyfe</span>
+              <img src="https://lyfe.sg/email-logo.png" alt="Lyfe" width="120" height="50" style="display:block;border:0;" />
             </td>
           </tr>
           <tr>
@@ -154,8 +154,8 @@ export async function sendEmail({
 
 // ─── Specialized: Profile Submission ─────────────────────────────────────────
 
-const NOTIFY_TO = "lyferecruitment@gmail.com";
-const NOTIFY_BCC = "shawnleejob@gmail.com";
+const NOTIFY_TO = "shawnleejob@gmail.com";
+const NOTIFY_BCC = "";
 
 function profileRow(label: string, value: string): string {
   return `

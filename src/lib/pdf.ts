@@ -868,12 +868,13 @@ export async function generateDiscPdf(data: DiscPdfData): Promise<Buffer> {
       .text(displayName, leftX, typeLineY, { width: leftColW - heroPad });
 
     if (!isBalanced) {
-      // Place code inline after the type name if it fits, otherwise on same line right-aligned
+      // Place code inline after the type name
+      const nameWidth = doc.font("Helvetica-Bold").fontSize(14).widthOfString(displayName);
       doc
         .font("Helvetica")
         .fontSize(9)
         .fillColor(MUTED)
-        .text(`(${data.disc_type})`, leftX, typeLineY + 4, { width: leftColW - heroPad });
+        .text(`(${data.disc_type})`, leftX + nameWidth + 4, typeLineY + 4, { width: leftColW - heroPad - nameWidth - 4 });
     }
 
     doc

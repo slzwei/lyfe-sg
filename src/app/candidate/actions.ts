@@ -163,6 +163,7 @@ export async function verifyOtp(phone: string, token: string, inviteToken?: stri
       contact_number: phone,
       invitation_id: invitation.id,
       completed: false,
+      onboarding_step: 1,
     },
     { onConflict: "user_id" }
   );

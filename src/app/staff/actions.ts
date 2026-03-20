@@ -85,6 +85,7 @@ export async function sendInvite(data: {
 
 export interface InvitationProgress {
   profile_completed: boolean;
+  onboarding_step: number;
   quiz_answered: number;
   quiz_completed: boolean;
   disc_type?: string;
@@ -141,19 +142,19 @@ export async function listInvitations(): Promise<{
     .filter((inv) => inv.user_id)
     .map((inv) => inv.user_id as string);
 
-  const profileMap = new Map<string, boolean>();
+  const profileMap = new Map<string, { completed: boolean; onboarding_step: number }>();
   const quizProgressMap = new Map<string, number>();
   const resultsMap = new Map<string, string>();
 
   if (userIds.length > 0) {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const { data: profiles } = await (admin.from("candidate_profiles") as any)
-      .select("user_id, completed")
+      .select("user_id, completed, onboarding_step")
       .in("user_id", userIds);
 
     if (profiles) {
-      for (const p of profiles as Array<{ user_id: string; completed: boolean }>) {
-        profileMap.set(p.user_id, p.completed);
+      for (const p of profiles as Array<{ user_id: string; completed: boolean; onboarding_step: number }>) {
+        profileMap.set(p.user_id, { completed: p.completed, onboarding_step: p.onboarding_step });
       }
     }
 
@@ -181,17 +182,21 @@ export async function listInvitations(): Promise<{
     }
   }
 
-  const enriched: Invitation[] = invitations.map((inv) => ({
-    ...inv,
-    progress: inv.user_id
-      ? {
-          profile_completed: profileMap.get(inv.user_id) || false,
-          quiz_answered: quizProgressMap.get(inv.user_id) || 0,
-          quiz_completed: resultsMap.has(inv.user_id),
-          disc_type: resultsMap.get(inv.user_id),
-        }
-      : null,
-  }));
+  const enriched: Invitation[] = invitations.map((inv) => {
+    const pInfo = inv.user_id ? profileMap.get(inv.user_id) : undefined;
+    return {
+      ...inv,
+      progress: inv.user_id
+        ? {
+            profile_completed: pInfo?.completed || false,
+            onboarding_step: pInfo?.onboarding_step || 1,
+            quiz_answered: quizProgressMap.get(inv.user_id) || 0,
+            quiz_completed: resultsMap.has(inv.user_id),
+            disc_type: resultsMap.get(inv.user_id),
+          }
+        : null,
+    };
+  });
 
   return { success: true, data: enriched };
 }
@@ -240,7 +245,7 @@ export async function resetApplication(invitationId: string) {
   // Reset profile to incomplete so candidate can re-edit and re-submit
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   await (admin.from("candidate_profiles") as any)
-    .update({ completed: false, updated_at: new Date().toISOString() })
+    .update({ completed: false, onboarding_step: 1, updated_at: new Date().toISOString() })
     .eq("user_id", userId);
 
   return { success: true };

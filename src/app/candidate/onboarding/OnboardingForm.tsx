@@ -178,7 +178,7 @@ export default function OnboardingForm({ initialData, userPhone }: OnboardingFor
     if (!validateStep(currentStep)) return;
 
     // Auto-save draft on step navigation
-    saveDraft(formData).catch(() => {});
+    saveDraft(formData, currentStep + 1).catch(() => {});
 
     if (currentStep < 6) {
       setCurrentStep(currentStep + 1);

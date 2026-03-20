@@ -126,26 +126,32 @@ export default function InviteClient() {
     // Accepted: show progress bar + label
     const progress = inv.progress;
     let step = 1;
-    let label = "Filling application";
+    let label = "Starting application";
     const quizInProgress =
       progress && progress.quiz_answered > 0 && !progress.quiz_completed;
+    const stepLabels = ["Personal", "NS & Emergency", "Education", "Skills", "Employment", "Declaration"];
 
     if (progress) {
       if (progress.quiz_completed) {
-        step = 3;
+        step = 4;
         label = `Completed · ${progress.disc_type}`;
+      } else if (progress.profile_completed && quizInProgress) {
+        step = 3;
+        label = `Taking quiz (${progress.quiz_answered}/38)`;
       } else if (progress.profile_completed) {
+        step = 3;
+        label = "Application submitted";
+      } else {
         step = 2;
-        label = quizInProgress
-          ? `Taking quiz (${progress.quiz_answered}/38)`
-          : "Application submitted";
+        const s = progress.onboarding_step || 1;
+        label = `Step ${s}/6 · ${stepLabels[s - 1]}`;
       }
     }
 
     return (
       <div className="flex flex-col gap-1">
         <div className="flex gap-0.5">
-          {[1, 2, 3].map((s) => (
+          {[1, 2, 3, 4].map((s) => (
             <div
               key={s}
               className={`h-1.5 w-5 rounded-full ${

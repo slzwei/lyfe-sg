@@ -136,7 +136,7 @@ export async function saveProfile(formData: Record<string, unknown>) {
   redirect("/candidate/disc-quiz");
 }
 
-export async function saveDraft(formData: Record<string, unknown>) {
+export async function saveDraft(formData: Record<string, unknown>, currentStep?: number) {
   const supabase = await createClient();
   const {
     data: { user },
@@ -182,6 +182,7 @@ export async function saveDraft(formData: Record<string, unknown>) {
     languages: formData.languages || [],
     employment_history: formData.employment_history || [],
     completed: false,
+    onboarding_step: currentStep || 1,
     updated_at: new Date().toISOString(),
   };
 

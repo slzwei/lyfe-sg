@@ -134,7 +134,7 @@ export default function InviteClient() {
     if (progress) {
       if (progress.quiz_completed) {
         step = 4;
-        label = `Completed · DISC: ${progress.disc_type?.toUpperCase()}`;
+        label = `Completed\nDISC: ${progress.disc_type?.toUpperCase()}`;
       } else if (progress.profile_completed && quizInProgress) {
         step = 3;
         label = `Taking quiz (${progress.quiz_answered}/38)`;
@@ -164,7 +164,7 @@ export default function InviteClient() {
             />
           ))}
         </div>
-        <span className="text-xs text-stone-600">{label}</span>
+        <span className="whitespace-pre-line text-xs text-stone-600">{label}</span>
       </div>
     );
   }

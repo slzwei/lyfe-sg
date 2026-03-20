@@ -50,24 +50,22 @@ export default function InviteClient() {
     }, 500);
   }, [fetchInvitations]);
 
-  // Supabase Realtime: subscribe to candidate progress changes
+  // Supabase Realtime: subscribe to progress_signals table
+  // (triggers on the real tables update this single-row signal table,
+  //  which has open RLS so the anon-key client can receive events)
   useEffect(() => {
     const supabase = createClient();
-    const tables = ["candidate_profiles", "disc_responses", "disc_results", "invitations"] as const;
 
-    const channel = supabase.channel("staff-live-progress");
-
-    for (const table of tables) {
-      channel.on(
+    const channel = supabase
+      .channel("staff-live-progress")
+      .on(
         "postgres_changes",
-        { event: "*", schema: "public", table },
+        { event: "UPDATE", schema: "public", table: "progress_signals" },
         () => debouncedRefresh()
-      );
-    }
-
-    channel.subscribe((status) => {
-      setRealtimeConnected(status === "SUBSCRIBED");
-    });
+      )
+      .subscribe((status) => {
+        setRealtimeConnected(status === "SUBSCRIBED");
+      });
 
     return () => {
       if (debounceRef.current) clearTimeout(debounceRef.current);

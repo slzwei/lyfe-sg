@@ -85,13 +85,6 @@ export default function ComingSoon() {
           <div className="h-px w-12 bg-gradient-to-l from-transparent to-orange-500/40" />
         </div>
 
-        {/* Description */}
-        <p className="text-white/40 text-sm sm:text-base leading-relaxed max-w-md mx-auto mb-10">
-          We&apos;re building a better way to plan your financial future.
-          <br />
-          Stay tuned — we launch soon.
-        </p>
-
         {/* Email form */}
         {!submitted ? (
           <form

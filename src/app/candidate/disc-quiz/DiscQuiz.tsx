@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import StepIndicator from "@/components/ui/StepIndicator";
 import {
   DISC_STEPS,
@@ -12,6 +12,39 @@ import {
 import { submitDiscQuiz, saveQuizProgress } from "./actions";
 
 const STEP_LABELS = ["Pairs 1", "Pairs 2", "Pairs 3", "Ratings", "Scenarios"];
+
+const CALC_STAGES = [
+  { pct: 15, label: "Saving your responses…" },
+  { pct: 40, label: "Analysing personality patterns…" },
+  { pct: 65, label: "Calculating DISC scores…" },
+  { pct: 85, label: "Generating your profile…" },
+  { pct: 95, label: "Almost there…" },
+];
+
+function CalculatingOverlay({ progress, stage }: { progress: number; stage: string }) {
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-white/80 backdrop-blur-sm">
+      <div className="w-full max-w-sm px-6 text-center">
+        {/* Spinner */}
+        <div className="mx-auto mb-6 h-12 w-12 animate-spin rounded-full border-4 border-stone-200 border-t-orange-500" />
+
+        {/* Progress bar */}
+        <div className="mb-3 h-2.5 w-full overflow-hidden rounded-full bg-stone-200">
+          <div
+            className="h-full rounded-full bg-orange-500 transition-all duration-500 ease-out"
+            style={{ width: `${progress}%` }}
+          />
+        </div>
+
+        {/* Percentage */}
+        <p className="mb-1 text-2xl font-bold text-stone-800">{progress}%</p>
+
+        {/* Stage label */}
+        <p className="text-sm text-stone-500">{stage}</p>
+      </div>
+    </div>
+  );
+}
 
 interface DiscQuizProps {
   initialResponses?: Record<string, number> | null;
@@ -26,6 +59,22 @@ export default function DiscQuiz({ initialResponses, initialEmail }: DiscQuizPro
   const [resultsEmail, setResultsEmail] = useState(initialEmail || "");
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [calcProgress, setCalcProgress] = useState(0);
+  const [calcStage, setCalcStage] = useState(CALC_STAGES[0].label);
+
+  // Animate progress while submitting
+  useEffect(() => {
+    if (!submitting) return;
+    let stageIdx = 0;
+    const interval = setInterval(() => {
+      if (stageIdx < CALC_STAGES.length) {
+        setCalcProgress(CALC_STAGES[stageIdx].pct);
+        setCalcStage(CALC_STAGES[stageIdx].label);
+        stageIdx++;
+      }
+    }, 800);
+    return () => clearInterval(interval);
+  }, [submitting]);
 
   const questions = DISC_STEPS[currentStep - 1];
 
@@ -37,7 +86,7 @@ export default function DiscQuiz({ initialResponses, initialEmail }: DiscQuizPro
     return questions.every((q) => responses[String(q.id)] !== undefined);
   }
 
-  async function handleNext() {
+  const handleNext = useCallback(async () => {
     if (!allAnswered()) {
       setError("Please answer all questions before continuing.");
       return;
@@ -53,14 +102,21 @@ export default function DiscQuiz({ initialResponses, initialEmail }: DiscQuizPro
     } else {
       // Final submit
       setSubmitting(true);
+      setCalcProgress(0);
+      setCalcStage(CALC_STAGES[0].label);
       const result = await submitDiscQuiz(responses, resultsEmail);
       if (result?.error) {
         setError(result.error);
         setSubmitting(false);
+        setCalcProgress(0);
+      } else {
+        setCalcProgress(100);
+        setCalcStage("Done!");
       }
       // On success, server action redirects
     }
-  }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentStep, responses, resultsEmail]);
 
   function handleBack() {
     if (currentStep > 1) {
@@ -72,6 +128,9 @@ export default function DiscQuiz({ initialResponses, initialEmail }: DiscQuizPro
 
   return (
     <div>
+      {submitting && (
+        <CalculatingOverlay progress={calcProgress} stage={calcStage} />
+      )}
       <StepIndicator
         currentStep={currentStep}
         totalSteps={5}

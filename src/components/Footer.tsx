@@ -16,7 +16,7 @@ export default function Footer() {
             </span>
           </div>
           <p className="text-sm text-stone-500 text-center">
-            Representatives of Income Insurance Co-operative Ltd.
+            Financial Representatives
           </p>
           <p className="text-sm text-stone-600">
             &copy; {new Date().getFullYear()} Lyfe

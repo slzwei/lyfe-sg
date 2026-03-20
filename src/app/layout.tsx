@@ -14,22 +14,20 @@ const pacifico = Pacifico({
 });
 
 export const metadata: Metadata = {
-  title: "Lyfe — Financial Representatives | Income Insurance Singapore",
+  title: "Lyfe — Your Financial Future, Made Simple",
   description:
-    "Lyfe is a team of Income Insurance financial representatives in Singapore. We help with life insurance, health insurance, savings, investments, and retirement planning.",
+    "Lyfe is a team of financial representatives in Singapore. We help with life insurance, health insurance, savings, investments, and retirement planning.",
   keywords: [
     "insurance singapore",
     "financial adviser singapore",
-    "income insurance",
     "life insurance",
     "health insurance",
     "financial planning singapore",
-    "NTUC Income",
   ],
   openGraph: {
-    title: "Lyfe — Financial Representatives | Income Insurance Singapore",
+    title: "Lyfe — Your Financial Future, Made Simple",
     description:
-      "Your financial future, made simple. We're a team of dedicated financial representatives under Income Insurance.",
+      "Your financial future, made simple. We're a team of dedicated financial representatives helping you plan ahead.",
     url: "https://lyfe.sg",
     siteName: "Lyfe",
     locale: "en_SG",

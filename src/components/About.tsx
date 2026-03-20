@@ -3,9 +3,9 @@ import AnimateIn from "./AnimateIn";
 const highlights = [
   {
     title: "Trusted",
-    subtitle: "Backed by Income Insurance",
+    subtitle: "Established & trusted",
     description:
-      "Formerly NTUC Income \u2014 one of Singapore\u2019s most established insurers with decades of service.",
+      "Backed by one of Singapore\u2019s most established insurers with decades of service.",
     accent: "bg-orange-500",
   },
   {
@@ -45,8 +45,7 @@ export default function About() {
             </AnimateIn>
             <AnimateIn delay={0.2}>
               <p className="mt-5 text-base sm:text-lg text-stone-500 leading-relaxed max-w-lg">
-                Lyfe is a group of financial representatives under Income
-                Insurance (formerly NTUC Income). We believe everyone deserves
+                Lyfe is a group of financial representatives. We believe everyone deserves
                 access to clear, honest financial advice &mdash; no jargon, no
                 pressure, just genuine care for your well-being.
               </p>

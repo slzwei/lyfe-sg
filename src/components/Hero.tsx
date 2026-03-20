@@ -41,7 +41,7 @@ export default function Hero() {
             style={show(0.1)}
           >
             <span className="h-1.5 w-1.5 rounded-full bg-orange-500" />
-            Income Insurance Representatives
+            Financial Representatives
           </p>
 
           <h1
@@ -61,8 +61,8 @@ export default function Hero() {
             className="mt-7 text-lg sm:text-xl text-stone-500 max-w-xl leading-relaxed font-medium"
             style={show(0.35)}
           >
-            We&apos;re a team of dedicated financial representatives under
-            Income Insurance, helping Singaporeans protect what matters and
+            We&apos;re a team of dedicated financial representatives
+            helping Singaporeans protect what matters and
             plan for the future.
           </p>
 

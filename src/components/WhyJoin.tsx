@@ -24,7 +24,7 @@ const reasons = [
       "Help families achieve financial security. The work you do genuinely changes lives.",
   },
   {
-    title: "Backed by Income Insurance",
+    title: "Backed by a trusted brand",
     description:
       "Represent one of Singapore\u2019s most trusted insurance brands with a strong product suite.",
   },

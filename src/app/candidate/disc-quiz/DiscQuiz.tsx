@@ -108,7 +108,10 @@ export default function DiscQuiz({ initialResponses, initialEmail }: DiscQuizPro
     }
     setError("");
 
-    // Auto-save progress
+    // Cancel any pending debounced save to avoid racing with this one
+    if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
+
+    // Save progress
     saveQuizProgress(responses).catch(() => {});
 
     if (currentStep < 5) {

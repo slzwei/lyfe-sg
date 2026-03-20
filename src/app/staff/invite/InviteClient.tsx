@@ -19,6 +19,7 @@ export default function InviteClient() {
   const [invitations, setInvitations] = useState<Invitation[]>([]);
   const [loadingList, setLoadingList] = useState(true);
   const [actionLoading, setActionLoading] = useState<string | null>(null);
+  const [copiedId, setCopiedId] = useState<string | null>(null);
 
   const fetchInvitations = useCallback(async () => {
     const result = await listInvitations();
@@ -77,6 +78,13 @@ export default function InviteClient() {
     const result = await resetQuiz(id);
     if (result.success) fetchInvitations();
     setActionLoading(null);
+  }
+
+  function handleCopyLink(inv: Invitation) {
+    const link = `${window.location.origin}/candidate/login?token=${inv.token}`;
+    navigator.clipboard.writeText(link);
+    setCopiedId(inv.id);
+    setTimeout(() => setCopiedId(null), 2000);
   }
 
   function progressDisplay(inv: Invitation) {
@@ -271,6 +279,14 @@ export default function InviteClient() {
                       </td>
                       <td className="py-2.5">
                         <div className="flex items-center gap-2">
+                          {inv.status === "pending" && !isExpired && (
+                            <button
+                              onClick={() => handleCopyLink(inv)}
+                              className="text-xs text-stone-500 hover:text-stone-700"
+                            >
+                              {copiedId === inv.id ? "Copied!" : "Copy Link"}
+                            </button>
+                          )}
                           {inv.status === "pending" && !isExpired && (
                             <button
                               onClick={() => handleRevoke(inv.id)}

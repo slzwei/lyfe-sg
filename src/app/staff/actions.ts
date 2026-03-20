@@ -92,6 +92,7 @@ export interface InvitationProgress {
 
 export interface Invitation {
   id: string;
+  token: string;
   email: string;
   candidate_name: string | null;
   position_applied: string | null;
@@ -114,7 +115,7 @@ export async function listInvitations(): Promise<{
   const admin = getAdminClient();
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { data, error } = await (admin.from("invitations") as any)
-    .select("id, email, candidate_name, position_applied, status, user_id, created_at, expires_at, accepted_at")
+    .select("id, token, email, candidate_name, position_applied, status, user_id, created_at, expires_at, accepted_at")
     .order("created_at", { ascending: false })
     .limit(100);
 
@@ -124,6 +125,7 @@ export async function listInvitations(): Promise<{
 
   const invitations = data as Array<{
     id: string;
+    token: string;
     email: string;
     candidate_name: string | null;
     position_applied: string | null;

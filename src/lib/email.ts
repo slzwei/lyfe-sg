@@ -55,8 +55,8 @@ function wrapHtml(body: string): string {
 
           <!-- Header: Wordmark + accent line -->
           <tr>
-            <td style="padding:36px 40px 0 34px;">
-              <img src="https://lyfe.sg/email-logo.png" alt="Lyfe" width="120" height="50" style="display:block;border:0;" />
+            <td style="padding:36px 40px 0 24px;">
+              <img src="https://lyfe.sg/email-logo.png" alt="Lyfe" width="120" style="display:block;border:0;" />
             </td>
           </tr>
           <tr>

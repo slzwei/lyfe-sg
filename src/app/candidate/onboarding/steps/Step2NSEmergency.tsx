@@ -25,20 +25,24 @@ export default function Step2NSEmergency({
   const v = (key: string) => (data[key] as string) || "";
   const ec = (key: string) =>
     errors[key] ? " !border-red-400 !bg-red-50" : "";
-  const isSGMale =
-    v("nationality").toLowerCase() === "singaporean" &&
-    v("gender").toLowerCase() === "male";
+  const nationality = v("nationality").toLowerCase();
+  const isMale = v("gender").toLowerCase() === "male";
+  const isSGMale = nationality === "singaporean" && isMale;
+  const isPRMale = nationality === "pr" && isMale;
+  const showNS = isSGMale || isPRMale;
 
   return (
     <div className="space-y-8">
       {/* National Service — conditional */}
-      {isSGMale && (
+      {showNS && (
         <div className="space-y-4">
           <h2 className="text-lg font-semibold text-stone-800">
             National Service
           </h2>
           <p className="text-sm text-stone-500">
-            Required for Singaporean males.
+            {isSGMale
+              ? "Required for Singaporean males."
+              : "Optional for Singapore PR males."}
           </p>
 
           <div className="grid gap-4 sm:grid-cols-2">
@@ -68,7 +72,7 @@ export default function Step2NSEmergency({
 
           <div className="grid gap-4 sm:grid-cols-2">
             <div>
-              <label className={LABEL_CLASS}>Service Status *</label>
+              <label className={LABEL_CLASS}>Service Status{isSGMale ? " *" : ""}</label>
               <select
                 className={SELECT_CLASS + ec("ns_service_status")}
                 value={v("ns_service_status")}
@@ -85,7 +89,7 @@ export default function Step2NSEmergency({
               <FieldError error={errors.ns_service_status} />
             </div>
             <div>
-              <label className={LABEL_CLASS}>NS Status *</label>
+              <label className={LABEL_CLASS}>NS Status{isSGMale ? " *" : ""}</label>
               <select
                 className={SELECT_CLASS + ec("ns_status")}
                 value={v("ns_status")}

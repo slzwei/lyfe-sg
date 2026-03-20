@@ -134,8 +134,7 @@ export default function DiscQuiz({ initialResponses, initialEmail }: DiscQuizPro
       {currentStep === 1 && (
         <p className="mb-4 rounded-xl border border-stone-200 bg-stone-50 px-4 py-3 text-xs leading-relaxed text-stone-500">
           This work style quiz is designed to help you reflect on your natural
-          work preferences. It is not a psychometric instrument, and results
-          should not be used for hiring or placement decisions.
+          work preferences. It is not a psychometric instrument.
         </p>
       )}
       <StepIndicator

@@ -68,7 +68,10 @@ export default function InviteClient() {
       (payload) => {
         if (payload.userId && payload.state) {
           setLiveStates((prev) => ({ ...prev, [payload.userId]: payload.state }));
-          refreshUser(payload.userId);
+          // Only fetch from DB for states that change data
+          if (payload.state === "quiz" || payload.state === "form") {
+            refreshUser(payload.userId);
+          }
         }
       },
       (connected) => setLive(connected)

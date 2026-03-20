@@ -77,8 +77,8 @@ export default function Step2NSEmergency({
                 }
               >
                 <option value="">Select</option>
-                <option value="Part-time">Part-time (NSman)</option>
-                <option value="Full Time">Full Time (NSF)</option>
+                <option value="NSF">NSF (Full-time)</option>
+                <option value="NSman">NSman (Reservist)</option>
                 <option value="Deferred">Deferred</option>
                 <option value="Exempted">Exempted</option>
               </select>
@@ -93,7 +93,7 @@ export default function Step2NSEmergency({
               >
                 <option value="">Select</option>
                 <option value="Active">Active</option>
-                <option value="Inactive">Inactive</option>
+                <option value="ORD">ORD</option>
               </select>
               <FieldError error={errors.ns_status} />
             </div>

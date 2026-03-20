@@ -46,6 +46,8 @@ export default function Step6Declaration({
   onChange,
   errors,
 }: Step6Props) {
+  const ec = (key: string) =>
+    errors[key] ? " !border-red-400 !bg-red-50" : "";
   return (
     <div className="space-y-8">
       {/* Additional Information */}
@@ -90,7 +92,7 @@ export default function Step6Declaration({
                 {answer === true && (
                   <div>
                     <textarea
-                      className="mt-3 w-full rounded-xl border border-stone-200 bg-stone-50 px-3 py-2.5 text-sm outline-none transition-colors focus:border-orange-400 focus:ring-2 focus:ring-orange-100"
+                      className={"mt-3 w-full rounded-xl border border-stone-200 bg-stone-50 px-3 py-2.5 text-sm outline-none transition-colors focus:border-orange-400 focus:ring-2 focus:ring-orange-100" + ec(q.detailKey)}
                       rows={2}
                       placeholder="Please provide details…"
                       value={(data[q.detailKey] as string) || ""}

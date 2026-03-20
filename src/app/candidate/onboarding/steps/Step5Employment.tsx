@@ -36,6 +36,8 @@ export default function Step5Employment({
   errors,
 }: Step5Props) {
   const rows = (data.employment_history as EmploymentRow[]) || [];
+  const ec = (key: string) =>
+    errors[key] ? " !border-red-400 !bg-red-50" : "";
 
   function updateRow(index: number, field: string, value: unknown) {
     const updated = rows.map((row, i) => {
@@ -105,7 +107,7 @@ export default function Step5Employment({
                 <label className={LABEL_CLASS}>From (mm/yyyy)</label>
                 <input
                   type="month"
-                  className={INPUT_CLASS}
+                  className={INPUT_CLASS + ec(`employment_history.${i}.from`)}
                   value={row.from}
                   onChange={(e) => updateRow(i, "from", e.target.value)}
                 />
@@ -125,7 +127,7 @@ export default function Step5Employment({
                   <>
                     <input
                       type="month"
-                      className={INPUT_CLASS}
+                      className={INPUT_CLASS + ec(`employment_history.${i}.to`)}
                       value={row.to}
                       onChange={(e) => updateRow(i, "to", e.target.value)}
                     />
@@ -158,7 +160,7 @@ export default function Step5Employment({
               <div>
                 <label className={LABEL_CLASS}>Company / Country *</label>
                 <input
-                  className={INPUT_CLASS}
+                  className={INPUT_CLASS + ec(`employment_history.${i}.company`)}
                   value={row.company}
                   onChange={(e) => updateRow(i, "company", e.target.value)}
                   placeholder="e.g. DBS Bank Singapore"
@@ -172,7 +174,7 @@ export default function Step5Employment({
               <div>
                 <label className={LABEL_CLASS}>Position Held *</label>
                 <input
-                  className={INPUT_CLASS}
+                  className={INPUT_CLASS + ec(`employment_history.${i}.position`)}
                   value={row.position}
                   onChange={(e) => updateRow(i, "position", e.target.value)}
                 />

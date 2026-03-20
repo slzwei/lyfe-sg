@@ -55,6 +55,8 @@ export default function Step3Education({
   onChange,
   errors,
 }: Step3Props) {
+  const ec = (key: string) =>
+    errors[key] ? " !border-red-400 !bg-red-50" : "";
   const education = (data.education as EducationData) || {
     currently_studying: false,
     current_qualification: "",
@@ -147,7 +149,7 @@ export default function Step3Education({
                 What are you studying? *
               </label>
               <input
-                className={INPUT_CLASS}
+                className={INPUT_CLASS + ec("education.current_qualification")}
                 value={education.current_qualification}
                 onChange={(e) =>
                   update("current_qualification", e.target.value)
@@ -163,7 +165,7 @@ export default function Step3Education({
             <div>
               <label className={LABEL_CLASS}>Institution *</label>
               <input
-                className={INPUT_CLASS}
+                className={INPUT_CLASS + ec("education.current_institution")}
                 value={education.current_institution}
                 onChange={(e) =>
                   update("current_institution", e.target.value)
@@ -179,7 +181,7 @@ export default function Step3Education({
             <div>
               <label className={LABEL_CLASS}>Year Commenced</label>
               <select
-                className={SELECT_CLASS}
+                className={SELECT_CLASS + ec("education.current_year_commenced")}
                 value={education.current_year_commenced}
                 onChange={(e) =>
                   update("current_year_commenced", e.target.value)
@@ -196,7 +198,7 @@ export default function Step3Education({
             <div>
               <label className={LABEL_CLASS}>Expected End Date *</label>
               <select
-                className={SELECT_CLASS}
+                className={SELECT_CLASS + ec("education.current_expected_end_date")}
                 value={education.current_expected_end_date}
                 onChange={(e) =>
                   update("current_expected_end_date", e.target.value)
@@ -234,7 +236,7 @@ export default function Step3Education({
           <div>
             <label className={LABEL_CLASS}>Qualification Level *</label>
             <select
-              className={SELECT_CLASS}
+              className={SELECT_CLASS + ec("education.highest_qualification")}
               value={education.highest_qualification}
               onChange={(e) =>
                 update("highest_qualification", e.target.value)
@@ -256,7 +258,7 @@ export default function Step3Education({
           <div>
             <label className={LABEL_CLASS}>Institution *</label>
             <input
-              className={INPUT_CLASS}
+              className={INPUT_CLASS + ec("education.highest_institution")}
               value={education.highest_institution}
               onChange={(e) =>
                 update("highest_institution", e.target.value)
@@ -272,7 +274,7 @@ export default function Step3Education({
           <div>
             <label className={LABEL_CLASS}>Year Completed *</label>
             <select
-              className={SELECT_CLASS}
+              className={SELECT_CLASS + ec("education.highest_year_completed")}
               value={education.highest_year_completed}
               onChange={(e) =>
                 update("highest_year_completed", e.target.value)

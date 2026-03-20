@@ -23,6 +23,8 @@ export default function Step2NSEmergency({
   errors,
 }: Step2Props) {
   const v = (key: string) => (data[key] as string) || "";
+  const ec = (key: string) =>
+    errors[key] ? " !border-red-400 !bg-red-50" : "";
   const isSGMale =
     v("nationality").toLowerCase() === "singaporean" &&
     v("gender").toLowerCase() === "male";
@@ -44,7 +46,7 @@ export default function Step2NSEmergency({
               <label className={LABEL_CLASS}>Enlistment Date</label>
               <input
                 type="date"
-                className={INPUT_CLASS}
+                className={INPUT_CLASS + ec("ns_enlistment_date")}
                 value={v("ns_enlistment_date")}
                 onChange={(e) =>
                   onChange("ns_enlistment_date", e.target.value)
@@ -56,7 +58,7 @@ export default function Step2NSEmergency({
               <label className={LABEL_CLASS}>ORD Date</label>
               <input
                 type="date"
-                className={INPUT_CLASS}
+                className={INPUT_CLASS + ec("ns_ord_date")}
                 value={v("ns_ord_date")}
                 onChange={(e) => onChange("ns_ord_date", e.target.value)}
               />
@@ -68,7 +70,7 @@ export default function Step2NSEmergency({
             <div>
               <label className={LABEL_CLASS}>Service Status *</label>
               <select
-                className={SELECT_CLASS}
+                className={SELECT_CLASS + ec("ns_service_status")}
                 value={v("ns_service_status")}
                 onChange={(e) =>
                   onChange("ns_service_status", e.target.value)
@@ -85,7 +87,7 @@ export default function Step2NSEmergency({
             <div>
               <label className={LABEL_CLASS}>NS Status *</label>
               <select
-                className={SELECT_CLASS}
+                className={SELECT_CLASS + ec("ns_status")}
                 value={v("ns_status")}
                 onChange={(e) => onChange("ns_status", e.target.value)}
               >
@@ -122,7 +124,7 @@ export default function Step2NSEmergency({
           <div>
             <label className={LABEL_CLASS}>Name *</label>
             <input
-              className={INPUT_CLASS}
+              className={INPUT_CLASS + ec("emergency_name")}
               value={v("emergency_name")}
               onChange={(e) => onChange("emergency_name", e.target.value)}
             />
@@ -131,7 +133,7 @@ export default function Step2NSEmergency({
           <div>
             <label className={LABEL_CLASS}>Relationship *</label>
             <select
-              className={SELECT_CLASS}
+              className={SELECT_CLASS + ec("emergency_relationship")}
               value={v("emergency_relationship")}
               onChange={(e) =>
                 onChange("emergency_relationship", e.target.value)
@@ -151,7 +153,7 @@ export default function Step2NSEmergency({
             <label className={LABEL_CLASS}>Contact Number *</label>
             <input
               type="tel"
-              className={INPUT_CLASS}
+              className={INPUT_CLASS + ec("emergency_contact")}
               value={v("emergency_contact")}
               onChange={(e) => onChange("emergency_contact", e.target.value)}
             />

@@ -42,6 +42,8 @@ function SectionHeader({
 
 export default function Step1Personal({ data, onChange, errors }: Step1Props) {
   const v = (key: string) => (data[key] as string) || "";
+  const ec = (key: string) =>
+    errors[key] ? " !border-red-400 !bg-red-50" : "";
   const [postalLoading, setPostalLoading] = useState(false);
   const [postalError, setPostalError] = useState("");
 
@@ -93,7 +95,7 @@ export default function Step1Personal({ data, onChange, errors }: Step1Props) {
           <div>
             <label className={LABEL_CLASS}>Position Applied For *</label>
             <input
-              className={INPUT_CLASS}
+              className={INPUT_CLASS + ec("position_applied")}
               value={v("position_applied")}
               onChange={(e) => onChange("position_applied", e.target.value)}
             />
@@ -103,7 +105,7 @@ export default function Step1Personal({ data, onChange, errors }: Step1Props) {
             <label className={LABEL_CLASS}>Expected Salary *</label>
             <div className="flex gap-2">
               <input
-                className={INPUT_CLASS + " flex-1"}
+                className={INPUT_CLASS + " flex-1" + ec("expected_salary")}
                 value={v("expected_salary")}
                 onChange={(e) => onChange("expected_salary", e.target.value)}
                 placeholder="2500"
@@ -124,7 +126,7 @@ export default function Step1Personal({ data, onChange, errors }: Step1Props) {
             <label className={LABEL_CLASS}>Date of Availability *</label>
             <input
               type="date"
-              className={INPUT_CLASS}
+              className={INPUT_CLASS + ec("date_available")}
               value={v("date_available")}
               onChange={(e) => onChange("date_available", e.target.value)}
             />
@@ -142,7 +144,7 @@ export default function Step1Personal({ data, onChange, errors }: Step1Props) {
           <div>
             <label className={LABEL_CLASS}>Full Name (as in NRIC) *</label>
             <input
-              className={INPUT_CLASS}
+              className={INPUT_CLASS + ec("full_name")}
               value={v("full_name")}
               onChange={(e) => onChange("full_name", e.target.value)}
             />
@@ -153,7 +155,7 @@ export default function Step1Personal({ data, onChange, errors }: Step1Props) {
               <label className={LABEL_CLASS}>Date of Birth *</label>
               <input
                 type="date"
-                className={INPUT_CLASS}
+                className={INPUT_CLASS + ec("date_of_birth")}
                 value={v("date_of_birth")}
                 onChange={(e) => onChange("date_of_birth", e.target.value)}
               />
@@ -162,7 +164,7 @@ export default function Step1Personal({ data, onChange, errors }: Step1Props) {
             <div>
               <label className={LABEL_CLASS}>Place of Birth *</label>
               <input
-                className={INPUT_CLASS}
+                className={INPUT_CLASS + ec("place_of_birth")}
                 value={v("place_of_birth")}
                 onChange={(e) => onChange("place_of_birth", e.target.value)}
               />
@@ -173,7 +175,7 @@ export default function Step1Personal({ data, onChange, errors }: Step1Props) {
             <div>
               <label className={LABEL_CLASS}>Gender *</label>
               <select
-                className={SELECT_CLASS}
+                className={SELECT_CLASS + ec("gender")}
                 value={v("gender")}
                 onChange={(e) => onChange("gender", e.target.value)}
               >
@@ -186,7 +188,7 @@ export default function Step1Personal({ data, onChange, errors }: Step1Props) {
             <div>
               <label className={LABEL_CLASS}>Marital Status *</label>
               <select
-                className={SELECT_CLASS}
+                className={SELECT_CLASS + ec("marital_status")}
                 value={v("marital_status")}
                 onChange={(e) => onChange("marital_status", e.target.value)}
               >
@@ -201,7 +203,7 @@ export default function Step1Personal({ data, onChange, errors }: Step1Props) {
             <div>
               <label className={LABEL_CLASS}>Nationality *</label>
               <select
-                className={SELECT_CLASS}
+                className={SELECT_CLASS + ec("nationality")}
                 value={v("nationality")}
                 onChange={(e) => onChange("nationality", e.target.value)}
               >
@@ -216,7 +218,7 @@ export default function Step1Personal({ data, onChange, errors }: Step1Props) {
             <div>
               <label className={LABEL_CLASS}>Race *</label>
               <select
-                className={SELECT_CLASS}
+                className={SELECT_CLASS + ec("race")}
                 value={v("race")}
                 onChange={(e) => onChange("race", e.target.value)}
               >
@@ -246,7 +248,7 @@ export default function Step1Personal({ data, onChange, errors }: Step1Props) {
             <div>
               <label className={LABEL_CLASS}>Postal Code *</label>
               <input
-                className={INPUT_CLASS}
+                className={INPUT_CLASS + ec("address_postal")}
                 maxLength={6}
                 inputMode="numeric"
                 value={v("address_postal")}

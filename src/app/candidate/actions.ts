@@ -173,5 +173,5 @@ export async function verifyOtp(phone: string, token: string, inviteToken?: stri
 export async function signOut() {
   const supabase = await createClient();
   await supabase.auth.signOut();
-  redirect("/candidate/login");
+  redirect("/candidate/signed-out");
 }

@@ -164,12 +164,12 @@ export async function listInvitations(): Promise<{
   if (userIds.length > 0) {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const { data: profiles } = await (admin.from("candidate_profiles") as any)
-      .select("user_id, completed")
+      .select("user_id, completed, onboarding_step")
       .in("user_id", userIds);
 
     if (profiles) {
-      for (const p of profiles as Array<{ user_id: string; completed: boolean }>) {
-        profileMap.set(p.user_id, { completed: p.completed, onboarding_step: 1 });
+      for (const p of profiles as Array<{ user_id: string; completed: boolean; onboarding_step: number }>) {
+        profileMap.set(p.user_id, { completed: p.completed, onboarding_step: p.onboarding_step });
       }
     }
 
@@ -260,7 +260,7 @@ export async function resetApplication(invitationId: string) {
   // Reset profile to incomplete so candidate can re-edit and re-submit
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   await (admin.from("candidate_profiles") as any)
-    .update({ completed: false, updated_at: new Date().toISOString() })
+    .update({ completed: false, onboarding_step: 1, updated_at: new Date().toISOString() })
     .eq("user_id", userId);
 
   return { success: true };

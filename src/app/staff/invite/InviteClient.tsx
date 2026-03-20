@@ -286,7 +286,7 @@ export default function InviteClient() {
                               disabled={isLoading}
                               className="text-xs text-blue-600 hover:text-blue-800 disabled:opacity-50"
                             >
-                              Retrigger Quiz
+                              Reset Quiz
                             </button>
                           )}
                           {isAccepted && (
@@ -295,7 +295,7 @@ export default function InviteClient() {
                               disabled={isLoading}
                               className="text-xs text-orange-600 hover:text-orange-800 disabled:opacity-50"
                             >
-                              Retrigger App
+                              Reopen Form
                             </button>
                           )}
                         </div>

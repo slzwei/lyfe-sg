@@ -146,6 +146,87 @@ export default function InviteClient() {
     setTimeout(() => setCopiedId(null), 2000);
   }
 
+  // ─── Shared action definitions ──────────────────────────────────────────────
+
+  function getActions(inv: Invitation, showArchive: boolean) {
+    const isExpired = inv.status === "pending" && new Date(inv.expires_at) < new Date();
+    const isAccepted = inv.status === "accepted";
+
+    const actions: {
+      key: string;
+      label: string;
+      onClick: () => void;
+      icon: React.ReactNode;
+      hoverClass: string;
+      canUseWhileLoading?: boolean;
+    }[] = [];
+
+    if (inv.status === "pending" && !isExpired) {
+      actions.push({
+        key: "copy",
+        label: copiedId === inv.id ? "Copied!" : "Copy link",
+        onClick: () => handleCopyLink(inv),
+        icon: copiedId === inv.id
+          ? <svg className="h-4 w-4 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
+          : <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101M10.172 13.828a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" /></svg>,
+        hoverClass: "hover:bg-stone-100 hover:text-stone-600",
+        canUseWhileLoading: true,
+      });
+    }
+
+    if ((inv.status === "pending" && !isExpired) || isAccepted) {
+      actions.push({
+        key: "revoke",
+        label: "Revoke",
+        onClick: () => handleRevoke(inv.id),
+        icon: <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" /></svg>,
+        hoverClass: "hover:bg-red-50 hover:text-red-500",
+      });
+    }
+
+    if (isAccepted && inv.progress?.quiz_completed) {
+      actions.push({
+        key: "reset-quiz",
+        label: "Reset quiz",
+        onClick: () => handleResetQuiz(inv.id),
+        icon: <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>,
+        hoverClass: "hover:bg-blue-50 hover:text-blue-500",
+      });
+    }
+
+    if (isAccepted && inv.progress?.profile_completed) {
+      actions.push({
+        key: "reset-app",
+        label: "Reopen form",
+        onClick: () => handleResetApp(inv.id),
+        icon: <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>,
+        hoverClass: "hover:bg-orange-50 hover:text-orange-500",
+      });
+    }
+
+    if (showArchive && !inv.archived_at && (inv.status === "revoked" || isExpired || (isAccepted && !!inv.progress?.quiz_completed))) {
+      actions.push({
+        key: "archive",
+        label: "Archive",
+        onClick: () => handleArchive(inv.id),
+        icon: <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M20 7l-8 4-8-4m16 0v10a2 2 0 01-2 2H6a2 2 0 01-2-2V7m16 0l-8-4-8 4" /></svg>,
+        hoverClass: "hover:bg-stone-100 hover:text-stone-600",
+      });
+    }
+
+    actions.push({
+      key: "delete",
+      label: "Delete",
+      onClick: () => handleDelete(inv.id),
+      icon: <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>,
+      hoverClass: "hover:bg-red-50 hover:text-red-600",
+    });
+
+    return actions;
+  }
+
+  // ─── Progress display ───────────────────────────────────────────────────────
+
   function progressDisplay(inv: Invitation) {
     const isExpired =
       inv.status === "pending" && new Date(inv.expires_at) < new Date();
@@ -240,11 +321,9 @@ export default function InviteClient() {
     );
   }
 
+  // ─── Row renderer (desktop table) ──────────────────────────────────────────
+
   function renderRow(inv: Invitation, showArchive: boolean) {
-    const isExpired =
-      inv.status === "pending" &&
-      new Date(inv.expires_at) < new Date();
-    const isAccepted = inv.status === "accepted";
     const isLoading = actionLoading === inv.id;
 
     return (
@@ -265,72 +344,70 @@ export default function InviteClient() {
         </td>
         <td className="py-2.5">
           <div className="flex items-center gap-1.5">
-            {inv.status === "pending" && !isExpired && (
+            {getActions(inv, showArchive).map((a) => (
               <button
-                onClick={() => handleCopyLink(inv)}
-                title={copiedId === inv.id ? "Copied!" : "Copy invite link"}
-                className="rounded p-1 text-stone-400 transition-colors hover:bg-stone-100 hover:text-stone-600"
+                key={a.key}
+                onClick={a.onClick}
+                disabled={!a.canUseWhileLoading && isLoading}
+                title={a.label}
+                aria-label={a.label}
+                className={`rounded p-1.5 text-stone-400 transition-colors disabled:opacity-50 ${a.hoverClass}`}
               >
-                {copiedId === inv.id ? (
-                  <svg className="h-4 w-4 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
-                ) : (
-                  <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101M10.172 13.828a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" /></svg>
-                )}
+                {a.icon}
               </button>
-            )}
-            {((inv.status === "pending" && !isExpired) || isAccepted) && (
-              <button
-                onClick={() => handleRevoke(inv.id)}
-                disabled={isLoading}
-                title="Revoke invitation"
-                className="rounded p-1 text-stone-400 transition-colors hover:bg-red-50 hover:text-red-500 disabled:opacity-50"
-              >
-                <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" /></svg>
-              </button>
-            )}
-            {isAccepted && inv.progress?.quiz_completed && (
-              <button
-                onClick={() => handleResetQuiz(inv.id)}
-                disabled={isLoading}
-                title="Reset quiz"
-                className="rounded p-1 text-stone-400 transition-colors hover:bg-blue-50 hover:text-blue-500 disabled:opacity-50"
-              >
-                <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
-              </button>
-            )}
-            {isAccepted && inv.progress?.profile_completed && (
-              <button
-                onClick={() => handleResetApp(inv.id)}
-                disabled={isLoading}
-                title="Reopen application form"
-                className="rounded p-1 text-stone-400 transition-colors hover:bg-orange-50 hover:text-orange-500 disabled:opacity-50"
-              >
-                <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
-              </button>
-            )}
-            {showArchive && !inv.archived_at && (inv.status === "revoked" || isExpired || (isAccepted && inv.progress?.quiz_completed)) && (
-              <button
-                onClick={() => handleArchive(inv.id)}
-                disabled={isLoading}
-                title="Archive candidate"
-                className="rounded p-1 text-stone-400 transition-colors hover:bg-stone-100 hover:text-stone-600 disabled:opacity-50"
-              >
-                <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M20 7l-8 4-8-4m16 0v10a2 2 0 01-2 2H6a2 2 0 01-2-2V7m16 0l-8-4-8 4" /></svg>
-              </button>
-            )}
-            <button
-              onClick={() => handleDelete(inv.id)}
-              disabled={isLoading}
-              title="Permanently delete candidate"
-              className="rounded p-1 text-stone-400 transition-colors hover:bg-red-50 hover:text-red-600 disabled:opacity-50"
-            >
-              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
-            </button>
+            ))}
           </div>
         </td>
       </tr>
     );
   }
+
+  // ─── Card renderer (mobile) ────────────────────────────────────────────────
+
+  function renderCard(inv: Invitation, showArchive: boolean) {
+    const isLoading = actionLoading === inv.id;
+
+    return (
+      <div
+        key={inv.id}
+        className={`rounded-xl border border-stone-200 bg-white p-4 ${isLoading ? "opacity-50 pointer-events-none" : ""}`}
+      >
+        {/* Header: Name + Progress */}
+        <div className="flex items-start justify-between gap-3">
+          <div className="min-w-0 flex-1">
+            <p className="truncate font-medium text-stone-800">
+              {inv.candidate_name || "\u2014"}
+            </p>
+            <p className="mt-0.5 truncate text-sm text-stone-500">{inv.email}</p>
+          </div>
+          <div className="shrink-0">{progressDisplay(inv)}</div>
+        </div>
+
+        {/* Meta: Position + Date */}
+        <p className="mt-2 text-xs text-stone-400">
+          {inv.position_applied || "\u2014"} &middot; {new Date(inv.created_at).toLocaleDateString()}
+        </p>
+
+        {/* Actions */}
+        <div className="mt-3 flex flex-wrap items-center gap-1 border-t border-stone-100 pt-3">
+          {getActions(inv, showArchive).map((a) => (
+            <button
+              key={a.key}
+              onClick={a.onClick}
+              disabled={!a.canUseWhileLoading && isLoading}
+              title={a.label}
+              aria-label={a.label}
+              className={`rounded-lg p-2.5 text-stone-400 transition-colors disabled:opacity-50 ${a.hoverClass}`}
+            >
+              {a.icon}
+            </button>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  // ─── Candidate list sections ───────────────────────────────────────────────
 
   const tableHead = (
     <thead>
@@ -345,10 +422,32 @@ export default function InviteClient() {
     </thead>
   );
 
+  function renderCandidateSection(list: Invitation[], showArchive: boolean) {
+    return (
+      <>
+        {/* Desktop: Table */}
+        <div className="hidden overflow-x-auto md:block">
+          <table className="w-full text-sm">
+            {tableHead}
+            <tbody className="divide-y divide-stone-50">
+              {list.map((inv) => renderRow(inv, showArchive))}
+            </tbody>
+          </table>
+        </div>
+        {/* Mobile: Cards */}
+        <div className="space-y-3 md:hidden">
+          {list.map((inv) => renderCard(inv, showArchive))}
+        </div>
+      </>
+    );
+  }
+
+  // ─── Render ─────────────────────────────────────────────────────────────────
+
   return (
-    <div className="space-y-8">
+    <div className="space-y-6 sm:space-y-8">
       {/* Send Invitation Form */}
-      <div className="rounded-2xl border border-stone-200 bg-white p-6 shadow-sm">
+      <div className="rounded-2xl border border-stone-200 bg-white p-4 shadow-sm sm:p-6">
         <h2 className="mb-4 text-lg font-semibold text-stone-800">
           Send Invitation
         </h2>
@@ -367,10 +466,10 @@ export default function InviteClient() {
               onChange={(e) => setEmail(e.target.value)}
               placeholder="candidate@example.com"
               required
-              className="h-10 w-full rounded-lg border border-stone-200 bg-stone-50 px-3 text-sm outline-none transition-colors focus:border-orange-400 focus:ring-2 focus:ring-orange-100"
+              className="h-11 w-full rounded-lg border border-stone-200 bg-stone-50 px-3 text-sm outline-none transition-colors focus:border-orange-400 focus:ring-2 focus:ring-orange-100 sm:h-10"
             />
           </div>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div>
               <label
                 htmlFor="name"
@@ -384,7 +483,7 @@ export default function InviteClient() {
                 value={candidateName}
                 onChange={(e) => setCandidateName(e.target.value)}
                 placeholder="John Tan"
-                className="h-10 w-full rounded-lg border border-stone-200 bg-stone-50 px-3 text-sm outline-none transition-colors focus:border-orange-400 focus:ring-2 focus:ring-orange-100"
+                className="h-11 w-full rounded-lg border border-stone-200 bg-stone-50 px-3 text-sm outline-none transition-colors focus:border-orange-400 focus:ring-2 focus:ring-orange-100 sm:h-10"
               />
             </div>
             <div>
@@ -400,7 +499,7 @@ export default function InviteClient() {
                 value={position}
                 onChange={(e) => setPosition(e.target.value)}
                 placeholder="Sales Executive"
-                className="h-10 w-full rounded-lg border border-stone-200 bg-stone-50 px-3 text-sm outline-none transition-colors focus:border-orange-400 focus:ring-2 focus:ring-orange-100"
+                className="h-11 w-full rounded-lg border border-stone-200 bg-stone-50 px-3 text-sm outline-none transition-colors focus:border-orange-400 focus:ring-2 focus:ring-orange-100 sm:h-10"
               />
             </div>
           </div>
@@ -420,7 +519,7 @@ export default function InviteClient() {
           <button
             type="submit"
             disabled={sending || !email}
-            className="h-10 rounded-xl bg-orange-500 px-6 font-semibold text-white transition-colors hover:bg-orange-600 disabled:cursor-not-allowed disabled:opacity-50"
+            className="h-11 w-full rounded-xl bg-orange-500 px-6 font-semibold text-white transition-colors hover:bg-orange-600 disabled:cursor-not-allowed disabled:opacity-50 sm:h-10 sm:w-auto"
           >
             {sending ? "Sending..." : "Send Invitation"}
           </button>
@@ -428,7 +527,7 @@ export default function InviteClient() {
       </div>
 
       {/* Candidate List */}
-      <div className="rounded-2xl border border-stone-200 bg-white p-6 shadow-sm">
+      <div className="rounded-2xl border border-stone-200 bg-white p-4 shadow-sm sm:p-6">
         <div className="mb-4 flex items-center justify-between">
           <h2 className="text-lg font-semibold text-stone-800">
             Candidate List
@@ -436,7 +535,7 @@ export default function InviteClient() {
           <div className="flex items-center gap-2">
             {live && (
               <span className="flex items-center gap-1 text-xs text-green-600">
-                <span className="inline-block h-1.5 w-1.5 rounded-full bg-green-500 animate-pulse" />
+                <span className="inline-block h-1.5 w-1.5 animate-pulse rounded-full bg-green-500" />
                 Live
               </span>
             )}
@@ -450,6 +549,7 @@ export default function InviteClient() {
               onClick={handleRefresh}
               disabled={refreshing}
               title="Refresh"
+              aria-label="Refresh candidate list"
               className="rounded-lg p-1.5 text-stone-400 transition-colors hover:bg-stone-100 hover:text-stone-600 disabled:opacity-50"
             >
               <svg
@@ -479,14 +579,7 @@ export default function InviteClient() {
               {active.length === 0 ? (
                 <p className="text-sm text-stone-400">No active candidates.</p>
               ) : (
-                <div className="overflow-x-auto">
-                  <table className="w-full text-sm">
-                    {tableHead}
-                    <tbody className="divide-y divide-stone-50">
-                      {active.map((inv) => renderRow(inv, true))}
-                    </tbody>
-                  </table>
-                </div>
+                renderCandidateSection(active, true)
               )}
             </div>
 
@@ -510,13 +603,8 @@ export default function InviteClient() {
                   Past Candidates ({archived.length})
                 </button>
                 {pastOpen && (
-                  <div className="mt-2 overflow-x-auto">
-                    <table className="w-full text-sm">
-                      {tableHead}
-                      <tbody className="divide-y divide-stone-50">
-                        {archived.map((inv) => renderRow(inv, false))}
-                      </tbody>
-                    </table>
+                  <div className="mt-2">
+                    {renderCandidateSection(archived, false)}
                   </div>
                 )}
               </div>

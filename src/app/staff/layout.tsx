@@ -28,7 +28,7 @@ export default async function StaffLayout({
   return (
     <div className="min-h-screen bg-stone-50">
       <header className="border-b border-stone-200 bg-white">
-        <div className="mx-auto flex max-w-3xl items-center justify-between px-4 py-4">
+        <div className="mx-auto flex max-w-3xl items-center justify-between px-4 py-4 md:max-w-4xl">
           <Link href="/staff/invite" className="font-display text-2xl text-orange-500">
             Lyfe
           </Link>
@@ -37,7 +37,7 @@ export default async function StaffLayout({
           )}
         </div>
       </header>
-      <main className="mx-auto max-w-3xl px-4 py-8">{children}</main>
+      <main className="mx-auto max-w-3xl px-4 py-8 md:max-w-4xl">{children}</main>
     </div>
   );
 }

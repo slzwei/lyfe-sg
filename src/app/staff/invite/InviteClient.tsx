@@ -278,40 +278,48 @@ export default function InviteClient() {
                         {new Date(inv.created_at).toLocaleDateString()}
                       </td>
                       <td className="py-2.5">
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-1.5">
                           {inv.status === "pending" && !isExpired && (
                             <button
                               onClick={() => handleCopyLink(inv)}
-                              className="text-xs text-stone-500 hover:text-stone-700"
+                              title={copiedId === inv.id ? "Copied!" : "Copy invite link"}
+                              className="rounded p-1 text-stone-400 transition-colors hover:bg-stone-100 hover:text-stone-600"
                             >
-                              {copiedId === inv.id ? "Copied!" : "Copy Link"}
+                              {copiedId === inv.id ? (
+                                <svg className="h-4 w-4 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
+                              ) : (
+                                <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101M10.172 13.828a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" /></svg>
+                              )}
                             </button>
                           )}
                           {inv.status === "pending" && !isExpired && (
                             <button
                               onClick={() => handleRevoke(inv.id)}
                               disabled={isLoading}
-                              className="text-xs text-red-500 hover:text-red-700 disabled:opacity-50"
+                              title="Revoke invitation"
+                              className="rounded p-1 text-stone-400 transition-colors hover:bg-red-50 hover:text-red-500 disabled:opacity-50"
                             >
-                              Revoke
+                              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" /></svg>
                             </button>
                           )}
                           {isAccepted && inv.progress?.quiz_completed && (
                             <button
                               onClick={() => handleResetQuiz(inv.id)}
                               disabled={isLoading}
-                              className="text-xs text-blue-600 hover:text-blue-800 disabled:opacity-50"
+                              title="Reset quiz"
+                              className="rounded p-1 text-stone-400 transition-colors hover:bg-blue-50 hover:text-blue-500 disabled:opacity-50"
                             >
-                              Reset Quiz
+                              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
                             </button>
                           )}
                           {isAccepted && inv.progress?.profile_completed && (
                             <button
                               onClick={() => handleResetApp(inv.id)}
                               disabled={isLoading}
-                              className="text-xs text-orange-600 hover:text-orange-800 disabled:opacity-50"
+                              title="Reopen application form"
+                              className="rounded p-1 text-stone-400 transition-colors hover:bg-orange-50 hover:text-orange-500 disabled:opacity-50"
                             >
-                              Reopen Form
+                              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
                             </button>
                           )}
                         </div>

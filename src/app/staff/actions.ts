@@ -164,12 +164,12 @@ export async function listInvitations(): Promise<{
   if (userIds.length > 0) {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const { data: profiles } = await (admin.from("candidate_profiles") as any)
-      .select("user_id, completed, onboarding_step")
+      .select("user_id, completed")
       .in("user_id", userIds);
 
     if (profiles) {
-      for (const p of profiles as Array<{ user_id: string; completed: boolean; onboarding_step: number }>) {
-        profileMap.set(p.user_id, { completed: p.completed, onboarding_step: p.onboarding_step });
+      for (const p of profiles as Array<{ user_id: string; completed: boolean }>) {
+        profileMap.set(p.user_id, { completed: p.completed, onboarding_step: 1 });
       }
     }
 
@@ -260,7 +260,7 @@ export async function resetApplication(invitationId: string) {
   // Reset profile to incomplete so candidate can re-edit and re-submit
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   await (admin.from("candidate_profiles") as any)
-    .update({ completed: false, onboarding_step: 1, updated_at: new Date().toISOString() })
+    .update({ completed: false, updated_at: new Date().toISOString() })
     .eq("user_id", userId);
 
   return { success: true };
@@ -287,6 +287,51 @@ export async function resetQuiz(invitationId: string) {
   await (admin.from("disc_results") as any).delete().eq("user_id", userId);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   await (admin.from("disc_responses") as any).delete().eq("user_id", userId);
+
+  return { success: true };
+}
+
+export async function deleteCandidate(id: string) {
+  const staff = await requireStaff();
+  if (!staff) return { success: false, error: "Not authenticated." };
+
+  const admin = getAdminClient();
+
+  // Fetch invitation to get user_id
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { data: invitation, error: fetchError } = await (admin.from("invitations") as any)
+    .select("user_id")
+    .eq("id", id)
+    .single();
+
+  if (fetchError) {
+    return { success: false, error: "Invitation not found." };
+  }
+
+  const userId = invitation?.user_id as string | null;
+
+  if (userId) {
+    // Delete in order: quiz data → profile → invitation → auth user
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    await (admin.from("disc_results") as any).delete().eq("user_id", userId);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    await (admin.from("disc_responses") as any).delete().eq("user_id", userId);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    await (admin.from("candidate_profiles") as any).delete().eq("user_id", userId);
+  }
+
+  // Delete the invitation record
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { error } = await (admin.from("invitations") as any).delete().eq("id", id);
+
+  if (error) {
+    return { success: false, error: error.message };
+  }
+
+  // Delete the auth user last
+  if (userId) {
+    await admin.auth.admin.deleteUser(userId);
+  }
 
   return { success: true };
 }

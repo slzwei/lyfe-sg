@@ -52,6 +52,8 @@ interface DiscQuizProps {
 }
 
 export default function DiscQuiz({ initialResponses, initialEmail }: DiscQuizProps) {
+  const hasProgress = initialResponses && Object.keys(initialResponses).length > 0;
+  const [showIntro, setShowIntro] = useState(!hasProgress);
   const [currentStep, setCurrentStep] = useState(1);
   const [responses, setResponses] = useState<Record<string, number>>(
     initialResponses || {}
@@ -124,6 +126,36 @@ export default function DiscQuiz({ initialResponses, initialEmail }: DiscQuizPro
       setCurrentStep(currentStep - 1);
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
+  }
+
+  if (showIntro) {
+    return (
+      <div className="rounded-3xl border border-stone-200 bg-white p-6 sm:p-8 text-center">
+        <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-green-50">
+          <svg className="h-8 w-8 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+          </svg>
+        </div>
+        <h2 className="text-xl font-bold text-stone-800">Application Submitted</h2>
+        <p className="mt-2 text-sm text-stone-500">
+          Thank you for completing the application form.
+        </p>
+        <hr className="my-6 border-stone-100" />
+        <h3 className="text-lg font-semibold text-stone-800">One Last Step</h3>
+        <p className="mt-2 text-sm text-stone-600">
+          Please complete a short personality quiz to help us understand your work style.
+          There are no right or wrong answers — just answer honestly based on how you
+          naturally think and behave.
+        </p>
+        <button
+          type="button"
+          onClick={() => setShowIntro(false)}
+          className="mt-8 rounded-xl bg-orange-500 px-8 py-3 text-sm font-semibold text-white transition-colors hover:bg-orange-600"
+        >
+          Begin Quiz
+        </button>
+      </div>
+    );
   }
 
   return (

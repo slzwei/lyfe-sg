@@ -182,7 +182,6 @@ export async function saveDraft(formData: Record<string, unknown>, currentStep?:
     languages: formData.languages || [],
     employment_history: formData.employment_history || [],
     completed: false,
-    onboarding_step: currentStep || 1,
     updated_at: new Date().toISOString(),
   };
 

@@ -29,12 +29,12 @@ export type Question = FormatAQuestion | FormatBQuestion | FormatCQuestion;
 
 // Step 1 — Format A: Word Pairs (8 questions)
 const step1: FormatAQuestion[] = [
-  { id: 1, format: "A", left: "Open", right: "Skeptical", leftType: "I", rightType: "C" },
-  { id: 2, format: "A", left: "Cheerful", right: "Methodical", leftType: "I", rightType: "C" },
+  { id: 1, format: "A", left: "Open", right: "Discerning", leftType: "I", rightType: "C" },
+  { id: 2, format: "A", left: "Spontaneous", right: "Methodical", leftType: "I", rightType: "C" },
   { id: 3, format: "A", left: "Reserved", right: "Dynamic", leftType: "C", rightType: "D" },
   { id: 4, format: "A", left: "Humble", right: "Bold", leftType: "S", rightType: "D" },
   { id: 5, format: "A", left: "Generous", right: "Strict", leftType: "S", rightType: "C" },
-  { id: 6, format: "A", left: "Lively", right: "Systematic", leftType: "I", rightType: "C" },
+  { id: 6, format: "A", left: "Lively", right: "Thorough", leftType: "I", rightType: "C" },
   { id: 7, format: "A", left: "Obedient", right: "Outspoken", leftType: "S", rightType: "D" },
   { id: 8, format: "A", left: "Modest", right: "Challenging", leftType: "S", rightType: "D" },
 ];
@@ -42,7 +42,7 @@ const step1: FormatAQuestion[] = [
 // Step 2 — Format A: Word Pairs (8 questions)
 const step2: FormatAQuestion[] = [
   { id: 9, format: "A", left: "Helpful", right: "Resolute", leftType: "S", rightType: "D" },
-  { id: 10, format: "A", left: "Enthusiastic", right: "Accurate", leftType: "I", rightType: "C" },
+  { id: 10, format: "A", left: "Enthusiastic", right: "Objective", leftType: "I", rightType: "C" },
   { id: 11, format: "A", left: "Compliant", right: "Enterprising", leftType: "C", rightType: "D" },
   { id: 12, format: "A", left: "Gentle", right: "Direct", leftType: "S", rightType: "D" },
   { id: 13, format: "A", left: "Accommodating", right: "Firm", leftType: "S", rightType: "D" },
@@ -54,11 +54,11 @@ const step2: FormatAQuestion[] = [
 // Step 3 — Format A: Word Pairs (8 questions)
 const step3: FormatAQuestion[] = [
   { id: 17, format: "A", left: "Accepting", right: "Matter-of-Fact", leftType: "S", rightType: "C" },
-  { id: 18, format: "A", left: "Optimistic", right: "Perfectionistic", leftType: "I", rightType: "C" },
+  { id: 18, format: "A", left: "Persuasive", right: "Meticulous", leftType: "I", rightType: "C" },
   { id: 19, format: "A", left: "Quiet", right: "Charismatic", leftType: "C", rightType: "I" },
   { id: 20, format: "A", left: "Obliging", right: "Assertive", leftType: "S", rightType: "D" },
-  { id: 21, format: "A", left: "Trusting", right: "Questioning", leftType: "I", rightType: "C" },
-  { id: 22, format: "A", left: "Light-Hearted", right: "Precise", leftType: "I", rightType: "C" },
+  { id: 21, format: "A", left: "Outgoing", right: "Prudent", leftType: "I", rightType: "C" },
+  { id: 22, format: "A", left: "Animated", right: "Precise", leftType: "I", rightType: "C" },
   { id: 23, format: "A", left: "Cautious", right: "Adventurous", leftType: "C", rightType: "D" },
   { id: 24, format: "A", left: "Receptive", right: "Decisive", leftType: "S", rightType: "D" },
 ];

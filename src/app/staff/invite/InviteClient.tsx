@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
+import { createClient } from "@/lib/supabase/client";
 import {
   sendInvite,
   listInvitations,
@@ -25,6 +26,8 @@ export default function InviteClient() {
   const [refreshing, setRefreshing] = useState(false);
   const [lastRefreshed, setLastRefreshed] = useState<Date | null>(null);
   const [pastOpen, setPastOpen] = useState(false);
+  const [realtimeConnected, setRealtimeConnected] = useState(false);
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const fetchInvitations = useCallback(async () => {
     const result = await listInvitations();
@@ -39,9 +42,42 @@ export default function InviteClient() {
     fetchInvitations();
   }, [fetchInvitations]);
 
-  // Auto-poll every 30 seconds
+  // Debounced refresh — collapses rapid-fire DB events into a single fetch
+  const debouncedRefresh = useCallback(() => {
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    debounceRef.current = setTimeout(() => {
+      fetchInvitations();
+    }, 500);
+  }, [fetchInvitations]);
+
+  // Supabase Realtime: subscribe to candidate progress changes
   useEffect(() => {
-    const interval = setInterval(fetchInvitations, 30_000);
+    const supabase = createClient();
+    const tables = ["candidate_profiles", "disc_responses", "disc_results", "invitations"] as const;
+
+    const channel = supabase.channel("staff-live-progress");
+
+    for (const table of tables) {
+      channel.on(
+        "postgres_changes",
+        { event: "*", schema: "public", table },
+        () => debouncedRefresh()
+      );
+    }
+
+    channel.subscribe((status) => {
+      setRealtimeConnected(status === "SUBSCRIBED");
+    });
+
+    return () => {
+      if (debounceRef.current) clearTimeout(debounceRef.current);
+      supabase.removeChannel(channel);
+    };
+  }, [debouncedRefresh]);
+
+  // Fallback poll every 60s in case realtime disconnects
+  useEffect(() => {
+    const interval = setInterval(fetchInvitations, 60_000);
     return () => clearInterval(interval);
   }, [fetchInvitations]);
 
@@ -110,7 +146,8 @@ export default function InviteClient() {
   }
 
   async function handleDelete(id: string) {
-    if (!confirm("Permanently delete this candidate? This will remove their invitation, application, quiz data, and account. This cannot be undone.")) return;
+    const input = prompt('Permanently delete this candidate? This will remove their invitation, application, quiz data, and account.\n\nType "delete" to confirm:');
+    if (input !== "delete") return;
     setActionLoading(id);
     const result = await deleteCandidate(id);
     if (result.success) fetchInvitations();
@@ -412,9 +449,15 @@ export default function InviteClient() {
             Candidate List
           </h2>
           <div className="flex items-center gap-2">
+            {realtimeConnected && (
+              <span className="flex items-center gap-1 text-xs text-green-600">
+                <span className="inline-block h-1.5 w-1.5 rounded-full bg-green-500 animate-pulse" />
+                Live
+              </span>
+            )}
             {lastRefreshed && (
               <span className="text-xs text-stone-400">
-                Updated {lastRefreshed.toLocaleTimeString()}
+                {lastRefreshed.toLocaleTimeString()}
               </span>
             )}
             <button

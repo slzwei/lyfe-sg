@@ -131,28 +131,54 @@ export default function DiscQuiz({ initialResponses, initialEmail }: DiscQuizPro
   if (showIntro) {
     return (
       <div className="rounded-3xl border border-stone-200 bg-white p-6 sm:p-8 text-center">
-        <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-green-50">
-          <svg className="h-8 w-8 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-          </svg>
+        {/* Progress indicator — form done, quiz pending */}
+        <div className="mx-auto mb-6 flex items-center justify-center gap-3">
+          <div className="flex items-center gap-2">
+            <div className="flex h-7 w-7 items-center justify-center rounded-full bg-green-500 text-white">
+              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+              </svg>
+            </div>
+            <span className="text-xs font-medium text-green-600">Application</span>
+          </div>
+          <div className="h-px w-8 bg-stone-200" />
+          <div className="flex items-center gap-2">
+            <div className="flex h-7 w-7 items-center justify-center rounded-full bg-orange-500 text-xs font-bold text-white">
+              2
+            </div>
+            <span className="text-xs font-semibold text-orange-600">Personality Quiz</span>
+          </div>
         </div>
-        <h2 className="text-xl font-bold text-stone-800">Application Submitted</h2>
-        <p className="mt-2 text-sm text-stone-500">
-          Thank you for completing the application form.
+
+        <h2 className="text-xl font-bold text-stone-800">
+          Almost There!
+        </h2>
+        <p className="mx-auto mt-2 max-w-md text-sm text-stone-500">
+          Your application form is saved. Complete a short personality quiz to
+          finish your registration.
         </p>
-        <hr className="my-6 border-stone-100" />
-        <h3 className="text-lg font-semibold text-stone-800">One Last Step</h3>
-        <p className="mt-2 text-sm text-stone-600">
-          Please complete a short personality quiz to help us understand your work style.
-          There are no right or wrong answers — just answer honestly based on how you
-          naturally think and behave.
-        </p>
+
+        <div className="mx-auto mt-6 max-w-sm rounded-2xl border border-orange-100 bg-orange-50 p-5">
+          <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-orange-100">
+            <svg className="h-6 w-6 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9 5.25h.008v.008H12v-.008z" />
+            </svg>
+          </div>
+          <p className="text-sm font-medium text-stone-700">
+            ~5 minutes &middot; 38 questions
+          </p>
+          <p className="mt-1 text-xs text-stone-500">
+            No right or wrong answers — just answer honestly based on how you
+            naturally think and behave.
+          </p>
+        </div>
+
         <button
           type="button"
           onClick={() => setShowIntro(false)}
-          className="mt-8 rounded-xl bg-orange-500 px-8 py-3 text-sm font-semibold text-white transition-colors hover:bg-orange-600"
+          className="mt-6 w-full max-w-xs rounded-xl bg-orange-500 px-8 py-3 text-sm font-semibold text-white transition-colors hover:bg-orange-600"
         >
-          Begin Quiz
+          Continue to Quiz →
         </button>
       </div>
     );

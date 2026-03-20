@@ -32,32 +32,32 @@ const step1: FormatAQuestion[] = [
   { id: 1, format: "A", left: "Open", right: "Discerning", leftType: "I", rightType: "C" },
   { id: 2, format: "A", left: "Spontaneous", right: "Methodical", leftType: "I", rightType: "C" },
   { id: 3, format: "A", left: "Reserved", right: "Dynamic", leftType: "C", rightType: "D" },
-  { id: 4, format: "A", left: "Humble", right: "Bold", leftType: "S", rightType: "D" },
+  { id: 4, format: "A", left: "Energetic", right: "Calm", leftType: "I", rightType: "S" },
   { id: 5, format: "A", left: "Generous", right: "Strict", leftType: "S", rightType: "C" },
-  { id: 6, format: "A", left: "Lively", right: "Thorough", leftType: "I", rightType: "C" },
-  { id: 7, format: "A", left: "Obedient", right: "Outspoken", leftType: "S", rightType: "D" },
-  { id: 8, format: "A", left: "Modest", right: "Challenging", leftType: "S", rightType: "D" },
+  { id: 6, format: "A", left: "Focused", right: "Cheerful", leftType: "D", rightType: "I" },
+  { id: 7, format: "A", left: "Vibrant", right: "Steady", leftType: "I", rightType: "S" },
+  { id: 8, format: "A", left: "Modest", right: "Ambitious", leftType: "S", rightType: "D" },
 ];
 
 // Step 2 — Format A: Word Pairs (8 questions)
 const step2: FormatAQuestion[] = [
-  { id: 9, format: "A", left: "Helpful", right: "Resolute", leftType: "S", rightType: "D" },
+  { id: 9, format: "A", left: "Supportive", right: "Resolute", leftType: "S", rightType: "D" },
   { id: 10, format: "A", left: "Enthusiastic", right: "Objective", leftType: "I", rightType: "C" },
   { id: 11, format: "A", left: "Compliant", right: "Enterprising", leftType: "C", rightType: "D" },
-  { id: 12, format: "A", left: "Gentle", right: "Direct", leftType: "S", rightType: "D" },
-  { id: 13, format: "A", left: "Accommodating", right: "Firm", leftType: "S", rightType: "D" },
-  { id: 14, format: "A", left: "Playful", right: "Analytical", leftType: "I", rightType: "C" },
-  { id: 15, format: "A", left: "Tactful", right: "Expressive", leftType: "C", rightType: "I" },
-  { id: 16, format: "A", left: "Even-Tempered", right: "Tough", leftType: "S", rightType: "D" },
+  { id: 12, format: "A", left: "Diplomatic", right: "Direct", leftType: "S", rightType: "D" },
+  { id: 13, format: "A", left: "Upbeat", right: "Grounded", leftType: "I", rightType: "S" },
+  { id: 14, format: "A", left: "Independent", right: "Engaging", leftType: "D", rightType: "I" },
+  { id: 15, format: "A", left: "Purposeful", right: "Charming", leftType: "D", rightType: "I" },
+  { id: 16, format: "A", left: "Even-Tempered", right: "Driven", leftType: "S", rightType: "D" },
 ];
 
 // Step 3 — Format A: Word Pairs (8 questions)
 const step3: FormatAQuestion[] = [
   { id: 17, format: "A", left: "Accepting", right: "Matter-of-Fact", leftType: "S", rightType: "C" },
   { id: 18, format: "A", left: "Persuasive", right: "Meticulous", leftType: "I", rightType: "C" },
-  { id: 19, format: "A", left: "Quiet", right: "Charismatic", leftType: "C", rightType: "I" },
-  { id: 20, format: "A", left: "Obliging", right: "Assertive", leftType: "S", rightType: "D" },
-  { id: 21, format: "A", left: "Outgoing", right: "Prudent", leftType: "I", rightType: "C" },
+  { id: 19, format: "A", left: "Reflective", right: "Expressive", leftType: "C", rightType: "I" },
+  { id: 20, format: "A", left: "Cooperative", right: "Assertive", leftType: "S", rightType: "D" },
+  { id: 21, format: "A", left: "Outgoing", right: "Thoughtful", leftType: "I", rightType: "C" },
   { id: 22, format: "A", left: "Animated", right: "Precise", leftType: "I", rightType: "C" },
   { id: 23, format: "A", left: "Cautious", right: "Adventurous", leftType: "C", rightType: "D" },
   { id: 24, format: "A", left: "Receptive", right: "Decisive", leftType: "S", rightType: "D" },
@@ -68,11 +68,11 @@ const step4: FormatBQuestion[] = [
   { id: 25, format: "B", word: "Agreeable", discType: "S" },
   { id: 26, format: "B", word: "Daring", discType: "D" },
   { id: 27, format: "B", word: "Sociable", discType: "I" },
-  { id: 28, format: "B", word: "Dominant", discType: "D" },
+  { id: 28, format: "B", word: "Optimistic", discType: "I" },
   { id: 29, format: "B", word: "Patient", discType: "S" },
-  { id: 30, format: "B", word: "Soft-Spoken", discType: "S" },
+  { id: 30, format: "B", word: "Systematic", discType: "C" },
   { id: 31, format: "B", word: "Detail-Oriented", discType: "C" },
-  { id: 32, format: "B", word: "Competitive", discType: "D" },
+  { id: 32, format: "B", word: "Determined", discType: "D" },
 ];
 
 // Step 5 — Format C: Scenario Binary Choice (6 questions)

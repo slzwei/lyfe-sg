@@ -1,7 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback, useRef } from "react";
-import { createClient } from "@/lib/supabase/client";
+import { useState, useEffect, useCallback } from "react";
 import {
   sendInvite,
   listInvitations,
@@ -26,8 +25,6 @@ export default function InviteClient() {
   const [refreshing, setRefreshing] = useState(false);
   const [lastRefreshed, setLastRefreshed] = useState<Date | null>(null);
   const [pastOpen, setPastOpen] = useState(false);
-  const [realtimeConnected, setRealtimeConnected] = useState(false);
-  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const fetchInvitations = useCallback(async () => {
     const result = await listInvitations();
@@ -42,40 +39,9 @@ export default function InviteClient() {
     fetchInvitations();
   }, [fetchInvitations]);
 
-  // Debounced refresh — collapses rapid-fire DB events into a single fetch
-  const debouncedRefresh = useCallback(() => {
-    if (debounceRef.current) clearTimeout(debounceRef.current);
-    debounceRef.current = setTimeout(() => {
-      fetchInvitations();
-    }, 500);
-  }, [fetchInvitations]);
-
-  // Supabase Realtime: subscribe to progress_signals table
-  // (triggers on the real tables update this single-row signal table,
-  //  which has open RLS so the anon-key client can receive events)
+  // Poll every 5 seconds for near-realtime progress updates
   useEffect(() => {
-    const supabase = createClient();
-
-    const channel = supabase
-      .channel("staff-live-progress")
-      .on(
-        "postgres_changes",
-        { event: "UPDATE", schema: "public", table: "progress_signals" },
-        () => debouncedRefresh()
-      )
-      .subscribe((status) => {
-        setRealtimeConnected(status === "SUBSCRIBED");
-      });
-
-    return () => {
-      if (debounceRef.current) clearTimeout(debounceRef.current);
-      supabase.removeChannel(channel);
-    };
-  }, [debouncedRefresh]);
-
-  // Fallback poll every 60s in case realtime disconnects
-  useEffect(() => {
-    const interval = setInterval(fetchInvitations, 60_000);
+    const interval = setInterval(fetchInvitations, 5_000);
     return () => clearInterval(interval);
   }, [fetchInvitations]);
 
@@ -447,12 +413,6 @@ export default function InviteClient() {
             Candidate List
           </h2>
           <div className="flex items-center gap-2">
-            {realtimeConnected && (
-              <span className="flex items-center gap-1 text-xs text-green-600">
-                <span className="inline-block h-1.5 w-1.5 rounded-full bg-green-500 animate-pulse" />
-                Live
-              </span>
-            )}
             {lastRefreshed && (
               <span className="text-xs text-stone-400">
                 {lastRefreshed.toLocaleTimeString()}

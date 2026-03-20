@@ -259,74 +259,56 @@ export default function InviteClient() {
       );
     }
 
-    // Accepted: pill bar showing progress
+    // Accepted: smooth progress bar
     const progress = inv.progress;
     const quizInProgress =
       progress && progress.quiz_answered > 0 && !progress.quiz_completed;
-    const stepLabels = ["Personal", "NS & Emergency", "Education", "Skills", "Employment", "Declaration"];
 
-    type PillStatus = "done" | "active" | "pending";
-    let pillLabel: string;
-    let pillStyle: string;
-    let subLabel = "";
+    // Calculate overall percentage: form = 0–50%, quiz = 50–100%
+    let pct = 0;
+    let label = "Starting";
+    let detail = "";
+    let barColor = "bg-stone-300";
+    let textColor = "text-stone-500";
 
     if (progress?.quiz_completed) {
-      pillLabel = `Completed`;
-      pillStyle = "bg-green-50 text-green-700 border-green-200";
-      subLabel = `DISC: ${progress.disc_type?.toUpperCase()}`;
+      pct = 100;
+      label = "Completed";
+      detail = progress.disc_type?.toUpperCase() || "";
+      barColor = "bg-green-500";
+      textColor = "text-green-700";
     } else if (progress?.profile_completed && quizInProgress) {
-      pillLabel = `Quiz`;
-      pillStyle = "bg-blue-50 text-blue-700 border-blue-200";
-      subLabel = `${progress.quiz_answered}/39`;
+      pct = 50 + Math.round((progress.quiz_answered / 38) * 50);
+      label = "Quiz";
+      detail = `${progress.quiz_answered}/38`;
+      barColor = "bg-blue-500";
+      textColor = "text-blue-700";
     } else if (progress?.profile_completed) {
-      pillLabel = "Submitted";
-      pillStyle = "bg-orange-50 text-orange-700 border-orange-200";
+      pct = 50;
+      label = "Form done";
+      detail = "Quiz not started";
+      barColor = "bg-orange-500";
+      textColor = "text-orange-700";
     } else if (progress) {
       const s = progress.onboarding_step || 1;
-      pillLabel = stepLabels[s - 1];
-      pillStyle = "bg-stone-50 text-stone-600 border-stone-200";
-      subLabel = `${s}/6`;
-    } else {
-      pillLabel = "Starting";
-      pillStyle = "bg-stone-50 text-stone-500 border-stone-200";
+      pct = Math.round((s / 6) * 50);
+      label = "Form";
+      detail = `${s}/6`;
+      barColor = "bg-orange-400";
+      textColor = "text-stone-600";
     }
-
-    // Determine segment statuses for the pill bar
-    let segments: PillStatus[];
-    if (progress?.quiz_completed) {
-      segments = ["done", "done", "done"];
-    } else if (progress?.profile_completed && quizInProgress) {
-      segments = ["done", "done", "active"];
-    } else if (progress?.profile_completed) {
-      segments = ["done", "done", "pending"];
-    } else if (progress) {
-      segments = ["done", "active", "pending"];
-    } else {
-      segments = ["active", "pending", "pending"];
-    }
-
-    const segmentStyles: Record<PillStatus, string> = {
-      done: "bg-green-400",
-      active: "bg-orange-400",
-      pending: "bg-stone-200",
-    };
 
     return (
-      <div className="flex flex-col gap-1">
-        {/* Mini bar segments */}
-        <div className="flex gap-0.5">
-          {segments.map((s, i) => (
-            <div key={i} className={`h-1.5 w-3 first:rounded-l-full last:rounded-r-full ${segmentStyles[s]}`} />
-          ))}
+      <div className="w-28">
+        <div className="mb-1 flex items-baseline justify-between">
+          <span className={`text-xs font-medium ${textColor}`}>{label}</span>
+          <span className="text-[10px] text-stone-400">{detail}</span>
         </div>
-        {/* Pill label */}
-        <div className="flex items-center gap-1.5">
-          <span className={`inline-block whitespace-nowrap rounded-full border px-2.5 py-0.5 text-xs font-medium ${pillStyle}`}>
-            {pillLabel}
-          </span>
-          {subLabel && (
-            <span className="text-[10px] text-stone-400">{subLabel}</span>
-          )}
+        <div className="h-1.5 w-full overflow-hidden rounded-full bg-stone-100">
+          <div
+            className={`h-full rounded-full transition-all duration-500 ${barColor}`}
+            style={{ width: `${pct}%` }}
+          />
         </div>
       </div>
     );

@@ -20,6 +20,19 @@ const LABEL_CLASS = "mb-1 block text-xs font-medium text-stone-600";
 
 const EMPTY_LANG: LanguageRow = { language: "", spoken: "", written: "" };
 
+const LANGUAGES = [
+  "English", "Mandarin", "Malay", "Tamil",
+  "---",
+  "Arabic", "Bengali", "Burmese", "Cantonese", "Czech", "Danish", "Dutch",
+  "Filipino", "Finnish", "French", "German", "Greek", "Gujarati", "Hebrew",
+  "Hindi", "Hokkien", "Hungarian", "Indonesian", "Italian", "Japanese",
+  "Javanese", "Kannada", "Khmer", "Korean", "Lao", "Malayalam", "Marathi",
+  "Nepali", "Norwegian", "Pashto", "Persian", "Polish", "Portuguese",
+  "Punjabi", "Romanian", "Russian", "Sinhalese", "Spanish", "Swahili",
+  "Swedish", "Tagalog", "Teochew", "Thai", "Turkish", "Ukrainian", "Urdu",
+  "Vietnamese", "Other",
+];
+
 export default function Step4Skills({ data, onChange, errors }: Step4Props) {
   const v = (key: string) => (data[key] as string) || "";
   const rawLangs = data.languages as LanguageRow[] | undefined;
@@ -111,12 +124,20 @@ export default function Step4Skills({ data, onChange, errors }: Step4Props) {
               <div className="grid gap-3 sm:grid-cols-3">
                 <div>
                   <label className={LABEL_CLASS}>Language</label>
-                  <input
-                    className={INPUT_CLASS}
+                  <select
+                    className={SELECT_CLASS}
                     value={row.language}
                     onChange={(e) => updateLang(i, "language", e.target.value)}
-                    placeholder="e.g. English"
-                  />
+                  >
+                    <option value="">Select</option>
+                    {LANGUAGES.map((l) =>
+                      l === "---" ? (
+                        <option key="---" disabled>──────────</option>
+                      ) : (
+                        <option key={l} value={l}>{l}</option>
+                      )
+                    )}
+                  </select>
                 </div>
                 <div>
                   <label className={LABEL_CLASS}>Spoken</label>

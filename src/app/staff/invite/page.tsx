@@ -6,7 +6,7 @@ export default async function InvitePage() {
   const cookieStore = await cookies();
   const session = cookieStore.get("staff_session")?.value;
 
-  if (!session || session !== process.env.STAFF_SECRET) {
+  if (!session || session.length < 32) {
     redirect("/staff/login");
   }
 

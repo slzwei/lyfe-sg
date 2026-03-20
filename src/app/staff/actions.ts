@@ -1,7 +1,8 @@
 "use server";
 
 import { cookies } from "next/headers";
-import { randomBytes } from "crypto";
+import { randomBytes, createHash } from "crypto";
+import { z } from "zod";
 import { getAdminClient } from "@/lib/supabase/admin";
 import { sendInvitationEmail } from "@/lib/email";
 
@@ -16,8 +17,23 @@ export async function staffLogin(secret: string) {
     return { success: false, error: "Invalid password." };
   }
 
+  const sessionToken = randomBytes(32).toString("base64url");
+  const tokenHash = createHash("sha256").update(sessionToken).digest("hex");
+
+  const admin = getAdminClient();
+
+  // Clean up expired sessions
+  await admin.from("staff_sessions")
+    .delete()
+    .lt("expires_at", new Date().toISOString());
+
+  // Insert new session
+  await admin.from("staff_sessions").insert({
+    token_hash: tokenHash,
+  });
+
   const cookieStore = await cookies();
-  cookieStore.set("staff_session", secret, {
+  cookieStore.set("staff_session", sessionToken, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     sameSite: "lax",
@@ -31,10 +47,41 @@ export async function staffLogin(secret: string) {
 async function requireStaff() {
   const cookieStore = await cookies();
   const session = cookieStore.get("staff_session")?.value;
-  if (!session || session !== process.env.STAFF_SECRET) {
-    return null;
+  if (!session) return null;
+
+  const tokenHash = createHash("sha256").update(session).digest("hex");
+  const admin = getAdminClient();
+
+  const { data } = await admin.from("staff_sessions")
+    .select("id")
+    .eq("token_hash", tokenHash)
+    .gt("expires_at", new Date().toISOString())
+    .limit(1);
+
+  if (data && data.length > 0) return session;
+
+  // Backward compatibility: allow plaintext STAFF_SECRET cookie during deploy transition
+  if (session === process.env.STAFF_SECRET) {
+    console.warn("[staff-auth] Legacy plaintext cookie detected — migrate to session tokens");
+    return session;
   }
-  return session;
+
+  return null;
+}
+
+export async function staffLogout() {
+  const cookieStore = await cookies();
+  const session = cookieStore.get("staff_session")?.value;
+
+  if (session) {
+    const tokenHash = createHash("sha256").update(session).digest("hex");
+    const admin = getAdminClient();
+    await admin.from("staff_sessions")
+      .delete()
+      .eq("token_hash", tokenHash);
+  }
+
+  cookieStore.delete("staff_session");
 }
 
 // ─── Invitations ─────────────────────────────────────────────────────────────
@@ -47,15 +94,14 @@ export async function sendInvite(data: {
   const staff = await requireStaff();
   if (!staff) return { success: false, error: "Not authenticated." };
 
-  if (!data.email || !data.email.includes("@")) {
+  if (!data.email || !z.string().email().safeParse(data.email).success) {
     return { success: false, error: "Please enter a valid email address." };
   }
 
   const admin = getAdminClient();
 
   // Check if email already has an active invitation (pending or accepted)
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { data: existing } = await (admin.from("invitations") as any)
+  const { data: existing } = await admin.from("invitations")
     .select("id")
     .eq("email", data.email)
     .in("status", ["pending", "accepted"])
@@ -67,8 +113,7 @@ export async function sendInvite(data: {
 
   const token = randomBytes(32).toString("base64url");
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { error } = await (admin.from("invitations") as any).insert({
+  const { error } = await admin.from("invitations").insert({
     token,
     email: data.email,
     candidate_name: data.candidateName || null,
@@ -128,70 +173,54 @@ export async function listInvitations(): Promise<{
   if (!staff) return { success: false, error: "Not authenticated." };
 
   const admin = getAdminClient();
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { data, error } = await (admin.from("invitations") as any)
+  const { data, error } = await admin.from("invitations")
     .select("id, token, email, candidate_name, position_applied, status, user_id, created_at, expires_at, accepted_at, archived_at")
     .order("created_at", { ascending: false })
     .limit(100);
 
   if (error) {
-    return { success: false, error: (error as { message: string }).message };
+    return { success: false, error: error.message };
   }
 
-  const invitations = data as Array<{
-    id: string;
-    token: string;
-    email: string;
-    candidate_name: string | null;
-    position_applied: string | null;
-    status: string;
-    user_id: string | null;
-    created_at: string;
-    expires_at: string;
-    accepted_at: string | null;
-    archived_at: string | null;
-  }>;
+  const invitations = data;
 
   // Collect user_ids for accepted invitations
   const userIds = invitations
     .filter((inv) => inv.user_id)
-    .map((inv) => inv.user_id as string);
+    .map((inv) => inv.user_id!);
 
   const profileMap = new Map<string, { completed: boolean; onboarding_step: number }>();
   const quizProgressMap = new Map<string, number>();
   const resultsMap = new Map<string, string>();
 
   if (userIds.length > 0) {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { data: profiles } = await (admin.from("candidate_profiles") as any)
+    const { data: profiles } = await admin.from("candidate_profiles")
       .select("user_id, completed, onboarding_step")
       .in("user_id", userIds);
 
     if (profiles) {
-      for (const p of profiles as Array<{ user_id: string; completed: boolean; onboarding_step: number }>) {
+      for (const p of profiles) {
         profileMap.set(p.user_id, { completed: p.completed, onboarding_step: p.onboarding_step });
       }
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { data: responses } = await (admin.from("disc_responses") as any)
+    const { data: responses } = await admin.from("disc_responses")
       .select("user_id, responses")
       .in("user_id", userIds);
 
     if (responses) {
-      for (const r of responses as Array<{ user_id: string; responses: Record<string, unknown> }>) {
+      for (const r of responses) {
         const count = r.responses ? Object.keys(r.responses).length : 0;
         quizProgressMap.set(r.user_id, count);
       }
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { data: results } = await (admin.from("disc_results") as any)
+    const { data: results } = await admin.from("disc_results")
       .select("user_id, disc_type")
       .in("user_id", userIds);
 
     if (results) {
-      for (const r of results as Array<{ user_id: string; disc_type: string }>) {
+      for (const r of results) {
         resultsMap.set(r.user_id, r.disc_type);
       }
     }
@@ -227,26 +256,23 @@ export async function getProgressForUser(userId: string): Promise<{
 
   // 3 parallel queries for a single user
   const [profileRes, responsesRes, resultsRes] = await Promise.all([
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (admin.from("candidate_profiles") as any)
+    admin.from("candidate_profiles")
       .select("completed, onboarding_step")
       .eq("user_id", userId)
       .single(),
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (admin.from("disc_responses") as any)
+    admin.from("disc_responses")
       .select("responses")
       .eq("user_id", userId)
       .single(),
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (admin.from("disc_results") as any)
+    admin.from("disc_results")
       .select("disc_type")
       .eq("user_id", userId)
       .single(),
   ]);
 
-  const profile = profileRes.data as { completed: boolean; onboarding_step: number } | null;
-  const responses = responsesRes.data as { responses: Record<string, unknown> } | null;
-  const results = resultsRes.data as { disc_type: string } | null;
+  const profile = profileRes.data;
+  const responses = responsesRes.data;
+  const results = resultsRes.data;
 
   return {
     success: true,
@@ -265,8 +291,7 @@ export async function revokeInvitation(id: string) {
   if (!staff) return { success: false, error: "Not authenticated." };
 
   const admin = getAdminClient();
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { error } = await (admin.from("invitations") as any)
+  const { error } = await admin.from("invitations")
     .update({ status: "revoked" })
     .eq("id", id)
     .in("status", ["pending", "accepted"]);
@@ -283,8 +308,7 @@ export async function resetApplication(invitationId: string) {
   if (!staff) return { success: false, error: "Not authenticated." };
 
   const admin = getAdminClient();
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { data: invitation, error: fetchError } = await (admin.from("invitations") as any)
+  const { data: invitation, error: fetchError } = await admin.from("invitations")
     .select("user_id")
     .eq("id", invitationId)
     .single();
@@ -293,18 +317,15 @@ export async function resetApplication(invitationId: string) {
     return { success: false, error: "No candidate linked to this invitation." };
   }
 
-  const userId = invitation.user_id as string;
+  const userId = invitation.user_id;
 
   // Clear quiz data
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  await (admin.from("disc_results") as any).delete().eq("user_id", userId);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  await (admin.from("disc_responses") as any).delete().eq("user_id", userId);
+  await admin.from("disc_results").delete().eq("user_id", userId);
+  await admin.from("disc_responses").delete().eq("user_id", userId);
 
   // Reset profile to incomplete so candidate can re-edit and re-submit
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  await (admin.from("candidate_profiles") as any)
-    .update({ completed: false, onboarding_step: 1, updated_at: new Date().toISOString() })
+  await admin.from("candidate_profiles")
+    .update({ completed: false, onboarding_step: 1 })
     .eq("user_id", userId);
 
   return { success: true };
@@ -315,8 +336,7 @@ export async function resetQuiz(invitationId: string) {
   if (!staff) return { success: false, error: "Not authenticated." };
 
   const admin = getAdminClient();
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { data: invitation, error: fetchError } = await (admin.from("invitations") as any)
+  const { data: invitation, error: fetchError } = await admin.from("invitations")
     .select("user_id")
     .eq("id", invitationId)
     .single();
@@ -325,12 +345,10 @@ export async function resetQuiz(invitationId: string) {
     return { success: false, error: "No candidate linked to this invitation." };
   }
 
-  const userId = invitation.user_id as string;
+  const userId = invitation.user_id;
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  await (admin.from("disc_results") as any).delete().eq("user_id", userId);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  await (admin.from("disc_responses") as any).delete().eq("user_id", userId);
+  await admin.from("disc_results").delete().eq("user_id", userId);
+  await admin.from("disc_responses").delete().eq("user_id", userId);
 
   return { success: true };
 }
@@ -341,38 +359,22 @@ export async function deleteCandidate(id: string) {
 
   const admin = getAdminClient();
 
-  // Fetch invitation to get user_id
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { data: invitation, error: fetchError } = await (admin.from("invitations") as any)
+  // Get user_id before RPC (needed for auth.admin.deleteUser)
+  const { data: invitation } = await admin
+    .from("invitations")
     .select("user_id")
     .eq("id", id)
     .single();
 
-  if (fetchError) {
-    return { success: false, error: "Invitation not found." };
-  }
+  const userId = invitation?.user_id ?? null;
 
-  const userId = invitation?.user_id as string | null;
-
-  if (userId) {
-    // Delete in order: quiz data → profile → invitation → auth user
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    await (admin.from("disc_results") as any).delete().eq("user_id", userId);
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    await (admin.from("disc_responses") as any).delete().eq("user_id", userId);
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    await (admin.from("candidate_profiles") as any).delete().eq("user_id", userId);
-  }
-
-  // Delete the invitation record
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { error } = await (admin.from("invitations") as any).delete().eq("id", id);
-
+  // Transactional delete of all DB records
+  const { error } = await admin.rpc("delete_candidate", { p_invitation_id: id });
   if (error) {
     return { success: false, error: error.message };
   }
 
-  // Delete the auth user last
+  // Delete auth user last (Auth Admin API, outside transaction)
   if (userId) {
     await admin.auth.admin.deleteUser(userId);
   }
@@ -385,8 +387,7 @@ export async function archiveInvitation(id: string) {
   if (!staff) return { success: false, error: "Not authenticated." };
 
   const admin = getAdminClient();
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { error } = await (admin.from("invitations") as any)
+  const { error } = await admin.from("invitations")
     .update({ archived_at: new Date().toISOString() })
     .eq("id", id)
     .is("archived_at", null);

@@ -33,7 +33,7 @@ export async function validateInviteToken(token: string): Promise<{
     .from("invitations")
     .select("id, candidate_name, position_applied, status, expires_at")
     .eq("token", token)
-    .single() as { data: { id: string; candidate_name: string | null; position_applied: string | null; status: string; expires_at: string } | null; error: unknown };
+    .single();
 
   if (error || !data) {
     return { valid: false, error: "Invalid invitation link." };
@@ -80,7 +80,12 @@ export async function verifyOtp(phone: string, token: string, inviteToken?: stri
 
   if (!role) {
     // New user — assign candidate role
-    await supabase.rpc("assign_candidate_role");
+    try {
+      await supabase.rpc("assign_candidate_role");
+      await supabase.auth.refreshSession();
+    } catch (e) {
+      console.error("[auth] Failed to assign candidate role:", e);
+    }
   } else if (role !== "candidate") {
     await supabase.auth.signOut();
     return {
@@ -95,13 +100,12 @@ export async function verifyOtp(phone: string, token: string, inviteToken?: stri
     .from("candidate_profiles")
     .select("id")
     .eq("user_id", user.id)
-    .single() as { data: { id: string } | null; error: unknown };
+    .single();
 
   if (existingProfile) {
     // Existing candidate — if they have an invite token, apply invitation data
     if (inviteToken) {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const { data: inv } = await (admin.from("invitations") as any)
+      const { data: inv } = await admin.from("invitations")
         .select("id, email, candidate_name, position_applied, expires_at")
         .eq("token", inviteToken)
         .eq("status", "pending")
@@ -109,8 +113,7 @@ export async function verifyOtp(phone: string, token: string, inviteToken?: stri
 
       if (inv && new Date(inv.expires_at) > new Date()) {
         // Mark invitation as accepted
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        await (admin.from("invitations") as any)
+        await admin.from("invitations")
           .update({
             status: "accepted",
             user_id: user.id,
@@ -119,8 +122,7 @@ export async function verifyOtp(phone: string, token: string, inviteToken?: stri
           .eq("id", inv.id);
 
         // Update profile with invitation data
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        await (admin.from("candidate_profiles") as any)
+        await admin.from("candidate_profiles")
           .update({
             email: inv.email,
             full_name: inv.candidate_name || "",
@@ -143,19 +145,12 @@ export async function verifyOtp(phone: string, token: string, inviteToken?: stri
   }
 
   // Validate and consume invitation
-  interface InvitationRow {
-    id: string;
-    email: string;
-    candidate_name: string | null;
-    position_applied: string | null;
-    expires_at: string;
-  }
   const { data: invitation, error: invError } = await admin
     .from("invitations")
     .select("id, email, candidate_name, position_applied, expires_at")
     .eq("token", inviteToken)
     .eq("status", "pending")
-    .single() as { data: InvitationRow | null; error: unknown };
+    .single();
 
   if (invError || !invitation) {
     await supabase.auth.signOut();
@@ -174,8 +169,7 @@ export async function verifyOtp(phone: string, token: string, inviteToken?: stri
   }
 
   // Mark invitation as accepted
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  await (admin.from("invitations") as any)
+  await admin.from("invitations")
     .update({
       status: "accepted",
       user_id: user.id,
@@ -184,8 +178,7 @@ export async function verifyOtp(phone: string, token: string, inviteToken?: stri
     .eq("id", invitation.id);
 
   // Create draft profile with pre-filled data
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  await (admin.from("candidate_profiles") as any).upsert(
+  await admin.from("candidate_profiles").upsert(
     {
       user_id: user.id,
       email: invitation.email,

@@ -23,7 +23,7 @@ export default async function StaffLayout({
   // We'll check the path via a different mechanism — just check the cookie
   // If no session, the individual pages will redirect (layout can't know path easily)
 
-  const isAuthenticated = staffSession === process.env.STAFF_SECRET;
+  const isAuthenticated = !!staffSession && staffSession.length >= 32;
 
   return (
     <div className="min-h-screen bg-stone-50">

@@ -1,10 +1,11 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
+import type { Database } from "./database.types";
 
 export async function updateSession(request: NextRequest) {
   let supabaseResponse = NextResponse.next({ request });
 
-  const supabase = createServerClient(
+  const supabase = createServerClient<Database>(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
@@ -30,7 +31,7 @@ export async function updateSession(request: NextRequest) {
   // Staff routes — cookie-based auth, no Supabase user needed
   if (path.startsWith("/staff/") && !path.startsWith("/staff/login")) {
     const staffSession = request.cookies.get("staff_session")?.value;
-    if (!staffSession || staffSession !== process.env.STAFF_SECRET) {
+    if (!staffSession || staffSession.length < 32) {
       const url = request.nextUrl.clone();
       url.pathname = "/staff/login";
       return NextResponse.redirect(url);

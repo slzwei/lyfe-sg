@@ -4,6 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import { sendProfileSubmissionEmail } from "@/lib/email";
 import type { FullProfileData } from "@/lib/pdf";
+import type { Json } from "@/lib/supabase/database.types";
 
 export async function saveProfile(formData: Record<string, unknown>) {
   const supabase = await createClient();
@@ -42,14 +43,14 @@ export async function saveProfile(formData: Record<string, unknown>) {
     emergency_name: formData.emergency_name as string,
     emergency_relationship: formData.emergency_relationship as string,
     emergency_contact: formData.emergency_contact as string,
-    education: formData.education,
+    education: formData.education as Json,
     software_competencies: (formData.software_competencies as string) || null,
     shorthand_wpm: formData.shorthand_wpm
       ? Number(formData.shorthand_wpm)
       : null,
     typing_wpm: formData.typing_wpm ? Number(formData.typing_wpm) : null,
-    languages: formData.languages,
-    employment_history: formData.employment_history,
+    languages: formData.languages as Json,
+    employment_history: formData.employment_history as Json,
     additional_health: formData.additional_health as boolean,
     additional_health_detail:
       (formData.additional_health_detail as string) || null,
@@ -71,7 +72,6 @@ export async function saveProfile(formData: Record<string, unknown>) {
     declaration_agreed: formData.declaration_agreed as boolean,
     declaration_date: new Date().toISOString(),
     completed: true,
-    updated_at: new Date().toISOString(),
   };
 
   const { error } = await supabase
@@ -109,7 +109,7 @@ export async function saveProfile(formData: Record<string, unknown>) {
     emergency_name: profile.emergency_name,
     emergency_relationship: profile.emergency_relationship,
     emergency_contact: profile.emergency_contact,
-    education: profile.education as FullProfileData["education"],
+    education: profile.education as unknown as FullProfileData["education"],
     software_competencies: profile.software_competencies,
     shorthand_wpm: profile.shorthand_wpm,
     typing_wpm: profile.typing_wpm,
@@ -172,18 +172,17 @@ export async function saveDraft(formData: Record<string, unknown>, currentStep?:
     emergency_relationship:
       (formData.emergency_relationship as string) || null,
     emergency_contact: (formData.emergency_contact as string) || null,
-    education: formData.education || {},
+    education: (formData.education || {}) as Json,
     software_competencies:
       (formData.software_competencies as string) || null,
     shorthand_wpm: formData.shorthand_wpm
       ? Number(formData.shorthand_wpm)
       : null,
     typing_wpm: formData.typing_wpm ? Number(formData.typing_wpm) : null,
-    languages: formData.languages || [],
-    employment_history: formData.employment_history || [],
+    languages: (formData.languages || []) as Json,
+    employment_history: (formData.employment_history || []) as Json,
     completed: false,
     onboarding_step: currentStep || 1,
-    updated_at: new Date().toISOString(),
   };
 
   await supabase

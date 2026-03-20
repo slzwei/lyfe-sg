@@ -56,8 +56,17 @@ export default function InviteClient() {
       () => debouncedRefresh(),
       (connected) => setLive(connected)
     );
+
+    // Browser knows immediately when network drops
+    const goOffline = () => setLive(false);
+    const goOnline = () => setLive(true);
+    window.addEventListener("offline", goOffline);
+    window.addEventListener("online", goOnline);
+
     return () => {
       if (debounceRef.current) clearTimeout(debounceRef.current);
+      window.removeEventListener("offline", goOffline);
+      window.removeEventListener("online", goOnline);
       unsub();
     };
   }, [debouncedRefresh]);

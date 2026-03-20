@@ -196,7 +196,7 @@ export default function InviteClient() {
     };
 
     return (
-      <div className="flex items-center gap-2">
+      <div className="flex flex-col gap-1">
         {/* Mini bar segments */}
         <div className="flex gap-0.5">
           {segments.map((s, i) => (
@@ -204,12 +204,14 @@ export default function InviteClient() {
           ))}
         </div>
         {/* Pill label */}
-        <span className={`inline-block whitespace-nowrap rounded-full border px-2.5 py-0.5 text-xs font-medium ${pillStyle}`}>
-          {pillLabel}
-        </span>
-        {subLabel && (
-          <span className="text-[10px] text-stone-400">{subLabel}</span>
-        )}
+        <div className="flex items-center gap-1.5">
+          <span className={`inline-block whitespace-nowrap rounded-full border px-2.5 py-0.5 text-xs font-medium ${pillStyle}`}>
+            {pillLabel}
+          </span>
+          {subLabel && (
+            <span className="text-[10px] text-stone-400">{subLabel}</span>
+          )}
+        </div>
       </div>
     );
   }

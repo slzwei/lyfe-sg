@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import StepIndicator from "@/components/ui/StepIndicator";
 import {
   DISC_STEPS,
@@ -77,6 +77,19 @@ export default function DiscQuiz({ initialResponses, initialEmail }: DiscQuizPro
     }, 800);
     return () => clearInterval(interval);
   }, [submitting]);
+
+  // Auto-save progress after each answer (debounced 2s)
+  const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  useEffect(() => {
+    if (Object.keys(responses).length === 0) return;
+    if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
+    saveTimerRef.current = setTimeout(() => {
+      saveQuizProgress(responses).catch(() => {});
+    }, 2000);
+    return () => {
+      if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
+    };
+  }, [responses]);
 
   const questions = DISC_STEPS[currentStep - 1];
 

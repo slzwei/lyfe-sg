@@ -181,6 +181,12 @@ export default async function DiscResultsPage() {
         </div>
       )}
 
+      {/* Disclaimer */}
+      <p className="text-center text-xs leading-relaxed text-stone-400">
+        This assessment is for personal reflection only. Your work style may
+        vary across situations and over time.
+      </p>
+
       {/* Completion */}
       <div className="rounded-3xl border border-orange-200/60 bg-gradient-to-br from-orange-50 to-amber-50/50 p-6 text-center">
         <h2 className="text-lg font-semibold text-stone-800">

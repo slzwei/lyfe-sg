@@ -14,6 +14,51 @@ const AXIS_EFFECTS: Record<AxisCode, [DISCType, DISCType]> = {
   w: ["I", "S"], // Agreeable
 };
 
+// Compute theoretical min/max raw score per dimension from question structure.
+// Used to normalize each dimension independently to 0-100.
+function computeDimensionRanges(): Record<DISCType, { min: number; max: number }> {
+  const ranges: Record<DISCType, { min: number; max: number }> = {
+    D: { min: 0, max: 0 },
+    I: { min: 0, max: 0 },
+    S: { min: 0, max: 0 },
+    C: { min: 0, max: 0 },
+  };
+
+  for (const q of DISC_STEPS.flat()) {
+    if (q.format === "A") {
+      // contribution = answer - 3, range [-2, +2]
+      ranges[q.leftType].min += -2;
+      ranges[q.leftType].max += 2;
+      ranges[q.rightType].min += -2;
+      ranges[q.rightType].max += 2;
+    } else if (q.format === "B") {
+      // discType gets [-2, +2], diagonal opposite gets [-1, +1]
+      ranges[q.discType].min += -2;
+      ranges[q.discType].max += 2;
+      const opp = DIAGONAL_OPPOSITE[q.discType];
+      ranges[opp].min += -1;
+      ranges[opp].max += 1;
+    } else if (q.format === "C") {
+      const typesA = new Set(AXIS_EFFECTS[q.optionA.axis]);
+      const typesB = new Set(AXIS_EFFECTS[q.optionB.axis]);
+      for (const t of ["D", "I", "S", "C"] as DISCType[]) {
+        const inA = typesA.has(t);
+        const inB = typesB.has(t);
+        if (inA && inB) {
+          ranges[t].min += 1;
+          ranges[t].max += 1;
+        } else if (inA || inB) {
+          ranges[t].max += 1;
+        }
+      }
+    }
+  }
+
+  return ranges;
+}
+
+const DIMENSION_RANGES = computeDimensionRanges();
+
 export interface DISCScores {
   d_raw: number;
   i_raw: number;
@@ -57,37 +102,17 @@ export function calculateDiscScores(
     }
   }
 
-  // Normalize to percentages
-  const minScore = Math.min(raw.D, raw.I, raw.S, raw.C);
-  const shifted = {
-    D: raw.D - minScore,
-    I: raw.I - minScore,
-    S: raw.S - minScore,
-    C: raw.C - minScore,
-  };
-
-  const total = shifted.D + shifted.I + shifted.S + shifted.C;
-
-  let pct: Record<DISCType, number>;
-  if (total === 0) {
-    pct = { D: 25, I: 25, S: 25, C: 25 };
-  } else {
-    pct = {
-      D: Math.round((shifted.D / total) * 100),
-      I: Math.round((shifted.I / total) * 100),
-      S: Math.round((shifted.S / total) * 100),
-      C: Math.round((shifted.C / total) * 100),
-    };
-
-    // Fix rounding to sum to exactly 100
-    const pctSum = pct.D + pct.I + pct.S + pct.C;
-    if (pctSum !== 100) {
-      const diff = 100 - pctSum;
-      const maxType = (Object.entries(pct) as [DISCType, number][]).sort(
-        (a, b) => b[1] - a[1]
-      )[0][0];
-      pct[maxType] += diff;
-    }
+  // Normalize each dimension independently to 0-100 using its theoretical range.
+  // Dimensions are NOT constrained to sum to 100% — each is an independent measure
+  // of how strongly the respondent exhibits that trait (50 = midline).
+  const pct = {} as Record<DISCType, number>;
+  for (const t of ["D", "I", "S", "C"] as DISCType[]) {
+    const { min, max } = DIMENSION_RANGES[t];
+    const range = max - min;
+    pct[t] =
+      range === 0
+        ? 50
+        : Math.max(0, Math.min(100, Math.round(((raw[t] - min) / range) * 100)));
   }
 
   // Calculate circumplex angle

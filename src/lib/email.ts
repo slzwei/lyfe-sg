@@ -1,6 +1,6 @@
 import nodemailer from "nodemailer";
 import type { Transporter } from "nodemailer";
-import { generateProfilePdf, type FullProfileData } from "./pdf";
+import { generateProfilePdf, generateDiscPdf, type FullProfileData, type DiscPdfData } from "./pdf";
 
 // ─── Transporter (cached) ────────────────────────────────────────────────────
 
@@ -242,6 +242,7 @@ interface DiscResultData {
   i_pct: number;
   s_pct: number;
   c_pct: number;
+  angle: number;
   results_email: string;
   contact_number: string;
 }
@@ -326,10 +327,66 @@ export async function sendDiscResultsEmail(result: DiscResultData) {
   const typeName = TYPE_NAMES[result.disc_type] || result.disc_type;
   const primaryDimension = result.disc_type.charAt(0).toUpperCase();
   const primaryColor = TYPE_COLORS[primaryDimension] || "#2C2925";
+  const bgTint = `${primaryColor}08`;
+  const borderTint = `${primaryColor}20`;
 
   console.log(
     `[email] Preparing DISC results email for ${result.full_name} (${typeName})`
   );
+
+  // Import type info for PDF
+  const { DISC_TYPE_INFO } = await import("@/app/candidate/disc-quiz/scoring");
+  const typeInfo = DISC_TYPE_INFO[result.disc_type];
+
+  // Generate PDF attachment
+  let pdfBuffer: Buffer | null = null;
+  if (typeInfo) {
+    try {
+      pdfBuffer = await generateDiscPdf({
+        full_name: result.full_name,
+        disc_type: result.disc_type,
+        d_pct: result.d_pct,
+        i_pct: result.i_pct,
+        s_pct: result.s_pct,
+        c_pct: result.c_pct,
+        angle: result.angle,
+        typeInfo,
+      });
+      console.log(`[email] DISC PDF generated (${pdfBuffer.length} bytes)`);
+    } catch (err) {
+      console.error("[email] DISC PDF generation failed:", err);
+    }
+  }
+
+  // Build descriptor pills HTML
+  const descriptorPills = typeInfo
+    ? typeInfo.descriptors
+        .map(
+          (d: string) =>
+            `<span style="display:inline-block;padding:4px 12px;border-radius:20px;font-size:11px;font-weight:600;color:${primaryColor};background-color:${bgTint};border:1px solid ${borderTint};margin:0 4px 4px 0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">${d}</span>`
+        )
+        .join("")
+    : "";
+
+  // Build strengths list
+  const strengthsList = typeInfo
+    ? typeInfo.strengths
+        .map(
+          (s: string) =>
+            `<tr><td style="padding:4px 0 4px 0;vertical-align:top;width:16px;"><span style="display:inline-block;width:6px;height:6px;border-radius:3px;background-color:#34d399;margin-top:5px;"></span></td><td style="padding:4px 0;font-size:12px;color:#065f46;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;line-height:1.5;">${s}</td></tr>`
+        )
+        .join("")
+    : "";
+
+  // Build blind spots list
+  const blindSpotsList = typeInfo
+    ? typeInfo.blindSpots
+        .map(
+          (b: string) =>
+            `<tr><td style="padding:4px 0 4px 0;vertical-align:top;width:16px;"><span style="display:inline-block;width:6px;height:6px;border-radius:3px;background-color:#fbbf24;margin-top:5px;"></span></td><td style="padding:4px 0;font-size:12px;color:#92400e;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;line-height:1.5;">${b}</td></tr>`
+        )
+        .join("")
+    : "";
 
   const body = `
               <!-- Greeting -->
@@ -337,21 +394,47 @@ export async function sendDiscResultsEmail(result: DiscResultData) {
                 New personality assessment completed.
               </p>
               <p style="margin:0 0 28px 0;font-size:13px;color:#A09B93;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;font-weight:400;line-height:1.5;">
-                DISC profile results are ready for review.
+                DISC profile results are ready for review.${pdfBuffer ? " Full report attached as PDF." : ""}
               </p>
 
-              <!-- Candidate name -->
-              <p style="margin:0 0 4px 0;font-size:22px;color:#2C2925;font-family:'Georgia','Times New Roman',serif;font-weight:normal;line-height:1.3;letter-spacing:-0.3px;">
-                ${result.full_name}
-              </p>
+              <!-- Hero card -->
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;">
+                <tr>
+                  <td style="padding:24px;background-color:${bgTint};border-radius:12px;border:1px solid ${borderTint};">
+                    <!-- Candidate name -->
+                    <p style="margin:0 0 4px 0;font-size:22px;color:#2C2925;font-family:'Georgia','Times New Roman',serif;font-weight:normal;line-height:1.3;letter-spacing:-0.3px;">
+                      ${result.full_name}
+                    </p>
 
-              <!-- DISC type label -->
-              <p style="margin:0 0 24px 0;font-size:14px;color:${primaryColor};font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;font-weight:600;letter-spacing:0.3px;">
-                ${typeName} <span style="font-weight:400;color:#A09B93;">(${result.disc_type})</span>
+                    <!-- DISC type -->
+                    <p style="margin:0 0 2px 0;font-size:18px;color:${primaryColor};font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;font-weight:700;letter-spacing:0.3px;">
+                      ${typeName}
+                    </p>
+
+                    ${typeInfo ? `
+                    <!-- Motto -->
+                    <p style="margin:0 0 12px 0;font-size:13px;color:#A09B93;font-family:'Georgia','Times New Roman',serif;font-style:italic;">
+                      &ldquo;${typeInfo.motto}&rdquo;
+                    </p>
+
+                    <!-- Descriptor pills -->
+                    <div style="margin:0 0 0 0;">
+                      ${descriptorPills}
+                    </div>
+                    ` : ""}
+                  </td>
+                </tr>
+              </table>
+
+              ${typeInfo ? `
+              <!-- Description -->
+              <p style="margin:20px 0 0 0;font-size:13px;color:#57534e;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;line-height:1.6;">
+                ${typeInfo.description}
               </p>
+              ` : ""}
 
               <!-- Thin divider -->
-              <div style="height:1px;background-color:#EEECE8;margin-bottom:4px;"></div>
+              <div style="height:1px;background-color:#EEECE8;margin:24px 0 4px 0;"></div>
 
               <!-- Contact info -->
               <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;">
@@ -371,7 +454,63 @@ export async function sendDiscResultsEmail(result: DiscResultData) {
                 ${scoreBar("Clarity", result.c_pct, "C")}
               </table>
 
+              ${typeInfo ? `
+              <!-- Strengths & Blind Spots -->
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;margin-top:28px;">
+                <tr>
+                  <td width="48%" style="vertical-align:top;padding-right:8px;">
+                    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;background-color:#ecfdf5;border-radius:8px;border:1px solid #d1fae5;">
+                      <tr>
+                        <td style="padding:14px 16px 4px 16px;">
+                          <p style="margin:0 0 8px 0;font-size:12px;font-weight:700;color:#059669;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
+                            Strengths
+                          </p>
+                          <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;">
+                            ${strengthsList}
+                          </table>
+                        </td>
+                      </tr>
+                      <tr><td style="height:10px;"></td></tr>
+                    </table>
+                  </td>
+                  <td width="4%"></td>
+                  <td width="48%" style="vertical-align:top;padding-left:8px;">
+                    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;background-color:#fffbeb;border-radius:8px;border:1px solid #fef3c7;">
+                      <tr>
+                        <td style="padding:14px 16px 4px 16px;">
+                          <p style="margin:0 0 8px 0;font-size:12px;font-weight:700;color:#d97706;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
+                            Blind Spots
+                          </p>
+                          <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;">
+                            ${blindSpotsList}
+                          </table>
+                        </td>
+                      </tr>
+                      <tr><td style="height:10px;"></td></tr>
+                    </table>
+                  </td>
+                </tr>
+              </table>
+              ` : ""}
+
+              ${pdfBuffer ? `
+              <!-- PDF note -->
+              <p style="margin:24px 0 0 0;font-size:12px;color:#A09B93;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;text-align:center;font-style:italic;">
+                Full personality profile report with diagram attached as PDF.
+              </p>
+              ` : ""}
+
   `;
+
+  const attachments = pdfBuffer
+    ? [
+        {
+          filename: `${result.full_name.replace(/\s+/g, "_")}_DISC_Profile.pdf`,
+          content: pdfBuffer,
+          contentType: "application/pdf",
+        },
+      ]
+    : undefined;
 
   await sendEmail({
     to: NOTIFY_TO,
@@ -379,5 +518,6 @@ export async function sendDiscResultsEmail(result: DiscResultData) {
     subject: `DISC Result: ${result.full_name} — ${typeName} (${result.disc_type})`,
     html: wrapHtml(body),
     text: `DISC quiz completed by ${result.full_name}. Type: ${typeName}. D:${result.d_pct}% I:${result.i_pct}% S:${result.s_pct}% C:${result.c_pct}%`,
+    attachments,
   });
 }

@@ -71,6 +71,7 @@ export async function submitDiscQuiz(responses: Record<string, number>, resultsE
     i_pct: scores.i_pct,
     s_pct: scores.s_pct,
     c_pct: scores.c_pct,
+    angle: scores.angle,
     results_email: resultsEmail || "",
     contact_number: profile?.contact_number || "",
   }).catch(() => {});

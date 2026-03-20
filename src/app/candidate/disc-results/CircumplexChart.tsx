@@ -83,7 +83,12 @@ export default function CircumplexChart({
     return `M ${cx} ${cy} L ${x1} ${y1} A ${radius} ${radius} 0 0 0 ${x2} ${y2} Z`;
   }
 
-  const dotR = outerR * 0.6;
+  // Dot distance from center encodes profile strength (differentiation)
+  const vScore = d + i - (s + c);
+  const hScore = i + s - (d + c);
+  const rawMag = Math.sqrt(vScore ** 2 + hScore ** 2);
+  const normalizedMag = Math.min(rawMag / 120, 1);
+  const dotR = outerR * (0.2 + normalizedMag * 0.65);
   const dotAngleRad = (angle * Math.PI) / 180;
   const dotX = cx + dotR * Math.cos(dotAngleRad);
   const dotY = cy - dotR * Math.sin(dotAngleRad);

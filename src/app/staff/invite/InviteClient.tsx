@@ -289,7 +289,7 @@ export default function InviteClient() {
                               Reset Quiz
                             </button>
                           )}
-                          {isAccepted && (
+                          {isAccepted && inv.progress?.profile_completed && (
                             <button
                               onClick={() => handleResetApp(inv.id)}
                               disabled={isLoading}

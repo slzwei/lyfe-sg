@@ -157,19 +157,21 @@ export default function InviteClient() {
     let subLabel = "";
 
     if (progress?.quiz_completed) {
-      pillLabel = `Completed · DISC: ${progress.disc_type?.toUpperCase()}`;
+      pillLabel = `Completed`;
       pillStyle = "bg-green-50 text-green-700 border-green-200";
+      subLabel = `DISC: ${progress.disc_type?.toUpperCase()}`;
     } else if (progress?.profile_completed && quizInProgress) {
-      pillLabel = `Quiz · ${progress.quiz_answered}/39`;
+      pillLabel = `Quiz`;
       pillStyle = "bg-blue-50 text-blue-700 border-blue-200";
+      subLabel = `${progress.quiz_answered}/39`;
     } else if (progress?.profile_completed) {
-      pillLabel = "Application submitted";
+      pillLabel = "Submitted";
       pillStyle = "bg-orange-50 text-orange-700 border-orange-200";
     } else if (progress) {
       const s = progress.onboarding_step || 1;
-      pillLabel = `Form · ${stepLabels[s - 1]}`;
+      pillLabel = stepLabels[s - 1];
       pillStyle = "bg-stone-50 text-stone-600 border-stone-200";
-      subLabel = `Step ${s}/6`;
+      subLabel = `${s}/6`;
     } else {
       pillLabel = "Starting";
       pillStyle = "bg-stone-50 text-stone-500 border-stone-200";

@@ -41,18 +41,16 @@ export default function Hero() {
             style={show(0.1)}
           >
             <span className="h-1.5 w-1.5 rounded-full bg-orange-500" />
-            Financial Representatives
+            Coming Soon
           </p>
 
           <h1
             className="mt-8 text-[2.75rem] sm:text-[3.5rem] lg:text-[4.25rem] font-extrabold tracking-tight text-stone-900 leading-[1.08]"
             style={show(0.2)}
           >
-            Your financial
-            <br />
-            future,{" "}
+            We&apos;re{" "}
             <span className="relative">
-              <span className="relative z-10 text-orange-500">made simple.</span>
+              <span className="relative z-10 text-orange-500">revamping.</span>
               <span className="absolute bottom-1 left-0 right-0 h-3 bg-orange-100 -z-0 rounded-sm" />
             </span>
           </h1>
@@ -61,9 +59,8 @@ export default function Hero() {
             className="mt-7 text-lg sm:text-xl text-stone-500 max-w-xl leading-relaxed font-medium"
             style={show(0.35)}
           >
-            We&apos;re a team of dedicated financial representatives
-            helping Singaporeans protect what matters and
-            plan for the future.
+            We&apos;re giving Lyfe a fresh new look.
+            Stay tuned &mdash; something better is on the way.
           </p>
 
           <div

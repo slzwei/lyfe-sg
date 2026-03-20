@@ -14,9 +14,9 @@ const pacifico = Pacifico({
 });
 
 export const metadata: Metadata = {
-  title: "Lyfe — Your Financial Future, Made Simple",
+  title: "Lyfe — We're Revamping",
   description:
-    "Lyfe is a team of financial representatives in Singapore. We help with life insurance, health insurance, savings, investments, and retirement planning.",
+    "Lyfe is getting a fresh new look. Stay tuned — we'll be back soon with something better.",
   keywords: [
     "insurance singapore",
     "financial adviser singapore",
@@ -25,9 +25,9 @@ export const metadata: Metadata = {
     "financial planning singapore",
   ],
   openGraph: {
-    title: "Lyfe — Your Financial Future, Made Simple",
+    title: "Lyfe — We're Revamping",
     description:
-      "Your financial future, made simple. We're a team of dedicated financial representatives helping you plan ahead.",
+      "Lyfe is getting a fresh new look. Stay tuned — we'll be back soon with something better.",
     url: "https://lyfe.sg",
     siteName: "Lyfe",
     locale: "en_SG",

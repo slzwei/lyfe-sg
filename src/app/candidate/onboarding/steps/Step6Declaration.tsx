@@ -97,7 +97,7 @@ export default function Step6Declaration({
                       onChange={(e) => onChange(q.detailKey, e.target.value)}
                     />
                     {errors[q.detailKey] && (
-                      <p className="mt-1 text-xs text-red-500">
+                      <p data-error className="mt-1 text-xs text-red-500">
                         {errors[q.detailKey]}
                       </p>
                     )}
@@ -134,7 +134,7 @@ export default function Step6Declaration({
             </span>
           </label>
           {errors.declaration_agreed && (
-            <p className="mt-2 text-xs text-red-500">
+            <p data-error className="mt-2 text-xs text-red-500">
               {errors.declaration_agreed}
             </p>
           )}

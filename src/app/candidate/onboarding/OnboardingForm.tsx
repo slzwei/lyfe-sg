@@ -154,6 +154,13 @@ export default function OnboardingForm({ initialData, userPhone }: OnboardingFor
       }
     }
     setErrors(fieldErrors);
+    // Scroll to the first error field
+    requestAnimationFrame(() => {
+      const firstError = document.querySelector("[data-error]");
+      if (firstError) {
+        firstError.scrollIntoView({ behavior: "smooth", block: "center" });
+      }
+    });
     return false;
   }
 

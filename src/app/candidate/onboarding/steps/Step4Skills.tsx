@@ -66,7 +66,7 @@ export default function Step4Skills({ data, onChange, errors }: Step4Props) {
             placeholder="e.g. Microsoft Word, Excel, Photoshop, Canva…"
           />
           {errors.software_competencies && (
-            <p className="mt-1 text-xs text-red-500">
+            <p data-error className="mt-1 text-xs text-red-500">
               {errors.software_competencies}
             </p>
           )}

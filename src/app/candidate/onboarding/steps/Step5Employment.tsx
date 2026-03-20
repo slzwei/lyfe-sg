@@ -75,7 +75,7 @@ export default function Step5Employment({
       </div>
 
       {errors.employment_history && (
-        <p className="text-xs text-red-500">{errors.employment_history}</p>
+        <p data-error className="text-xs text-red-500">{errors.employment_history}</p>
       )}
 
       {rows.map((row, i) => (
@@ -110,7 +110,7 @@ export default function Step5Employment({
                   onChange={(e) => updateRow(i, "from", e.target.value)}
                 />
                 {errors[`employment_history.${i}.from`] && (
-                  <p className="mt-1 text-xs text-red-500">
+                  <p data-error className="mt-1 text-xs text-red-500">
                     {errors[`employment_history.${i}.from`]}
                   </p>
                 )}
@@ -130,7 +130,7 @@ export default function Step5Employment({
                       onChange={(e) => updateRow(i, "to", e.target.value)}
                     />
                     {errors[`employment_history.${i}.to`] && (
-                      <p className="mt-1 text-xs text-red-500">
+                      <p data-error className="mt-1 text-xs text-red-500">
                         {errors[`employment_history.${i}.to`]}
                       </p>
                     )}
@@ -150,7 +150,7 @@ export default function Step5Employment({
                   </span>
                 </label>
                 {errors[`employment_history.${i}.is_current`] && (
-                  <p className="mt-1 text-xs text-red-500">
+                  <p data-error className="mt-1 text-xs text-red-500">
                     {errors[`employment_history.${i}.is_current`]}
                   </p>
                 )}
@@ -164,7 +164,7 @@ export default function Step5Employment({
                   placeholder="e.g. DBS Bank Singapore"
                 />
                 {errors[`employment_history.${i}.company`] && (
-                  <p className="mt-1 text-xs text-red-500">
+                  <p data-error className="mt-1 text-xs text-red-500">
                     {errors[`employment_history.${i}.company`]}
                   </p>
                 )}
@@ -177,7 +177,7 @@ export default function Step5Employment({
                   onChange={(e) => updateRow(i, "position", e.target.value)}
                 />
                 {errors[`employment_history.${i}.position`] && (
-                  <p className="mt-1 text-xs text-red-500">
+                  <p data-error className="mt-1 text-xs text-red-500">
                     {errors[`employment_history.${i}.position`]}
                   </p>
                 )}

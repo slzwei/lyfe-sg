@@ -95,7 +95,7 @@ export default function Step3Education({
       </div>
 
       {errors.education && (
-        <p className="text-xs text-red-500">{errors.education}</p>
+        <p data-error className="text-xs text-red-500">{errors.education}</p>
       )}
 
       {/* Currently studying toggle */}
@@ -155,7 +155,7 @@ export default function Step3Education({
                 placeholder="e.g. Bachelor of Business"
               />
               {errors["education.current_qualification"] && (
-                <p className="mt-1 text-xs text-red-500">
+                <p data-error className="mt-1 text-xs text-red-500">
                   {errors["education.current_qualification"]}
                 </p>
               )}
@@ -171,7 +171,7 @@ export default function Step3Education({
                 placeholder="e.g. National University of Singapore"
               />
               {errors["education.current_institution"] && (
-                <p className="mt-1 text-xs text-red-500">
+                <p data-error className="mt-1 text-xs text-red-500">
                   {errors["education.current_institution"]}
                 </p>
               )}
@@ -210,7 +210,7 @@ export default function Step3Education({
                 ))}
               </select>
               {errors["education.current_expected_end_date"] && (
-                <p className="mt-1 text-xs text-red-500">
+                <p data-error className="mt-1 text-xs text-red-500">
                   {errors["education.current_expected_end_date"]}
                 </p>
               )}
@@ -248,7 +248,7 @@ export default function Step3Education({
               ))}
             </select>
             {errors["education.highest_qualification"] && (
-              <p className="mt-1 text-xs text-red-500">
+              <p data-error className="mt-1 text-xs text-red-500">
                 {errors["education.highest_qualification"]}
               </p>
             )}
@@ -264,7 +264,7 @@ export default function Step3Education({
               placeholder="e.g. Ngee Ann Polytechnic"
             />
             {errors["education.highest_institution"] && (
-              <p className="mt-1 text-xs text-red-500">
+              <p data-error className="mt-1 text-xs text-red-500">
                 {errors["education.highest_institution"]}
               </p>
             )}
@@ -286,7 +286,7 @@ export default function Step3Education({
               ))}
             </select>
             {errors["education.highest_year_completed"] && (
-              <p className="mt-1 text-xs text-red-500">
+              <p data-error className="mt-1 text-xs text-red-500">
                 {errors["education.highest_year_completed"]}
               </p>
             )}

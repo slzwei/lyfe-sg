@@ -18,7 +18,7 @@ const LABEL_CLASS = "mb-1.5 block text-sm font-medium text-stone-700";
 
 function FieldError({ error }: { error?: string }) {
   if (!error) return null;
-  return <p className="mt-1 text-xs text-red-500">{error}</p>;
+  return <p data-error className="mt-1 text-xs text-red-500">{error}</p>;
 }
 
 function SectionHeader({

@@ -51,8 +51,21 @@ export async function sendInvite(data: {
     return { success: false, error: "Please enter a valid email address." };
   }
 
-  const token = randomBytes(32).toString("base64url");
   const admin = getAdminClient();
+
+  // Check if email already has an active invitation (pending or accepted)
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { data: existing } = await (admin.from("invitations") as any)
+    .select("id")
+    .eq("email", data.email)
+    .in("status", ["pending", "accepted"])
+    .limit(1);
+
+  if (existing && existing.length > 0) {
+    return { success: false, error: "An invitation for this email already exists." };
+  }
+
+  const token = randomBytes(32).toString("base64url");
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { error } = await (admin.from("invitations") as any).insert({

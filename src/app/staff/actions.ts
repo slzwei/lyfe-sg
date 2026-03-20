@@ -102,6 +102,7 @@ export interface Invitation {
   created_at: string;
   expires_at: string;
   accepted_at: string | null;
+  archived_at: string | null;
   progress: InvitationProgress | null;
 }
 
@@ -116,7 +117,7 @@ export async function listInvitations(): Promise<{
   const admin = getAdminClient();
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { data, error } = await (admin.from("invitations") as any)
-    .select("id, token, email, candidate_name, position_applied, status, user_id, created_at, expires_at, accepted_at")
+    .select("id, token, email, candidate_name, position_applied, status, user_id, created_at, expires_at, accepted_at, archived_at")
     .order("created_at", { ascending: false })
     .limit(100);
 
@@ -135,6 +136,7 @@ export async function listInvitations(): Promise<{
     created_at: string;
     expires_at: string;
     accepted_at: string | null;
+    archived_at: string | null;
   }>;
 
   // Collect user_ids for accepted invitations
@@ -210,7 +212,7 @@ export async function revokeInvitation(id: string) {
   const { error } = await (admin.from("invitations") as any)
     .update({ status: "revoked" })
     .eq("id", id)
-    .eq("status", "pending");
+    .in("status", ["pending", "accepted"]);
 
   if (error) {
     return { success: false, error: error.message };
@@ -272,6 +274,24 @@ export async function resetQuiz(invitationId: string) {
   await (admin.from("disc_results") as any).delete().eq("user_id", userId);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   await (admin.from("disc_responses") as any).delete().eq("user_id", userId);
+
+  return { success: true };
+}
+
+export async function archiveInvitation(id: string) {
+  const staff = await requireStaff();
+  if (!staff) return { success: false, error: "Not authenticated." };
+
+  const admin = getAdminClient();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { error } = await (admin.from("invitations") as any)
+    .update({ archived_at: new Date().toISOString() })
+    .eq("id", id)
+    .is("archived_at", null);
+
+  if (error) {
+    return { success: false, error: error.message };
+  }
 
   return { success: true };
 }

@@ -7,6 +7,7 @@ import {
   revokeInvitation,
   resetApplication,
   resetQuiz,
+  archiveInvitation,
   type Invitation,
 } from "../actions";
 
@@ -22,6 +23,7 @@ export default function InviteClient() {
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [refreshing, setRefreshing] = useState(false);
   const [lastRefreshed, setLastRefreshed] = useState<Date | null>(null);
+  const [pastOpen, setPastOpen] = useState(false);
 
   const fetchInvitations = useCallback(async () => {
     const result = await listInvitations();
@@ -41,6 +43,9 @@ export default function InviteClient() {
     const interval = setInterval(fetchInvitations, 30_000);
     return () => clearInterval(interval);
   }, [fetchInvitations]);
+
+  const active = invitations.filter((inv) => !inv.archived_at);
+  const archived = invitations.filter((inv) => inv.archived_at);
 
   async function handleRefresh() {
     setRefreshing(true);
@@ -95,6 +100,14 @@ export default function InviteClient() {
     setActionLoading(null);
   }
 
+  async function handleArchive(id: string) {
+    if (!confirm("Archive this candidate? They will be moved to Past Candidates.")) return;
+    setActionLoading(id);
+    const result = await archiveInvitation(id);
+    if (result.success) fetchInvitations();
+    setActionLoading(null);
+  }
+
   function handleCopyLink(inv: Invitation) {
     const link = `${window.location.origin}/candidate/login?token=${inv.token}`;
     navigator.clipboard.writeText(link);
@@ -137,7 +150,7 @@ export default function InviteClient() {
         label = `Completed\nDISC: ${progress.disc_type?.toUpperCase()}`;
       } else if (progress.profile_completed && quizInProgress) {
         step = 3;
-        label = `Taking quiz (${progress.quiz_answered}/38)`;
+        label = `Taking quiz (${progress.quiz_answered}/39)`;
       } else if (progress.profile_completed) {
         step = 3;
         label = "Application submitted";
@@ -168,6 +181,103 @@ export default function InviteClient() {
       </div>
     );
   }
+
+  function renderRow(inv: Invitation, showArchive: boolean) {
+    const isExpired =
+      inv.status === "pending" &&
+      new Date(inv.expires_at) < new Date();
+    const isAccepted = inv.status === "accepted";
+    const isLoading = actionLoading === inv.id;
+
+    return (
+      <tr
+        key={inv.id}
+        className={`text-stone-600 ${isLoading ? "opacity-50 pointer-events-none" : ""}`}
+      >
+        <td className="py-2.5 pr-4 font-medium text-stone-800">
+          {inv.candidate_name || "\u2014"}
+        </td>
+        <td className="py-2.5 pr-4">{inv.email}</td>
+        <td className="py-2.5 pr-4">
+          {inv.position_applied || "\u2014"}
+        </td>
+        <td className="py-2.5 pr-4">{progressDisplay(inv)}</td>
+        <td className="py-2.5 pr-4 text-stone-400">
+          {new Date(inv.created_at).toLocaleDateString()}
+        </td>
+        <td className="py-2.5">
+          <div className="flex items-center gap-1.5">
+            {inv.status === "pending" && !isExpired && (
+              <button
+                onClick={() => handleCopyLink(inv)}
+                title={copiedId === inv.id ? "Copied!" : "Copy invite link"}
+                className="rounded p-1 text-stone-400 transition-colors hover:bg-stone-100 hover:text-stone-600"
+              >
+                {copiedId === inv.id ? (
+                  <svg className="h-4 w-4 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
+                ) : (
+                  <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101M10.172 13.828a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" /></svg>
+                )}
+              </button>
+            )}
+            {((inv.status === "pending" && !isExpired) || isAccepted) && (
+              <button
+                onClick={() => handleRevoke(inv.id)}
+                disabled={isLoading}
+                title="Revoke invitation"
+                className="rounded p-1 text-stone-400 transition-colors hover:bg-red-50 hover:text-red-500 disabled:opacity-50"
+              >
+                <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" /></svg>
+              </button>
+            )}
+            {isAccepted && inv.progress?.quiz_completed && (
+              <button
+                onClick={() => handleResetQuiz(inv.id)}
+                disabled={isLoading}
+                title="Reset quiz"
+                className="rounded p-1 text-stone-400 transition-colors hover:bg-blue-50 hover:text-blue-500 disabled:opacity-50"
+              >
+                <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
+              </button>
+            )}
+            {isAccepted && inv.progress?.profile_completed && (
+              <button
+                onClick={() => handleResetApp(inv.id)}
+                disabled={isLoading}
+                title="Reopen application form"
+                className="rounded p-1 text-stone-400 transition-colors hover:bg-orange-50 hover:text-orange-500 disabled:opacity-50"
+              >
+                <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
+              </button>
+            )}
+            {showArchive && !inv.archived_at && (
+              <button
+                onClick={() => handleArchive(inv.id)}
+                disabled={isLoading}
+                title="Archive candidate"
+                className="rounded p-1 text-stone-400 transition-colors hover:bg-stone-100 hover:text-stone-600 disabled:opacity-50"
+              >
+                <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M20 7l-8 4-8-4m16 0v10a2 2 0 01-2 2H6a2 2 0 01-2-2V7m16 0l-8-4-8 4" /></svg>
+              </button>
+            )}
+          </div>
+        </td>
+      </tr>
+    );
+  }
+
+  const tableHead = (
+    <thead>
+      <tr className="border-b border-stone-100 text-left text-xs font-medium uppercase tracking-wider text-stone-400">
+        <th className="pb-2 pr-4">Name</th>
+        <th className="pb-2 pr-4">Email</th>
+        <th className="pb-2 pr-4">Position</th>
+        <th className="pb-2 pr-4">Progress</th>
+        <th className="pb-2 pr-4">Sent</th>
+        <th className="pb-2">Actions</th>
+      </tr>
+    </thead>
+  );
 
   return (
     <div className="space-y-8">
@@ -251,11 +361,11 @@ export default function InviteClient() {
         </form>
       </div>
 
-      {/* Invitation List */}
+      {/* Candidate List */}
       <div className="rounded-2xl border border-stone-200 bg-white p-6 shadow-sm">
         <div className="mb-4 flex items-center justify-between">
           <h2 className="text-lg font-semibold text-stone-800">
-            Recent Invitations
+            Candidate List
           </h2>
           <div className="flex items-center gap-2">
             {lastRefreshed && (
@@ -286,96 +396,59 @@ export default function InviteClient() {
         {loadingList ? (
           <p className="text-sm text-stone-400">Loading...</p>
         ) : invitations.length === 0 ? (
-          <p className="text-sm text-stone-400">No invitations sent yet.</p>
+          <p className="text-sm text-stone-400">No candidates yet.</p>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="border-b border-stone-100 text-left text-xs font-medium uppercase tracking-wider text-stone-400">
-                  <th className="pb-2 pr-4">Name</th>
-                  <th className="pb-2 pr-4">Email</th>
-                  <th className="pb-2 pr-4">Position</th>
-                  <th className="pb-2 pr-4">Progress</th>
-                  <th className="pb-2 pr-4">Sent</th>
-                  <th className="pb-2">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-stone-50">
-                {invitations.map((inv) => {
-                  const isExpired =
-                    inv.status === "pending" &&
-                    new Date(inv.expires_at) < new Date();
-                  const isAccepted = inv.status === "accepted";
-                  const isLoading = actionLoading === inv.id;
+          <div className="space-y-6">
+            {/* Active Candidates */}
+            <div>
+              <h3 className="mb-2 text-xs font-semibold uppercase tracking-wider text-stone-400">
+                Active Candidates
+              </h3>
+              {active.length === 0 ? (
+                <p className="text-sm text-stone-400">No active candidates.</p>
+              ) : (
+                <div className="overflow-x-auto">
+                  <table className="w-full text-sm">
+                    {tableHead}
+                    <tbody className="divide-y divide-stone-50">
+                      {active.map((inv) => renderRow(inv, true))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </div>
 
-                  return (
-                    <tr
-                      key={inv.id}
-                      className={`text-stone-600 ${isLoading ? "opacity-50 pointer-events-none" : ""}`}
-                    >
-                      <td className="py-2.5 pr-4 font-medium text-stone-800">
-                        {inv.candidate_name || "\u2014"}
-                      </td>
-                      <td className="py-2.5 pr-4">{inv.email}</td>
-                      <td className="py-2.5 pr-4">
-                        {inv.position_applied || "\u2014"}
-                      </td>
-                      <td className="py-2.5 pr-4">{progressDisplay(inv)}</td>
-                      <td className="py-2.5 pr-4 text-stone-400">
-                        {new Date(inv.created_at).toLocaleDateString()}
-                      </td>
-                      <td className="py-2.5">
-                        <div className="flex items-center gap-1.5">
-                          {inv.status === "pending" && !isExpired && (
-                            <button
-                              onClick={() => handleCopyLink(inv)}
-                              title={copiedId === inv.id ? "Copied!" : "Copy invite link"}
-                              className="rounded p-1 text-stone-400 transition-colors hover:bg-stone-100 hover:text-stone-600"
-                            >
-                              {copiedId === inv.id ? (
-                                <svg className="h-4 w-4 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
-                              ) : (
-                                <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101M10.172 13.828a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" /></svg>
-                              )}
-                            </button>
-                          )}
-                          {inv.status === "pending" && !isExpired && (
-                            <button
-                              onClick={() => handleRevoke(inv.id)}
-                              disabled={isLoading}
-                              title="Revoke invitation"
-                              className="rounded p-1 text-stone-400 transition-colors hover:bg-red-50 hover:text-red-500 disabled:opacity-50"
-                            >
-                              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" /></svg>
-                            </button>
-                          )}
-                          {isAccepted && inv.progress?.quiz_completed && (
-                            <button
-                              onClick={() => handleResetQuiz(inv.id)}
-                              disabled={isLoading}
-                              title="Reset quiz"
-                              className="rounded p-1 text-stone-400 transition-colors hover:bg-blue-50 hover:text-blue-500 disabled:opacity-50"
-                            >
-                              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
-                            </button>
-                          )}
-                          {isAccepted && inv.progress?.profile_completed && (
-                            <button
-                              onClick={() => handleResetApp(inv.id)}
-                              disabled={isLoading}
-                              title="Reopen application form"
-                              className="rounded p-1 text-stone-400 transition-colors hover:bg-orange-50 hover:text-orange-500 disabled:opacity-50"
-                            >
-                              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
-                            </button>
-                          )}
-                        </div>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
+            {/* Past Candidates (archived) */}
+            {archived.length > 0 && (
+              <div className="border-t border-stone-100 pt-4">
+                <button
+                  type="button"
+                  onClick={() => setPastOpen(!pastOpen)}
+                  className="flex w-full items-center gap-2 text-left text-xs font-semibold uppercase tracking-wider text-stone-400 transition-colors hover:text-stone-600"
+                >
+                  <svg
+                    className={`h-3.5 w-3.5 transition-transform ${pastOpen ? "rotate-90" : ""}`}
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth={2}
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                  </svg>
+                  Past Candidates ({archived.length})
+                </button>
+                {pastOpen && (
+                  <div className="mt-2 overflow-x-auto">
+                    <table className="w-full text-sm">
+                      {tableHead}
+                      <tbody className="divide-y divide-stone-50">
+                        {archived.map((inv) => renderRow(inv, false))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         )}
       </div>

@@ -98,7 +98,38 @@ export async function verifyOtp(phone: string, token: string, inviteToken?: stri
     .single() as { data: { id: string } | null; error: unknown };
 
   if (existingProfile) {
-    // Existing candidate — allow login without invite token
+    // Existing candidate — if they have an invite token, apply invitation data
+    if (inviteToken) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const { data: inv } = await (admin.from("invitations") as any)
+        .select("id, email, candidate_name, position_applied, expires_at")
+        .eq("token", inviteToken)
+        .eq("status", "pending")
+        .single();
+
+      if (inv && new Date(inv.expires_at) > new Date()) {
+        // Mark invitation as accepted
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        await (admin.from("invitations") as any)
+          .update({
+            status: "accepted",
+            user_id: user.id,
+            accepted_at: new Date().toISOString(),
+          })
+          .eq("id", inv.id);
+
+        // Update profile with invitation data
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        await (admin.from("candidate_profiles") as any)
+          .update({
+            email: inv.email,
+            full_name: inv.candidate_name || "",
+            position_applied: inv.position_applied || "",
+            invitation_id: inv.id,
+          })
+          .eq("user_id", user.id);
+      }
+    }
     redirect("/candidate/onboarding");
   }
 

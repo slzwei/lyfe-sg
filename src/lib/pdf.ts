@@ -859,33 +859,28 @@ export async function generateDiscPdf(data: DiscPdfData): Promise<Buffer> {
       .fillColor(DARK)
       .text(data.full_name, leftX, heroTopY + 14, { width: leftColW - heroPad });
 
-    if (isBalanced) {
-      doc
-        .font("Helvetica-Bold")
-        .fontSize(14)
-        .fillColor(displayColor)
-        .text(displayName, leftX, doc.y + 2, { width: leftColW - heroPad });
-    } else {
-      doc
-        .font("Helvetica-Bold")
-        .fontSize(14)
-        .fillColor(displayColor)
-        .text(`${displayName}  `, leftX, doc.y + 2, {
-          width: leftColW - heroPad,
-          continued: true,
-        });
+    // Type name + code
+    const typeLineY = doc.y + 2;
+    doc
+      .font("Helvetica-Bold")
+      .fontSize(14)
+      .fillColor(displayColor)
+      .text(displayName, leftX, typeLineY, { width: leftColW - heroPad });
+
+    if (!isBalanced) {
+      // Place code inline after the type name if it fits, otherwise on same line right-aligned
       doc
         .font("Helvetica")
         .fontSize(9)
         .fillColor(MUTED)
-        .text(`(${data.disc_type})`, { continued: false });
+        .text(`(${data.disc_type})`, leftX, typeLineY + 4, { width: leftColW - heroPad });
     }
 
     doc
       .font("Helvetica-Oblique")
       .fontSize(8)
       .fillColor(MUTED)
-      .text(`"${data.typeInfo.motto}"`, leftX, doc.y + 2, { width: leftColW - heroPad });
+      .text(`"${data.typeInfo.motto}"`, leftX, doc.y + 3, { width: leftColW - heroPad });
 
     const descriptorLine = data.typeInfo.descriptors.join("  ·  ");
     doc

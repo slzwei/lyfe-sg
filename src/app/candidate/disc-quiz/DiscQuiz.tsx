@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useCallback } from "react";
 import StepIndicator from "@/components/ui/StepIndicator";
 import {
   DISC_STEPS,
@@ -78,17 +78,10 @@ export default function DiscQuiz({ initialResponses, initialEmail }: DiscQuizPro
     return () => clearInterval(interval);
   }, [submitting]);
 
-  // Auto-save progress after each answer (debounced 2s)
-  const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  // Save progress to DB after every answer
   useEffect(() => {
     if (Object.keys(responses).length === 0) return;
-    if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
-    saveTimerRef.current = setTimeout(() => {
-      saveQuizProgress(responses).catch(() => {});
-    }, 2000);
-    return () => {
-      if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
-    };
+    saveQuizProgress(responses).catch(() => {});
   }, [responses]);
 
   const questions = DISC_STEPS[currentStep - 1];
@@ -108,10 +101,8 @@ export default function DiscQuiz({ initialResponses, initialEmail }: DiscQuizPro
     }
     setError("");
 
-    // Cancel any pending debounced save to avoid racing with this one
-    if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
-
-    // Save progress
+    // Save progress (also saved per-answer via useEffect, but
+    // this ensures the latest state is persisted before navigating)
     saveQuizProgress(responses).catch(() => {});
 
     if (currentStep < 5) {

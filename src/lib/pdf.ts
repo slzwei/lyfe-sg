@@ -415,18 +415,31 @@ export async function generateProfilePdf(
 
     // ── 10. Additional Declarations ───────────────────────────────────────
     sectionHeader("Additional Declarations");
-    function decl(label: string, value: boolean, detail: string | null) {
-      row(label, yesNo(value));
-      if (value && detail) {
-        row("  Details", detail);
+    function decl(question: string, value: boolean, detail: string | null) {
+      if (y > 720) {
+        doc.addPage();
+        y = MARGIN;
       }
+      // Question text — full width, muted
+      doc
+        .fontSize(9)
+        .fillColor(MUTED)
+        .text(question, MARGIN, y, { width: CONTENT_W });
+      y = doc.y + 3;
+      // Answer — bold color
+      const answer = yesNo(value) + (value && detail ? ` — ${detail}` : "");
+      doc
+        .fontSize(10)
+        .fillColor(DARK)
+        .text(answer, MARGIN + 12, y, { width: CONTENT_W - 12 });
+      y = doc.y + 10;
     }
-    decl("Health conditions", profile.additional_health, profile.additional_health_detail);
-    decl("Previously dismissed", profile.additional_dismissed, profile.additional_dismissed_detail);
-    decl("Criminal convictions", profile.additional_convicted, profile.additional_convicted_detail);
-    decl("Bankruptcy", profile.additional_bankrupt, profile.additional_bankrupt_detail);
-    decl("Relatives in company", profile.additional_relatives, profile.additional_relatives_detail);
-    decl("Previously applied", profile.additional_prev_applied, profile.additional_prev_applied_detail);
+    decl("Have you been or are you suffering from any disease / illness / major medical condition / mental disorder or physical impairment?", profile.additional_health, profile.additional_health_detail);
+    decl("Have you been discharged or dismissed from the service of your previous employer/s?", profile.additional_dismissed, profile.additional_dismissed_detail);
+    decl("Have you been convicted in a court of law in any country?", profile.additional_convicted, profile.additional_convicted_detail);
+    decl("Have you ever been served with a garnishee order or been declared a bankrupt?", profile.additional_bankrupt, profile.additional_bankrupt_detail);
+    decl("Do you have any relatives currently employed by the Company?", profile.additional_relatives, profile.additional_relatives_detail);
+    decl("Have you previously applied for employment with the Company?", profile.additional_prev_applied, profile.additional_prev_applied_detail);
     spacer();
 
     // ── 11. Declaration ───────────────────────────────────────────────────

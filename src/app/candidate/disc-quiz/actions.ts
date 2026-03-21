@@ -2,8 +2,11 @@
 
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
-import { calculateDiscScores } from "./scoring";
+import { calculateDiscScores, DISC_TYPE_INFO } from "./scoring";
 import { sendDiscResultsEmail } from "@/lib/email";
+import { generateDiscPdf } from "@/lib/pdf";
+import { uploadCandidatePdf } from "@/lib/supabase/storage";
+import { getAdminClient } from "@/lib/supabase/admin";
 
 export async function submitDiscQuiz(responses: Record<string, number>, resultsEmail?: string, durationSeconds?: number) {
   const supabase = await createClient();
@@ -65,6 +68,38 @@ export async function submitDiscQuiz(responses: Record<string, number>, resultsE
     .select("full_name, contact_number")
     .eq("user_id", user.id)
     .single();
+
+  // Generate PDF, upload to storage, and update invitation (don't block on failure)
+  const isBalanced = profile_strength === "balanced";
+  const typeInfo = isBalanced ? DISC_TYPE_INFO["Balanced"] : DISC_TYPE_INFO[scores.disc_type];
+  if (typeInfo) {
+    (async () => {
+      try {
+        const pdfBuffer = await generateDiscPdf({
+          full_name: profile?.full_name || "Unknown",
+          disc_type: scores.disc_type,
+          d_pct: scores.d_pct,
+          i_pct: scores.i_pct,
+          s_pct: scores.s_pct,
+          c_pct: scores.c_pct,
+          angle: scores.angle,
+          profile_strength,
+          strength_pct,
+          priorities,
+          typeInfo,
+        });
+        const filePath = await uploadCandidatePdf(user.id, "disc-profile", pdfBuffer);
+        if (filePath) {
+          const admin = getAdminClient();
+          await admin.from("invitations")
+            .update({ disc_pdf_path: filePath })
+            .eq("user_id", user.id);
+        }
+      } catch (err) {
+        console.error("[pdf-upload] DISC PDF storage failed:", err);
+      }
+    })();
+  }
 
   // Send email notification (don't block on failure)
   sendDiscResultsEmail({

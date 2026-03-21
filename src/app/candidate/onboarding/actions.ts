@@ -3,7 +3,9 @@
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import { sendProfileSubmissionEmail } from "@/lib/email";
-import type { FullProfileData } from "@/lib/pdf";
+import { generateProfilePdf, type FullProfileData } from "@/lib/pdf";
+import { uploadCandidatePdf } from "@/lib/supabase/storage";
+import { getAdminClient } from "@/lib/supabase/admin";
 import type { Json } from "@/lib/supabase/database.types";
 
 export async function saveProfile(formData: Record<string, unknown>) {
@@ -82,8 +84,7 @@ export async function saveProfile(formData: Record<string, unknown>) {
     return { error: error.message };
   }
 
-  // Send email notification with PDF attachment (don't block on failure)
-  sendProfileSubmissionEmail({
+  const profileData: FullProfileData = {
     full_name: profile.full_name,
     position_applied: profile.position_applied,
     expected_salary: profile.expected_salary,
@@ -129,7 +130,26 @@ export async function saveProfile(formData: Record<string, unknown>) {
     additional_prev_applied_detail: profile.additional_prev_applied_detail,
     declaration_agreed: profile.declaration_agreed,
     declaration_date: profile.declaration_date,
-  }).catch((err) => {
+  };
+
+  // Generate PDF, upload to storage, and update invitation (don't block on failure)
+  (async () => {
+    try {
+      const pdfBuffer = await generateProfilePdf(profileData);
+      const filePath = await uploadCandidatePdf(user.id, "application", pdfBuffer);
+      if (filePath) {
+        const admin = getAdminClient();
+        await admin.from("invitations")
+          .update({ profile_pdf_path: filePath })
+          .eq("user_id", user.id);
+      }
+    } catch (err) {
+      console.error("[pdf-upload] Profile PDF storage failed:", err);
+    }
+  })();
+
+  // Send email notification with PDF attachment (don't block on failure)
+  sendProfileSubmissionEmail(profileData).catch((err) => {
     console.error("[email] sendProfileSubmissionEmail failed:", err);
   });
 

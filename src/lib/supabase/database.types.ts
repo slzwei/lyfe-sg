@@ -967,11 +967,13 @@ export type Database = {
           archived_at: string | null
           candidate_name: string | null
           created_at: string
+          disc_pdf_path: string | null
           email: string
           expires_at: string
           id: string
           invited_by: string
           position_applied: string | null
+          profile_pdf_path: string | null
           status: string
           token: string
           user_id: string | null
@@ -981,11 +983,13 @@ export type Database = {
           archived_at?: string | null
           candidate_name?: string | null
           created_at?: string
+          disc_pdf_path?: string | null
           email: string
           expires_at?: string
           id?: string
           invited_by: string
           position_applied?: string | null
+          profile_pdf_path?: string | null
           status?: string
           token: string
           user_id?: string | null
@@ -995,11 +999,13 @@ export type Database = {
           archived_at?: string | null
           candidate_name?: string | null
           created_at?: string
+          disc_pdf_path?: string | null
           email?: string
           expires_at?: string
           id?: string
           invited_by?: string
           position_applied?: string | null
+          profile_pdf_path?: string | null
           status?: string
           token?: string
           user_id?: string | null

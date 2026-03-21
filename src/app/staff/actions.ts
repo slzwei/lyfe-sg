@@ -5,6 +5,7 @@ import { randomBytes, createHash } from "crypto";
 import { z } from "zod";
 import { getAdminClient } from "@/lib/supabase/admin";
 import { sendInvitationEmail } from "@/lib/email";
+import { getSignedPdfUrl } from "@/lib/supabase/storage";
 
 // ─── Staff Authentication ────────────────────────────────────────────────────
 
@@ -161,6 +162,8 @@ export interface Invitation {
   expires_at: string;
   accepted_at: string | null;
   archived_at: string | null;
+  profile_pdf_path: string | null;
+  disc_pdf_path: string | null;
   progress: InvitationProgress | null;
 }
 
@@ -174,7 +177,7 @@ export async function listInvitations(): Promise<{
 
   const admin = getAdminClient();
   const { data, error } = await admin.from("invitations")
-    .select("id, token, email, candidate_name, position_applied, status, user_id, created_at, expires_at, accepted_at, archived_at")
+    .select("id, token, email, candidate_name, position_applied, status, user_id, created_at, expires_at, accepted_at, archived_at, profile_pdf_path, disc_pdf_path")
     .order("created_at", { ascending: false })
     .limit(100);
 
@@ -397,4 +400,18 @@ export async function archiveInvitation(id: string) {
   }
 
   return { success: true };
+}
+
+export async function getPdfUrl(filePath: string): Promise<{
+  success: boolean;
+  url?: string;
+  error?: string;
+}> {
+  const staff = await requireStaff();
+  if (!staff) return { success: false, error: "Not authenticated." };
+
+  const url = await getSignedPdfUrl(filePath);
+  if (!url) return { success: false, error: "Failed to generate download URL." };
+
+  return { success: true, url };
 }

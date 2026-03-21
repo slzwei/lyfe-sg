@@ -179,7 +179,7 @@ export async function listInvitations(): Promise<{
 
   const admin = getAdminClient();
   const { data, error } = await admin.from("invitations")
-    .select("id, token, email, candidate_name, position_applied, status, user_id, created_at, expires_at, accepted_at, archived_at, profile_pdf_path, disc_pdf_path")
+    .select("*")
     .order("created_at", { ascending: false })
     .limit(100);
 

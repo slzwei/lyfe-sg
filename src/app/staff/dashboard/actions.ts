@@ -77,13 +77,30 @@ export async function getDashboardStats(): Promise<{
     .map(([type, count]) => ({ type, count }))
     .sort((a, b) => b.count - a.count);
 
-  // Recent candidates (last 10 active)
-  const recentCandidates = active.slice(0, 10).map((inv) => ({
-    name: inv.candidate_name || "—",
-    email: inv.email,
-    status: inv.status,
-    created_at: inv.created_at || "",
-  }));
+  // Recent candidates (last 10 active) with meaningful progress labels
+  const discUserIds = new Set(
+    (acceptedUserIds.length > 0
+      ? (await admin.from("disc_results").select("user_id").in("user_id", acceptedUserIds)).data || []
+      : []
+    ).map((r) => r.user_id)
+  );
+
+  const recentCandidates = active.slice(0, 10).map((inv) => {
+    let progress: string;
+    if (inv.status === "pending") {
+      progress = "pending";
+    } else if (inv.user_id && discUserIds.has(inv.user_id)) {
+      progress = "completed";
+    } else {
+      progress = "in progress";
+    }
+    return {
+      name: inv.candidate_name || "—",
+      email: inv.email,
+      status: progress,
+      created_at: inv.created_at || "",
+    };
+  });
 
   return {
     success: true,

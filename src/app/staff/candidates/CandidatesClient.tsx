@@ -48,11 +48,20 @@ export default function CandidatesClient({ staffRole }: { staffRole?: string }) 
     return () => clearTimeout(timeout);
   }, [fetchData]);
 
-  // Invited = no candidate_record_id yet (still pending signup)
-  const pendingInvitations = invitations.filter((inv) => !inv.archived_at && !inv.candidate_record_id);
+  // Accepted without a job = signed up but no candidates record (show on "All" tab)
+  const acceptedWithoutRecord = invitations.filter((inv) => !inv.archived_at && inv.status === "accepted" && !inv.candidate_record_id);
+  // Invited = not yet signed up (pending/expired/revoked, no candidate_record_id)
+  const pendingInvitations = invitations.filter((inv) => !inv.archived_at && inv.status !== "accepted" && !inv.candidate_record_id);
   const archivedInvitations = invitations.filter((inv) => inv.archived_at);
 
   // Search filter (for invitation tabs — candidates are already server-filtered by query)
+  const filteredAccepted = query
+    ? acceptedWithoutRecord.filter((inv) =>
+        inv.candidate_name?.toLowerCase().includes(query.toLowerCase()) ||
+        inv.email.toLowerCase().includes(query.toLowerCase())
+      )
+    : acceptedWithoutRecord;
+
   const filteredInvitations = query
     ? pendingInvitations.filter((inv) =>
         inv.candidate_name?.toLowerCase().includes(query.toLowerCase()) ||
@@ -219,10 +228,11 @@ export default function CandidatesClient({ staffRole }: { staffRole?: string }) 
             </thead>
             <tbody className="divide-y divide-stone-50">
               {tab === "all" && pipelineCandidates.map((c) => renderCandidateRow(c))}
+              {tab === "all" && filteredAccepted.map((inv) => renderInvitationRow(inv))}
               {tab === "invited" && filteredInvitations.map((inv) => renderInvitationRow(inv))}
               {tab === "archived" && filteredArchived.map((inv) => renderInvitationRow(inv))}
 
-              {((tab === "all" && pipelineCandidates.length === 0) ||
+              {((tab === "all" && pipelineCandidates.length === 0 && filteredAccepted.length === 0) ||
                 (tab === "invited" && filteredInvitations.length === 0) ||
                 (tab === "archived" && filteredArchived.length === 0)) && (
                 <tr><td colSpan={6} className="px-4 py-12 text-center text-stone-400">No candidates found.</td></tr>

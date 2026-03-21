@@ -1144,6 +1144,8 @@ export type Database = {
           description: string | null
           id: string
           location: string | null
+          portal: string | null
+          portal_url: string | null
           status: Database["public"]["Enums"]["job_status"]
           title: string
           updated_at: string | null
@@ -1157,6 +1159,8 @@ export type Database = {
           description?: string | null
           id?: string
           location?: string | null
+          portal?: string | null
+          portal_url?: string | null
           status?: Database["public"]["Enums"]["job_status"]
           title: string
           updated_at?: string | null
@@ -1170,6 +1174,8 @@ export type Database = {
           description?: string | null
           id?: string
           location?: string | null
+          portal?: string | null
+          portal_url?: string | null
           status?: Database["public"]["Enums"]["job_status"]
           title?: string
           updated_at?: string | null
@@ -2147,6 +2153,8 @@ export type Database = {
         }
         Returns: undefined
       }
+      show_limit: { Args: never; Returns: number }
+      show_trgm: { Args: { "": string }; Returns: string[] }
       submit_exam_attempt: {
         Args: {
           p_answers?: Json

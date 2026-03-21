@@ -5,7 +5,7 @@ import LogoutButton from "./components/LogoutButton";
 
 export const metadata: Metadata = {
   title: "Staff Portal — Lyfe",
-  description: "Manage candidate invitations.",
+  description: "Manage candidates and job postings.",
 };
 
 export default async function StaffLayout({
@@ -30,35 +30,17 @@ export default async function StaffLayout({
           </Link>
           {isAuthenticated && (
             <div className="flex items-center gap-3">
-              <Link
-                href="/staff/dashboard"
-                className="rounded-lg px-3 py-1.5 text-sm text-stone-500 transition-colors hover:bg-stone-100 hover:text-stone-700"
-              >
+              <Link href="/staff/dashboard" className="rounded-lg px-3 py-1.5 text-sm text-stone-500 transition-colors hover:bg-stone-100 hover:text-stone-700">
                 Dashboard
               </Link>
-              <Link
-                href="/staff/jobs"
-                className="rounded-lg px-3 py-1.5 text-sm text-stone-500 transition-colors hover:bg-stone-100 hover:text-stone-700"
-              >
-                Jobs
-              </Link>
-              <Link
-                href="/staff/candidates"
-                className="rounded-lg px-3 py-1.5 text-sm text-stone-500 transition-colors hover:bg-stone-100 hover:text-stone-700"
-              >
+              <Link href="/staff/candidates" className="rounded-lg px-3 py-1.5 text-sm text-stone-500 transition-colors hover:bg-stone-100 hover:text-stone-700">
                 Candidates
               </Link>
-              <Link
-                href="/staff/invite"
-                className="rounded-lg px-3 py-1.5 text-sm text-stone-500 transition-colors hover:bg-stone-100 hover:text-stone-700"
-              >
-                Invites
+              <Link href="/staff/jobs" className="rounded-lg px-3 py-1.5 text-sm text-stone-500 transition-colors hover:bg-stone-100 hover:text-stone-700">
+                Job Postings
               </Link>
               {isAdmin && (
-                <Link
-                  href="/staff/team"
-                  className="rounded-lg px-3 py-1.5 text-sm text-stone-500 transition-colors hover:bg-stone-100 hover:text-stone-700"
-                >
+                <Link href="/staff/team" className="rounded-lg px-3 py-1.5 text-sm text-stone-500 transition-colors hover:bg-stone-100 hover:text-stone-700">
                   Team
                 </Link>
               )}

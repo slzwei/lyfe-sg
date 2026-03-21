@@ -1,122 +1,152 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import Link from "next/link";
-import { listJobs, createJob, updateJob, type Job } from "./actions";
+import { listJobPostings, createJobPosting, updateJobPosting, deleteJobPosting, type JobPosting } from "./actions";
 
-const STATUS_STYLES: Record<string, string> = {
-  draft: "bg-stone-100 text-stone-600",
-  open: "bg-green-50 text-green-700 border-green-200",
-  paused: "bg-yellow-50 text-yellow-700 border-yellow-200",
-  closed: "bg-red-50 text-red-600 border-red-200",
-};
+const PORTALS = ["Indeed", "Jobstreet", "LinkedIn", "MyCareersFuture", "Company Website", "Other"] as const;
 
 export default function JobsClient() {
-  const [jobs, setJobs] = useState<Job[]>([]);
+  const [jobs, setJobs] = useState<JobPosting[]>([]);
   const [loading, setLoading] = useState(true);
   const [showCreate, setShowCreate] = useState(false);
   const [creating, setCreating] = useState(false);
-  const [form, setForm] = useState({ title: "", department: "", location: "", description: "" });
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [form, setForm] = useState({ title: "", department: "", location: "", description: "", portal: "", portal_url: "" });
   const [error, setError] = useState("");
 
   const fetchJobs = useCallback(async () => {
-    const result = await listJobs();
+    const result = await listJobPostings();
     if (result.success && result.data) setJobs(result.data);
     setLoading(false);
   }, []);
 
   useEffect(() => { fetchJobs(); }, [fetchJobs]);
 
+  function resetForm() {
+    setForm({ title: "", department: "", location: "", description: "", portal: "", portal_url: "" });
+  }
+
   async function handleCreate(e: React.FormEvent) {
     e.preventDefault();
     setCreating(true);
     setError("");
-
-    const result = await createJob(form);
+    const result = await createJobPosting(form);
     if (result.success) {
-      setForm({ title: "", department: "", location: "", description: "" });
+      resetForm();
       setShowCreate(false);
       fetchJobs();
     } else {
-      setError(result.error || "Failed to create job.");
+      setError(result.error || "Failed.");
     }
     setCreating(false);
   }
 
-  async function handleToggleStatus(job: Job) {
-    const newStatus = job.status === "open" ? "paused" : "open";
-    await updateJob(job.id, { status: newStatus });
+  function startEdit(job: JobPosting) {
+    setEditingId(job.id);
+    setForm({
+      title: job.title,
+      department: job.department || "",
+      location: job.location || "",
+      description: job.description || "",
+      portal: job.portal || "",
+      portal_url: job.portal_url || "",
+    });
+  }
+
+  async function handleSaveEdit() {
+    if (!editingId) return;
+    await updateJobPosting(editingId, form);
+    setEditingId(null);
+    resetForm();
+    fetchJobs();
+  }
+
+  async function handleToggleStatus(job: JobPosting) {
+    const newStatus = job.status === "open" ? "closed" : "open";
+    await updateJobPosting(job.id, { status: newStatus });
+    fetchJobs();
+  }
+
+  async function handleDelete(id: string) {
+    if (!confirm("Archive this job posting?")) return;
+    await deleteJobPosting(id);
     fetchJobs();
   }
 
   return (
     <div className="space-y-6">
-      {/* Create button */}
-      <div className="flex justify-end">
+      <div className="flex items-center justify-between">
+        <h1 className="text-2xl font-bold text-stone-800">Job Postings</h1>
         <button
-          onClick={() => setShowCreate(!showCreate)}
+          onClick={() => { setShowCreate(!showCreate); setEditingId(null); resetForm(); }}
           className="rounded-xl bg-orange-500 px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-orange-600"
         >
-          {showCreate ? "Cancel" : "New Job"}
+          {showCreate ? "Cancel" : "Add Posting"}
         </button>
       </div>
 
-      {/* Create form */}
-      {showCreate && (
+      {/* Create / Edit form */}
+      {(showCreate || editingId) && (
         <div className="rounded-2xl border border-stone-200 bg-white p-6">
-          <h2 className="mb-4 text-lg font-semibold text-stone-800">Create Job</h2>
-          <form onSubmit={handleCreate} className="space-y-3">
+          <h2 className="mb-4 text-lg font-semibold text-stone-800">
+            {editingId ? "Edit Job Posting" : "New Job Posting"}
+          </h2>
+          <form onSubmit={editingId ? (e) => { e.preventDefault(); handleSaveEdit(); } : handleCreate} className="space-y-3">
             <div className="grid gap-3 sm:grid-cols-2">
               <div>
-                <label className="mb-1 block text-xs font-medium text-stone-500">Title *</label>
-                <input
-                  type="text"
-                  value={form.title}
-                  onChange={(e) => setForm({ ...form, title: e.target.value })}
-                  placeholder="e.g. Financial Consultant"
-                  className="h-10 w-full rounded-lg border border-stone-200 bg-stone-50 px-3 text-sm outline-none focus:border-orange-400 focus:ring-2 focus:ring-orange-100"
-                  required
-                />
+                <label className="mb-1 block text-xs font-medium text-stone-500">Job Title *</label>
+                <input type="text" value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })}
+                  placeholder="e.g. Financial Consultant" required
+                  className="h-10 w-full rounded-lg border border-stone-200 bg-stone-50 px-3 text-sm outline-none focus:border-orange-400 focus:ring-2 focus:ring-orange-100" />
               </div>
               <div>
-                <label className="mb-1 block text-xs font-medium text-stone-500">Department</label>
-                <input
-                  type="text"
-                  value={form.department}
-                  onChange={(e) => setForm({ ...form, department: e.target.value })}
-                  placeholder="e.g. Sales"
-                  className="h-10 w-full rounded-lg border border-stone-200 bg-stone-50 px-3 text-sm outline-none focus:border-orange-400 focus:ring-2 focus:ring-orange-100"
-                />
+                <label className="mb-1 block text-xs font-medium text-stone-500">Portal</label>
+                <select value={form.portal} onChange={(e) => setForm({ ...form, portal: e.target.value })}
+                  className="h-10 w-full rounded-lg border border-stone-200 bg-stone-50 px-3 text-sm outline-none focus:border-orange-400 focus:ring-2 focus:ring-orange-100">
+                  <option value="">Select portal…</option>
+                  {PORTALS.map((p) => <option key={p} value={p}>{p}</option>)}
+                </select>
               </div>
             </div>
             <div>
-              <label className="mb-1 block text-xs font-medium text-stone-500">Location</label>
-              <input
-                type="text"
-                value={form.location}
-                onChange={(e) => setForm({ ...form, location: e.target.value })}
-                placeholder="e.g. Singapore"
-                className="h-10 w-full rounded-lg border border-stone-200 bg-stone-50 px-3 text-sm outline-none focus:border-orange-400 focus:ring-2 focus:ring-orange-100"
-              />
+              <label className="mb-1 block text-xs font-medium text-stone-500">Posting URL</label>
+              <input type="url" value={form.portal_url} onChange={(e) => setForm({ ...form, portal_url: e.target.value })}
+                placeholder="https://www.indeed.com/job/..."
+                className="h-10 w-full rounded-lg border border-stone-200 bg-stone-50 px-3 text-sm outline-none focus:border-orange-400 focus:ring-2 focus:ring-orange-100" />
+            </div>
+            <div className="grid gap-3 sm:grid-cols-2">
+              <div>
+                <label className="mb-1 block text-xs font-medium text-stone-500">Department</label>
+                <input type="text" value={form.department} onChange={(e) => setForm({ ...form, department: e.target.value })}
+                  placeholder="e.g. Sales"
+                  className="h-10 w-full rounded-lg border border-stone-200 bg-stone-50 px-3 text-sm outline-none focus:border-orange-400 focus:ring-2 focus:ring-orange-100" />
+              </div>
+              <div>
+                <label className="mb-1 block text-xs font-medium text-stone-500">Location</label>
+                <input type="text" value={form.location} onChange={(e) => setForm({ ...form, location: e.target.value })}
+                  placeholder="e.g. Singapore"
+                  className="h-10 w-full rounded-lg border border-stone-200 bg-stone-50 px-3 text-sm outline-none focus:border-orange-400 focus:ring-2 focus:ring-orange-100" />
+              </div>
             </div>
             <div>
-              <label className="mb-1 block text-xs font-medium text-stone-500">Description</label>
-              <textarea
-                value={form.description}
-                onChange={(e) => setForm({ ...form, description: e.target.value })}
-                rows={3}
-                placeholder="Job description…"
-                className="w-full rounded-lg border border-stone-200 bg-stone-50 px-3 py-2 text-sm outline-none focus:border-orange-400 focus:ring-2 focus:ring-orange-100"
-              />
+              <label className="mb-1 block text-xs font-medium text-stone-500">Job Description</label>
+              <textarea value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })}
+                rows={4} placeholder="Paste the job description here…"
+                className="w-full rounded-lg border border-stone-200 bg-stone-50 px-3 py-2 text-sm outline-none focus:border-orange-400 focus:ring-2 focus:ring-orange-100" />
             </div>
             {error && <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-600">{error}</p>}
-            <button
-              type="submit"
-              disabled={creating || !form.title}
-              className="rounded-lg bg-orange-500 px-5 py-2 text-sm font-semibold text-white transition-colors hover:bg-orange-600 disabled:opacity-50"
-            >
-              {creating ? "Creating…" : "Create Job"}
-            </button>
+            <div className="flex gap-2">
+              <button type="submit" disabled={creating || !form.title}
+                className="rounded-lg bg-orange-500 px-5 py-2 text-sm font-semibold text-white hover:bg-orange-600 disabled:opacity-50">
+                {editingId ? "Save Changes" : creating ? "Creating…" : "Add Posting"}
+              </button>
+              {editingId && (
+                <button type="button" onClick={() => { setEditingId(null); resetForm(); }}
+                  className="rounded-lg border border-stone-200 px-5 py-2 text-sm text-stone-500 hover:bg-stone-100">
+                  Cancel
+                </button>
+              )}
+            </div>
           </form>
         </div>
       )}
@@ -126,47 +156,60 @@ export default function JobsClient() {
         <div className="py-12 text-center text-sm text-stone-400">Loading…</div>
       ) : jobs.length === 0 ? (
         <div className="rounded-2xl border border-dashed border-stone-300 py-16 text-center">
-          <p className="text-stone-400">No jobs yet. Create your first job to start building a pipeline.</p>
+          <p className="text-stone-400">No job postings yet.</p>
         </div>
       ) : (
         <div className="space-y-3">
           {jobs.map((job) => (
-            <Link
-              key={job.id}
-              href={`/staff/jobs/${job.id}`}
-              className="flex items-center gap-4 rounded-2xl border border-stone-200 bg-white p-5 transition-shadow hover:shadow-md"
-            >
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2">
-                  <h3 className="font-semibold text-stone-800 truncate">{job.title}</h3>
-                  <span className={`rounded-full border px-2 py-0.5 text-xs font-medium ${STATUS_STYLES[job.status] || STATUS_STYLES.draft}`}>
-                    {job.status}
-                  </span>
+            <div key={job.id} className="rounded-2xl border border-stone-200 bg-white p-5">
+              <div className="flex items-start justify-between">
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2">
+                    <h3 className="font-semibold text-stone-800">{job.title}</h3>
+                    <span className={`rounded-full border px-2 py-0.5 text-xs font-medium ${
+                      job.status === "open" ? "bg-green-50 text-green-700 border-green-200" :
+                      job.status === "closed" ? "bg-red-50 text-red-600 border-red-200" :
+                      "bg-stone-100 text-stone-600 border-stone-200"
+                    }`}>
+                      {job.status}
+                    </span>
+                  </div>
+                  <div className="mt-1 flex flex-wrap items-center gap-3 text-sm text-stone-400">
+                    {job.portal && (
+                      <span className="rounded bg-blue-50 px-1.5 py-0.5 text-xs font-medium text-blue-600">{job.portal}</span>
+                    )}
+                    {job.department && <span>{job.department}</span>}
+                    {job.location && <span>{job.location}</span>}
+                    {job.created_at && <span>{new Date(job.created_at).toLocaleDateString()}</span>}
+                  </div>
+                  {job.portal_url && (
+                    <a href={job.portal_url} target="_blank" rel="noopener noreferrer"
+                      className="mt-1 inline-block text-sm text-orange-500 hover:text-orange-600 truncate max-w-md">
+                      {job.portal_url}
+                    </a>
+                  )}
+                  {job.description && (
+                    <p className="mt-2 text-sm text-stone-500 line-clamp-2 whitespace-pre-wrap">{job.description}</p>
+                  )}
                 </div>
-                <div className="mt-1 flex items-center gap-3 text-sm text-stone-400">
-                  {job.department && <span>{job.department}</span>}
-                  {job.location && <span>{job.location}</span>}
-                  <span>{job.candidate_count || 0} candidates</span>
-                </div>
-              </div>
-              <div className="flex items-center gap-2">
-                {(job.status === "open" || job.status === "paused" || job.status === "draft") && (
-                  <button
-                    onClick={(e) => { e.preventDefault(); handleToggleStatus(job); }}
+                <div className="ml-4 flex shrink-0 items-center gap-1">
+                  <button onClick={() => handleToggleStatus(job)}
                     className={`rounded-lg px-3 py-1.5 text-xs font-medium transition-colors ${
-                      job.status === "open"
-                        ? "text-yellow-600 hover:bg-yellow-50"
-                        : "text-green-600 hover:bg-green-50"
-                    }`}
-                  >
-                    {job.status === "open" ? "Pause" : "Open"}
+                      job.status === "open" ? "text-red-500 hover:bg-red-50" : "text-green-600 hover:bg-green-50"
+                    }`}>
+                    {job.status === "open" ? "Close" : "Reopen"}
                   </button>
-                )}
-                <svg className="h-5 w-5 text-stone-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-                </svg>
+                  <button onClick={() => startEdit(job)}
+                    className="rounded-lg px-3 py-1.5 text-xs text-stone-400 hover:bg-stone-100 hover:text-stone-600">
+                    Edit
+                  </button>
+                  <button onClick={() => handleDelete(job.id)}
+                    className="rounded-lg px-3 py-1.5 text-xs text-stone-400 hover:bg-red-50 hover:text-red-500">
+                    Delete
+                  </button>
+                </div>
               </div>
-            </Link>
+            </div>
           ))}
         </div>
       )}

@@ -10,7 +10,7 @@ import {
   resetStaffPassword,
 } from "./actions";
 
-const ROLE_OPTIONS = ["agent", "manager", "director", "admin"] as const;
+const ROLE_OPTIONS = ["manager", "director", "admin"] as const;
 
 interface StaffMember {
   id: string;
@@ -31,7 +31,7 @@ export default function TeamClient() {
   // Invite form
   const [email, setEmail] = useState("");
   const [fullName, setFullName] = useState("");
-  const [role, setRole] = useState<string>("agent");
+  const [role, setRole] = useState<string>("manager");
   const [inviting, setInviting] = useState(false);
 
   const fetchStaff = useCallback(async () => {

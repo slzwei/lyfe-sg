@@ -24,7 +24,7 @@ export interface StaffUser {
 
 // DB enum: admin | director | manager | agent | pa | candidate
 // Staff-level roles (anyone who can access the staff portal):
-const STAFF_ROLES = ["agent", "manager", "director", "admin"] as const;
+const STAFF_ROLES = ["manager", "director", "admin"] as const;
 
 export async function staffLogin(email: string, password: string) {
   const supabase = await createClient();

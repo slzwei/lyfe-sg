@@ -23,52 +23,26 @@ export default function DashboardClient() {
       <h1 className="text-2xl font-bold text-stone-800">Dashboard</h1>
 
       {/* KPI cards */}
-      <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
-        <div className="rounded-2xl border border-stone-200 bg-white p-5">
-          <div className="text-xs font-medium text-stone-400">Open Jobs</div>
-          <div className="mt-1 text-3xl font-bold text-stone-800">{stats.openJobs}</div>
-        </div>
+      <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
         <div className="rounded-2xl border border-stone-200 bg-white p-5">
           <div className="text-xs font-medium text-stone-400">Total Candidates</div>
           <div className="mt-1 text-3xl font-bold text-stone-800">{stats.totalCandidates}</div>
         </div>
         <div className="rounded-2xl border border-stone-200 bg-white p-5">
-          <div className="text-xs font-medium text-stone-400">Added This Week</div>
-          <div className="mt-1 text-3xl font-bold text-orange-500">{stats.candidatesThisWeek}</div>
+          <div className="text-xs font-medium text-stone-400">Completed</div>
+          <div className="mt-1 text-3xl font-bold text-green-600">{stats.completedCount}</div>
+        </div>
+        <div className="rounded-2xl border border-stone-200 bg-white p-5">
+          <div className="text-xs font-medium text-stone-400">Pending</div>
+          <div className="mt-1 text-3xl font-bold text-orange-500">{stats.pendingCount}</div>
+        </div>
+        <div className="rounded-2xl border border-stone-200 bg-white p-5">
+          <div className="text-xs font-medium text-stone-400">Job Postings</div>
+          <div className="mt-1 text-3xl font-bold text-stone-800">{stats.openJobs}</div>
         </div>
       </div>
 
       <div className="grid gap-6 lg:grid-cols-2">
-        {/* Pipeline overview */}
-        <div className="rounded-2xl border border-stone-200 bg-white">
-          <div className="border-b border-stone-100 px-5 py-4">
-            <h2 className="font-semibold text-stone-700">Pipeline Overview</h2>
-          </div>
-          <div className="p-5">
-            {stats.pipelineBreakdown.length === 0 ? (
-              <p className="text-sm text-stone-400">No candidates in pipeline yet.</p>
-            ) : (
-              <div className="space-y-3">
-                {stats.pipelineBreakdown.map((s) => {
-                  const maxCount = Math.max(...stats.pipelineBreakdown.map((x) => x.count));
-                  const pct = maxCount > 0 ? (s.count / maxCount) * 100 : 0;
-                  return (
-                    <div key={s.stage}>
-                      <div className="flex items-center justify-between text-sm">
-                        <span className="text-stone-600">{s.stage}</span>
-                        <span className="font-medium text-stone-800">{s.count}</span>
-                      </div>
-                      <div className="mt-1 h-2 w-full overflow-hidden rounded-full bg-stone-100">
-                        <div className="h-full rounded-full bg-orange-400 transition-all" style={{ width: `${pct}%` }} />
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            )}
-          </div>
-        </div>
-
         {/* DISC distribution */}
         <div className="rounded-2xl border border-stone-200 bg-white">
           <div className="border-b border-stone-100 px-5 py-4">
@@ -76,75 +50,52 @@ export default function DashboardClient() {
           </div>
           <div className="p-5">
             {stats.discTypeDistribution.length === 0 ? (
-              <p className="text-sm text-stone-400">No DISC assessments completed yet.</p>
+              <p className="text-sm text-stone-400">No assessments completed yet.</p>
             ) : (
               <div className="flex flex-wrap gap-2">
                 {stats.discTypeDistribution.map((d) => (
                   <div key={d.type} className="rounded-xl border border-purple-100 bg-purple-50 px-3 py-2 text-center">
                     <div className="text-lg font-bold text-purple-600">{d.type}</div>
-                    <div className="text-xs text-purple-400">{d.count} candidate{d.count !== 1 ? "s" : ""}</div>
+                    <div className="text-xs text-purple-400">{d.count}</div>
                   </div>
                 ))}
               </div>
             )}
           </div>
         </div>
-      </div>
 
-      {/* Funnel by job */}
-      {stats.funnelByJob.length > 0 && (
+        {/* Recent candidates */}
         <div className="rounded-2xl border border-stone-200 bg-white">
-          <div className="border-b border-stone-100 px-5 py-4">
-            <h2 className="font-semibold text-stone-700">Hiring Funnel</h2>
+          <div className="flex items-center justify-between border-b border-stone-100 px-5 py-4">
+            <h2 className="font-semibold text-stone-700">Recent Candidates</h2>
+            <Link href="/staff/candidates" className="text-xs text-orange-500 hover:text-orange-600">View all</Link>
           </div>
-          <div className="divide-y divide-stone-50">
-            {stats.funnelByJob.map((f) => (
-              <div key={f.job_id} className="px-5 py-4">
-                <Link href={`/staff/jobs/${f.job_id}`} className="text-sm font-medium text-stone-700 hover:text-orange-500">
-                  {f.job_title}
-                </Link>
-                <div className="mt-2 flex items-center gap-1">
-                  {f.stages.map((s, i) => (
-                    <div key={s.name} className="flex items-center gap-1">
-                      <div className="rounded bg-stone-100 px-2 py-1 text-center">
-                        <div className="text-sm font-semibold text-stone-700">{s.count}</div>
-                        <div className="text-[10px] text-stone-400">{s.name}</div>
-                      </div>
-                      {i < f.stages.length - 1 && (
-                        <svg className="h-3 w-3 text-stone-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-                        </svg>
-                      )}
-                    </div>
-                  ))}
+          {stats.recentCandidates.length === 0 ? (
+            <div className="px-5 py-8 text-center text-sm text-stone-400">No candidates yet.</div>
+          ) : (
+            <div className="divide-y divide-stone-50">
+              {stats.recentCandidates.map((c, i) => (
+                <div key={i} className="flex items-center justify-between px-5 py-3">
+                  <div>
+                    <div className="text-sm font-medium text-stone-700">{c.name}</div>
+                    <div className="text-xs text-stone-400">{c.email}</div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className={`rounded-full border px-2 py-0.5 text-xs font-medium ${
+                      c.status === "accepted" ? "bg-green-50 text-green-700 border-green-200" :
+                      "bg-yellow-50 text-yellow-700 border-yellow-200"
+                    }`}>
+                      {c.status}
+                    </span>
+                    <span className="text-xs text-stone-300">
+                      {c.created_at ? new Date(c.created_at).toLocaleDateString() : ""}
+                    </span>
+                  </div>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
         </div>
-      )}
-
-      {/* Recent activity */}
-      <div className="rounded-2xl border border-stone-200 bg-white">
-        <div className="border-b border-stone-100 px-5 py-4">
-          <h2 className="font-semibold text-stone-700">Recent Activity</h2>
-        </div>
-        {stats.recentActivity.length === 0 ? (
-          <div className="px-5 py-8 text-center text-sm text-stone-400">No activity yet.</div>
-        ) : (
-          <div className="divide-y divide-stone-50">
-            {stats.recentActivity.map((a) => (
-              <div key={a.id} className="flex items-center gap-3 px-5 py-3">
-                <span className="rounded bg-stone-100 px-1.5 py-0.5 text-[10px] font-medium text-stone-500">{a.type}</span>
-                <span className="text-sm text-stone-600">{a.candidate_name}</span>
-                {a.note && <span className="flex-1 truncate text-sm text-stone-400">{a.note}</span>}
-                <span className="shrink-0 text-xs text-stone-300">
-                  {new Date(a.created_at).toLocaleDateString()}
-                </span>
-              </div>
-            ))}
-          </div>
-        )}
       </div>
     </div>
   );

@@ -7,10 +7,10 @@ export interface DashboardStats {
   openJobs: number;
   totalCandidates: number;
   candidatesThisWeek: number;
-  pipelineBreakdown: { stage: string; count: number }[];
+  completedCount: number;
+  pendingCount: number;
   discTypeDistribution: { type: string; count: number }[];
-  recentActivity: { id: string; type: string; note: string | null; candidate_name: string; created_at: string }[];
-  funnelByJob: { job_title: string; job_id: string; stages: { name: string; count: number }[] }[];
+  recentCandidates: { name: string; email: string; status: string; disc_type?: string; created_at: string }[];
 }
 
 export async function getDashboardStats(): Promise<{
@@ -24,119 +24,77 @@ export async function getDashboardStats(): Promise<{
   const admin = getAdminClient();
   const oneWeekAgo = new Date(Date.now() - 7 * 86400000).toISOString();
 
-  const [
-    jobsRes,
-    candidatesRes,
-    recentCandidatesRes,
-    stagesRes,
-    activitiesRes,
-  ] = await Promise.all([
+  // All data from invitations (the real candidate list)
+  const [jobsRes, invitationsRes] = await Promise.all([
     admin.from("jobs").select("id, title, status").is("archived_at", null),
-    admin.from("candidates").select("id, name, job_id, current_stage_id, created_at"),
-    admin.from("candidates").select("id").gte("created_at", oneWeekAgo),
-    admin.from("pipeline_stages").select("id, name, job_id, display_order").order("display_order"),
-    admin.from("candidate_activities")
-      .select("id, type, note, candidate_id, created_at")
-      .order("created_at", { ascending: false })
-      .limit(10),
+    admin.from("invitations")
+      .select("id, candidate_name, email, status, user_id, created_at, archived_at")
+      .order("created_at", { ascending: false }),
   ]);
 
   const jobs = jobsRes.data || [];
-  const candidates = candidatesRes.data || [];
-  const stages = stagesRes.data || [];
+  const invitations = invitationsRes.data || [];
   const openJobs = jobs.filter((j) => j.status === "open").length;
 
-  // Pipeline breakdown across all jobs
-  const stageCountMap = new Map<string, number>();
-  const stageNameMap = new Map<string, string>();
-  for (const s of stages) {
-    stageNameMap.set(s.id, s.name);
-    stageCountMap.set(s.name, 0);
-  }
-  for (const c of candidates) {
-    if (c.current_stage_id) {
-      const name = stageNameMap.get(c.current_stage_id);
-      if (name) stageCountMap.set(name, (stageCountMap.get(name) || 0) + 1);
-    }
-  }
-  const pipelineBreakdown = [...stageCountMap.entries()]
-    .map(([stage, count]) => ({ stage, count }))
-    .filter((s) => s.count > 0);
+  const active = invitations.filter((inv) => !inv.archived_at);
+  const thisWeek = active.filter((inv) => inv.created_at && inv.created_at >= oneWeekAgo);
 
-  // DISC type distribution (via profiles bridge)
-  const candidateIds = candidates.map((c) => c.id);
-  const discTypeDistribution: { type: string; count: number }[] = [];
+  // Get progress for accepted invitations
+  const acceptedUserIds = active
+    .filter((inv) => inv.status === "accepted" && inv.user_id)
+    .map((inv) => inv.user_id!);
 
-  if (candidateIds.length > 0) {
-    const { data: profiles } = await admin.from("candidate_profiles")
-      .select("candidate_id, user_id")
-      .in("candidate_id", candidateIds);
+  let completedCount = 0;
+  let pendingCount = 0;
+  const discTypes = new Map<string, number>();
 
-    if (profiles && profiles.length > 0) {
-      const userIds = profiles.map((p) => p.user_id).filter(Boolean);
-      if (userIds.length > 0) {
-        const { data: results } = await admin.from("disc_results")
-          .select("disc_type")
-          .in("user_id", userIds);
+  if (acceptedUserIds.length > 0) {
+    const [profilesRes, discRes] = await Promise.all([
+      admin.from("candidate_profiles")
+        .select("user_id, completed")
+        .in("user_id", acceptedUserIds),
+      admin.from("disc_results")
+        .select("user_id, disc_type")
+        .in("user_id", acceptedUserIds),
+    ]);
 
-        if (results) {
-          const typeCounts = new Map<string, number>();
-          for (const r of results) {
-            typeCounts.set(r.disc_type, (typeCounts.get(r.disc_type) || 0) + 1);
-          }
-          for (const [type, count] of typeCounts) {
-            discTypeDistribution.push({ type, count });
-          }
-          discTypeDistribution.sort((a, b) => b.count - a.count);
-        }
-      }
+    const profiles = profilesRes.data || [];
+    const discResults = discRes.data || [];
+
+    completedCount = discResults.length; // completed = has DISC results
+    pendingCount = active.filter((inv) => inv.status === "accepted").length - completedCount;
+
+    for (const r of discResults) {
+      discTypes.set(r.disc_type, (discTypes.get(r.disc_type) || 0) + 1);
     }
   }
 
-  // Recent activity with candidate names
-  const activities = activitiesRes.data || [];
-  const activityCandidateIds = [...new Set(activities.map((a) => a.candidate_id))];
-  const candidateNameMap = new Map<string, string>();
-  if (activityCandidateIds.length > 0) {
-    const { data: names } = await admin.from("candidates")
-      .select("id, name")
-      .in("id", activityCandidateIds);
-    if (names) names.forEach((n) => candidateNameMap.set(n.id, n.name));
-  }
+  // Pending invitations (not yet accepted)
+  const pendingInvites = active.filter((inv) => inv.status === "pending").length;
+  pendingCount += pendingInvites;
 
-  const recentActivity = activities.map((a) => ({
-    id: a.id,
-    type: a.type,
-    note: a.note,
-    candidate_name: candidateNameMap.get(a.candidate_id) || "Unknown",
-    created_at: a.created_at || "",
+  const discTypeDistribution = [...discTypes.entries()]
+    .map(([type, count]) => ({ type, count }))
+    .sort((a, b) => b.count - a.count);
+
+  // Recent candidates (last 10 active)
+  const recentCandidates = active.slice(0, 10).map((inv) => ({
+    name: inv.candidate_name || "—",
+    email: inv.email,
+    status: inv.status,
+    created_at: inv.created_at || "",
   }));
-
-  // Funnel by job (top 5 open jobs)
-  const openJobsList = jobs.filter((j) => j.status === "open").slice(0, 5);
-  const funnelByJob = openJobsList.map((job) => {
-    const jobStages = stages.filter((s) => s.job_id === job.id);
-    const jobCandidates = candidates.filter((c) => c.job_id === job.id);
-    return {
-      job_title: job.title,
-      job_id: job.id,
-      stages: jobStages.map((s) => ({
-        name: s.name,
-        count: jobCandidates.filter((c) => c.current_stage_id === s.id).length,
-      })),
-    };
-  });
 
   return {
     success: true,
     stats: {
       openJobs,
-      totalCandidates: candidates.length,
-      candidatesThisWeek: recentCandidatesRes.data?.length || 0,
-      pipelineBreakdown,
+      totalCandidates: active.length,
+      candidatesThisWeek: thisWeek.length,
+      completedCount,
+      pendingCount,
       discTypeDistribution,
-      recentActivity,
-      funnelByJob,
+      recentCandidates,
     },
   };
 }

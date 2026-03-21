@@ -48,17 +48,17 @@ export default function CandidatesClient({ staffRole }: { staffRole?: string }) 
     return () => clearTimeout(timeout);
   }, [fetchData]);
 
-  // Filtered views
-  const activeInvitations = invitations.filter((inv) => !inv.archived_at);
+  // Invited = no candidate_record_id yet (still pending signup)
+  const pendingInvitations = invitations.filter((inv) => !inv.archived_at && !inv.candidate_record_id);
   const archivedInvitations = invitations.filter((inv) => inv.archived_at);
 
-  // Search filter
+  // Search filter (for invitation tabs — candidates are already server-filtered by query)
   const filteredInvitations = query
-    ? activeInvitations.filter((inv) =>
+    ? pendingInvitations.filter((inv) =>
         inv.candidate_name?.toLowerCase().includes(query.toLowerCase()) ||
         inv.email.toLowerCase().includes(query.toLowerCase())
       )
-    : activeInvitations;
+    : pendingInvitations;
 
   const filteredArchived = query
     ? archivedInvitations.filter((inv) =>
@@ -218,12 +218,12 @@ export default function CandidatesClient({ staffRole }: { staffRole?: string }) 
               </tr>
             </thead>
             <tbody className="divide-y divide-stone-50">
-              {tab === "all" && filteredInvitations.map((inv) => renderInvitationRow(inv))}
-              {tab === "invited" && filteredInvitations.filter((inv) => inv.status === "pending" || inv.status === "accepted").map((inv) => renderInvitationRow(inv))}
+              {tab === "all" && pipelineCandidates.map((c) => renderCandidateRow(c))}
+              {tab === "invited" && filteredInvitations.map((inv) => renderInvitationRow(inv))}
               {tab === "archived" && filteredArchived.map((inv) => renderInvitationRow(inv))}
 
-              {((tab === "all" && filteredInvitations.length === 0) ||
-                (tab === "invited" && filteredInvitations.filter((inv) => inv.status === "pending" || inv.status === "accepted").length === 0) ||
+              {((tab === "all" && pipelineCandidates.length === 0) ||
+                (tab === "invited" && filteredInvitations.length === 0) ||
                 (tab === "archived" && filteredArchived.length === 0)) && (
                 <tr><td colSpan={6} className="px-4 py-12 text-center text-stone-400">No candidates found.</td></tr>
               )}
@@ -233,6 +233,30 @@ export default function CandidatesClient({ staffRole }: { staffRole?: string }) 
       )}
     </div>
   );
+
+  function renderCandidateRow(c: SearchResult) {
+    return (
+      <tr key={c.id} className="transition-colors hover:bg-stone-50">
+        <td className="px-4 py-3">
+          <Link href={`/staff/candidates/${c.id}`} className="font-medium text-orange-600 hover:text-orange-700 hover:underline">
+            {c.name || "—"}
+          </Link>
+        </td>
+        <td className="px-4 py-3 text-stone-500">{c.email || "—"}</td>
+        <td className="px-4 py-3 text-stone-500">{c.job_title || "—"}</td>
+        <td className="px-4 py-3">
+          <span className="text-xs font-medium capitalize text-stone-600">{c.status}</span>
+          {c.disc_type && (
+            <span className="ml-1.5 rounded bg-purple-50 px-1 py-0.5 text-[10px] font-semibold text-purple-600">{c.disc_type}</span>
+          )}
+        </td>
+        <td className="px-4 py-3 text-xs text-stone-400">
+          {c.created_at ? new Date(c.created_at).toLocaleDateString() : "—"}
+        </td>
+        <td className="px-4 py-3" />
+      </tr>
+    );
+  }
 
   function renderInvitationRow(inv: Invitation) {
     const isLoading = actionLoading === inv.id;

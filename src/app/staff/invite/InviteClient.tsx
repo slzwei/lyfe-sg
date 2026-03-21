@@ -24,6 +24,12 @@ export default function InviteClient() {
   const [loadingList, setLoadingList] = useState(true);
   const [actionLoading, setActionLoading] = useState<string | null>(null);
   const [copiedId, setCopiedId] = useState<string | null>(null);
+  const [confirmDialog, setConfirmDialog] = useState<{
+    message: string;
+    phrase: string;
+    onConfirm: () => void;
+  } | null>(null);
+  const [confirmInput, setConfirmInput] = useState("");
   const [refreshing, setRefreshing] = useState(false);
   const [lastRefreshed, setLastRefreshed] = useState<Date | null>(null);
   const [pastOpen, setPastOpen] = useState(false);
@@ -141,45 +147,74 @@ export default function InviteClient() {
     setSending(false);
   }
 
-  async function handleRevoke(id: string) {
-    if (!confirm("Revoke this invitation? The candidate will no longer be able to use it.")) return;
-    setActionLoading(id);
-    const result = await revokeInvitation(id);
-    if (result.success) fetchInvitations();
-    setActionLoading(null);
+  function requireConfirm(message: string, phrase: string, onConfirm: () => void) {
+    setConfirmInput("");
+    setConfirmDialog({ message, phrase, onConfirm });
   }
 
-  async function handleResetApp(id: string) {
-    if (!confirm("Reset this candidate's application? Their form will be marked incomplete and quiz data will be cleared. They will need to re-submit.")) return;
-    setActionLoading(id);
-    const result = await resetApplication(id);
-    if (result.success) fetchInvitations();
-    setActionLoading(null);
+  function handleRevoke(id: string) {
+    requireConfirm(
+      "Revoke this invitation? The candidate will no longer be able to use it.",
+      "revoke",
+      async () => {
+        setActionLoading(id);
+        const result = await revokeInvitation(id);
+        if (result.success) fetchInvitations();
+        setActionLoading(null);
+      }
+    );
   }
 
-  async function handleResetQuiz(id: string) {
-    if (!confirm("Reset this candidate's quiz? They will need to retake the DISC personality test.")) return;
-    setActionLoading(id);
-    const result = await resetQuiz(id);
-    if (result.success) fetchInvitations();
-    setActionLoading(null);
+  function handleResetApp(id: string) {
+    requireConfirm(
+      "Reset this candidate's application? Their form will be marked incomplete and quiz data will be cleared. They will need to re-submit.",
+      "reopen form",
+      async () => {
+        setActionLoading(id);
+        const result = await resetApplication(id);
+        if (result.success) fetchInvitations();
+        setActionLoading(null);
+      }
+    );
   }
 
-  async function handleArchive(id: string) {
-    if (!confirm("Archive this candidate? They will be moved to Past Candidates.")) return;
-    setActionLoading(id);
-    const result = await archiveInvitation(id);
-    if (result.success) fetchInvitations();
-    setActionLoading(null);
+  function handleResetQuiz(id: string) {
+    requireConfirm(
+      "Reset this candidate's quiz? They will need to retake the DISC personality test.",
+      "reset quiz",
+      async () => {
+        setActionLoading(id);
+        const result = await resetQuiz(id);
+        if (result.success) fetchInvitations();
+        setActionLoading(null);
+      }
+    );
   }
 
-  async function handleDelete(id: string) {
-    const input = prompt('Permanently delete this candidate? This will remove their invitation, application, quiz data, and account.\n\nType "delete" to confirm:');
-    if (input !== "delete") return;
-    setActionLoading(id);
-    const result = await deleteCandidate(id);
-    if (result.success) fetchInvitations();
-    setActionLoading(null);
+  function handleArchive(id: string) {
+    requireConfirm(
+      "Archive this candidate? They will be moved to Past Candidates.",
+      "archive",
+      async () => {
+        setActionLoading(id);
+        const result = await archiveInvitation(id);
+        if (result.success) fetchInvitations();
+        setActionLoading(null);
+      }
+    );
+  }
+
+  function handleDelete(id: string) {
+    requireConfirm(
+      "Permanently delete this candidate? This will remove their invitation, application, quiz data, and account.",
+      "delete",
+      async () => {
+        setActionLoading(id);
+        const result = await deleteCandidate(id);
+        if (result.success) fetchInvitations();
+        setActionLoading(null);
+      }
+    );
   }
 
   function handleCopyLink(inv: Invitation) {
@@ -649,6 +684,52 @@ export default function InviteClient() {
           </div>
         )}
       </div>
+
+      {/* Confirmation dialog */}
+      {confirmDialog && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
+          <div className="mx-4 w-full max-w-sm rounded-2xl border border-stone-200 bg-white p-6 shadow-xl">
+            <p className="text-sm text-stone-700">{confirmDialog.message}</p>
+            <p className="mt-4 text-xs text-stone-500">
+              Type <span className="font-semibold text-stone-800">{confirmDialog.phrase}</span> to confirm:
+            </p>
+            <input
+              autoFocus
+              type="text"
+              value={confirmInput}
+              onChange={(e) => setConfirmInput(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && confirmInput === confirmDialog.phrase) {
+                  setConfirmDialog(null);
+                  confirmDialog.onConfirm();
+                }
+              }}
+              placeholder={confirmDialog.phrase}
+              className="mt-2 h-10 w-full rounded-lg border border-stone-200 bg-stone-50 px-3 text-sm outline-none transition-colors focus:border-orange-400 focus:ring-2 focus:ring-orange-100"
+            />
+            <div className="mt-4 flex items-center justify-end gap-2">
+              <button
+                type="button"
+                onClick={() => setConfirmDialog(null)}
+                className="rounded-lg px-4 py-2 text-sm font-medium text-stone-600 transition-colors hover:bg-stone-100"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                disabled={confirmInput !== confirmDialog.phrase}
+                onClick={() => {
+                  setConfirmDialog(null);
+                  confirmDialog.onConfirm();
+                }}
+                className="rounded-lg bg-red-500 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-red-600 disabled:opacity-30"
+              >
+                Confirm
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

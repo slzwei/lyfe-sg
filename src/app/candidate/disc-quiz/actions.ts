@@ -5,7 +5,7 @@ import { redirect } from "next/navigation";
 import { calculateDiscScores } from "./scoring";
 import { sendDiscResultsEmail } from "@/lib/email";
 
-export async function submitDiscQuiz(responses: Record<string, number>, resultsEmail?: string) {
+export async function submitDiscQuiz(responses: Record<string, number>, resultsEmail?: string, durationSeconds?: number) {
   const supabase = await createClient();
   const {
     data: { user },
@@ -49,6 +49,7 @@ export async function submitDiscQuiz(responses: Record<string, number>, resultsE
       {
         user_id: user.id,
         results_email: resultsEmail || null,
+        duration_seconds: durationSeconds ?? null,
         ...dbScores,
       },
       { onConflict: "user_id" }

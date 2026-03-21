@@ -551,6 +551,7 @@ export type Database = {
           d_pct: number
           d_raw: number
           disc_type: string
+          duration_seconds: number | null
           i_pct: number
           i_raw: number
           id: string
@@ -567,6 +568,7 @@ export type Database = {
           d_pct: number
           d_raw: number
           disc_type: string
+          duration_seconds?: number | null
           i_pct: number
           i_raw: number
           id?: string
@@ -583,6 +585,7 @@ export type Database = {
           d_pct?: number
           d_raw?: number
           disc_type?: string
+          duration_seconds?: number | null
           i_pct?: number
           i_raw?: number
           id?: string

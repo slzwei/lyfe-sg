@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import StepIndicator from "@/components/ui/StepIndicator";
 import {
   DISC_STEPS,
@@ -56,6 +56,7 @@ interface DiscQuizProps {
 export default function DiscQuiz({ userId, initialResponses, initialEmail }: DiscQuizProps) {
   const hasProgress = initialResponses && Object.keys(initialResponses).length > 0;
   const [showIntro, setShowIntro] = useState(!hasProgress);
+  const quizStartRef = useRef<number>(hasProgress ? Date.now() : 0);
   const [currentStep, setCurrentStep] = useState(1);
   const [responses, setResponses] = useState<Record<string, number>>(
     initialResponses || {}
@@ -116,7 +117,8 @@ export default function DiscQuiz({ userId, initialResponses, initialEmail }: Dis
       setSubmitting(true);
       setCalcProgress(0);
       setCalcStage(CALC_STAGES[0].label);
-      const result = await submitDiscQuiz(responses, resultsEmail);
+      const durationSeconds = Math.round((Date.now() - quizStartRef.current) / 1000);
+      const result = await submitDiscQuiz(responses, resultsEmail, durationSeconds);
       if (result?.error) {
         setError(result.error);
         setSubmitting(false);
@@ -184,7 +186,7 @@ export default function DiscQuiz({ userId, initialResponses, initialEmail }: Dis
 
         <button
           type="button"
-          onClick={() => setShowIntro(false)}
+          onClick={() => { quizStartRef.current = Date.now(); setShowIntro(false); }}
           className="mt-6 w-full max-w-xs rounded-xl bg-orange-500 px-8 py-3 text-sm font-semibold text-white transition-colors hover:bg-orange-600"
         >
           Continue to Quiz →

@@ -12,6 +12,7 @@ import {
   archiveInvitation,
   deleteCandidate,
   getPdfUrl,
+  backfillPdfs,
   type Invitation,
 } from "../actions";
 
@@ -48,7 +49,12 @@ export default function InviteClient() {
   }, []);
 
   useEffect(() => {
-    fetchInvitations();
+    fetchInvitations().then(() => {
+      // One-time backfill: generate PDFs for candidates who completed before this feature
+      backfillPdfs().then(({ generated }) => {
+        if (generated > 0) fetchInvitations();
+      });
+    });
   }, [fetchInvitations]);
 
   // Targeted refresh: only fetch progress for the candidate that changed

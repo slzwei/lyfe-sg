@@ -16,7 +16,7 @@ export default async function StaffLayout({
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
-  const name = (user?.user_metadata?.full_name as string) || user?.email;
+  const name = (user?.user_metadata?.full_name as string) || user?.email || user?.phone;
   const role = user?.app_metadata?.role as string | undefined;
   const isAuthenticated = !!user && !!role;
   const isAdmin = role === "admin";

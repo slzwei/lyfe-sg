@@ -31,7 +31,7 @@ export async function updateSession(request: NextRequest) {
   const path = request.nextUrl.pathname;
 
   // Staff routes — dual auth during transition (Supabase Auth + legacy cookie)
-  if (path.startsWith("/staff/") && !path.startsWith("/staff/login") && !path.startsWith("/staff/forgot-password") && !path.startsWith("/staff/reset-password")) {
+  if (path.startsWith("/staff/") && !path.startsWith("/staff/login") && !path.startsWith("/staff/verify")) {
     // Check Supabase Auth session first (new method)
     const { data: { user } } = await supabase.auth.getUser();
     if (user) {

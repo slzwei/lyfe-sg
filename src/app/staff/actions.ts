@@ -34,18 +34,70 @@ export async function staffLogin(email: string, password: string) {
     return { success: false, error: "Invalid email or password." };
   }
 
-  // Verify user has a staff-level role
+  // Admin-only: email+password login is restricted to admins
   const role = data.user.app_metadata?.role as string | undefined;
+  if (role !== "admin") {
+    await supabase.auth.signOut();
+    return { success: false, error: "Email login is for admins only. Use phone OTP." };
+  }
+
+  const adminClient = getAdminClient();
+  await adminClient.from("users")
+    .update({ last_login_at: new Date().toISOString() })
+    .eq("id", data.user.id);
+
+  return { success: true };
+}
+
+export async function staffSendOtp(phone: string) {
+  const cleaned = phone.replace(/\s/g, "");
+  if (!/^\+65\d{8}$/.test(cleaned)) {
+    return { success: false, error: "Please enter a valid SG mobile number." };
+  }
+
+  const supabase = await createClient();
+  const { error } = await supabase.auth.signInWithOtp({ phone: cleaned });
+
+  if (error) {
+    return { success: false, error: error.message };
+  }
+
+  return { success: true };
+}
+
+export async function staffVerifyOtp(phone: string, token: string) {
+  if (!/^\d{6}$/.test(token)) {
+    return { success: false, error: "Please enter a 6-digit code." };
+  }
+
+  const supabase = await createClient();
+  const { data, error } = await supabase.auth.verifyOtp({
+    phone,
+    token,
+    type: "sms",
+  });
+
+  if (error) {
+    return { success: false, error: "Invalid or expired code. Please try again." };
+  }
+
+  const user = data.user;
+  if (!user) {
+    return { success: false, error: "Verification failed." };
+  }
+
+  // Verify user has a staff-level role
+  const role = user.app_metadata?.role as string | undefined;
   if (!role || !STAFF_ROLES.includes(role as typeof STAFF_ROLES[number])) {
     await supabase.auth.signOut();
-    return { success: false, error: "Not authorized as staff." };
+    return { success: false, error: "Not authorized as staff. Contact your admin." };
   }
 
   // Update last_login_at
   const adminClient = getAdminClient();
   await adminClient.from("users")
     .update({ last_login_at: new Date().toISOString() })
-    .eq("id", data.user.id);
+    .eq("id", user.id);
 
   return { success: true };
 }

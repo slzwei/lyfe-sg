@@ -139,9 +139,10 @@ export default function VerifyPage() {
           )}
 
           {loading && (
-            <p className="mt-4 text-center text-sm text-stone-500">
-              Verifying…
-            </p>
+            <div className="mt-6 flex flex-col items-center gap-3">
+              <div className="h-8 w-8 animate-spin rounded-full border-3 border-stone-200 border-t-orange-500" />
+              <p className="text-sm text-stone-500">Verifying…</p>
+            </div>
           )}
 
           <div className="mt-6 text-center">

@@ -13,6 +13,8 @@ export default function JobsClient() {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [form, setForm] = useState({ title: "", description: "", portal: "", portal_url: "" });
   const [error, setError] = useState("");
+  const [closingId, setClosingId] = useState<string | null>(null);
+  const [closeConfirm, setCloseConfirm] = useState("");
 
   const fetchJobs = useCallback(async () => {
     const result = await listJobPostings();
@@ -59,9 +61,12 @@ export default function JobsClient() {
     fetchJobs();
   }
 
-  async function handleToggleStatus(job: JobPosting) {
-    const newStatus = job.status === "open" ? "closed" : "open";
-    await updateJobPosting(job.id, { status: newStatus });
+  async function handleClose(id: string) {
+    // Optimistic update
+    setJobs((prev) => prev.map((j) => j.id === id ? { ...j, status: "closed" } : j));
+    setClosingId(null);
+    setCloseConfirm("");
+    await updateJobPosting(id, { status: "closed" });
     fetchJobs();
   }
 
@@ -202,12 +207,38 @@ export default function JobsClient() {
                   )}
                 </div>
                 <div className="ml-4 flex shrink-0 items-center gap-1">
-                  <button onClick={() => handleToggleStatus(job)}
-                    className={`rounded-lg px-3 py-1.5 text-xs font-medium transition-colors ${
-                      job.status === "open" ? "text-red-500 hover:bg-red-50" : "text-green-600 hover:bg-green-50"
-                    }`}>
-                    {job.status === "open" ? "Close" : "Reopen"}
-                  </button>
+                  {job.status === "open" && closingId !== job.id && (
+                    <button onClick={() => { setClosingId(job.id); setCloseConfirm(""); }}
+                      className="rounded-lg px-3 py-1.5 text-xs font-medium text-red-500 transition-colors hover:bg-red-50">
+                      Close
+                    </button>
+                  )}
+                  {job.status === "open" && closingId === job.id && (
+                    <div className="flex items-center gap-1.5">
+                      <input
+                        type="text"
+                        value={closeConfirm}
+                        onChange={(e) => setCloseConfirm(e.target.value)}
+                        placeholder='Type "close"'
+                        className="h-7 w-24 rounded-lg border border-red-200 bg-red-50 px-2 text-xs outline-none focus:border-red-400"
+                        autoFocus
+                        onKeyDown={(e) => {
+                          if (e.key === "Escape") { setClosingId(null); setCloseConfirm(""); }
+                          if (e.key === "Enter" && closeConfirm.toLowerCase() === "close") handleClose(job.id);
+                        }}
+                      />
+                      <button
+                        onClick={() => handleClose(job.id)}
+                        disabled={closeConfirm.toLowerCase() !== "close"}
+                        className="rounded-lg bg-red-500 px-2.5 py-1 text-xs font-medium text-white hover:bg-red-600 disabled:opacity-30">
+                        Confirm
+                      </button>
+                      <button onClick={() => { setClosingId(null); setCloseConfirm(""); }}
+                        className="rounded-lg px-2 py-1 text-xs text-stone-400 hover:bg-stone-100">
+                        Cancel
+                      </button>
+                    </div>
+                  )}
                   <button onClick={() => startEdit(job)}
                     className="rounded-lg px-3 py-1.5 text-xs text-stone-400 hover:bg-stone-100 hover:text-stone-600">
                     Edit

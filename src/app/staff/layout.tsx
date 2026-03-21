@@ -25,8 +25,9 @@ export default async function StaffLayout({
     <div className="min-h-screen bg-stone-50">
       <header className="border-b border-stone-200 bg-white">
         <div className="mx-auto flex max-w-3xl items-center justify-between px-4 py-4 md:max-w-4xl">
-          <Link href="/staff/dashboard" className="font-display text-2xl text-orange-500">
-            Lyfe
+          <Link href="/staff/dashboard" className="flex flex-col">
+            <span className="font-display text-2xl text-orange-500">Lyfe</span>
+            <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-stone-400">Applicant Tracking System</span>
           </Link>
           {isAuthenticated && (
             <div className="flex items-center gap-3">

@@ -106,7 +106,7 @@ export async function verifyOtp(phone: string, token: string, inviteToken?: stri
     // Existing candidate — if they have an invite token, apply invitation data
     if (inviteToken) {
       const { data: inv } = await admin.from("invitations")
-        .select("id, email, candidate_name, position_applied, expires_at")
+        .select("id, email, candidate_name, position_applied, expires_at, job_id, invited_by_user_id")
         .eq("token", inviteToken)
         .eq("status", "pending")
         .single();
@@ -147,7 +147,7 @@ export async function verifyOtp(phone: string, token: string, inviteToken?: stri
   // Validate and consume invitation
   const { data: invitation, error: invError } = await admin
     .from("invitations")
-    .select("id, email, candidate_name, position_applied, expires_at")
+    .select("id, email, candidate_name, position_applied, expires_at, job_id, invited_by_user_id")
     .eq("token", inviteToken)
     .eq("status", "pending")
     .single();
@@ -178,7 +178,7 @@ export async function verifyOtp(phone: string, token: string, inviteToken?: stri
     .eq("id", invitation.id);
 
   // Create draft profile with pre-filled data
-  await admin.from("candidate_profiles").upsert(
+  const profileUpsert = await admin.from("candidate_profiles").upsert(
     {
       user_id: user.id,
       email: invitation.email,
@@ -190,7 +190,46 @@ export async function verifyOtp(phone: string, token: string, inviteToken?: stri
       onboarding_step: 1,
     },
     { onConflict: "user_id" }
-  );
+  ).select("id").single();
+
+  // Bridge to ATS pipeline: if invitation is linked to a job, create candidates record
+  if (invitation.job_id) {
+    // Get first pipeline stage for this job
+    const { data: firstStage } = await admin.from("pipeline_stages")
+      .select("id")
+      .eq("job_id", invitation.job_id)
+      .order("display_order")
+      .limit(1)
+      .single();
+
+    if (firstStage) {
+      const now = new Date().toISOString();
+      const createdBy = invitation.invited_by_user_id || invitation.job_id; // fallback
+
+      const { data: candidateRecord } = await admin.from("candidates").insert({
+        name: invitation.candidate_name || phone,
+        phone,
+        email: invitation.email,
+        status: "applied",
+        job_id: invitation.job_id,
+        current_stage_id: firstStage.id,
+        stage_entered_at: now,
+        assigned_manager_id: createdBy,
+        created_by_id: createdBy,
+      }).select("id").single();
+
+      // Link candidate_profiles to candidates record
+      if (candidateRecord && profileUpsert.data) {
+        await admin.from("candidate_profiles")
+          .update({ candidate_id: candidateRecord.id })
+          .eq("id", profileUpsert.data.id);
+
+        await admin.from("invitations")
+          .update({ candidate_record_id: candidateRecord.id })
+          .eq("id", invitation.id);
+      }
+    }
+  }
 
   redirect("/candidate/onboarding");
 }

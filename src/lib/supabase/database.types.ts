@@ -237,6 +237,7 @@ export type Database = {
           address_street: string | null
           address_unit: string | null
           alias: string | null
+          candidate_id: string | null
           chinese_name: string | null
           completed: boolean
           contact_number: string | null
@@ -293,6 +294,7 @@ export type Database = {
           address_street?: string | null
           address_unit?: string | null
           alias?: string | null
+          candidate_id?: string | null
           chinese_name?: string | null
           completed?: boolean
           contact_number?: string | null
@@ -349,6 +351,7 @@ export type Database = {
           address_street?: string | null
           address_unit?: string | null
           alias?: string | null
+          candidate_id?: string | null
           chinese_name?: string | null
           completed?: boolean
           contact_number?: string | null
@@ -388,6 +391,13 @@ export type Database = {
           user_id?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "candidate_profiles_candidate_id_fkey"
+            columns: ["candidate_id"]
+            isOneToOne: false
+            referencedRelation: "candidates"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "candidate_profiles_invitation_id_fkey"
             columns: ["invitation_id"]
@@ -463,13 +473,16 @@ export type Database = {
           assigned_manager_id: string
           created_at: string | null
           created_by_id: string
+          current_stage_id: string | null
           email: string | null
           id: string
           invite_token: string | null
+          job_id: string | null
           name: string
           notes: string | null
           phone: string
           resume_url: string | null
+          stage_entered_at: string | null
           status: Database["public"]["Enums"]["candidate_status"]
           updated_at: string | null
         }
@@ -477,13 +490,16 @@ export type Database = {
           assigned_manager_id: string
           created_at?: string | null
           created_by_id: string
+          current_stage_id?: string | null
           email?: string | null
           id?: string
           invite_token?: string | null
+          job_id?: string | null
           name: string
           notes?: string | null
           phone: string
           resume_url?: string | null
+          stage_entered_at?: string | null
           status?: Database["public"]["Enums"]["candidate_status"]
           updated_at?: string | null
         }
@@ -491,13 +507,16 @@ export type Database = {
           assigned_manager_id?: string
           created_at?: string | null
           created_by_id?: string
+          current_stage_id?: string | null
           email?: string | null
           id?: string
           invite_token?: string | null
+          job_id?: string | null
           name?: string
           notes?: string | null
           phone?: string
           resume_url?: string | null
+          stage_entered_at?: string | null
           status?: Database["public"]["Enums"]["candidate_status"]
           updated_at?: string | null
         }
@@ -514,6 +533,20 @@ export type Database = {
             columns: ["created_by_id"]
             isOneToOne: false
             referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "candidates_current_stage_id_fkey"
+            columns: ["current_stage_id"]
+            isOneToOne: false
+            referencedRelation: "pipeline_stages"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "candidates_job_id_fkey"
+            columns: ["job_id"]
+            isOneToOne: false
+            referencedRelation: "jobs"
             referencedColumns: ["id"]
           },
         ]
@@ -966,12 +999,15 @@ export type Database = {
           accepted_at: string | null
           archived_at: string | null
           candidate_name: string | null
+          candidate_record_id: string | null
           created_at: string
           disc_pdf_path: string | null
           email: string
           expires_at: string
           id: string
           invited_by: string
+          invited_by_user_id: string | null
+          job_id: string | null
           position_applied: string | null
           profile_pdf_path: string | null
           status: string
@@ -982,12 +1018,15 @@ export type Database = {
           accepted_at?: string | null
           archived_at?: string | null
           candidate_name?: string | null
+          candidate_record_id?: string | null
           created_at?: string
           disc_pdf_path?: string | null
           email: string
           expires_at?: string
           id?: string
           invited_by: string
+          invited_by_user_id?: string | null
+          job_id?: string | null
           position_applied?: string | null
           profile_pdf_path?: string | null
           status?: string
@@ -998,19 +1037,44 @@ export type Database = {
           accepted_at?: string | null
           archived_at?: string | null
           candidate_name?: string | null
+          candidate_record_id?: string | null
           created_at?: string
           disc_pdf_path?: string | null
           email?: string
           expires_at?: string
           id?: string
           invited_by?: string
+          invited_by_user_id?: string | null
+          job_id?: string | null
           position_applied?: string | null
           profile_pdf_path?: string | null
           status?: string
           token?: string
           user_id?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "invitations_candidate_record_id_fkey"
+            columns: ["candidate_record_id"]
+            isOneToOne: false
+            referencedRelation: "candidates"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "invitations_invited_by_user_id_fkey"
+            columns: ["invited_by_user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "invitations_job_id_fkey"
+            columns: ["job_id"]
+            isOneToOne: false
+            referencedRelation: "jobs"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       invite_tokens: {
         Row: {
@@ -1063,6 +1127,56 @@ export type Database = {
           },
           {
             foreignKeyName: "invite_tokens_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      jobs: {
+        Row: {
+          archived_at: string | null
+          closed_at: string | null
+          created_at: string | null
+          created_by: string
+          department: string | null
+          description: string | null
+          id: string
+          location: string | null
+          status: Database["public"]["Enums"]["job_status"]
+          title: string
+          updated_at: string | null
+        }
+        Insert: {
+          archived_at?: string | null
+          closed_at?: string | null
+          created_at?: string | null
+          created_by: string
+          department?: string | null
+          description?: string | null
+          id?: string
+          location?: string | null
+          status?: Database["public"]["Enums"]["job_status"]
+          title: string
+          updated_at?: string | null
+        }
+        Update: {
+          archived_at?: string | null
+          closed_at?: string | null
+          created_at?: string | null
+          created_by?: string
+          department?: string | null
+          description?: string | null
+          id?: string
+          location?: string | null
+          status?: Database["public"]["Enums"]["job_status"]
+          title?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "jobs_created_by_fkey"
             columns: ["created_by"]
             isOneToOne: false
             referencedRelation: "users"
@@ -1266,6 +1380,41 @@ export type Database = {
             columns: ["pa_id"]
             isOneToOne: false
             referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      pipeline_stages: {
+        Row: {
+          created_at: string | null
+          display_order: number
+          id: string
+          job_id: string
+          name: string
+          stage_type: Database["public"]["Enums"]["stage_type"]
+        }
+        Insert: {
+          created_at?: string | null
+          display_order?: number
+          id?: string
+          job_id: string
+          name: string
+          stage_type?: Database["public"]["Enums"]["stage_type"]
+        }
+        Update: {
+          created_at?: string | null
+          display_order?: number
+          id?: string
+          job_id?: string
+          name?: string
+          stage_type?: Database["public"]["Enums"]["stage_type"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pipeline_stages_job_id_fkey"
+            columns: ["job_id"]
+            isOneToOne: false
+            referencedRelation: "jobs"
             referencedColumns: ["id"]
           },
         ]
@@ -1761,6 +1910,75 @@ export type Database = {
         }
         Relationships: []
       }
+      stage_transitions: {
+        Row: {
+          candidate_id: string
+          created_at: string | null
+          from_stage_id: string | null
+          id: string
+          job_id: string
+          moved_by: string
+          note: string | null
+          to_stage_id: string
+        }
+        Insert: {
+          candidate_id: string
+          created_at?: string | null
+          from_stage_id?: string | null
+          id?: string
+          job_id: string
+          moved_by: string
+          note?: string | null
+          to_stage_id: string
+        }
+        Update: {
+          candidate_id?: string
+          created_at?: string | null
+          from_stage_id?: string | null
+          id?: string
+          job_id?: string
+          moved_by?: string
+          note?: string | null
+          to_stage_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "stage_transitions_candidate_id_fkey"
+            columns: ["candidate_id"]
+            isOneToOne: false
+            referencedRelation: "candidates"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "stage_transitions_from_stage_id_fkey"
+            columns: ["from_stage_id"]
+            isOneToOne: false
+            referencedRelation: "pipeline_stages"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "stage_transitions_job_id_fkey"
+            columns: ["job_id"]
+            isOneToOne: false
+            referencedRelation: "jobs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "stage_transitions_moved_by_fkey"
+            columns: ["moved_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "stage_transitions_to_stage_id_fkey"
+            columns: ["to_stage_id"]
+            isOneToOne: false
+            referencedRelation: "pipeline_stages"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       users: {
         Row: {
           avatar_url: string | null
@@ -1864,6 +2082,10 @@ export type Database = {
         Returns: boolean
       }
       can_manage_event: { Args: { p_created_by: string }; Returns: boolean }
+      create_default_pipeline: {
+        Args: { p_job_id: string }
+        Returns: undefined
+      }
       create_lead_with_activity: {
         Args: {
           p_email: string
@@ -1971,6 +2193,7 @@ export type Database = {
       interview_status: "scheduled" | "completed" | "cancelled" | "rescheduled"
       interview_type: "zoom" | "in_person"
       item_progress_status: "not_started" | "in_progress" | "completed"
+      job_status: "draft" | "open" | "paused" | "closed" | "archived"
       lead_activity_type:
         | "created"
         | "note"
@@ -2011,6 +2234,14 @@ export type Database = {
         | "case_closed"
         | "check_in"
         | "departure"
+      stage_type:
+        | "sourced"
+        | "screening"
+        | "assessment"
+        | "interview"
+        | "offer"
+        | "hired"
+        | "custom"
       user_role: "admin" | "director" | "manager" | "agent" | "pa" | "candidate"
     }
     CompositeTypes: {
@@ -2159,6 +2390,7 @@ export const Constants = {
       interview_status: ["scheduled", "completed", "cancelled", "rescheduled"],
       interview_type: ["zoom", "in_person"],
       item_progress_status: ["not_started", "in_progress", "completed"],
+      job_status: ["draft", "open", "paused", "closed", "archived"],
       lead_activity_type: [
         "created",
         "note",
@@ -2196,6 +2428,15 @@ export const Constants = {
         "case_closed",
         "check_in",
         "departure",
+      ],
+      stage_type: [
+        "sourced",
+        "screening",
+        "assessment",
+        "interview",
+        "offer",
+        "hired",
+        "custom",
       ],
       user_role: ["admin", "director", "manager", "agent", "pa", "candidate"],
     },

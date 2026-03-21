@@ -2,89 +2,129 @@
 
 import { cookies } from "next/headers";
 import { randomBytes, createHash } from "crypto";
+import { redirect } from "next/navigation";
 import { z } from "zod";
+import { createClient } from "@/lib/supabase/server";
 import { getAdminClient } from "@/lib/supabase/admin";
 import { sendInvitationEmail } from "@/lib/email";
 import { getSignedPdfUrl, uploadCandidatePdf } from "@/lib/supabase/storage";
 import { generateProfilePdf, generateDiscPdf, type FullProfileData } from "@/lib/pdf";
 import { computeDerivedFields, DISC_TYPE_INFO } from "@/app/candidate/disc-quiz/scoring";
 
+// ─── Types ──────────────────────────────────────────────────────────────────
+
+export interface StaffUser {
+  id: string;
+  full_name: string;
+  email: string;
+  role: string;
+}
+
 // ─── Staff Authentication ────────────────────────────────────────────────────
 
-export async function staffLogin(secret: string) {
-  if (!process.env.STAFF_SECRET) {
-    return { success: false, error: "Staff login not configured." };
+// DB enum: admin | director | manager | agent | pa | candidate
+// Staff-level roles (anyone who can access the staff portal):
+const STAFF_ROLES = ["agent", "manager", "director", "admin"] as const;
+
+export async function staffLogin(email: string, password: string) {
+  const supabase = await createClient();
+  const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+
+  if (error) {
+    return { success: false, error: "Invalid email or password." };
   }
 
-  if (secret !== process.env.STAFF_SECRET) {
-    return { success: false, error: "Invalid password." };
+  // Verify user has a staff-level role
+  const role = data.user.app_metadata?.role as string | undefined;
+  if (!role || !STAFF_ROLES.includes(role as typeof STAFF_ROLES[number])) {
+    await supabase.auth.signOut();
+    return { success: false, error: "Not authorized as staff." };
   }
 
-  const sessionToken = randomBytes(32).toString("base64url");
-  const tokenHash = createHash("sha256").update(sessionToken).digest("hex");
-
-  const admin = getAdminClient();
-
-  // Clean up expired sessions
-  await admin.from("staff_sessions")
-    .delete()
-    .lt("expires_at", new Date().toISOString());
-
-  // Insert new session
-  await admin.from("staff_sessions").insert({
-    token_hash: tokenHash,
-  });
-
-  const cookieStore = await cookies();
-  cookieStore.set("staff_session", sessionToken, {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "lax",
-    path: "/",
-    maxAge: 60 * 60 * 24, // 24 hours
-  });
+  // Update last_login_at
+  const adminClient = getAdminClient();
+  await adminClient.from("users")
+    .update({ last_login_at: new Date().toISOString() })
+    .eq("id", data.user.id);
 
   return { success: true };
 }
 
-async function requireStaff() {
+async function requireStaff(minRole?: string): Promise<StaffUser | null> {
+  // PRIMARY: Check Supabase Auth session
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  if (user) {
+    const role = user.app_metadata?.role as string | undefined;
+    if (!role || !STAFF_ROLES.includes(role as typeof STAFF_ROLES[number])) return null;
+
+    // Enforce minimum role if specified
+    if (minRole) {
+      const userLevel = STAFF_ROLES.indexOf(role as typeof STAFF_ROLES[number]);
+      const requiredLevel = STAFF_ROLES.indexOf(minRole as typeof STAFF_ROLES[number]);
+      if (userLevel < 0 || requiredLevel < 0 || userLevel < requiredLevel) return null;
+    }
+
+    // Fetch profile from public.users
+    const adminClient = getAdminClient();
+    const { data: profile } = await adminClient
+      .from("users")
+      .select("id, full_name, email, role")
+      .eq("id", user.id)
+      .single();
+
+    if (profile) return profile as StaffUser;
+
+    // Profile missing in public.users — return from auth metadata
+    return {
+      id: user.id,
+      full_name: (user.user_metadata?.full_name as string) || user.email || "Staff",
+      email: user.email || "",
+      role: role,
+    };
+  }
+
+  // FALLBACK (transition period): Check old staff_session cookie
+  // Remove this block after all staff have migrated to individual accounts
   const cookieStore = await cookies();
   const session = cookieStore.get("staff_session")?.value;
-  if (!session) return null;
+  if (session) {
+    const tokenHash = createHash("sha256").update(session).digest("hex");
+    const adminClient = getAdminClient();
+    const { data } = await adminClient.from("staff_sessions")
+      .select("id")
+      .eq("token_hash", tokenHash)
+      .gt("expires_at", new Date().toISOString())
+      .limit(1);
 
-  const tokenHash = createHash("sha256").update(session).digest("hex");
-  const admin = getAdminClient();
+    if (data && data.length > 0) {
+      return { id: "legacy", full_name: "Staff", email: "", role: "staff" };
+    }
 
-  const { data } = await admin.from("staff_sessions")
-    .select("id")
-    .eq("token_hash", tokenHash)
-    .gt("expires_at", new Date().toISOString())
-    .limit(1);
-
-  if (data && data.length > 0) return session;
-
-  // Backward compatibility: allow plaintext STAFF_SECRET cookie during deploy transition
-  if (session === process.env.STAFF_SECRET) {
-    console.warn("[staff-auth] Legacy plaintext cookie detected — migrate to session tokens");
-    return session;
+    // Legacy plaintext cookie fallback
+    if (session === process.env.STAFF_SECRET) {
+      return { id: "legacy", full_name: "Staff", email: "", role: "staff" };
+    }
   }
 
   return null;
 }
 
 export async function staffLogout() {
+  const supabase = await createClient();
+  await supabase.auth.signOut();
+
+  // Also clear old cookie if present (transition)
   const cookieStore = await cookies();
-  const session = cookieStore.get("staff_session")?.value;
-
-  if (session) {
-    const tokenHash = createHash("sha256").update(session).digest("hex");
-    const admin = getAdminClient();
-    await admin.from("staff_sessions")
-      .delete()
-      .eq("token_hash", tokenHash);
-  }
-
   cookieStore.delete("staff_session");
+
+  redirect("/staff/login");
+}
+
+/** Returns the current staff user for use in server components / layouts. */
+export async function getStaffUser(): Promise<StaffUser | null> {
+  return requireStaff();
 }
 
 // ─── Invitations ─────────────────────────────────────────────────────────────
@@ -93,6 +133,7 @@ export async function sendInvite(data: {
   email: string;
   candidateName?: string;
   position?: string;
+  jobId?: string;
 }) {
   const staff = await requireStaff();
   if (!staff) return { success: false, error: "Not authenticated." };
@@ -101,10 +142,10 @@ export async function sendInvite(data: {
     return { success: false, error: "Please enter a valid email address." };
   }
 
-  const admin = getAdminClient();
+  const adminClient = getAdminClient();
 
   // Check if email already has an active invitation (pending or accepted)
-  const { data: existing } = await admin.from("invitations")
+  const { data: existing } = await adminClient.from("invitations")
     .select("id")
     .eq("email", data.email)
     .in("status", ["pending", "accepted"])
@@ -116,12 +157,14 @@ export async function sendInvite(data: {
 
   const token = randomBytes(32).toString("base64url");
 
-  const { error } = await admin.from("invitations").insert({
+  const { error } = await adminClient.from("invitations").insert({
     token,
     email: data.email,
     candidate_name: data.candidateName || null,
     position_applied: data.position || null,
-    invited_by: "staff",
+    invited_by: staff.full_name,
+    invited_by_user_id: staff.id !== "legacy" ? staff.id : null,
+    job_id: data.jobId || null,
   });
 
   if (error) {
@@ -160,6 +203,7 @@ export interface Invitation {
   position_applied: string | null;
   status: string;
   user_id: string | null;
+  invited_by: string;
   created_at: string;
   expires_at: string;
   accepted_at: string | null;
@@ -177,8 +221,8 @@ export async function listInvitations(): Promise<{
   const staff = await requireStaff();
   if (!staff) return { success: false, error: "Not authenticated." };
 
-  const admin = getAdminClient();
-  const { data, error } = await admin.from("invitations")
+  const adminClient = getAdminClient();
+  const { data, error } = await adminClient.from("invitations")
     .select("*")
     .order("created_at", { ascending: false })
     .limit(100);
@@ -199,7 +243,7 @@ export async function listInvitations(): Promise<{
   const resultsMap = new Map<string, string>();
 
   if (userIds.length > 0) {
-    const { data: profiles } = await admin.from("candidate_profiles")
+    const { data: profiles } = await adminClient.from("candidate_profiles")
       .select("user_id, completed, onboarding_step")
       .in("user_id", userIds);
 
@@ -209,7 +253,7 @@ export async function listInvitations(): Promise<{
       }
     }
 
-    const { data: responses } = await admin.from("disc_responses")
+    const { data: responses } = await adminClient.from("disc_responses")
       .select("user_id, responses")
       .in("user_id", userIds);
 
@@ -220,7 +264,7 @@ export async function listInvitations(): Promise<{
       }
     }
 
-    const { data: results } = await admin.from("disc_results")
+    const { data: results } = await adminClient.from("disc_results")
       .select("user_id, disc_type")
       .in("user_id", userIds);
 
@@ -235,6 +279,7 @@ export async function listInvitations(): Promise<{
     const pInfo = inv.user_id ? profileMap.get(inv.user_id) : undefined;
     return {
       ...inv,
+      invited_by: inv.invited_by || "staff",
       progress: inv.user_id
         ? {
             profile_completed: pInfo?.completed || false,
@@ -257,19 +302,19 @@ export async function getProgressForUser(userId: string): Promise<{
   const staff = await requireStaff();
   if (!staff) return { success: false };
 
-  const admin = getAdminClient();
+  const adminClient = getAdminClient();
 
   // 3 parallel queries for a single user
   const [profileRes, responsesRes, resultsRes] = await Promise.all([
-    admin.from("candidate_profiles")
+    adminClient.from("candidate_profiles")
       .select("completed, onboarding_step")
       .eq("user_id", userId)
       .single(),
-    admin.from("disc_responses")
+    adminClient.from("disc_responses")
       .select("responses")
       .eq("user_id", userId)
       .single(),
-    admin.from("disc_results")
+    adminClient.from("disc_results")
       .select("disc_type")
       .eq("user_id", userId)
       .single(),
@@ -295,8 +340,8 @@ export async function revokeInvitation(id: string) {
   const staff = await requireStaff();
   if (!staff) return { success: false, error: "Not authenticated." };
 
-  const admin = getAdminClient();
-  const { error } = await admin.from("invitations")
+  const adminClient = getAdminClient();
+  const { error } = await adminClient.from("invitations")
     .update({ status: "revoked" })
     .eq("id", id)
     .in("status", ["pending", "accepted"]);
@@ -312,8 +357,8 @@ export async function resetApplication(invitationId: string) {
   const staff = await requireStaff();
   if (!staff) return { success: false, error: "Not authenticated." };
 
-  const admin = getAdminClient();
-  const { data: invitation, error: fetchError } = await admin.from("invitations")
+  const adminClient = getAdminClient();
+  const { data: invitation, error: fetchError } = await adminClient.from("invitations")
     .select("user_id")
     .eq("id", invitationId)
     .single();
@@ -325,11 +370,11 @@ export async function resetApplication(invitationId: string) {
   const userId = invitation.user_id;
 
   // Clear quiz data
-  await admin.from("disc_results").delete().eq("user_id", userId);
-  await admin.from("disc_responses").delete().eq("user_id", userId);
+  await adminClient.from("disc_results").delete().eq("user_id", userId);
+  await adminClient.from("disc_responses").delete().eq("user_id", userId);
 
   // Reset profile to incomplete so candidate can re-edit and re-submit
-  await admin.from("candidate_profiles")
+  await adminClient.from("candidate_profiles")
     .update({ completed: false, onboarding_step: 1 })
     .eq("user_id", userId);
 
@@ -340,8 +385,8 @@ export async function resetQuiz(invitationId: string) {
   const staff = await requireStaff();
   if (!staff) return { success: false, error: "Not authenticated." };
 
-  const admin = getAdminClient();
-  const { data: invitation, error: fetchError } = await admin.from("invitations")
+  const adminClient = getAdminClient();
+  const { data: invitation, error: fetchError } = await adminClient.from("invitations")
     .select("user_id")
     .eq("id", invitationId)
     .single();
@@ -352,20 +397,21 @@ export async function resetQuiz(invitationId: string) {
 
   const userId = invitation.user_id;
 
-  await admin.from("disc_results").delete().eq("user_id", userId);
-  await admin.from("disc_responses").delete().eq("user_id", userId);
+  await adminClient.from("disc_results").delete().eq("user_id", userId);
+  await adminClient.from("disc_responses").delete().eq("user_id", userId);
 
   return { success: true };
 }
 
 export async function deleteCandidate(id: string) {
-  const staff = await requireStaff();
-  if (!staff) return { success: false, error: "Not authenticated." };
+  // Admin-only action
+  const staff = await requireStaff("admin");
+  if (!staff) return { success: false, error: "Admin access required." };
 
-  const admin = getAdminClient();
+  const adminClient = getAdminClient();
 
   // Get user_id before RPC (needed for auth.admin.deleteUser)
-  const { data: invitation } = await admin
+  const { data: invitation } = await adminClient
     .from("invitations")
     .select("user_id")
     .eq("id", id)
@@ -374,14 +420,14 @@ export async function deleteCandidate(id: string) {
   const userId = invitation?.user_id ?? null;
 
   // Transactional delete of all DB records
-  const { error } = await admin.rpc("delete_candidate", { p_invitation_id: id });
+  const { error } = await adminClient.rpc("delete_candidate", { p_invitation_id: id });
   if (error) {
     return { success: false, error: error.message };
   }
 
   // Delete auth user last (Auth Admin API, outside transaction)
   if (userId) {
-    await admin.auth.admin.deleteUser(userId);
+    await adminClient.auth.admin.deleteUser(userId);
   }
 
   return { success: true };
@@ -391,8 +437,8 @@ export async function archiveInvitation(id: string) {
   const staff = await requireStaff();
   if (!staff) return { success: false, error: "Not authenticated." };
 
-  const admin = getAdminClient();
-  const { error } = await admin.from("invitations")
+  const adminClient = getAdminClient();
+  const { error } = await adminClient.from("invitations")
     .update({ archived_at: new Date().toISOString() })
     .eq("id", id)
     .is("archived_at", null);
@@ -426,10 +472,10 @@ export async function backfillPdfs(): Promise<{ generated: number }> {
   const staff = await requireStaff();
   if (!staff) return { generated: 0 };
 
-  const admin = getAdminClient();
+  const adminClient = getAdminClient();
 
   // Find invitations with completed work but missing PDFs
-  const { data: invitations } = await admin.from("invitations")
+  const { data: invitations } = await adminClient.from("invitations")
     .select("id, user_id, profile_pdf_path, disc_pdf_path")
     .not("user_id", "is", null)
     .eq("status", "accepted");
@@ -443,7 +489,7 @@ export async function backfillPdfs(): Promise<{ generated: number }> {
 
     // Backfill profile PDF
     if (!inv.profile_pdf_path) {
-      const { data: profile } = await admin.from("candidate_profiles")
+      const { data: profile } = await adminClient.from("candidate_profiles")
         .select("*")
         .eq("user_id", userId)
         .eq("completed", true)
@@ -502,7 +548,7 @@ export async function backfillPdfs(): Promise<{ generated: number }> {
           const pdfBuffer = await generateProfilePdf(profileData);
           const filePath = await uploadCandidatePdf(userId, "application", pdfBuffer);
           if (filePath) {
-            await admin.from("invitations")
+            await adminClient.from("invitations")
               .update({ profile_pdf_path: filePath })
               .eq("id", inv.id);
             generated++;
@@ -516,8 +562,8 @@ export async function backfillPdfs(): Promise<{ generated: number }> {
     // Backfill DISC PDF
     if (!inv.disc_pdf_path) {
       const [{ data: results }, { data: profile }] = await Promise.all([
-        admin.from("disc_results").select("*").eq("user_id", userId).single(),
-        admin.from("candidate_profiles").select("full_name").eq("user_id", userId).single(),
+        adminClient.from("disc_results").select("*").eq("user_id", userId).single(),
+        adminClient.from("candidate_profiles").select("full_name").eq("user_id", userId).single(),
       ]);
 
       if (results) {
@@ -544,7 +590,7 @@ export async function backfillPdfs(): Promise<{ generated: number }> {
             });
             const filePath = await uploadCandidatePdf(userId, "disc-profile", pdfBuffer);
             if (filePath) {
-              await admin.from("invitations")
+              await adminClient.from("invitations")
                 .update({ disc_pdf_path: filePath })
                 .eq("id", inv.id);
               generated++;

@@ -455,7 +455,10 @@ export default function InviteClient() {
         </td>
         <td className="py-2.5 pr-4">{progressDisplay(inv)}</td>
         <td className="py-2.5 pr-4 text-stone-400">
-          {new Date(inv.created_at).toLocaleDateString()}
+          <div>{new Date(inv.created_at).toLocaleDateString()}</div>
+          {inv.invited_by && inv.invited_by !== "staff" && (
+            <div className="text-[10px] text-stone-300">by {inv.invited_by}</div>
+          )}
         </td>
         <td className="py-2.5">
           <div className="flex items-center gap-1.5">

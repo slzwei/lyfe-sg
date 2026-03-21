@@ -2,6 +2,8 @@ import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 import type { Database } from "./database.types";
 
+const STAFF_ROLES = ["agent", "manager", "director", "admin"];
+
 export async function updateSession(request: NextRequest) {
   let supabaseResponse = NextResponse.next({ request });
 
@@ -28,15 +30,27 @@ export async function updateSession(request: NextRequest) {
 
   const path = request.nextUrl.pathname;
 
-  // Staff routes — cookie-based auth, no Supabase user needed
-  if (path.startsWith("/staff/") && !path.startsWith("/staff/login")) {
-    const staffSession = request.cookies.get("staff_session")?.value;
-    if (!staffSession || staffSession.length < 32) {
-      const url = request.nextUrl.clone();
-      url.pathname = "/staff/login";
-      return NextResponse.redirect(url);
+  // Staff routes — dual auth during transition (Supabase Auth + legacy cookie)
+  if (path.startsWith("/staff/") && !path.startsWith("/staff/login") && !path.startsWith("/staff/forgot-password") && !path.startsWith("/staff/reset-password")) {
+    // Check Supabase Auth session first (new method)
+    const { data: { user } } = await supabase.auth.getUser();
+    if (user) {
+      const role = user.app_metadata?.role as string | undefined;
+      if (role && STAFF_ROLES.includes(role)) {
+        return supabaseResponse;
+      }
     }
-    return supabaseResponse;
+
+    // Fallback: check old staff_session cookie (transition period)
+    const staffSession = request.cookies.get("staff_session")?.value;
+    if (staffSession && staffSession.length >= 32) {
+      return supabaseResponse;
+    }
+
+    // Neither auth method worked — redirect to login
+    const url = request.nextUrl.clone();
+    url.pathname = "/staff/login";
+    return NextResponse.redirect(url);
   }
 
   const {
@@ -59,7 +73,7 @@ export async function updateSession(request: NextRequest) {
       return NextResponse.redirect(url);
     }
     if (!isCandidate) {
-      // Authenticated but wrong role — sign out and redirect to login with error
+      // Authenticated but wrong role — redirect to login with error
       const url = request.nextUrl.clone();
       url.pathname = "/candidate/login";
       url.searchParams.set("error", "unauthorized_role");

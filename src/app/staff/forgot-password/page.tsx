@@ -1,14 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { staffLogin } from "../actions";
+import { createClient } from "@/lib/supabase/client";
 
-export default function StaffLoginPage() {
-  const router = useRouter();
+export default function ForgotPasswordPage() {
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [sent, setSent] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -17,13 +15,40 @@ export default function StaffLoginPage() {
     setError("");
     setLoading(true);
 
-    const result = await staffLogin(email, password);
-    if (result.success) {
-      router.push("/staff/invite");
+    const supabase = createClient();
+    const siteUrl = window.location.origin;
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${siteUrl}/staff/reset-password`,
+    });
+
+    if (error) {
+      setError(error.message);
     } else {
-      setError(result.error || "Invalid credentials.");
+      setSent(true);
     }
     setLoading(false);
+  }
+
+  if (sent) {
+    return (
+      <div className="flex min-h-[60vh] items-center justify-center">
+        <div className="w-full max-w-md">
+          <div className="rounded-3xl border border-stone-200 bg-white p-8 shadow-sm text-center">
+            <div className="mb-4 text-4xl">✉️</div>
+            <h1 className="text-xl font-bold text-stone-800">Check your email</h1>
+            <p className="mt-2 text-sm text-stone-500">
+              If an account exists for <strong>{email}</strong>, we sent a password reset link.
+            </p>
+            <Link
+              href="/staff/login"
+              className="mt-6 inline-block text-sm text-orange-500 hover:text-orange-600"
+            >
+              Back to login
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -31,9 +56,9 @@ export default function StaffLoginPage() {
       <div className="w-full max-w-md">
         <div className="rounded-3xl border border-stone-200 bg-white p-8 shadow-sm">
           <div className="mb-6 text-center">
-            <h1 className="text-2xl font-bold text-stone-800">Staff Login</h1>
+            <h1 className="text-2xl font-bold text-stone-800">Reset Password</h1>
             <p className="mt-2 text-sm text-stone-500">
-              Sign in with your staff account
+              Enter your email and we'll send a reset link
             </p>
           </div>
 
@@ -57,24 +82,6 @@ export default function StaffLoginPage() {
               />
             </div>
 
-            <div>
-              <label
-                htmlFor="password"
-                className="mb-1.5 block text-sm font-medium text-stone-700"
-              >
-                Password
-              </label>
-              <input
-                id="password"
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="Enter your password"
-                className="h-12 w-full rounded-xl border border-stone-200 bg-stone-50 px-4 text-sm outline-none transition-colors focus:border-orange-400 focus:ring-2 focus:ring-orange-100"
-                autoComplete="current-password"
-              />
-            </div>
-
             {error && (
               <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-600">
                 {error}
@@ -83,19 +90,19 @@ export default function StaffLoginPage() {
 
             <button
               type="submit"
-              disabled={!email || !password || loading}
+              disabled={!email || loading}
               className="h-12 w-full rounded-xl bg-orange-500 font-semibold text-white transition-colors hover:bg-orange-600 disabled:cursor-not-allowed disabled:opacity-50"
             >
-              {loading ? "Signing in…" : "Sign In"}
+              {loading ? "Sending…" : "Send Reset Link"}
             </button>
           </form>
 
           <div className="mt-4 text-center">
             <Link
-              href="/staff/forgot-password"
+              href="/staff/login"
               className="text-sm text-stone-400 hover:text-orange-500 transition-colors"
             >
-              Forgot password?
+              Back to login
             </Link>
           </div>
         </div>

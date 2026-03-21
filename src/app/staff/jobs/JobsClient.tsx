@@ -11,7 +11,7 @@ export default function JobsClient() {
   const [showCreate, setShowCreate] = useState(false);
   const [creating, setCreating] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
-  const [form, setForm] = useState({ title: "", department: "", location: "", description: "", portal: "", portal_url: "" });
+  const [form, setForm] = useState({ title: "", description: "", portal: "", portal_url: "" });
   const [error, setError] = useState("");
 
   const fetchJobs = useCallback(async () => {
@@ -23,7 +23,7 @@ export default function JobsClient() {
   useEffect(() => { fetchJobs(); }, [fetchJobs]);
 
   function resetForm() {
-    setForm({ title: "", department: "", location: "", description: "", portal: "", portal_url: "" });
+    setForm({ title: "", description: "", portal: "", portal_url: "" });
   }
 
   async function handleCreate(e: React.FormEvent) {
@@ -45,8 +45,6 @@ export default function JobsClient() {
     setEditingId(job.id);
     setForm({
       title: job.title,
-      department: job.department || "",
-      location: job.location || "",
       description: job.description || "",
       portal: job.portal || "",
       portal_url: job.portal_url || "",
@@ -113,20 +111,6 @@ export default function JobsClient() {
               <input type="url" value={form.portal_url} onChange={(e) => setForm({ ...form, portal_url: e.target.value })}
                 placeholder="https://www.indeed.com/job/..."
                 className="h-10 w-full rounded-lg border border-stone-200 bg-stone-50 px-3 text-sm outline-none focus:border-orange-400 focus:ring-2 focus:ring-orange-100" />
-            </div>
-            <div className="grid gap-3 sm:grid-cols-2">
-              <div>
-                <label className="mb-1 block text-xs font-medium text-stone-500">Department</label>
-                <input type="text" value={form.department} onChange={(e) => setForm({ ...form, department: e.target.value })}
-                  placeholder="e.g. Sales"
-                  className="h-10 w-full rounded-lg border border-stone-200 bg-stone-50 px-3 text-sm outline-none focus:border-orange-400 focus:ring-2 focus:ring-orange-100" />
-              </div>
-              <div>
-                <label className="mb-1 block text-xs font-medium text-stone-500">Location</label>
-                <input type="text" value={form.location} onChange={(e) => setForm({ ...form, location: e.target.value })}
-                  placeholder="e.g. Singapore"
-                  className="h-10 w-full rounded-lg border border-stone-200 bg-stone-50 px-3 text-sm outline-none focus:border-orange-400 focus:ring-2 focus:ring-orange-100" />
-              </div>
             </div>
             <div>
               <label className="mb-1 block text-xs font-medium text-stone-500">Job Description</label>
@@ -205,8 +189,6 @@ export default function JobsClient() {
                     {job.portal && (
                       <span className="rounded bg-blue-50 px-1.5 py-0.5 text-xs font-medium text-blue-600">{job.portal}</span>
                     )}
-                    {job.department && <span>{job.department}</span>}
-                    {job.location && <span>{job.location}</span>}
                     {job.created_at && <span>{new Date(job.created_at).toLocaleDateString()}</span>}
                   </div>
                   {job.portal_url && (

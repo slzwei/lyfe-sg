@@ -13,8 +13,8 @@ export default function JobsClient() {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [form, setForm] = useState({ title: "", description: "", portal: "", portal_url: "" });
   const [error, setError] = useState("");
-  const [closingId, setClosingId] = useState<string | null>(null);
-  const [closeConfirm, setCloseConfirm] = useState("");
+  const [confirmAction, setConfirmAction] = useState<{ id: string; type: "close" | "delete" } | null>(null);
+  const [confirmText, setConfirmText] = useState("");
 
   const fetchJobs = useCallback(async () => {
     const result = await listJobPostings();
@@ -61,19 +61,19 @@ export default function JobsClient() {
     fetchJobs();
   }
 
-  async function handleClose(id: string) {
-    // Optimistic update
-    setJobs((prev) => prev.map((j) => j.id === id ? { ...j, status: "closed" } : j));
-    setClosingId(null);
-    setCloseConfirm("");
-    await updateJobPosting(id, { status: "closed" });
-    fetchJobs();
-  }
-
-  async function handleDelete(id: string) {
-    if (!confirm("Archive this job posting?")) return;
-    await deleteJobPosting(id);
-    fetchJobs();
+  async function handleConfirmAction() {
+    if (!confirmAction) return;
+    const { id, type } = confirmAction;
+    setConfirmAction(null);
+    setConfirmText("");
+    if (type === "close") {
+      setJobs((prev) => prev.map((j) => j.id === id ? { ...j, status: "closed" } : j));
+      await updateJobPosting(id, { status: "closed" });
+      fetchJobs();
+    } else {
+      await deleteJobPosting(id);
+      fetchJobs();
+    }
   }
 
   return (
@@ -207,43 +207,17 @@ export default function JobsClient() {
                   )}
                 </div>
                 <div className="ml-4 flex shrink-0 items-center gap-1">
-                  {job.status === "open" && closingId !== job.id && (
-                    <button onClick={() => { setClosingId(job.id); setCloseConfirm(""); }}
+                  {job.status === "open" && (
+                    <button onClick={() => { setConfirmAction({ id: job.id, type: "close" }); setConfirmText(""); }}
                       className="rounded-lg px-3 py-1.5 text-xs font-medium text-red-500 transition-colors hover:bg-red-50">
                       Close
                     </button>
-                  )}
-                  {job.status === "open" && closingId === job.id && (
-                    <div className="flex items-center gap-1.5">
-                      <input
-                        type="text"
-                        value={closeConfirm}
-                        onChange={(e) => setCloseConfirm(e.target.value)}
-                        placeholder='Type "close"'
-                        className="h-7 w-24 rounded-lg border border-red-200 bg-red-50 px-2 text-xs outline-none focus:border-red-400"
-                        autoFocus
-                        onKeyDown={(e) => {
-                          if (e.key === "Escape") { setClosingId(null); setCloseConfirm(""); }
-                          if (e.key === "Enter" && closeConfirm.toLowerCase() === "close") handleClose(job.id);
-                        }}
-                      />
-                      <button
-                        onClick={() => handleClose(job.id)}
-                        disabled={closeConfirm.toLowerCase() !== "close"}
-                        className="rounded-lg bg-red-500 px-2.5 py-1 text-xs font-medium text-white hover:bg-red-600 disabled:opacity-30">
-                        Confirm
-                      </button>
-                      <button onClick={() => { setClosingId(null); setCloseConfirm(""); }}
-                        className="rounded-lg px-2 py-1 text-xs text-stone-400 hover:bg-stone-100">
-                        Cancel
-                      </button>
-                    </div>
                   )}
                   <button onClick={() => startEdit(job)}
                     className="rounded-lg px-3 py-1.5 text-xs text-stone-400 hover:bg-stone-100 hover:text-stone-600">
                     Edit
                   </button>
-                  <button onClick={() => handleDelete(job.id)}
+                  <button onClick={() => { setConfirmAction({ id: job.id, type: "delete" }); setConfirmText(""); }}
                     className="rounded-lg px-3 py-1.5 text-xs text-stone-400 hover:bg-red-50 hover:text-red-500">
                     Delete
                   </button>
@@ -251,6 +225,44 @@ export default function JobsClient() {
               </div>
             </div>
           ))}
+        </div>
+      )}
+
+      {/* Confirmation Dialog */}
+      {confirmAction && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40" onClick={() => { setConfirmAction(null); setConfirmText(""); }}>
+          <div className="mx-4 w-full max-w-sm rounded-2xl bg-white p-6 shadow-xl" onClick={(e) => e.stopPropagation()}>
+            <h3 className="text-lg font-semibold text-stone-800">
+              {confirmAction.type === "close" ? "Close Job Posting" : "Delete Job Posting"}
+            </h3>
+            <p className="mt-2 text-sm text-stone-500">
+              Type <span className="font-semibold text-stone-700">&quot;{confirmAction.type}&quot;</span> to confirm.
+            </p>
+            <input
+              type="text"
+              value={confirmText}
+              onChange={(e) => setConfirmText(e.target.value)}
+              placeholder={confirmAction.type}
+              autoFocus
+              onKeyDown={(e) => {
+                if (e.key === "Escape") { setConfirmAction(null); setConfirmText(""); }
+                if (e.key === "Enter" && confirmText.toLowerCase() === confirmAction.type) handleConfirmAction();
+              }}
+              className="mt-3 h-10 w-full rounded-lg border border-stone-200 bg-stone-50 px-3 text-sm outline-none focus:border-red-400 focus:ring-2 focus:ring-red-100"
+            />
+            <div className="mt-4 flex justify-end gap-2">
+              <button onClick={() => { setConfirmAction(null); setConfirmText(""); }}
+                className="rounded-lg border border-stone-200 px-4 py-2 text-sm text-stone-500 hover:bg-stone-100">
+                Cancel
+              </button>
+              <button
+                onClick={handleConfirmAction}
+                disabled={confirmText.toLowerCase() !== confirmAction.type}
+                className="rounded-lg bg-red-500 px-4 py-2 text-sm font-semibold text-white hover:bg-red-600 disabled:opacity-30">
+                Confirm
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>

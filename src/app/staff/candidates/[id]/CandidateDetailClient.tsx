@@ -6,17 +6,39 @@ import {
   getCandidate,
   addActivity,
   updateCandidate,
+  getInterviews,
+  updateInterviewFeedback,
   type CandidateDetail,
   type Activity,
   type CandidateDocument,
+  type InterviewRecord,
 } from "../actions";
 
 const ACTIVITY_TYPES = ["note", "call", "email", "meeting", "status_change", "follow_up"] as const;
+
+const RECOMMENDATION_OPTIONS = [
+  { value: "second_interview", label: "2nd Interview", color: "bg-blue-50 text-blue-700 border-blue-200" },
+  { value: "on_hold", label: "On Hold", color: "bg-amber-50 text-amber-700 border-amber-200" },
+  { value: "pass", label: "Pass", color: "bg-red-50 text-red-600 border-red-200" },
+] as const;
+
+function recommendationBadge(rec: string | null) {
+  if (!rec) return null;
+  const opt = RECOMMENDATION_OPTIONS.find((o) => o.value === rec);
+  if (!opt) return null;
+  return (
+    <span className={`inline-flex items-center rounded-md border px-2 py-0.5 text-xs font-semibold ${opt.color}`}>
+      {opt.label}
+    </span>
+  );
+}
 
 export default function CandidateDetailClient({ candidateId }: { candidateId: string }) {
   const [candidate, setCandidate] = useState<CandidateDetail | null>(null);
   const [activities, setActivities] = useState<Activity[]>([]);
   const [documents, setDocuments] = useState<CandidateDocument[]>([]);
+  const [interviews, setInterviews] = useState<InterviewRecord[]>([]);
+  const [staffRole, setStaffRole] = useState<string>("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -29,20 +51,34 @@ export default function CandidateDetailClient({ candidateId }: { candidateId: st
   const [editing, setEditing] = useState(false);
   const [editForm, setEditForm] = useState({ name: "", email: "", phone: "", notes: "" });
 
+  // Interview feedback editing
+  const [editingInterviewId, setEditingInterviewId] = useState<string | null>(null);
+  const [feedbackForm, setFeedbackForm] = useState({ notes: "", recommendation: null as string | null });
+  const [savingFeedback, setSavingFeedback] = useState(false);
+
+  const isManagerPlus = staffRole && ["manager", "director", "admin"].includes(staffRole);
+
   const fetchData = useCallback(async () => {
-    const result = await getCandidate(candidateId);
-    if (result.success && result.candidate) {
-      setCandidate(result.candidate);
-      setActivities(result.activities || []);
-      setDocuments(result.documents || []);
+    const [candidateResult, interviewsResult] = await Promise.all([
+      getCandidate(candidateId),
+      getInterviews(candidateId),
+    ]);
+    if (candidateResult.success && candidateResult.candidate) {
+      setCandidate(candidateResult.candidate);
+      setActivities(candidateResult.activities || []);
+      setDocuments(candidateResult.documents || []);
+      setStaffRole(candidateResult.staffRole || "");
       setEditForm({
-        name: result.candidate.name,
-        email: result.candidate.email || "",
-        phone: result.candidate.phone,
-        notes: result.candidate.notes || "",
+        name: candidateResult.candidate.name,
+        email: candidateResult.candidate.email || "",
+        phone: candidateResult.candidate.phone,
+        notes: candidateResult.candidate.notes || "",
       });
     } else {
-      setError(result.error || "Not found.");
+      setError(candidateResult.error || "Not found.");
+    }
+    if (interviewsResult.success) {
+      setInterviews(interviewsResult.interviews || []);
     }
     setLoading(false);
   }, [candidateId]);
@@ -62,6 +98,26 @@ export default function CandidateDetailClient({ candidateId }: { candidateId: st
   async function handleSaveEdit() {
     await updateCandidate(candidateId, editForm);
     setEditing(false);
+    fetchData();
+  }
+
+  function startEditingFeedback(interview: InterviewRecord) {
+    setEditingInterviewId(interview.id);
+    setFeedbackForm({
+      notes: interview.notes || "",
+      recommendation: interview.recommendation || null,
+    });
+  }
+
+  async function handleSaveFeedback() {
+    if (!editingInterviewId) return;
+    setSavingFeedback(true);
+    await updateInterviewFeedback(editingInterviewId, {
+      notes: feedbackForm.notes,
+      recommendation: feedbackForm.recommendation || null,
+    });
+    setEditingInterviewId(null);
+    setSavingFeedback(false);
     fetchData();
   }
 
@@ -92,27 +148,10 @@ export default function CandidateDetailClient({ candidateId }: { candidateId: st
       <div className="grid gap-6 lg:grid-cols-3">
         <div className="lg:col-span-2 space-y-4">
           <div className="rounded-2xl border border-stone-200 bg-white p-5">
-            <div className="mb-3 h-4 w-20 animate-pulse rounded bg-stone-200" />
-            <div className="flex gap-2">
-              <div className="h-9 w-24 animate-pulse rounded-lg bg-stone-100" />
-              <div className="h-9 flex-1 animate-pulse rounded-lg bg-stone-100" />
-              <div className="h-9 w-14 animate-pulse rounded-lg bg-stone-200" />
-            </div>
-          </div>
-          <div className="rounded-2xl border border-stone-200 bg-white">
-            <div className="border-b border-stone-100 px-5 py-3">
-              <div className="h-4 w-24 animate-pulse rounded bg-stone-200" />
-            </div>
-            <div className="divide-y divide-stone-50">
-              {Array.from({ length: 3 }).map((_, i) => (
-                <div key={i} className="px-5 py-3">
-                  <div className="flex items-center gap-2">
-                    <div className="h-4 w-10 animate-pulse rounded bg-stone-100" />
-                    <div className="h-3 w-20 animate-pulse rounded bg-stone-100" />
-                    <div className="h-3 w-28 animate-pulse rounded bg-stone-100" />
-                  </div>
-                  <div className="mt-2 h-3.5 w-3/4 animate-pulse rounded bg-stone-100" />
-                </div>
+            <div className="mb-3 h-4 w-28 animate-pulse rounded bg-stone-200" />
+            <div className="space-y-3">
+              {Array.from({ length: 2 }).map((_, i) => (
+                <div key={i} className="h-16 animate-pulse rounded-lg bg-stone-50" />
               ))}
             </div>
           </div>
@@ -205,12 +244,12 @@ export default function CandidateDetailClient({ candidateId }: { candidateId: st
           <div className="mt-1 text-sm font-medium text-stone-700">
             {candidate.job_title ? (
               <Link href={`/staff/jobs/${candidate.job_id}`} className="hover:text-orange-500">{candidate.job_title}</Link>
-            ) : "—"}
+            ) : "\u2014"}
           </div>
         </div>
         <div className="rounded-xl border border-stone-200 bg-white p-4">
           <div className="text-xs text-stone-400">Stage</div>
-          <div className="mt-1 text-sm font-medium text-stone-700">{candidate.stage_name || "—"}</div>
+          <div className="mt-1 text-sm font-medium text-stone-700">{candidate.stage_name || "\u2014"}</div>
         </div>
         <div className="rounded-xl border border-stone-200 bg-white p-4">
           <div className="text-xs text-stone-400">DISC</div>
@@ -220,6 +259,124 @@ export default function CandidateDetailClient({ candidateId }: { candidateId: st
           <div className="text-xs text-stone-400">Application</div>
           <div className="mt-1 text-sm font-medium text-stone-700">{candidate.profile_completed ? "Completed" : "Pending"}</div>
         </div>
+      </div>
+
+      {/* Interviews section */}
+      <div className="rounded-2xl border border-stone-200 bg-white">
+        <div className="border-b border-stone-100 px-5 py-3">
+          <h3 className="font-semibold text-stone-700">Interviews ({interviews.length})</h3>
+        </div>
+        {interviews.length === 0 ? (
+          <div className="px-5 py-8 text-center text-sm text-stone-400">No interviews scheduled.</div>
+        ) : (
+          <div className="divide-y divide-stone-100">
+            {interviews.map((interview) => (
+              <div key={interview.id} className="px-5 py-4">
+                {/* Interview header row */}
+                <div className="flex items-start justify-between gap-3">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className="rounded bg-stone-800 px-2 py-0.5 text-xs font-bold text-white">
+                      Round {interview.round_number}
+                    </span>
+                    <span className={`rounded px-1.5 py-0.5 text-[10px] font-medium ${
+                      interview.status === "completed" ? "bg-green-50 text-green-600" :
+                      interview.status === "scheduled" ? "bg-blue-50 text-blue-600" :
+                      interview.status === "cancelled" ? "bg-red-50 text-red-500" :
+                      "bg-amber-50 text-amber-600"
+                    }`}>
+                      {interview.status}
+                    </span>
+                    <span className="text-xs text-stone-400">
+                      {interview.type === "zoom" ? "Zoom" : "In-person"}
+                    </span>
+                    {recommendationBadge(interview.recommendation)}
+                  </div>
+                  {isManagerPlus && interview.status === "completed" && editingInterviewId !== interview.id && (
+                    <button
+                      onClick={() => startEditingFeedback(interview)}
+                      className="shrink-0 rounded-lg border border-stone-200 px-2.5 py-1 text-xs text-stone-500 hover:bg-stone-100"
+                    >
+                      {interview.notes ? "Edit feedback" : "Add feedback"}
+                    </button>
+                  )}
+                </div>
+
+                {/* Interview details */}
+                <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-xs text-stone-400">
+                  <span>{new Date(interview.datetime).toLocaleString()}</span>
+                  <span>Interviewer: {interview.manager_name}</span>
+                  {interview.location && <span>{interview.location}</span>}
+                </div>
+
+                {/* Feedback display (read-only) */}
+                {interview.notes && editingInterviewId !== interview.id && (
+                  <div className="mt-3 rounded-lg bg-stone-50 p-3">
+                    <div className="mb-1 text-[10px] font-medium uppercase tracking-wide text-stone-400">Feedback</div>
+                    <p className="text-sm text-stone-600 whitespace-pre-wrap">{interview.notes}</p>
+                  </div>
+                )}
+
+                {/* Awaiting feedback indicator */}
+                {interview.status === "completed" && !interview.notes && !interview.recommendation && editingInterviewId !== interview.id && (
+                  <div className="mt-2 text-xs italic text-stone-300">Awaiting feedback</div>
+                )}
+
+                {/* Feedback edit form (manager+ only) */}
+                {editingInterviewId === interview.id && (
+                  <div className="mt-3 space-y-3 rounded-lg border border-orange-200 bg-orange-50/30 p-4">
+                    <div>
+                      <label className="mb-1 block text-xs font-medium text-stone-500">Feedback notes</label>
+                      <textarea
+                        value={feedbackForm.notes}
+                        onChange={(e) => setFeedbackForm({ ...feedbackForm, notes: e.target.value })}
+                        rows={3}
+                        placeholder="Write your interview feedback..."
+                        className="w-full rounded-lg border border-stone-200 bg-white px-3 py-2 text-sm outline-none focus:border-orange-400"
+                      />
+                    </div>
+                    <div>
+                      <label className="mb-1.5 block text-xs font-medium text-stone-500">Recommendation</label>
+                      <div className="flex flex-wrap gap-2">
+                        {RECOMMENDATION_OPTIONS.map((opt) => (
+                          <button
+                            key={opt.value}
+                            type="button"
+                            onClick={() => setFeedbackForm({
+                              ...feedbackForm,
+                              recommendation: feedbackForm.recommendation === opt.value ? null : opt.value,
+                            })}
+                            className={`rounded-lg border px-3 py-1.5 text-xs font-medium transition-colors ${
+                              feedbackForm.recommendation === opt.value
+                                ? opt.color
+                                : "border-stone-200 bg-white text-stone-400 hover:border-stone-300"
+                            }`}
+                          >
+                            {opt.label}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={handleSaveFeedback}
+                        disabled={savingFeedback}
+                        className="rounded-lg bg-orange-500 px-4 py-1.5 text-sm font-semibold text-white hover:bg-orange-600 disabled:opacity-50"
+                      >
+                        {savingFeedback ? "Saving..." : "Save"}
+                      </button>
+                      <button
+                        onClick={() => setEditingInterviewId(null)}
+                        className="rounded-lg border border-stone-200 px-4 py-1.5 text-sm text-stone-500 hover:bg-stone-100"
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
       </div>
 
       <div className="grid gap-6 lg:grid-cols-3">
@@ -235,7 +392,7 @@ export default function CandidateDetailClient({ candidateId }: { candidateId: st
                   {ACTIVITY_TYPES.map((t) => <option key={t} value={t}>{t}</option>)}
                 </select>
                 <input type="text" value={noteText} onChange={(e) => setNoteText(e.target.value)}
-                  placeholder="Write a note…" className="h-9 flex-1 rounded-lg border border-stone-200 bg-stone-50 px-3 text-sm outline-none focus:border-orange-400" />
+                  placeholder="Write a note\u2026" className="h-9 flex-1 rounded-lg border border-stone-200 bg-stone-50 px-3 text-sm outline-none focus:border-orange-400" />
                 <button type="submit" disabled={!noteText.trim() || addingNote}
                   className="h-9 rounded-lg bg-orange-500 px-4 text-sm font-semibold text-white hover:bg-orange-600 disabled:opacity-50">
                   Add

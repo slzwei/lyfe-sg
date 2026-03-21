@@ -1,7 +1,7 @@
 "use server";
 
 import { getAdminClient } from "@/lib/supabase/admin";
-import { getStaffUser } from "../actions";
+import { getStaffUser, requireStaff } from "../actions";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -65,6 +65,7 @@ export async function getCandidate(candidateId: string): Promise<{
   candidate?: CandidateDetail;
   activities?: Activity[];
   documents?: CandidateDocument[];
+  staffRole?: string;
   error?: string;
 }> {
   const staff = await getStaffUser();
@@ -142,6 +143,7 @@ export async function getCandidate(candidateId: string): Promise<{
       user_name: userNameMap.get(a.user_id) || "Staff",
     })),
     documents: (documentsRes.data || []) as CandidateDocument[],
+    staffRole: staff.role,
   };
 }
 
@@ -189,8 +191,8 @@ export async function addDocument(
 }
 
 export async function deleteDocument(docId: string): Promise<{ success: boolean; error?: string }> {
-  const staff = await getStaffUser();
-  if (!staff) return { success: false, error: "Not authenticated." };
+  const staff = await requireStaff("manager");
+  if (!staff) return { success: false, error: "Manager access required." };
 
   const admin = getAdminClient();
   const { error } = await admin.from("candidate_documents").delete().eq("id", docId);
@@ -334,6 +336,85 @@ export async function updateCandidate(
   if (data.notes !== undefined) update.notes = data.notes.trim() || null;
 
   const { error } = await admin.from("candidates").update(update).eq("id", candidateId);
+  if (error) return { success: false, error: error.message };
+  return { success: true };
+}
+
+// ─── Interviews ───────────────────────────────────────────────────────────────
+
+export interface InterviewRecord {
+  id: string;
+  candidate_id: string;
+  manager_id: string;
+  scheduled_by_id: string;
+  round_number: number;
+  type: string;
+  datetime: string;
+  location: string | null;
+  zoom_link: string | null;
+  status: string;
+  notes: string | null;
+  recommendation: string | null;
+  created_at: string | null;
+  updated_at: string | null;
+  // Enriched
+  manager_name?: string;
+  scheduled_by_name?: string;
+}
+
+export async function getInterviews(candidateId: string): Promise<{
+  success: boolean;
+  interviews?: InterviewRecord[];
+  error?: string;
+}> {
+  const staff = await getStaffUser();
+  if (!staff) return { success: false, error: "Not authenticated." };
+
+  const admin = getAdminClient();
+  const { data: interviews, error } = await admin.from("interviews")
+    .select("*")
+    .eq("candidate_id", candidateId)
+    .order("datetime", { ascending: false });
+
+  if (error) return { success: false, error: error.message };
+  if (!interviews || interviews.length === 0) return { success: true, interviews: [] };
+
+  // Enrich with user names
+  const userIds = [...new Set([
+    ...interviews.map((i) => i.manager_id),
+    ...interviews.map((i) => i.scheduled_by_id),
+  ])];
+  const userNameMap = new Map<string, string>();
+  if (userIds.length > 0) {
+    const { data: users } = await admin.from("users")
+      .select("id, full_name")
+      .in("id", userIds);
+    if (users) users.forEach((u) => userNameMap.set(u.id, u.full_name));
+  }
+
+  return {
+    success: true,
+    interviews: interviews.map((i) => ({
+      ...i,
+      manager_name: userNameMap.get(i.manager_id) || "Unknown",
+      scheduled_by_name: userNameMap.get(i.scheduled_by_id) || "Unknown",
+    })),
+  };
+}
+
+export async function updateInterviewFeedback(
+  interviewId: string,
+  data: { notes?: string; recommendation?: string | null }
+): Promise<{ success: boolean; error?: string }> {
+  const staff = await requireStaff("manager");
+  if (!staff) return { success: false, error: "Manager access required." };
+
+  const admin = getAdminClient();
+  const update: Record<string, unknown> = { updated_at: new Date().toISOString() };
+  if (data.notes !== undefined) update.notes = data.notes.trim() || null;
+  if (data.recommendation !== undefined) update.recommendation = data.recommendation;
+
+  const { error } = await admin.from("interviews").update(update).eq("id", interviewId);
   if (error) return { success: false, error: error.message };
   return { success: true };
 }

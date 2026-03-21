@@ -931,6 +931,7 @@ export type Database = {
           location: string | null
           manager_id: string
           notes: string | null
+          recommendation: string | null
           round_number: number
           scheduled_by_id: string
           status: Database["public"]["Enums"]["interview_status"]
@@ -947,6 +948,7 @@ export type Database = {
           location?: string | null
           manager_id: string
           notes?: string | null
+          recommendation?: string | null
           round_number?: number
           scheduled_by_id: string
           status?: Database["public"]["Enums"]["interview_status"]
@@ -963,6 +965,7 @@ export type Database = {
           location?: string | null
           manager_id?: string
           notes?: string | null
+          recommendation?: string | null
           round_number?: number
           scheduled_by_id?: string
           status?: Database["public"]["Enums"]["interview_status"]
@@ -2450,3 +2453,4 @@ export const Constants = {
     },
   },
 } as const
+

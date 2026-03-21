@@ -24,7 +24,7 @@ export interface StaffUser {
 
 // DB enum: admin | director | manager | agent | pa | candidate
 // Staff-level roles (anyone who can access the staff portal):
-const STAFF_ROLES = ["manager", "director", "admin"] as const;
+const STAFF_ROLES = ["pa", "manager", "director", "admin"] as const;
 
 export async function staffLogin(email: string, password: string) {
   const supabase = await createClient();
@@ -102,7 +102,7 @@ export async function staffVerifyOtp(phone: string, token: string) {
   return { success: true };
 }
 
-async function requireStaff(minRole?: string): Promise<StaffUser | null> {
+export async function requireStaff(minRole?: string): Promise<StaffUser | null> {
   // PRIMARY: Check Supabase Auth session
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
@@ -139,6 +139,9 @@ async function requireStaff(minRole?: string): Promise<StaffUser | null> {
 
   // FALLBACK (transition period): Check old staff_session cookie
   // Remove this block after all staff have migrated to individual accounts
+  // Legacy sessions have no role — deny any minRole requirement
+  if (minRole) return null;
+
   const cookieStore = await cookies();
   const session = cookieStore.get("staff_session")?.value;
   if (session) {
@@ -389,8 +392,8 @@ export async function getProgressForUser(userId: string): Promise<{
 }
 
 export async function revokeInvitation(id: string) {
-  const staff = await requireStaff();
-  if (!staff) return { success: false, error: "Not authenticated." };
+  const staff = await requireStaff("manager");
+  if (!staff) return { success: false, error: "Manager access required." };
 
   const adminClient = getAdminClient();
   const { error } = await adminClient.from("invitations")
@@ -406,8 +409,8 @@ export async function revokeInvitation(id: string) {
 }
 
 export async function resetApplication(invitationId: string) {
-  const staff = await requireStaff();
-  if (!staff) return { success: false, error: "Not authenticated." };
+  const staff = await requireStaff("manager");
+  if (!staff) return { success: false, error: "Manager access required." };
 
   const adminClient = getAdminClient();
   const { data: invitation, error: fetchError } = await adminClient.from("invitations")
@@ -434,8 +437,8 @@ export async function resetApplication(invitationId: string) {
 }
 
 export async function resetQuiz(invitationId: string) {
-  const staff = await requireStaff();
-  if (!staff) return { success: false, error: "Not authenticated." };
+  const staff = await requireStaff("manager");
+  if (!staff) return { success: false, error: "Manager access required." };
 
   const adminClient = getAdminClient();
   const { data: invitation, error: fetchError } = await adminClient.from("invitations")
@@ -486,8 +489,8 @@ export async function deleteCandidate(id: string) {
 }
 
 export async function archiveInvitation(id: string) {
-  const staff = await requireStaff();
-  if (!staff) return { success: false, error: "Not authenticated." };
+  const staff = await requireStaff("manager");
+  if (!staff) return { success: false, error: "Manager access required." };
 
   const adminClient = getAdminClient();
   const { error } = await adminClient.from("invitations")

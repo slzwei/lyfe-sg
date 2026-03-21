@@ -263,6 +263,7 @@ export interface Invitation {
   expires_at: string;
   accepted_at: string | null;
   archived_at: string | null;
+  candidate_record_id: string | null;
   profile_pdf_path: string | null;
   disc_pdf_path: string | null;
   progress: InvitationProgress | null;

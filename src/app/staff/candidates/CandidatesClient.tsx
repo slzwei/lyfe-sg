@@ -243,7 +243,13 @@ export default function CandidatesClient({ staffRole }: { staffRole?: string }) 
       <tr key={inv.id} className={`transition-colors hover:bg-stone-50 ${isLoading ? "opacity-50" : ""}`}>
         <td className="px-4 py-3">
           <span className="flex items-center gap-1.5">
-            <span className="font-medium text-stone-800">{inv.candidate_name || "—"}</span>
+            {inv.candidate_record_id ? (
+              <Link href={`/staff/candidates/${inv.candidate_record_id}`} className="font-medium text-orange-600 hover:text-orange-700 hover:underline">
+                {inv.candidate_name || "—"}
+              </Link>
+            ) : (
+              <span className="font-medium text-stone-800">{inv.candidate_name || "—"}</span>
+            )}
             {inv.profile_pdf_path && (
               <button onClick={() => handleDownloadPdf(inv.profile_pdf_path!)} title="Application PDF"
                 className="text-stone-300 hover:text-orange-500">

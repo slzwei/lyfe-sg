@@ -113,7 +113,7 @@ export default function JobsClient() {
             </div>
             <div>
               <label className="mb-1 block text-xs font-medium text-stone-500">Posting URL</label>
-              <input type="url" value={form.portal_url} onChange={(e) => setForm({ ...form, portal_url: e.target.value })}
+              <input type="text" value={form.portal_url} onChange={(e) => setForm({ ...form, portal_url: e.target.value })}
                 placeholder="https://www.indeed.com/job/..."
                 className="h-10 w-full rounded-lg border border-stone-200 bg-stone-50 px-3 text-sm outline-none focus:border-orange-400 focus:ring-2 focus:ring-orange-100" />
             </div>

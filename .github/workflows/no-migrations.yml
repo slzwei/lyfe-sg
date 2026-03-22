@@ -1,0 +1,16 @@
+name: Block migration drift
+on:
+  pull_request:
+    paths:
+      - 'supabase/migrations/**'
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Fail if migrations added to lyfe-sg
+        run: |
+          echo "::error::Migrations must go in lyfe-app/supabase/migrations/, not lyfe-sg."
+          echo "See INTEGRATION_PLAN.md for details."
+          exit 1

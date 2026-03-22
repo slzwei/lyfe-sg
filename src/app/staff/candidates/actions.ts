@@ -39,6 +39,35 @@ export interface Activity {
   user_name?: string;
 }
 
+export interface CandidateProfile {
+  full_name: string;
+  email: string | null;
+  contact_number: string | null;
+  date_of_birth: string | null;
+  nationality: string | null;
+  race: string | null;
+  gender: string | null;
+  marital_status: string | null;
+  position_applied: string | null;
+  expected_salary: string | null;
+  salary_period: string | null;
+  date_available: string | null;
+  place_of_birth: string | null;
+  address_block: string | null;
+  address_street: string | null;
+  address_unit: string | null;
+  address_postal: string | null;
+  emergency_name: string | null;
+  emergency_relationship: string | null;
+  emergency_contact: string | null;
+  education: Record<string, unknown> | null;
+  languages: unknown[] | null;
+  employment_history: unknown[] | null;
+  software_competencies: string | null;
+  typing_wpm: number | null;
+  shorthand_wpm: number | null;
+}
+
 export interface CandidateDocument {
   id: string;
   candidate_id: string;
@@ -65,6 +94,7 @@ export interface SearchResult {
 export async function getCandidate(candidateId: string): Promise<{
   success: boolean;
   candidate?: CandidateDetail;
+  profile?: CandidateProfile | null;
   activities?: Activity[];
   documents?: CandidateDocument[];
   staffRole?: string;
@@ -100,7 +130,7 @@ export async function getCandidate(candidateId: string): Promise<{
       .eq("candidate_id", candidateId)
       .order("created_at", { ascending: false }),
     admin.from("candidate_profiles")
-      .select("user_id, completed, candidate_id")
+      .select("*")
       .eq("candidate_id", candidateId)
       .single(),
     admin.from("invitations")
@@ -146,6 +176,34 @@ export async function getCandidate(candidateId: string): Promise<{
       profile_pdf_path: invitationRes.data?.profile_pdf_path || null,
       disc_pdf_path: invitationRes.data?.disc_pdf_path || null,
     },
+    profile: profileRes.data ? {
+      full_name: profileRes.data.full_name,
+      email: profileRes.data.email,
+      contact_number: profileRes.data.contact_number,
+      date_of_birth: profileRes.data.date_of_birth,
+      nationality: profileRes.data.nationality,
+      race: profileRes.data.race,
+      gender: profileRes.data.gender,
+      marital_status: profileRes.data.marital_status,
+      position_applied: profileRes.data.position_applied,
+      expected_salary: profileRes.data.expected_salary,
+      salary_period: profileRes.data.salary_period,
+      date_available: profileRes.data.date_available,
+      place_of_birth: profileRes.data.place_of_birth,
+      address_block: profileRes.data.address_block,
+      address_street: profileRes.data.address_street,
+      address_unit: profileRes.data.address_unit,
+      address_postal: profileRes.data.address_postal,
+      emergency_name: profileRes.data.emergency_name,
+      emergency_relationship: profileRes.data.emergency_relationship,
+      emergency_contact: profileRes.data.emergency_contact,
+      education: profileRes.data.education as Record<string, unknown> | null,
+      languages: profileRes.data.languages as unknown[] | null,
+      employment_history: profileRes.data.employment_history as unknown[] | null,
+      software_competencies: profileRes.data.software_competencies,
+      typing_wpm: profileRes.data.typing_wpm,
+      shorthand_wpm: profileRes.data.shorthand_wpm,
+    } : null,
     activities: activities.map((a) => ({
       ...a,
       user_name: userNameMap.get(a.user_id) || "Staff",

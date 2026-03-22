@@ -121,7 +121,13 @@ export default function DashboardClient() {
               {stats.recentCandidates.map((c, i) => (
                 <div key={i} className="flex items-center justify-between px-5 py-3">
                   <div>
-                    <div className="text-sm font-medium text-stone-700">{c.name}</div>
+                    {c.id ? (
+                      <Link href={`/staff/candidates/${c.id}`} className="text-sm font-medium text-stone-700 transition-colors hover:text-orange-600">
+                        {c.name}
+                      </Link>
+                    ) : (
+                      <div className="text-sm font-medium text-stone-700">{c.name}</div>
+                    )}
                     <div className="text-xs text-stone-400">{c.email}</div>
                   </div>
                   <div className="flex items-center gap-2">

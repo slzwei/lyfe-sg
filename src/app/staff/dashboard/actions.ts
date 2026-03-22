@@ -10,7 +10,7 @@ export interface DashboardStats {
   completedCount: number;
   pendingCount: number;
   discTypeDistribution: { type: string; count: number }[];
-  recentCandidates: { name: string; email: string; status: string; disc_type?: string; created_at: string }[];
+  recentCandidates: { id: string | null; name: string; email: string; status: string; disc_type?: string; created_at: string }[];
 }
 
 export async function getDashboardStats(): Promise<{
@@ -28,7 +28,7 @@ export async function getDashboardStats(): Promise<{
   const [jobsRes, invitationsRes] = await Promise.all([
     admin.from("jobs").select("id, title, status").is("archived_at", null),
     admin.from("invitations")
-      .select("id, candidate_name, email, status, user_id, created_at, archived_at")
+      .select("id, candidate_name, email, status, user_id, created_at, archived_at, candidate_record_id")
       .order("created_at", { ascending: false }),
   ]);
 
@@ -95,6 +95,7 @@ export async function getDashboardStats(): Promise<{
       progress = "in progress";
     }
     return {
+      id: inv.candidate_record_id || null,
       name: inv.candidate_name || "—",
       email: inv.email,
       status: progress,

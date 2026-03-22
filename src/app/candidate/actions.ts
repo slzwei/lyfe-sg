@@ -106,7 +106,7 @@ export async function verifyOtp(phone: string, token: string, inviteToken?: stri
     // Existing candidate — if they have an invite token, apply invitation data
     if (inviteToken) {
       const { data: inv } = await admin.from("invitations")
-        .select("id, email, candidate_name, position_applied, expires_at, job_id, invited_by_user_id")
+        .select("id, email, candidate_name, position_applied, expires_at, job_id, invited_by_user_id, attached_files")
         .eq("token", inviteToken)
         .eq("status", "pending")
         .single();
@@ -130,6 +130,32 @@ export async function verifyOtp(phone: string, token: string, inviteToken?: stri
             invitation_id: inv.id,
           })
           .eq("user_id", user.id);
+
+        // Bridge attached files to candidate_documents for returning candidates
+        if (inv.attached_files) {
+          const { data: profile } = await admin.from("candidate_profiles")
+            .select("candidate_id")
+            .eq("user_id", user.id)
+            .single();
+
+          if (profile?.candidate_id) {
+            const files = inv.attached_files as {
+              label: string;
+              file_name: string;
+              storage_path: string;
+            }[];
+            if (files.length > 0) {
+              await admin.from("candidate_documents").insert(
+                files.map((f) => ({
+                  candidate_id: profile.candidate_id!,
+                  label: f.label,
+                  file_name: f.file_name,
+                  file_url: f.storage_path,
+                }))
+              );
+            }
+          }
+        }
       }
     }
     redirect("/candidate/onboarding");
@@ -147,7 +173,7 @@ export async function verifyOtp(phone: string, token: string, inviteToken?: stri
   // Validate and consume invitation
   const { data: invitation, error: invError } = await admin
     .from("invitations")
-    .select("id, email, candidate_name, position_applied, expires_at, job_id, invited_by_user_id")
+    .select("id, email, candidate_name, position_applied, expires_at, job_id, invited_by_user_id, attached_files")
     .eq("token", inviteToken)
     .eq("status", "pending")
     .single();
@@ -241,6 +267,25 @@ export async function verifyOtp(phone: string, token: string, inviteToken?: stri
         await admin.from("invitations")
           .update({ candidate_record_id: candidateRecord.id })
           .eq("id", invitation.id);
+
+        // Bridge attached files to candidate_documents
+        if (invitation.attached_files) {
+          const files = invitation.attached_files as {
+            label: string;
+            file_name: string;
+            storage_path: string;
+          }[];
+          if (files.length > 0) {
+            await admin.from("candidate_documents").insert(
+              files.map((f) => ({
+                candidate_id: candidateRecord.id,
+                label: f.label,
+                file_name: f.file_name,
+                file_url: f.storage_path,
+              }))
+            );
+          }
+        }
       }
     }
   }

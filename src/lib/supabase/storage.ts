@@ -1,6 +1,7 @@
 import { getAdminClient } from "./admin";
 
 const BUCKET = "candidate-pdfs";
+const RESUMES_BUCKET = "candidate-resumes";
 
 /**
  * Upload a candidate PDF to Supabase Storage and return the file path.
@@ -49,4 +50,70 @@ export async function getSignedPdfUrl(
   }
 
   return data.signedUrl;
+}
+
+// ─── Candidate Resumes Bucket ─────────────────────────────────────────────
+
+/**
+ * Upload a document to the candidate-resumes bucket.
+ * At invite time, files go under invitations/{invitationId}/docs/{timestamp}_{filename}
+ */
+export async function uploadInviteDocument(
+  invitationId: string,
+  fileName: string,
+  fileBuffer: Buffer
+): Promise<string | null> {
+  const admin = getAdminClient();
+  const timestamp = Date.now();
+  const safeName = fileName.replace(/[^a-zA-Z0-9._-]/g, "_");
+  const storagePath = `invitations/${invitationId}/docs/${timestamp}_${safeName}`;
+
+  const { error } = await admin.storage
+    .from(RESUMES_BUCKET)
+    .upload(storagePath, fileBuffer, {
+      contentType: "application/pdf",
+      upsert: false,
+    });
+
+  if (error) {
+    console.error("[storage] Failed to upload invite doc:", error);
+    return null;
+  }
+
+  return storagePath;
+}
+
+/**
+ * Create a signed URL for a file in the candidate-resumes bucket.
+ */
+export async function getSignedResumeUrl(
+  filePath: string,
+  expiresIn = 300
+): Promise<string | null> {
+  const admin = getAdminClient();
+  const { data, error } = await admin.storage
+    .from(RESUMES_BUCKET)
+    .createSignedUrl(filePath, expiresIn);
+
+  if (error) {
+    console.error("[storage] Failed to create resume signed URL:", error);
+    return null;
+  }
+
+  return data.signedUrl;
+}
+
+/**
+ * Delete files from the candidate-resumes bucket.
+ */
+export async function deleteResumeFiles(paths: string[]): Promise<boolean> {
+  if (paths.length === 0) return true;
+  const admin = getAdminClient();
+  const { error } = await admin.storage.from(RESUMES_BUCKET).remove(paths);
+
+  if (error) {
+    console.error("[storage] Failed to delete resume files:", error);
+    return false;
+  }
+  return true;
 }

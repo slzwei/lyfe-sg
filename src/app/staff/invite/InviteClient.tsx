@@ -12,9 +12,16 @@ import {
   archiveInvitation,
   deleteCandidate,
   getPdfUrl,
+  getInviteFileUrl,
+  removeInviteFile,
   backfillPdfs,
   type Invitation,
+  type AttachedFile,
 } from "../actions";
+
+const DOCUMENT_LABELS = [
+  "Resume", "RES5", "M5", "M9", "M9A", "HI", "M8", "M8A", "ComGI", "BCP", "PGI", "Other",
+] as const;
 
 export default function InviteClient() {
   const [email, setEmail] = useState("");
@@ -35,6 +42,11 @@ export default function InviteClient() {
   const [refreshing, setRefreshing] = useState(false);
   const [lastRefreshed, setLastRefreshed] = useState<Date | null>(null);
   const [pastOpen, setPastOpen] = useState(false);
+  const [lastInvitationId, setLastInvitationId] = useState<string | null>(null);
+  const [attachedFiles, setAttachedFiles] = useState<AttachedFile[]>([]);
+  const [uploading, setUploading] = useState(false);
+  const [uploadLabel, setUploadLabel] = useState<string>("Resume");
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [live, setLive] = useState(false);
   const [liveStates, setLiveStates] = useState<Record<string, CandidateState>>({});
   const debounceMap = useRef<Map<string, ReturnType<typeof setTimeout>>>(new Map());
@@ -143,7 +155,10 @@ export default function InviteClient() {
     });
 
     if (result.success) {
-      setMessage({ type: "success", text: `Invitation sent to ${email}` });
+      setMessage({ type: "success", text: `Invitation sent to ${email}. You can now attach documents below.` });
+      setLastInvitationId(result.invitationId || null);
+      setAttachedFiles([]);
+      setUploadLabel("Resume");
       setEmail("");
       setCandidateName("");
       setPosition("");
@@ -233,6 +248,61 @@ export default function InviteClient() {
 
   async function handleDownloadPdf(path: string) {
     const result = await getPdfUrl(path);
+    if (result.success && result.url) {
+      window.open(result.url, "_blank");
+    }
+  }
+
+  async function handleUploadFile(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file || !lastInvitationId) return;
+
+    if (file.type !== "application/pdf") {
+      setMessage({ type: "error", text: "Only PDF files are allowed." });
+      return;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      setMessage({ type: "error", text: "File must be under 5 MB." });
+      return;
+    }
+    if (attachedFiles.length >= 20) {
+      setMessage({ type: "error", text: "Maximum 20 files per candidate." });
+      return;
+    }
+
+    setUploading(true);
+    try {
+      const formData = new FormData();
+      formData.append("invitationId", lastInvitationId);
+      formData.append("label", uploadLabel);
+      formData.append("file", file);
+
+      const res = await fetch("/api/upload-invite-doc", { method: "POST", body: formData });
+      const data = await res.json();
+
+      if (data.success) {
+        setAttachedFiles((prev) => [...prev, data.file]);
+        setMessage({ type: "success", text: `Uploaded ${file.name}` });
+      } else {
+        setMessage({ type: "error", text: data.error || "Upload failed." });
+      }
+    } catch {
+      setMessage({ type: "error", text: "Upload failed. Please try again." });
+    }
+    setUploading(false);
+    if (fileInputRef.current) fileInputRef.current.value = "";
+  }
+
+  async function handleRemoveFile(storagePath: string) {
+    if (!lastInvitationId) return;
+    const result = await removeInviteFile(lastInvitationId, storagePath);
+    if (result.success) {
+      setAttachedFiles((prev) => prev.filter((f) => f.storage_path !== storagePath));
+    }
+  }
+
+  async function handleDownloadInviteFile(storagePath: string) {
+    const result = await getInviteFileUrl(storagePath);
     if (result.success && result.url) {
       window.open(result.url, "_blank");
     }
@@ -449,7 +519,17 @@ export default function InviteClient() {
             )}
           </span>
         </td>
-        <td className="py-2.5 pr-4">{inv.email}</td>
+        <td className="py-2.5 pr-4">
+          <span className="flex items-center gap-1.5">
+            {inv.email}
+            {inv.attached_files && inv.attached_files.length > 0 && (
+              <span className="flex items-center gap-0.5 text-stone-400" title={`${inv.attached_files.length} file(s) attached`}>
+                <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" /></svg>
+                <span className="text-[10px]">{inv.attached_files.length}</span>
+              </span>
+            )}
+          </span>
+        </td>
         <td className="py-2.5 pr-4">
           {inv.position_applied || "\u2014"}
         </td>
@@ -506,7 +586,15 @@ export default function InviteClient() {
                 </button>
               )}
             </p>
-            <p className="mt-0.5 truncate text-sm text-stone-500">{inv.email}</p>
+            <p className="mt-0.5 flex items-center gap-1.5 truncate text-sm text-stone-500">
+              {inv.email}
+              {inv.attached_files && inv.attached_files.length > 0 && (
+                <span className="flex items-center gap-0.5 text-stone-400" title={`${inv.attached_files.length} file(s) attached`}>
+                  <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" /></svg>
+                  <span className="text-[10px]">{inv.attached_files.length}</span>
+                </span>
+              )}
+            </p>
           </div>
           <div className="shrink-0">{progressDisplay(inv)}</div>
         </div>
@@ -652,6 +740,82 @@ export default function InviteClient() {
             {sending ? "Sending..." : "Send Invitation"}
           </button>
         </form>
+
+        {/* Attach Documents (after successful send) */}
+        {lastInvitationId && (
+          <div className="mt-4 rounded-xl border border-stone-200 bg-stone-50 p-4">
+            <div className="mb-3 flex items-center justify-between">
+              <h3 className="text-sm font-semibold text-stone-700">
+                <svg className="mr-1.5 inline h-4 w-4 text-stone-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" /></svg>
+                Attach Documents
+              </h3>
+              <button
+                type="button"
+                onClick={() => { setLastInvitationId(null); setAttachedFiles([]); }}
+                className="text-xs text-stone-400 hover:text-stone-600"
+              >
+                Done
+              </button>
+            </div>
+            <div className="flex flex-wrap items-end gap-3">
+              <div>
+                <label className="mb-1 block text-xs text-stone-500">Label</label>
+                <select
+                  value={uploadLabel}
+                  onChange={(e) => setUploadLabel(e.target.value)}
+                  className="h-10 rounded-lg border border-stone-200 bg-white px-3 text-sm outline-none focus:border-orange-400 focus:ring-2 focus:ring-orange-100"
+                >
+                  {DOCUMENT_LABELS.map((l) => (
+                    <option key={l} value={l}>{l}</option>
+                  ))}
+                </select>
+              </div>
+              <div className="min-w-0 flex-1">
+                <label className="mb-1 block text-xs text-stone-500">PDF file (max 5 MB)</label>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept=".pdf,application/pdf"
+                  onChange={handleUploadFile}
+                  disabled={uploading}
+                  className="w-full text-sm text-stone-600 file:mr-2 file:rounded-lg file:border-0 file:bg-orange-500 file:px-3 file:py-2 file:text-sm file:font-medium file:text-white file:transition-colors hover:file:bg-orange-600 disabled:opacity-50"
+                />
+              </div>
+              {uploading && (
+                <span className="flex items-center gap-1.5 text-xs text-stone-400">
+                  <svg className="h-3.5 w-3.5 animate-spin" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" /><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" /></svg>
+                  Uploading...
+                </span>
+              )}
+            </div>
+            {attachedFiles.length > 0 && (
+              <ul className="mt-3 space-y-1.5">
+                {attachedFiles.map((f) => (
+                  <li key={f.storage_path} className="flex items-center gap-2 text-sm text-stone-600">
+                    <span className="shrink-0 rounded bg-stone-200 px-1.5 py-0.5 text-xs font-medium text-stone-600">{f.label}</span>
+                    <span className="min-w-0 truncate">{f.file_name}</span>
+                    <button
+                      type="button"
+                      onClick={() => handleDownloadInviteFile(f.storage_path)}
+                      title="Download"
+                      className="shrink-0 text-stone-300 transition-colors hover:text-blue-500"
+                    >
+                      <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveFile(f.storage_path)}
+                      title="Remove"
+                      className="shrink-0 text-stone-300 transition-colors hover:text-red-500"
+                    >
+                      <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        )}
       </div>
 
       {/* Candidate List */}

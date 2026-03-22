@@ -1001,6 +1001,7 @@ export type Database = {
         Row: {
           accepted_at: string | null
           archived_at: string | null
+          attached_files: Json | null
           candidate_name: string | null
           candidate_record_id: string | null
           created_at: string
@@ -1020,6 +1021,7 @@ export type Database = {
         Insert: {
           accepted_at?: string | null
           archived_at?: string | null
+          attached_files?: Json | null
           candidate_name?: string | null
           candidate_record_id?: string | null
           created_at?: string
@@ -1039,6 +1041,7 @@ export type Database = {
         Update: {
           accepted_at?: string | null
           archived_at?: string | null
+          attached_files?: Json | null
           candidate_name?: string | null
           candidate_record_id?: string | null
           created_at?: string

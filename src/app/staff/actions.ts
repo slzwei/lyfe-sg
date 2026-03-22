@@ -7,7 +7,7 @@ import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
 import { getAdminClient } from "@/lib/supabase/admin";
 import { sendInvitationEmail } from "@/lib/email";
-import { getSignedPdfUrl, uploadCandidatePdf } from "@/lib/supabase/storage";
+import { getSignedPdfUrl, getSignedResumeUrl, uploadCandidatePdf, deleteResumeFiles } from "@/lib/supabase/storage";
 import { generateProfilePdf, generateDiscPdf, type FullProfileData } from "@/lib/pdf";
 import { computeDerivedFields, DISC_TYPE_INFO } from "@/app/candidate/disc-quiz/scoring";
 
@@ -212,7 +212,7 @@ export async function sendInvite(data: {
 
   const token = randomBytes(32).toString("base64url");
 
-  const { error } = await adminClient.from("invitations").insert({
+  const { data: inserted, error } = await adminClient.from("invitations").insert({
     token,
     email: data.email,
     candidate_name: data.candidateName || null,
@@ -220,9 +220,9 @@ export async function sendInvite(data: {
     invited_by: staff.full_name,
     invited_by_user_id: staff.id !== "legacy" ? staff.id : null,
     job_id: data.jobId || null,
-  });
+  }).select("id").single();
 
-  if (error) {
+  if (error || !inserted) {
     console.error("[invite] DB insert failed:", error);
     return { success: false, error: "Failed to create invitation." };
   }
@@ -239,7 +239,7 @@ export async function sendInvite(data: {
     console.warn("[invite] Email send failed but invitation created:", emailResult.message);
   }
 
-  return { success: true };
+  return { success: true, invitationId: inserted.id };
 }
 
 export interface InvitationProgress {
@@ -248,6 +248,12 @@ export interface InvitationProgress {
   quiz_answered: number;
   quiz_completed: boolean;
   disc_type?: string;
+}
+
+export interface AttachedFile {
+  label: string;
+  file_name: string;
+  storage_path: string;
 }
 
 export interface Invitation {
@@ -266,6 +272,7 @@ export interface Invitation {
   candidate_record_id: string | null;
   profile_pdf_path: string | null;
   disc_pdf_path: string | null;
+  attached_files: AttachedFile[] | null;
   progress: InvitationProgress | null;
 }
 
@@ -336,6 +343,7 @@ export async function listInvitations(): Promise<{
     return {
       ...inv,
       invited_by: inv.invited_by || "staff",
+      attached_files: (inv.attached_files as unknown as AttachedFile[] | null) || null,
       progress: inv.user_id
         ? {
             profile_completed: pInfo?.completed || false,
@@ -466,10 +474,10 @@ export async function deleteCandidate(id: string) {
 
   const adminClient = getAdminClient();
 
-  // Get user_id before RPC (needed for auth.admin.deleteUser)
+  // Get user_id and attached files before RPC
   const { data: invitation } = await adminClient
     .from("invitations")
-    .select("user_id")
+    .select("user_id, attached_files")
     .eq("id", id)
     .single();
 
@@ -479,6 +487,16 @@ export async function deleteCandidate(id: string) {
   const { error } = await adminClient.rpc("delete_candidate", { p_invitation_id: id });
   if (error) {
     return { success: false, error: error.message };
+  }
+
+  // Clean up attached files from storage
+  if (invitation?.attached_files) {
+    const files = invitation.attached_files as unknown as AttachedFile[];
+    const paths = files.map((f) => f.storage_path);
+    const deleted = await deleteResumeFiles(paths);
+    if (!deleted) {
+      console.error(`[deleteCandidate] Storage cleanup failed for invitation ${id}, paths:`, paths);
+    }
   }
 
   // Delete auth user last (Auth Admin API, outside transaction)
@@ -518,6 +536,51 @@ export async function getPdfUrl(filePath: string): Promise<{
   if (!url) return { success: false, error: "Failed to generate download URL." };
 
   return { success: true, url };
+}
+
+export async function getInviteFileUrl(storagePath: string): Promise<{
+  success: boolean;
+  url?: string;
+  error?: string;
+}> {
+  const staff = await requireStaff();
+  if (!staff) return { success: false, error: "Not authenticated." };
+
+  if (!storagePath.startsWith("invitations/")) {
+    return { success: false, error: "Invalid file path." };
+  }
+
+  const url = await getSignedResumeUrl(storagePath);
+  if (!url) return { success: false, error: "Failed to generate download URL." };
+
+  return { success: true, url };
+}
+
+export async function removeInviteFile(invitationId: string, storagePath: string) {
+  const staff = await requireStaff();
+  if (!staff) return { success: false, error: "Not authenticated." };
+
+  const adminClient = getAdminClient();
+
+  const { data: invitation } = await adminClient.from("invitations")
+    .select("id, attached_files")
+    .eq("id", invitationId)
+    .single();
+
+  if (!invitation) return { success: false, error: "Invitation not found." };
+
+  const files = (invitation.attached_files as unknown[] || []) as AttachedFile[];
+  const updated = files.filter((f) => f.storage_path !== storagePath);
+
+  const { error: updateErr } = await adminClient.from("invitations")
+    .update({ attached_files: JSON.parse(JSON.stringify(updated)) })
+    .eq("id", invitationId);
+
+  if (updateErr) return { success: false, error: "Failed to update file list." };
+
+  await deleteResumeFiles([storagePath]);
+
+  return { success: true };
 }
 
 /**

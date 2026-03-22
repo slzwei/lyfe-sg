@@ -173,7 +173,7 @@ export async function verifyOtp(phone: string, token: string, inviteToken?: stri
   // Validate and consume invitation
   const { data: invitation, error: invError } = await admin
     .from("invitations")
-    .select("id, email, candidate_name, position_applied, expires_at, job_id, invited_by_user_id, attached_files")
+    .select("id, email, candidate_name, position_applied, expires_at, job_id, invited_by_user_id, assigned_manager_id, attached_files")
     .eq("token", inviteToken)
     .eq("status", "pending")
     .single();
@@ -254,7 +254,7 @@ export async function verifyOtp(phone: string, token: string, inviteToken?: stri
         job_id: invitation.job_id || null,
         current_stage_id: stageId,
         stage_entered_at: stageId ? now : null,
-        assigned_manager_id: createdBy,
+        assigned_manager_id: invitation.assigned_manager_id || createdBy,
         created_by_id: createdBy,
       }).select("id").single();
 

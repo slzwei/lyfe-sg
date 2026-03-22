@@ -484,3 +484,119 @@ export async function updateInterviewFeedback(
   if (error) return { success: false, error: error.message };
   return { success: true };
 }
+
+// ─── Assignable Managers ──────────────────────────────────────────────────────
+
+export interface AssignableManager {
+  id: string;
+  full_name: string;
+  role: string;
+}
+
+export async function listAssignableManagers(): Promise<{
+  success: boolean;
+  managers?: AssignableManager[];
+  error?: string;
+}> {
+  const staff = await getStaffUser();
+  if (!staff) return { success: false, error: "Not authenticated." };
+
+  const admin = getAdminClient();
+
+  if (staff.role === "pa") {
+    // PA: only managers they are assigned to
+    const { data: assignments } = await admin
+      .from("pa_manager_assignments")
+      .select("manager_id")
+      .eq("pa_id", staff.id);
+
+    if (!assignments || assignments.length === 0) {
+      return { success: true, managers: [] };
+    }
+
+    const managerIds = assignments.map((a) => a.manager_id);
+    const { data: managers } = await admin
+      .from("users")
+      .select("id, full_name, role")
+      .in("id", managerIds)
+      .eq("is_active", true)
+      .order("full_name");
+
+    return { success: true, managers: (managers || []) as AssignableManager[] };
+  }
+
+  // Manager/director/admin: all active managers, directors, and admins
+  const { data: managers } = await admin
+    .from("users")
+    .select("id, full_name, role")
+    .in("role", ["manager", "director", "admin"])
+    .eq("is_active", true)
+    .order("full_name");
+
+  return { success: true, managers: (managers || []) as AssignableManager[] };
+}
+
+// ─── Reassign Candidate ───────────────────────────────────────────────────────
+
+export async function reassignCandidate(
+  candidateId: string,
+  newManagerId: string
+): Promise<{ success: boolean; error?: string }> {
+  const staff = await requireStaff("manager");
+  if (!staff) return { success: false, error: "Manager access required." };
+
+  const admin = getAdminClient();
+
+  // Validate new manager exists and has correct role
+  const { data: targetUser } = await admin
+    .from("users")
+    .select("id, full_name, role, is_active")
+    .eq("id", newManagerId)
+    .single();
+
+  if (!targetUser || !targetUser.is_active) {
+    return { success: false, error: "Target manager not found or inactive." };
+  }
+
+  if (!["manager", "director", "admin"].includes(targetUser.role)) {
+    return { success: false, error: "Target user is not a manager/director/admin." };
+  }
+
+  // Get current candidate for old manager name
+  const { data: candidate } = await admin
+    .from("candidates")
+    .select("assigned_manager_id")
+    .eq("id", candidateId)
+    .single();
+
+  if (!candidate) return { success: false, error: "Candidate not found." };
+
+  if (candidate.assigned_manager_id === newManagerId) {
+    return { success: false, error: "Candidate is already assigned to this manager." };
+  }
+
+  // Get old manager name for activity log
+  const { data: oldManager } = await admin
+    .from("users")
+    .select("full_name")
+    .eq("id", candidate.assigned_manager_id)
+    .single();
+
+  // Update assignment
+  const { error } = await admin
+    .from("candidates")
+    .update({ assigned_manager_id: newManagerId })
+    .eq("id", candidateId);
+
+  if (error) return { success: false, error: error.message };
+
+  // Log activity
+  await admin.from("candidate_activities").insert({
+    candidate_id: candidateId,
+    user_id: staff.id,
+    type: "reassignment",
+    note: `Reassigned from ${oldManager?.full_name || "Unknown"} to ${targetUser.full_name}`,
+  });
+
+  return { success: true };
+}

@@ -8,11 +8,14 @@ import {
   updateCandidate,
   getInterviews,
   updateInterviewFeedback,
+  listAssignableManagers,
+  reassignCandidate,
   type CandidateDetail,
   type CandidateProfile,
   type Activity,
   type CandidateDocument,
   type InterviewRecord,
+  type AssignableManager,
 } from "../actions";
 import { getPdfUrl, getInviteFileUrl } from "../../actions";
 
@@ -58,6 +61,12 @@ export default function CandidateDetailClient({ candidateId }: { candidateId: st
   const [editingInterviewId, setEditingInterviewId] = useState<string | null>(null);
   const [feedbackForm, setFeedbackForm] = useState({ notes: "", recommendation: null as string | null });
   const [savingFeedback, setSavingFeedback] = useState(false);
+
+  // Reassign
+  const [showReassign, setShowReassign] = useState(false);
+  const [reassignManagers, setReassignManagers] = useState<AssignableManager[]>([]);
+  const [reassignTarget, setReassignTarget] = useState("");
+  const [reassigning, setReassigning] = useState(false);
 
   const isManagerPlus = staffRole && ["manager", "director", "admin"].includes(staffRole);
 
@@ -140,6 +149,26 @@ export default function CandidateDetailClient({ candidateId }: { candidateId: st
     fetchData();
   }
 
+  async function handleOpenReassign() {
+    setShowReassign(true);
+    setReassignTarget("");
+    const result = await listAssignableManagers();
+    if (result.success && result.managers) {
+      setReassignManagers(result.managers);
+    }
+  }
+
+  async function handleReassign() {
+    if (!reassignTarget) return;
+    setReassigning(true);
+    const result = await reassignCandidate(candidateId, reassignTarget);
+    setReassigning(false);
+    if (result.success) {
+      setShowReassign(false);
+      fetchData();
+    }
+  }
+
   if (loading) return (
     <div className="space-y-6">
       <div className="flex items-start justify-between">
@@ -219,13 +248,54 @@ export default function CandidateDetailClient({ candidateId }: { candidateId: st
             <span>{candidate.phone}</span>
           </div>
         </div>
-        <button
-          onClick={() => setEditing(!editing)}
-          className="rounded-lg border border-stone-200 px-3 py-1.5 text-sm text-stone-500 hover:bg-stone-100"
-        >
-          {editing ? "Cancel" : "Edit"}
-        </button>
+        <div className="flex items-center gap-2">
+          {isManagerPlus && (
+            <button
+              onClick={handleOpenReassign}
+              className="rounded-lg border border-stone-200 px-3 py-1.5 text-sm text-stone-500 hover:bg-stone-100"
+            >
+              Reassign
+            </button>
+          )}
+          <button
+            onClick={() => setEditing(!editing)}
+            className="rounded-lg border border-stone-200 px-3 py-1.5 text-sm text-stone-500 hover:bg-stone-100"
+          >
+            {editing ? "Cancel" : "Edit"}
+          </button>
+        </div>
       </div>
+
+      {/* Reassign panel */}
+      {showReassign && (
+        <div className="rounded-2xl border border-orange-200 bg-orange-50 p-5">
+          <div className="flex items-center justify-between">
+            <h3 className="text-sm font-semibold text-stone-700">Reassign Candidate</h3>
+            <button onClick={() => setShowReassign(false)} className="text-xs text-stone-400 hover:text-stone-600">Cancel</button>
+          </div>
+          <div className="mt-3 flex items-center gap-3">
+            <select
+              value={reassignTarget}
+              onChange={(e) => setReassignTarget(e.target.value)}
+              className="h-9 flex-1 rounded-lg border border-stone-200 bg-white px-3 text-sm outline-none focus:border-orange-400"
+            >
+              <option value="">Select a manager...</option>
+              {reassignManagers.map((m) => (
+                <option key={m.id} value={m.id}>
+                  {m.full_name} ({m.role})
+                </option>
+              ))}
+            </select>
+            <button
+              onClick={handleReassign}
+              disabled={!reassignTarget || reassigning}
+              className="rounded-lg bg-orange-500 px-4 py-1.5 text-sm font-semibold text-white hover:bg-orange-600 disabled:opacity-50"
+            >
+              {reassigning ? "Reassigning..." : "Confirm"}
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Edit form */}
       {editing && (

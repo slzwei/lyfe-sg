@@ -186,6 +186,7 @@ export async function sendInvite(data: {
   candidateName?: string;
   position?: string;
   jobId?: string;
+  assignedManagerId?: string;
 }) {
   const staff = await requireStaff();
   if (!staff) return { success: false, error: "Not authenticated." };
@@ -217,6 +218,7 @@ export async function sendInvite(data: {
     invited_by: staff.full_name,
     invited_by_user_id: staff.id !== "legacy" ? staff.id : null,
     job_id: data.jobId || null,
+    assigned_manager_id: data.assignedManagerId || null,
   }).select("id").single();
 
   if (error || !inserted) {

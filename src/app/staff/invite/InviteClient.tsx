@@ -15,9 +15,11 @@ import {
   getInviteFileUrl,
   removeInviteFile,
   backfillPdfs,
+  getStaffUser,
   type Invitation,
   type AttachedFile,
 } from "../actions";
+import { listAssignableManagers, type AssignableManager } from "../candidates/actions";
 
 const DOCUMENT_LABELS = [
   "Resume", "RES5", "M5", "M9", "M9A", "HI", "M8", "M8A", "ComGI", "BCP", "PGI", "Other",
@@ -50,6 +52,9 @@ export default function InviteClient() {
   const [live, setLive] = useState(false);
   const [liveStates, setLiveStates] = useState<Record<string, CandidateState>>({});
   const debounceMap = useRef<Map<string, ReturnType<typeof setTimeout>>>(new Map());
+  const [staffRole, setStaffRole] = useState<string>("");
+  const [assignableManagers, setAssignableManagers] = useState<AssignableManager[]>([]);
+  const [selectedManagerId, setSelectedManagerId] = useState<string>("");
 
   const fetchInvitations = useCallback(async () => {
     const result = await listInvitations();
@@ -66,6 +71,15 @@ export default function InviteClient() {
       backfillPdfs().then(({ generated }) => {
         if (generated > 0) fetchInvitations();
       });
+    });
+    // Fetch staff role and assignable managers for the picker
+    getStaffUser().then((user) => {
+      if (user) setStaffRole(user.role);
+    });
+    listAssignableManagers().then((result) => {
+      if (result.success && result.managers) {
+        setAssignableManagers(result.managers);
+      }
     });
   }, [fetchInvitations]);
 
@@ -152,6 +166,7 @@ export default function InviteClient() {
       email,
       candidateName: candidateName || undefined,
       position: position || undefined,
+      assignedManagerId: selectedManagerId || undefined,
     });
 
     if (result.success) {
@@ -162,6 +177,7 @@ export default function InviteClient() {
       setEmail("");
       setCandidateName("");
       setPosition("");
+      setSelectedManagerId("");
       fetchInvitations();
     } else {
       setMessage({ type: "error", text: result.error || "Failed to send." });
@@ -720,6 +736,32 @@ export default function InviteClient() {
             </div>
           </div>
 
+          {/* Manager assignment picker — required for PAs, optional for managers+ */}
+          {assignableManagers.length > 0 && (
+            <div>
+              <label
+                htmlFor="assignManager"
+                className="mb-1.5 block text-sm font-medium text-stone-700"
+              >
+                Assign to Manager{staffRole === "pa" && <span className="text-red-400"> *</span>}
+              </label>
+              <select
+                id="assignManager"
+                value={selectedManagerId}
+                onChange={(e) => setSelectedManagerId(e.target.value)}
+                required={staffRole === "pa"}
+                className="h-11 w-full rounded-lg border border-stone-200 bg-stone-50 px-3 text-sm outline-none transition-colors focus:border-orange-400 focus:ring-2 focus:ring-orange-100 sm:h-10"
+              >
+                <option value="">{staffRole === "pa" ? "Select a manager..." : "Myself (default)"}</option>
+                {assignableManagers.map((m) => (
+                  <option key={m.id} value={m.id}>
+                    {m.full_name} ({m.role})
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
+
           {message && (
             <p
               className={`rounded-lg px-3 py-2 text-sm ${
@@ -734,7 +776,7 @@ export default function InviteClient() {
 
           <button
             type="submit"
-            disabled={sending || !email}
+            disabled={sending || !email || (staffRole === "pa" && !selectedManagerId)}
             className="h-11 w-full rounded-xl bg-orange-500 px-6 font-semibold text-white transition-colors hover:bg-orange-600 disabled:cursor-not-allowed disabled:opacity-50 sm:h-10 sm:w-auto"
           >
             {sending ? "Sending..." : "Send Invitation"}

@@ -192,33 +192,47 @@ export async function verifyOtp(phone: string, token: string, inviteToken?: stri
     { onConflict: "user_id" }
   ).select("id").single();
 
-  // Bridge to ATS pipeline: if invitation is linked to a job, create candidates record
-  if (invitation.job_id) {
-    // Get first pipeline stage for this job
-    const { data: firstStage } = await admin.from("pipeline_stages")
-      .select("id")
-      .eq("job_id", invitation.job_id)
-      .order("display_order")
-      .limit(1)
-      .single();
+  // Bridge to ATS pipeline: always create a candidates record
+  {
+    // Resolve the staff user who invited, fallback to any admin
+    let createdBy: string | null = invitation.invited_by_user_id;
+    if (!createdBy) {
+      const { data: fallbackAdmin } = await admin.from("users")
+        .select("id")
+        .eq("role", "admin")
+        .limit(1)
+        .single();
+      createdBy = fallbackAdmin?.id ?? null;
+    }
 
-    if (firstStage) {
+    if (createdBy) {
       const now = new Date().toISOString();
-      const createdBy = invitation.invited_by_user_id || invitation.job_id; // fallback
+
+      // If linked to a job, resolve the first pipeline stage
+      let stageId: string | null = null;
+      if (invitation.job_id) {
+        const { data: firstStage } = await admin.from("pipeline_stages")
+          .select("id")
+          .eq("job_id", invitation.job_id)
+          .order("display_order")
+          .limit(1)
+          .single();
+        stageId = firstStage?.id || null;
+      }
 
       const { data: candidateRecord } = await admin.from("candidates").insert({
         name: invitation.candidate_name || phone,
         phone,
         email: invitation.email,
         status: "applied",
-        job_id: invitation.job_id,
-        current_stage_id: firstStage.id,
-        stage_entered_at: now,
+        job_id: invitation.job_id || null,
+        current_stage_id: stageId,
+        stage_entered_at: stageId ? now : null,
         assigned_manager_id: createdBy,
         created_by_id: createdBy,
       }).select("id").single();
 
-      // Link candidate_profiles to candidates record
+      // Link candidate_profiles and invitation to candidates record
       if (candidateRecord && profileUpsert.data) {
         await admin.from("candidate_profiles")
           .update({ candidate_id: candidateRecord.id })

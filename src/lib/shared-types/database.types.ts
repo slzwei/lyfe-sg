@@ -1001,6 +1001,7 @@ export type Database = {
         Row: {
           accepted_at: string | null
           archived_at: string | null
+          assigned_manager_id: string | null
           attached_files: Json | null
           candidate_name: string | null
           candidate_record_id: string | null
@@ -1021,6 +1022,7 @@ export type Database = {
         Insert: {
           accepted_at?: string | null
           archived_at?: string | null
+          assigned_manager_id?: string | null
           attached_files?: Json | null
           candidate_name?: string | null
           candidate_record_id?: string | null
@@ -1041,6 +1043,7 @@ export type Database = {
         Update: {
           accepted_at?: string | null
           archived_at?: string | null
+          assigned_manager_id?: string | null
           attached_files?: Json | null
           candidate_name?: string | null
           candidate_record_id?: string | null
@@ -1059,6 +1062,13 @@ export type Database = {
           user_id?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "invitations_assigned_manager_id_fkey"
+            columns: ["assigned_manager_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "invitations_candidate_record_id_fkey"
             columns: ["candidate_record_id"]

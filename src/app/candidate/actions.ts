@@ -268,6 +268,18 @@ export async function verifyOtp(phone: string, token: string, inviteToken?: stri
           .update({ candidate_record_id: candidateRecord.id })
           .eq("id", invitation.id);
 
+        // Notify assigned manager of new candidate
+        const managerId = invitation.assigned_manager_id || createdBy;
+        if (managerId) {
+          await admin.from("notifications").insert({
+            user_id: managerId,
+            type: "candidate_assigned",
+            title: "New candidate assigned",
+            body: `${invitation.candidate_name || phone} has been assigned to you.`,
+            data: { candidate_id: candidateRecord.id },
+          });
+        }
+
         // Bridge attached files to candidate_documents
         if (invitation.attached_files) {
           const files = invitation.attached_files as {

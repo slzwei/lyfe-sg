@@ -532,7 +532,7 @@ export async function reassignCandidate(
   // Get current candidate for old manager name
   const { data: candidate } = await admin
     .from("candidates")
-    .select("assigned_manager_id")
+    .select("name, assigned_manager_id")
     .eq("id", candidateId)
     .single();
 
@@ -557,13 +557,34 @@ export async function reassignCandidate(
 
   if (error) return { success: false, error: error.message };
 
-  // Log activity
-  await admin.from("candidate_activities").insert({
-    candidate_id: candidateId,
-    user_id: staff.id,
-    type: "reassignment",
-    note: `Reassigned from ${oldManager?.full_name || "Unknown"} to ${targetUser.full_name}`,
-  });
+  // Log activity + notify both managers
+  const candidateName = candidate.name || "A candidate";
+  await Promise.all([
+    admin.from("candidate_activities").insert({
+      candidate_id: candidateId,
+      user_id: staff.id,
+      type: "reassignment",
+      note: `Reassigned from ${oldManager?.full_name || "Unknown"} to ${targetUser.full_name}`,
+    }),
+    // Notify new manager
+    admin.from("notifications").insert({
+      user_id: newManagerId,
+      type: "candidate_assigned",
+      title: "Candidate assigned to you",
+      body: `${candidateName} has been assigned to you by ${staff.full_name}.`,
+      data: { candidate_id: candidateId },
+    }),
+    // Notify old manager (if exists)
+    ...(candidate.assigned_manager_id
+      ? [admin.from("notifications").insert({
+          user_id: candidate.assigned_manager_id,
+          type: "candidate_reassigned",
+          title: "Candidate reassigned",
+          body: `${candidateName} has been reassigned to ${targetUser.full_name} by ${staff.full_name}.`,
+          data: { candidate_id: candidateId },
+        })]
+      : []),
+  ]);
 
   return { success: true };
 }

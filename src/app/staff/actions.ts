@@ -7,7 +7,7 @@ import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
 import { getAdminClient } from "@/lib/supabase/admin";
 import { sendInvitationEmail } from "@/lib/email";
-import { getSignedPdfUrl, getSignedResumeUrl, uploadCandidatePdf, deleteResumeFiles } from "@/lib/supabase/storage";
+import { getSignedPdfUrl, getSignedResumeUrl, getSignedDocUrl, uploadCandidatePdf, deleteResumeFiles } from "@/lib/supabase/storage";
 import { generateProfilePdf, generateDiscPdf, type FullProfileData } from "@/lib/pdf";
 import { computeDerivedFields, DISC_TYPE_INFO } from "@/app/candidate/disc-quiz/scoring";
 import { STAFF_ROLES } from "@/lib/shared-types/roles";
@@ -550,6 +550,24 @@ export async function getInviteFileUrl(storagePath: string): Promise<{
   }
 
   const url = await getSignedResumeUrl(storagePath);
+  if (!url) return { success: false, error: "Failed to generate download URL." };
+
+  return { success: true, url };
+}
+
+export async function getCandidateDocUrl(storagePath: string): Promise<{
+  success: boolean;
+  url?: string;
+  error?: string;
+}> {
+  const staff = await requireStaff();
+  if (!staff) return { success: false, error: "Not authenticated." };
+
+  if (!storagePath.startsWith("candidates/")) {
+    return { success: false, error: "Invalid file path." };
+  }
+
+  const url = await getSignedDocUrl(storagePath);
   if (!url) return { success: false, error: "Failed to generate download URL." };
 
   return { success: true, url };

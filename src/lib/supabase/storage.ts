@@ -2,6 +2,7 @@ import { getAdminClient } from "./admin";
 
 const BUCKET = "candidate-pdfs";
 const RESUMES_BUCKET = "candidate-resumes";
+const DOCS_BUCKET = "candidate-documents";
 
 /**
  * Upload a candidate PDF to Supabase Storage and return the file path.
@@ -101,6 +102,73 @@ export async function getSignedResumeUrl(
   }
 
   return data.signedUrl;
+}
+
+// ─── Candidate Documents Bucket ──────────────────────────────────────────
+
+/**
+ * Upload a document to the candidate-documents bucket.
+ * Path: candidates/{candidateId}/{timestamp}_{filename}
+ */
+export async function uploadCandidateDocument(
+  candidateId: string,
+  fileName: string,
+  fileBuffer: Buffer,
+  contentType: string
+): Promise<string | null> {
+  const admin = getAdminClient();
+  const timestamp = Date.now();
+  const safeName = fileName.replace(/[^a-zA-Z0-9._-]/g, "_");
+  const storagePath = `candidates/${candidateId}/${timestamp}_${safeName}`;
+
+  const { error } = await admin.storage
+    .from(DOCS_BUCKET)
+    .upload(storagePath, fileBuffer, {
+      contentType,
+      upsert: false,
+    });
+
+  if (error) {
+    console.error("[storage] Failed to upload candidate doc:", error);
+    return null;
+  }
+
+  return storagePath;
+}
+
+/**
+ * Create a signed URL for a file in the candidate-documents bucket.
+ */
+export async function getSignedDocUrl(
+  filePath: string,
+  expiresIn = 300
+): Promise<string | null> {
+  const admin = getAdminClient();
+  const { data, error } = await admin.storage
+    .from(DOCS_BUCKET)
+    .createSignedUrl(filePath, expiresIn);
+
+  if (error) {
+    console.error("[storage] Failed to create doc signed URL:", error);
+    return null;
+  }
+
+  return data.signedUrl;
+}
+
+/**
+ * Delete files from the candidate-documents bucket.
+ */
+export async function deleteCandidateDocFiles(paths: string[]): Promise<boolean> {
+  if (paths.length === 0) return true;
+  const admin = getAdminClient();
+  const { error } = await admin.storage.from(DOCS_BUCKET).remove(paths);
+
+  if (error) {
+    console.error("[storage] Failed to delete candidate doc files:", error);
+    return false;
+  }
+  return true;
 }
 
 /**

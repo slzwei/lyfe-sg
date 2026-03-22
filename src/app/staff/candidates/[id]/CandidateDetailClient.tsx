@@ -17,7 +17,7 @@ import {
   type InterviewRecord,
   type AssignableManager,
 } from "../actions";
-import { getPdfUrl, getInviteFileUrl } from "../../actions";
+import { getPdfUrl, getInviteFileUrl, getCandidateDocUrl } from "../../actions";
 
 const ACTIVITY_TYPES = ["note", "call", "email", "meeting", "status_change", "follow_up"] as const;
 
@@ -68,6 +68,13 @@ export default function CandidateDetailClient({ candidateId }: { candidateId: st
   const [reassignTarget, setReassignTarget] = useState("");
   const [reassigning, setReassigning] = useState(false);
 
+  // Document upload
+  const [showUpload, setShowUpload] = useState(false);
+  const [uploadLabel, setUploadLabel] = useState("Resume");
+  const [uploadFile, setUploadFile] = useState<File | null>(null);
+  const [uploading, setUploading] = useState(false);
+  const [uploadError, setUploadError] = useState("");
+
   const isManagerPlus = staffRole && ["manager", "director", "admin"].includes(staffRole);
 
   const fetchData = useCallback(async () => {
@@ -104,13 +111,40 @@ export default function CandidateDetailClient({ candidateId }: { candidateId: st
   }
 
   async function handleDownloadDoc(fileUrl: string) {
-    // Documents from candidate-resumes bucket use invitation paths
     if (fileUrl.startsWith("invitations/")) {
       const result = await getInviteFileUrl(fileUrl);
+      if (result.success && result.url) window.open(result.url, "_blank");
+    } else if (fileUrl.startsWith("candidates/")) {
+      const result = await getCandidateDocUrl(fileUrl);
       if (result.success && result.url) window.open(result.url, "_blank");
     } else {
       window.open(fileUrl, "_blank");
     }
+  }
+
+  async function handleUploadDoc(e: React.FormEvent) {
+    e.preventDefault();
+    if (!uploadFile) return;
+    setUploading(true);
+    setUploadError("");
+
+    const formData = new FormData();
+    formData.append("candidateId", candidateId);
+    formData.append("label", uploadLabel);
+    formData.append("file", uploadFile);
+
+    const res = await fetch("/api/upload-candidate-doc", { method: "POST", body: formData });
+    const data = await res.json();
+
+    if (!res.ok || !data.success) {
+      setUploadError(data.error || "Upload failed.");
+    } else {
+      setShowUpload(false);
+      setUploadFile(null);
+      setUploadLabel("Resume");
+      fetchData();
+    }
+    setUploading(false);
   }
 
   async function handleAddNote(e: React.FormEvent) {
@@ -642,9 +676,51 @@ export default function CandidateDetailClient({ candidateId }: { candidateId: st
         {/* Documents sidebar (1/3) */}
         <div className="space-y-4">
           <div className="rounded-2xl border border-stone-200 bg-white">
-            <div className="border-b border-stone-100 px-5 py-3">
+            <div className="flex items-center justify-between border-b border-stone-100 px-5 py-3">
               <h3 className="font-semibold text-stone-700">Documents</h3>
+              <button
+                type="button"
+                onClick={() => setShowUpload(!showUpload)}
+                className="rounded-lg bg-orange-500 px-3 py-1 text-xs font-medium text-white transition-colors hover:bg-orange-600"
+              >
+                {showUpload ? "Cancel" : "Upload"}
+              </button>
             </div>
+            {/* Upload form */}
+            {showUpload && (
+              <form onSubmit={handleUploadDoc} className="border-b border-stone-100 px-5 py-4 space-y-3">
+                <div>
+                  <label className="block text-xs font-medium text-stone-500 mb-1">Document Type</label>
+                  <select
+                    value={uploadLabel}
+                    onChange={(e) => setUploadLabel(e.target.value)}
+                    className="w-full rounded-lg border border-stone-200 px-3 py-2 text-sm text-stone-700 focus:border-orange-400 focus:outline-none focus:ring-1 focus:ring-orange-400"
+                  >
+                    {["Resume", "RES5", "M5", "M9", "M9A", "HI", "M8", "M8A", "ComGI", "BCP", "PGI", "Other"].map((l) => (
+                      <option key={l} value={l}>{l}</option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-stone-500 mb-1">File</label>
+                  <input
+                    type="file"
+                    accept=".pdf,.jpg,.jpeg,.png,.doc,.docx"
+                    onChange={(e) => setUploadFile(e.target.files?.[0] || null)}
+                    className="w-full text-sm text-stone-600 file:mr-3 file:rounded-lg file:border-0 file:bg-stone-100 file:px-3 file:py-1.5 file:text-xs file:font-medium file:text-stone-700 hover:file:bg-stone-200"
+                  />
+                  <p className="mt-1 text-[10px] text-stone-400">PDF, JPEG, PNG, or Word. Max 10 MB.</p>
+                </div>
+                {uploadError && <p className="text-xs text-red-500">{uploadError}</p>}
+                <button
+                  type="submit"
+                  disabled={!uploadFile || uploading}
+                  className="w-full rounded-lg bg-orange-500 px-3 py-2 text-sm font-medium text-white transition-colors hover:bg-orange-600 disabled:opacity-50"
+                >
+                  {uploading ? "Uploading..." : "Upload Document"}
+                </button>
+              </form>
+            )}
             {/* Generated PDFs */}
             {(candidate.profile_pdf_path || candidate.disc_pdf_path) && (
               <div className="divide-y divide-stone-50 border-b border-stone-100">

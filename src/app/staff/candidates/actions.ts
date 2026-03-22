@@ -24,6 +24,8 @@ export interface CandidateDetail {
   disc_type?: string | null;
   disc_completed?: boolean;
   profile_completed?: boolean;
+  profile_pdf_path?: string | null;
+  disc_pdf_path?: string | null;
 }
 
 export interface Activity {
@@ -80,8 +82,8 @@ export async function getCandidate(candidateId: string): Promise<{
 
   if (error || !candidate) return { success: false, error: "Candidate not found." };
 
-  // Parallel: job, stage, DISC, activities, documents
-  const [jobRes, stageRes, activitiesRes, documentsRes, profileRes] = await Promise.all([
+  // Parallel: job, stage, DISC, activities, documents, invitation PDFs
+  const [jobRes, stageRes, activitiesRes, documentsRes, profileRes, invitationRes] = await Promise.all([
     candidate.job_id
       ? admin.from("jobs").select("title").eq("id", candidate.job_id).single()
       : Promise.resolve({ data: null }),
@@ -100,6 +102,10 @@ export async function getCandidate(candidateId: string): Promise<{
     admin.from("candidate_profiles")
       .select("user_id, completed, candidate_id")
       .eq("candidate_id", candidateId)
+      .single(),
+    admin.from("invitations")
+      .select("profile_pdf_path, disc_pdf_path")
+      .eq("candidate_record_id", candidateId)
       .single(),
   ]);
 
@@ -137,6 +143,8 @@ export async function getCandidate(candidateId: string): Promise<{
       disc_type: discType,
       disc_completed: discCompleted,
       profile_completed: profileRes.data?.completed || false,
+      profile_pdf_path: invitationRes.data?.profile_pdf_path || null,
+      disc_pdf_path: invitationRes.data?.disc_pdf_path || null,
     },
     activities: activities.map((a) => ({
       ...a,

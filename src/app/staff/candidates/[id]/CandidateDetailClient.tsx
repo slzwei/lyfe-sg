@@ -13,6 +13,7 @@ import {
   type CandidateDocument,
   type InterviewRecord,
 } from "../actions";
+import { getPdfUrl, getInviteFileUrl } from "../../actions";
 
 const ACTIVITY_TYPES = ["note", "call", "email", "meeting", "status_change", "follow_up"] as const;
 
@@ -84,6 +85,21 @@ export default function CandidateDetailClient({ candidateId }: { candidateId: st
   }, [candidateId]);
 
   useEffect(() => { fetchData(); }, [fetchData]);
+
+  async function handleDownloadPdf(path: string) {
+    const result = await getPdfUrl(path);
+    if (result.success && result.url) window.open(result.url, "_blank");
+  }
+
+  async function handleDownloadDoc(fileUrl: string) {
+    // Documents from candidate-resumes bucket use invitation paths
+    if (fileUrl.startsWith("invitations/")) {
+      const result = await getInviteFileUrl(fileUrl);
+      if (result.success && result.url) window.open(result.url, "_blank");
+    } else {
+      window.open(fileUrl, "_blank");
+    }
+  }
 
   async function handleAddNote(e: React.FormEvent) {
     e.preventDefault();
@@ -432,28 +448,66 @@ export default function CandidateDetailClient({ candidateId }: { candidateId: st
         <div className="space-y-4">
           <div className="rounded-2xl border border-stone-200 bg-white">
             <div className="border-b border-stone-100 px-5 py-3">
-              <h3 className="font-semibold text-stone-700">Documents ({documents.length})</h3>
+              <h3 className="font-semibold text-stone-700">Documents</h3>
             </div>
-            {documents.length === 0 ? (
+            {/* Generated PDFs */}
+            {(candidate.profile_pdf_path || candidate.disc_pdf_path) && (
+              <div className="divide-y divide-stone-50 border-b border-stone-100">
+                {candidate.profile_pdf_path && (
+                  <button
+                    type="button"
+                    onClick={() => handleDownloadPdf(candidate.profile_pdf_path!)}
+                    className="flex w-full items-center justify-between px-5 py-3 text-left transition-colors hover:bg-stone-50"
+                  >
+                    <div>
+                      <div className="text-sm font-medium text-stone-700">Registration Form</div>
+                      <div className="text-xs text-stone-400">Application PDF</div>
+                    </div>
+                    <svg className="h-4 w-4 text-stone-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                    </svg>
+                  </button>
+                )}
+                {candidate.disc_pdf_path && (
+                  <button
+                    type="button"
+                    onClick={() => handleDownloadPdf(candidate.disc_pdf_path!)}
+                    className="flex w-full items-center justify-between px-5 py-3 text-left transition-colors hover:bg-stone-50"
+                  >
+                    <div>
+                      <div className="text-sm font-medium text-stone-700">DISC Profile</div>
+                      <div className="text-xs text-stone-400">Personality assessment PDF</div>
+                    </div>
+                    <svg className="h-4 w-4 text-stone-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                    </svg>
+                  </button>
+                )}
+              </div>
+            )}
+            {/* Uploaded documents */}
+            {documents.length === 0 && !candidate.profile_pdf_path && !candidate.disc_pdf_path ? (
               <div className="px-5 py-8 text-center text-sm text-stone-400">No documents.</div>
-            ) : (
+            ) : documents.length > 0 ? (
               <div className="divide-y divide-stone-50">
                 {documents.map((d) => (
-                  <div key={d.id} className="flex items-center justify-between px-5 py-3">
+                  <button
+                    key={d.id}
+                    type="button"
+                    onClick={() => handleDownloadDoc(d.file_url)}
+                    className="flex w-full items-center justify-between px-5 py-3 text-left transition-colors hover:bg-stone-50"
+                  >
                     <div>
                       <div className="text-sm font-medium text-stone-700">{d.label}</div>
                       <div className="text-xs text-stone-400">{d.file_name}</div>
                     </div>
-                    <a href={d.file_url} target="_blank" rel="noopener noreferrer"
-                      className="text-stone-400 hover:text-orange-500">
-                      <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-                      </svg>
-                    </a>
-                  </div>
+                    <svg className="h-4 w-4 text-stone-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                    </svg>
+                  </button>
                 ))}
               </div>
-            )}
+            ) : null}
           </div>
 
           {/* Candidate info */}

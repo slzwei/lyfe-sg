@@ -635,3 +635,105 @@ export async function sendDiscResultsEmail(result: DiscResultData) {
     attachments,
   });
 }
+
+// ─── Specialized: Candidate Assigned ─────────────────────────────────────────
+
+interface CandidateAssignedEmailParams {
+  to: string;
+  managerName: string;
+  candidateName: string;
+  assignedBy?: string;
+  candidateId: string;
+}
+
+export async function sendCandidateAssignedEmail({
+  to,
+  managerName,
+  candidateName,
+  assignedBy,
+  candidateId,
+}: CandidateAssignedEmailParams) {
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://lyfe.sg";
+  const link = `${baseUrl}/staff/candidates/${candidateId}`;
+
+  const assignedLine = assignedBy
+    ? ` by <strong>${assignedBy}</strong>`
+    : "";
+
+  const body = `
+              <p style="margin:0 0 6px 0;font-size:15px;color:#2C2925;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;font-weight:600;line-height:1.5;">
+                Hi ${managerName},
+              </p>
+
+              <p style="margin:0 0 20px 0;font-size:14px;color:#57534e;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;line-height:1.6;">
+                <strong>${candidateName}</strong> has been assigned to you${assignedLine}.
+              </p>
+
+              <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 24px 0;">
+                <tr>
+                  <td style="background-color:#f97316;border-radius:12px;">
+                    <a href="${link}" style="display:inline-block;padding:14px 32px;background-color:#f97316;color:#ffffff;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;font-size:15px;font-weight:600;text-decoration:none;border-radius:12px;">
+                      View Candidate
+                    </a>
+                  </td>
+                </tr>
+              </table>
+  `;
+
+  return sendEmail({
+    to,
+    subject: `New candidate assigned: ${candidateName}`,
+    html: wrapHtml(body),
+    text: `Hi ${managerName}, ${candidateName} has been assigned to you${assignedBy ? ` by ${assignedBy}` : ""}. View: ${link}`,
+  });
+}
+
+// ─── Specialized: Candidate Reassigned ───────────────────────────────────────
+
+interface CandidateReassignedEmailParams {
+  to: string;
+  managerName: string;
+  candidateName: string;
+  newManagerName: string;
+  reassignedBy: string;
+  candidateId: string;
+}
+
+export async function sendCandidateReassignedEmail({
+  to,
+  managerName,
+  candidateName,
+  newManagerName,
+  reassignedBy,
+  candidateId,
+}: CandidateReassignedEmailParams) {
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://lyfe.sg";
+  const link = `${baseUrl}/staff/candidates/${candidateId}`;
+
+  const body = `
+              <p style="margin:0 0 6px 0;font-size:15px;color:#2C2925;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;font-weight:600;line-height:1.5;">
+                Hi ${managerName},
+              </p>
+
+              <p style="margin:0 0 20px 0;font-size:14px;color:#57534e;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;line-height:1.6;">
+                <strong>${candidateName}</strong> has been reassigned to <strong>${newManagerName}</strong> by <strong>${reassignedBy}</strong>.
+              </p>
+
+              <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 24px 0;">
+                <tr>
+                  <td style="background-color:#f97316;border-radius:12px;">
+                    <a href="${link}" style="display:inline-block;padding:14px 32px;background-color:#f97316;color:#ffffff;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;font-size:15px;font-weight:600;text-decoration:none;border-radius:12px;">
+                      View Candidate
+                    </a>
+                  </td>
+                </tr>
+              </table>
+  `;
+
+  return sendEmail({
+    to,
+    subject: `Candidate reassigned: ${candidateName}`,
+    html: wrapHtml(body),
+    text: `Hi ${managerName}, ${candidateName} has been reassigned to ${newManagerName} by ${reassignedBy}. View: ${link}`,
+  });
+}

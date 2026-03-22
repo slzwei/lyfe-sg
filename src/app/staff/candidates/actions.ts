@@ -1,6 +1,7 @@
 "use server";
 
 import { getAdminClient } from "@/lib/supabase/admin";
+import { sendCandidateAssignedEmail, sendCandidateReassignedEmail } from "@/lib/email";
 import { getStaffUser, requireStaff } from "../actions";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
@@ -517,7 +518,7 @@ export async function reassignCandidate(
   // Validate new manager exists and has correct role
   const { data: targetUser } = await admin
     .from("users")
-    .select("id, full_name, role, is_active")
+    .select("id, full_name, email, role, is_active")
     .eq("id", newManagerId)
     .single();
 
@@ -542,10 +543,10 @@ export async function reassignCandidate(
     return { success: false, error: "Candidate is already assigned to this manager." };
   }
 
-  // Get old manager name for activity log
+  // Get old manager name + email for activity log and notification
   const { data: oldManager } = await admin
     .from("users")
-    .select("full_name")
+    .select("full_name, email")
     .eq("id", candidate.assigned_manager_id)
     .single();
 
@@ -582,6 +583,27 @@ export async function reassignCandidate(
           title: "Candidate reassigned",
           body: `${candidateName} has been reassigned to ${targetUser.full_name} by ${staff.full_name}.`,
           data: { candidate_id: candidateId },
+        })]
+      : []),
+    // Email new manager
+    ...(targetUser.email
+      ? [sendCandidateAssignedEmail({
+          to: targetUser.email,
+          managerName: targetUser.full_name,
+          candidateName,
+          assignedBy: staff.full_name,
+          candidateId,
+        })]
+      : []),
+    // Email old manager
+    ...(oldManager?.email
+      ? [sendCandidateReassignedEmail({
+          to: oldManager.email,
+          managerName: oldManager.full_name,
+          candidateName,
+          newManagerName: targetUser.full_name,
+          reassignedBy: staff.full_name,
+          candidateId,
         })]
       : []),
   ]);

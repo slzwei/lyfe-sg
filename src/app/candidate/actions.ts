@@ -2,6 +2,7 @@
 
 import { createClient } from "@/lib/supabase/server";
 import { getAdminClient } from "@/lib/supabase/admin";
+import { sendCandidateAssignedEmail } from "@/lib/email";
 import { redirect } from "next/navigation";
 
 export async function sendOtp(phone: string) {
@@ -271,13 +272,28 @@ export async function verifyOtp(phone: string, token: string, inviteToken?: stri
         // Notify assigned manager of new candidate
         const managerId = invitation.assigned_manager_id || createdBy;
         if (managerId) {
+          const { data: manager } = await admin.from("users")
+            .select("full_name, email")
+            .eq("id", managerId)
+            .single();
+
+          const candName = invitation.candidate_name || phone;
           await admin.from("notifications").insert({
             user_id: managerId,
             type: "candidate_assigned",
             title: "New candidate assigned",
-            body: `${invitation.candidate_name || phone} has been assigned to you.`,
+            body: `${candName} has been assigned to you.`,
             data: { candidate_id: candidateRecord.id },
           });
+
+          if (manager?.email) {
+            sendCandidateAssignedEmail({
+              to: manager.email,
+              managerName: manager.full_name,
+              candidateName: candName,
+              candidateId: candidateRecord.id,
+            });
+          }
         }
 
         // Bridge attached files to candidate_documents

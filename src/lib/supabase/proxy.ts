@@ -1,8 +1,7 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 import type { Database } from "./database.types";
-
-const STAFF_ROLES = ["pa", "manager", "director", "admin"];
+import { STAFF_ROLES } from "../shared-types/roles";
 
 export async function updateSession(request: NextRequest) {
   let supabaseResponse = NextResponse.next({ request });
@@ -36,7 +35,7 @@ export async function updateSession(request: NextRequest) {
     const { data: { user } } = await supabase.auth.getUser();
     if (user) {
       const role = user.app_metadata?.role as string | undefined;
-      if (role && STAFF_ROLES.includes(role)) {
+      if (role && (STAFF_ROLES as readonly string[]).includes(role)) {
         return supabaseResponse;
       }
     }

@@ -10,6 +10,7 @@ import { sendInvitationEmail } from "@/lib/email";
 import { getSignedPdfUrl, getSignedResumeUrl, uploadCandidatePdf, deleteResumeFiles } from "@/lib/supabase/storage";
 import { generateProfilePdf, generateDiscPdf, type FullProfileData } from "@/lib/pdf";
 import { computeDerivedFields, DISC_TYPE_INFO } from "@/app/candidate/disc-quiz/scoring";
+import { STAFF_ROLES } from "@/lib/shared-types/roles";
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 
@@ -21,10 +22,6 @@ export interface StaffUser {
 }
 
 // ─── Staff Authentication ────────────────────────────────────────────────────
-
-// DB enum: admin | director | manager | agent | pa | candidate
-// Staff-level roles (anyone who can access the staff portal):
-const STAFF_ROLES = ["pa", "manager", "director", "admin"] as const;
 
 export async function staffLogin(email: string, password: string) {
   const supabase = await createClient();
@@ -88,7 +85,7 @@ export async function staffVerifyOtp(phone: string, token: string) {
 
   // Verify user has a staff-level role
   const role = user.app_metadata?.role as string | undefined;
-  if (!role || !STAFF_ROLES.includes(role as typeof STAFF_ROLES[number])) {
+  if (!role || !(STAFF_ROLES as readonly string[]).includes(role)) {
     await supabase.auth.signOut();
     return { success: false, error: "Not authorized as staff. Contact your admin." };
   }
@@ -109,12 +106,12 @@ export async function requireStaff(minRole?: string): Promise<StaffUser | null> 
 
   if (user) {
     const role = user.app_metadata?.role as string | undefined;
-    if (!role || !STAFF_ROLES.includes(role as typeof STAFF_ROLES[number])) return null;
+    if (!role || !(STAFF_ROLES as readonly string[]).includes(role)) return null;
 
     // Enforce minimum role if specified
     if (minRole) {
-      const userLevel = STAFF_ROLES.indexOf(role as typeof STAFF_ROLES[number]);
-      const requiredLevel = STAFF_ROLES.indexOf(minRole as typeof STAFF_ROLES[number]);
+      const userLevel = (STAFF_ROLES as readonly string[]).indexOf(role);
+      const requiredLevel = (STAFF_ROLES as readonly string[]).indexOf(minRole);
       if (userLevel < 0 || requiredLevel < 0 || userLevel < requiredLevel) return null;
     }
 

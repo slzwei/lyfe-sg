@@ -19,8 +19,6 @@ export interface CandidateDetail {
   created_at: string | null;
   updated_at: string | null;
   // Enriched
-  job_title?: string | null;
-  stage_name?: string | null;
   disc_type?: string | null;
   disc_completed?: boolean;
   profile_completed?: boolean;
@@ -83,8 +81,7 @@ export interface SearchResult {
   email: string | null;
   phone: string;
   status: string;
-  job_title: string | null;
-  stage_name: string | null;
+  position_applied: string | null;
   disc_type: string | null;
   created_at: string | null;
 }
@@ -113,13 +110,7 @@ export async function getCandidate(candidateId: string): Promise<{
   if (error || !candidate) return { success: false, error: "Candidate not found." };
 
   // Parallel: job, stage, DISC, activities, documents, invitation PDFs
-  const [jobRes, stageRes, activitiesRes, documentsRes, profileRes, invitationRes] = await Promise.all([
-    candidate.job_id
-      ? admin.from("jobs").select("title").eq("id", candidate.job_id).single()
-      : Promise.resolve({ data: null }),
-    candidate.current_stage_id
-      ? admin.from("pipeline_stages").select("name").eq("id", candidate.current_stage_id).single()
-      : Promise.resolve({ data: null }),
+  const [activitiesRes, documentsRes, profileRes, invitationRes] = await Promise.all([
     admin.from("candidate_activities")
       .select("*")
       .eq("candidate_id", candidateId)
@@ -168,8 +159,6 @@ export async function getCandidate(candidateId: string): Promise<{
     success: true,
     candidate: {
       ...candidate,
-      job_title: jobRes.data?.title || null,
-      stage_name: stageRes.data?.name || null,
       disc_type: discType,
       disc_completed: discCompleted,
       profile_completed: profileRes.data?.completed || false,
@@ -270,8 +259,6 @@ export async function deleteDocument(docId: string): Promise<{ success: boolean;
 
 export async function searchCandidates(params: {
   query?: string;
-  jobId?: string;
-  stageId?: string;
   discType?: string;
   limit?: number;
   offset?: number;
@@ -290,17 +277,13 @@ export async function searchCandidates(params: {
 
   // Build query
   let q = admin.from("candidates")
-    .select("id, name, email, phone, status, job_id, current_stage_id, created_at", { count: "exact" });
+    .select("id, name, email, phone, status, created_at", { count: "exact" });
 
   // Text search
   if (params.query?.trim()) {
     const search = params.query.trim();
     q = q.or(`name.ilike.%${search}%,email.ilike.%${search}%,phone.ilike.%${search}%`);
   }
-
-  // Filters
-  if (params.jobId) q = q.eq("job_id", params.jobId);
-  if (params.stageId) q = q.eq("current_stage_id", params.stageId);
 
   q = q.order("created_at", { ascending: false }).range(offset, offset + limit - 1);
 
@@ -311,29 +294,23 @@ export async function searchCandidates(params: {
     return { success: true, data: [], total: 0 };
   }
 
-  // Enrich with job titles, stage names, DISC types
-  const jobIds = [...new Set(candidates.map((c) => c.job_id).filter(Boolean))] as string[];
-  const stageIds = [...new Set(candidates.map((c) => c.current_stage_id).filter(Boolean))] as string[];
+  // Enrich with position_applied and DISC types
   const candidateIds = candidates.map((c) => c.id);
 
-  const [jobsRes, stagesRes, profilesRes] = await Promise.all([
-    jobIds.length > 0
-      ? admin.from("jobs").select("id, title").in("id", jobIds)
-      : Promise.resolve({ data: [] as { id: string; title: string }[] }),
-    stageIds.length > 0
-      ? admin.from("pipeline_stages").select("id, name").in("id", stageIds)
-      : Promise.resolve({ data: [] as { id: string; name: string }[] }),
+  const [profilesRes] = await Promise.all([
     admin.from("candidate_profiles")
-      .select("candidate_id, user_id")
+      .select("candidate_id, user_id, position_applied")
       .in("candidate_id", candidateIds),
   ]);
 
-  const jobMap = new Map((jobsRes.data || []).map((j) => [j.id, j.title]));
-  const stageMap = new Map((stagesRes.data || []).map((s) => [s.id, s.name]));
+  const profiles = profilesRes.data || [];
+  const positionMap = new Map<string, string>();
+  for (const p of profiles) {
+    if (p.position_applied && p.candidate_id) positionMap.set(p.candidate_id, p.position_applied);
+  }
 
   // DISC types via profiles → results
   const discMap = new Map<string, string>();
-  const profiles = profilesRes.data || [];
   if (profiles.length > 0) {
     const userIds = profiles.map((p) => p.user_id).filter(Boolean);
     if (userIds.length > 0) {
@@ -357,8 +334,7 @@ export async function searchCandidates(params: {
     email: c.email,
     phone: c.phone,
     status: c.status,
-    job_title: c.job_id ? jobMap.get(c.job_id) || null : null,
-    stage_name: c.current_stage_id ? stageMap.get(c.current_stage_id) || null : null,
+    position_applied: positionMap.get(c.id) || null,
     disc_type: discMap.get(c.id) || null,
     created_at: c.created_at,
   }));
@@ -368,21 +344,6 @@ export async function searchCandidates(params: {
   }
 
   return { success: true, data: enriched, total: count || 0 };
-}
-
-// ─── List Jobs (for filter dropdown) ─────────────────────────────────────────
-
-export async function listJobsForFilter(): Promise<{ id: string; title: string }[]> {
-  const staff = await getStaffUser();
-  if (!staff) return [];
-
-  const admin = getAdminClient();
-  const { data } = await admin.from("jobs")
-    .select("id, title")
-    .is("archived_at", null)
-    .order("title");
-
-  return data || [];
 }
 
 // ─── Update Candidate ────────────────────────────────────────────────────────

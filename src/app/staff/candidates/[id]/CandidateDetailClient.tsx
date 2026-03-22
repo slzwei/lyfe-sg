@@ -361,18 +361,10 @@ export default function CandidateDetailClient({ candidateId }: { candidateId: st
       )}
 
       {/* Status cards row */}
-      <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
+      <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
         <div className="rounded-xl border border-stone-200 bg-white p-4">
-          <div className="text-xs text-stone-400">Job</div>
-          <div className="mt-1 text-sm font-medium text-stone-700">
-            {candidate.job_title ? (
-              <Link href={`/staff/jobs/${candidate.job_id}`} className="hover:text-orange-500">{candidate.job_title}</Link>
-            ) : "\u2014"}
-          </div>
-        </div>
-        <div className="rounded-xl border border-stone-200 bg-white p-4">
-          <div className="text-xs text-stone-400">Stage</div>
-          <div className="mt-1 text-sm font-medium text-stone-700">{candidate.stage_name || "\u2014"}</div>
+          <div className="text-xs text-stone-400">Position</div>
+          <div className="mt-1 text-sm font-medium text-stone-700">{profile?.position_applied || "—"}</div>
         </div>
         <div className="rounded-xl border border-stone-200 bg-white p-4">
           <div className="text-xs text-stone-400">DISC</div>
@@ -394,7 +386,6 @@ export default function CandidateDetailClient({ candidateId }: { candidateId: st
             {/* Personal info */}
             <div className="grid grid-cols-2 gap-x-6 gap-y-3 sm:grid-cols-3 lg:grid-cols-4">
               {[
-                ["Position", profile.position_applied],
                 ["Salary", profile.expected_salary ? `$${profile.expected_salary}/${profile.salary_period || "month"}` : null],
                 ["Available", profile.date_available ? new Date(profile.date_available).toLocaleDateString() : null],
                 ["DOB", profile.date_of_birth ? new Date(profile.date_of_birth).toLocaleDateString() : null],

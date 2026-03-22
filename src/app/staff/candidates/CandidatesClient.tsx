@@ -253,7 +253,7 @@ export default function CandidatesClient({ staffRole }: { staffRole?: string }) 
           </Link>
         </td>
         <td className="px-4 py-3 text-stone-500">{c.email || "—"}</td>
-        <td className="px-4 py-3 text-stone-500">{c.job_title || "—"}</td>
+        <td className="px-4 py-3 text-stone-500">{c.position_applied || "—"}</td>
         <td className="px-4 py-3">
           <span className="text-xs font-medium capitalize text-stone-600">{c.status}</span>
           {c.disc_type && (

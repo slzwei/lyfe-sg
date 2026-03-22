@@ -75,7 +75,6 @@ import {
   updateCandidate,
   deleteDocument,
   searchCandidates,
-  listJobsForFilter,
   getInterviews,
   updateInterviewFeedback,
 } from "../actions";
@@ -315,11 +314,9 @@ describe("getCandidate (enrichment branches)", () => {
       }
       if (table === "candidates") return buildChain({
         id: "c-1", name: "Alice", email: "a@t.com", phone: "+6511111111", status: "applied",
-        notes: null, job_id: "j-1", current_stage_id: "s-1", stage_entered_at: null,
+        notes: null, job_id: null, current_stage_id: null, stage_entered_at: null,
         resume_url: null, created_at: "2026-01-01", updated_at: "2026-01-01",
       });
-      if (table === "jobs") return buildChain({ title: "Agent" });
-      if (table === "pipeline_stages") return buildChain({ name: "Screening" });
       if (table === "candidate_activities") {
         const c = buildChain();
         (c.limit as ReturnType<typeof vi.fn>).mockResolvedValue({ data: [{ id: "act-1", candidate_id: "c-1", user_id: "user-manager", type: "note", note: "test", outcome: null, created_at: "2026-01-01" }], error: null });
@@ -339,8 +336,6 @@ describe("getCandidate (enrichment branches)", () => {
     expect(result.success).toBe(true);
     expect(result.candidate!.disc_type).toBe("Di");
     expect(result.candidate!.disc_completed).toBe(true);
-    expect(result.candidate!.job_title).toBe("Agent");
-    expect(result.candidate!.stage_name).toBe("Screening");
     expect(result.candidate!.profile_completed).toBe(true);
   });
 
@@ -369,8 +364,6 @@ describe("getCandidate (enrichment branches)", () => {
 
     const result = await getCandidate("c-2");
     expect(result.success).toBe(true);
-    expect(result.candidate!.job_title).toBeNull();
-    expect(result.candidate!.stage_name).toBeNull();
     expect(result.candidate!.disc_type).toBeNull();
     expect(result.candidate!.disc_completed).toBe(false);
   });
@@ -469,12 +462,12 @@ describe("addDocument", () => {
 });
 
 describe("searchCandidates (enrichment)", () => {
-  it("enriches results with job titles, stage names, and DISC types", async () => {
+  it("enriches results with position_applied and DISC types", async () => {
     mockAuthUser("manager");
 
     const mockCandidates = [
-      { id: "c-1", name: "Alice", email: "a@t.com", phone: "+6511111111", status: "applied", job_id: "j-1", current_stage_id: "s-1", created_at: "2026-01-01" },
-      { id: "c-2", name: "Bob", email: "b@t.com", phone: "+6522222222", status: "applied", job_id: null, current_stage_id: null, created_at: "2026-01-02" },
+      { id: "c-1", name: "Alice", email: "a@t.com", phone: "+6511111111", status: "applied", created_at: "2026-01-01" },
+      { id: "c-2", name: "Bob", email: "b@t.com", phone: "+6522222222", status: "applied", created_at: "2026-01-02" },
     ];
 
     mockAdminFrom.mockImplementation((table: string) => {
@@ -484,19 +477,9 @@ describe("searchCandidates (enrichment)", () => {
         (c.range as ReturnType<typeof vi.fn>).mockResolvedValue({ data: mockCandidates, count: 2, error: null });
         return c;
       }
-      if (table === "jobs") {
-        const c = buildChain();
-        (c.in as ReturnType<typeof vi.fn>).mockResolvedValue({ data: [{ id: "j-1", title: "Financial Consultant" }], error: null });
-        return c;
-      }
-      if (table === "pipeline_stages") {
-        const c = buildChain();
-        (c.in as ReturnType<typeof vi.fn>).mockResolvedValue({ data: [{ id: "s-1", name: "Screening" }], error: null });
-        return c;
-      }
       if (table === "candidate_profiles") {
         const c = buildChain();
-        (c.in as ReturnType<typeof vi.fn>).mockResolvedValue({ data: [{ candidate_id: "c-1", user_id: "u-a" }], error: null });
+        (c.in as ReturnType<typeof vi.fn>).mockResolvedValue({ data: [{ candidate_id: "c-1", user_id: "u-a", position_applied: "Financial Advisor" }], error: null });
         return c;
       }
       if (table === "disc_results") {
@@ -510,10 +493,9 @@ describe("searchCandidates (enrichment)", () => {
     const result = await searchCandidates({});
     expect(result.success).toBe(true);
     expect(result.data).toHaveLength(2);
-    expect(result.data![0].job_title).toBe("Financial Consultant");
-    expect(result.data![0].stage_name).toBe("Screening");
+    expect(result.data![0].position_applied).toBe("Financial Advisor");
     expect(result.data![0].disc_type).toBe("Di");
-    expect(result.data![1].job_title).toBeNull();
+    expect(result.data![1].position_applied).toBeNull();
     expect(result.data![1].disc_type).toBeNull();
   });
 
@@ -521,7 +503,7 @@ describe("searchCandidates (enrichment)", () => {
     mockAuthUser("manager");
 
     const mockCandidates = [
-      { id: "c-1", name: "Alice", email: "a@t.com", phone: "+6511111111", status: "applied", job_id: null, current_stage_id: null, created_at: "2026-01-01" },
+      { id: "c-1", name: "Alice", email: "a@t.com", phone: "+6511111111", status: "applied", created_at: "2026-01-01" },
     ];
 
     mockAdminFrom.mockImplementation((table: string) => {
@@ -533,7 +515,7 @@ describe("searchCandidates (enrichment)", () => {
       }
       if (table === "candidate_profiles") {
         const c = buildChain();
-        (c.in as ReturnType<typeof vi.fn>).mockResolvedValue({ data: [{ candidate_id: "c-1", user_id: "u-a" }], error: null });
+        (c.in as ReturnType<typeof vi.fn>).mockResolvedValue({ data: [{ candidate_id: "c-1", user_id: "u-a", position_applied: null }], error: null });
         return c;
       }
       if (table === "disc_results") {
@@ -709,40 +691,3 @@ describe("getInterviews (user enrichment edge cases)", () => {
   });
 });
 
-describe("listJobsForFilter", () => {
-  it("requires authentication", async () => {
-    mockNoAuth();
-    const result = await listJobsForFilter();
-    expect(result).toEqual([]);
-  });
-
-  it("returns empty array on null data", async () => {
-    mockAuthUser("pa");
-    mockAdminFrom.mockImplementation((table: string) => {
-      if (table === "users") return buildChain({ id: "user-pa", full_name: "PA", email: "pa@t.com", role: "pa" });
-      if (table === "jobs") {
-        const c = buildChain();
-        (c.order as ReturnType<typeof vi.fn>).mockResolvedValue({ data: null, error: null });
-        return c;
-      }
-      return buildChain();
-    });
-    const result = await listJobsForFilter();
-    expect(result).toEqual([]);
-  });
-
-  it("returns jobs for authenticated staff", async () => {
-    mockAuthUser("pa");
-    mockAdminFrom.mockImplementation((table: string) => {
-      if (table === "users") return buildChain({ id: "user-pa", full_name: "PA", email: "pa@t.com", role: "pa" });
-      if (table === "jobs") {
-        const c = buildChain();
-        (c.order as ReturnType<typeof vi.fn>).mockResolvedValue({ data: [{ id: "j-1", title: "Agent" }], error: null });
-        return c;
-      }
-      return buildChain();
-    });
-    const result = await listJobsForFilter();
-    expect(result).toHaveLength(1);
-  });
-});

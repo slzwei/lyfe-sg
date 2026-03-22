@@ -367,8 +367,8 @@ export default function CandidateDetailClient({ candidateId }: { candidateId: st
           <div className="mt-1 text-sm font-medium text-stone-700">{profile?.position_applied || "—"}</div>
         </div>
         <div className="rounded-xl border border-stone-200 bg-white p-4">
-          <div className="text-xs text-stone-400">DISC</div>
-          <div className="mt-1 text-sm font-medium text-stone-700">{candidate.disc_type || (candidate.disc_completed ? "Completed" : "Not done")}</div>
+          <div className="text-xs text-stone-400">Assigned Manager</div>
+          <div className="mt-1 text-sm font-medium text-stone-700">{candidate.assigned_manager_name || "—"}</div>
         </div>
         <div className="rounded-xl border border-stone-200 bg-white p-4">
           <div className="text-xs text-stone-400">Application</div>

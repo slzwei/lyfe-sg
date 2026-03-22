@@ -15,10 +15,12 @@ export interface CandidateDetail {
   job_id: string | null;
   current_stage_id: string | null;
   stage_entered_at: string | null;
+  assigned_manager_id: string | null;
   resume_url: string | null;
   created_at: string | null;
   updated_at: string | null;
   // Enriched
+  assigned_manager_name?: string | null;
   disc_type?: string | null;
   disc_completed?: boolean;
   profile_completed?: boolean;
@@ -110,7 +112,7 @@ export async function getCandidate(candidateId: string): Promise<{
   if (error || !candidate) return { success: false, error: "Candidate not found." };
 
   // Parallel: job, stage, DISC, activities, documents, invitation PDFs
-  const [activitiesRes, documentsRes, profileRes, invitationRes] = await Promise.all([
+  const [activitiesRes, documentsRes, profileRes, invitationRes, managerRes] = await Promise.all([
     admin.from("candidate_activities")
       .select("*")
       .eq("candidate_id", candidateId)
@@ -128,6 +130,9 @@ export async function getCandidate(candidateId: string): Promise<{
       .select("profile_pdf_path, disc_pdf_path")
       .eq("candidate_record_id", candidateId)
       .single(),
+    candidate.assigned_manager_id
+      ? admin.from("users").select("full_name").eq("id", candidate.assigned_manager_id).single()
+      : Promise.resolve({ data: null }),
   ]);
 
   // Get DISC type if profile is linked
@@ -159,6 +164,7 @@ export async function getCandidate(candidateId: string): Promise<{
     success: true,
     candidate: {
       ...candidate,
+      assigned_manager_name: managerRes.data?.full_name || null,
       disc_type: discType,
       disc_completed: discCompleted,
       profile_completed: profileRes.data?.completed || false,

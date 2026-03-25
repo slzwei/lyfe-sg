@@ -2020,6 +2020,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      append_invitation_file: {
+        Args: { p_file: Json; p_invitation_id: string; p_max_files?: number }
+        Returns: Json
+      }
       assign_candidate_role: { Args: never; Returns: undefined }
       assign_lead_with_activity: {
         Args: {
@@ -2408,3 +2412,4 @@ export const Constants = {
     },
   },
 } as const
+

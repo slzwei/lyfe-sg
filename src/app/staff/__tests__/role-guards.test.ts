@@ -463,9 +463,22 @@ describe("Guarded destructive actions", () => {
 describe("Non-destructive actions accessible to PA", () => {
   it("sendInvite works for PA", async () => {
     mockAuthUser("pa");
-    setupAdminFrom({
-      users: { data: { id: "pa-1", full_name: "PA User", email: "pa@test.com", role: "pa" } },
-      invitations: { data: null },
+    mockAdminFrom.mockImplementation((table: string) => {
+      if (table === "users") return chainMock({ id: "pa-1", full_name: "PA User", email: "pa@test.com", role: "pa" });
+      if (table === "invitations") {
+        const c = chainMock();
+        // Duplicate check returns empty
+        (c.limit as ReturnType<typeof vi.fn>).mockImplementation(() =>
+          Object.assign(Promise.resolve({ data: [], error: null }), c)
+        );
+        // insert().select().single() returns new invitation
+        (c.insert as ReturnType<typeof vi.fn>).mockImplementation(() => {
+          const inner = chainMock({ id: "inv-new" });
+          return Object.assign(Promise.resolve({ data: { id: "inv-new" }, error: null }), inner);
+        });
+        return c;
+      }
+      return chainMock();
     });
     const result = await sendInvite({ email: "candidate@test.com" });
     expect(result.success).toBe(true);
@@ -800,11 +813,11 @@ describe("sendInvite (DB error branch)", () => {
         (c.limit as ReturnType<typeof vi.fn>).mockImplementation(() =>
           Object.assign(Promise.resolve({ data: [], error: null }), c)
         );
-        // Insert call fails
-        const errResult = { data: null, error: { message: "Insert failed" } };
-        (c.insert as ReturnType<typeof vi.fn>).mockImplementation(() =>
-          Object.assign(Promise.resolve(errResult), { then: (r: (v: unknown) => void) => Promise.resolve(errResult).then(r) })
-        );
+        // insert().select().single() fails
+        (c.insert as ReturnType<typeof vi.fn>).mockImplementation(() => {
+          const inner = chainMock(null, { message: "Insert failed" });
+          return Object.assign(Promise.resolve({ data: null, error: { message: "Insert failed" } }), inner);
+        });
         return c;
       }
       return chainMock();

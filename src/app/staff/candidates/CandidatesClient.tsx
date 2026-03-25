@@ -48,19 +48,22 @@ export default function CandidatesClient({ staffRole }: { staffRole?: string }) 
     return () => clearTimeout(timeout);
   }, [fetchData]);
 
-  // Accepted without a job = signed up but no candidates record (show on "All" tab)
-  const acceptedWithoutRecord = invitations.filter((inv) => !inv.archived_at && inv.status === "accepted" && !inv.candidate_record_id);
+  // Accepted invitations (with or without candidates record) — shown on "All" tab with progress
+  const acceptedInvitations = invitations.filter((inv) => !inv.archived_at && inv.status === "accepted");
+  const acceptedCandidateIds = new Set(acceptedInvitations.map((inv) => inv.candidate_record_id).filter(Boolean));
+  // Pipeline candidates not already covered by an invitation row
+  const pipelineOnly = pipelineCandidates.filter((c) => !acceptedCandidateIds.has(c.id));
   // Invited = not yet signed up (pending/expired/revoked, no candidate_record_id)
   const pendingInvitations = invitations.filter((inv) => !inv.archived_at && inv.status !== "accepted" && !inv.candidate_record_id);
   const archivedInvitations = invitations.filter((inv) => inv.archived_at);
 
   // Search filter (for invitation tabs — candidates are already server-filtered by query)
   const filteredAccepted = query
-    ? acceptedWithoutRecord.filter((inv) =>
+    ? acceptedInvitations.filter((inv) =>
         inv.candidate_name?.toLowerCase().includes(query.toLowerCase()) ||
         inv.email.toLowerCase().includes(query.toLowerCase())
       )
-    : acceptedWithoutRecord;
+    : acceptedInvitations;
 
   const filteredInvitations = query
     ? pendingInvitations.filter((inv) =>
@@ -227,12 +230,12 @@ export default function CandidatesClient({ staffRole }: { staffRole?: string }) 
               </tr>
             </thead>
             <tbody className="divide-y divide-stone-50">
-              {tab === "all" && pipelineCandidates.map((c) => renderCandidateRow(c))}
               {tab === "all" && filteredAccepted.map((inv) => renderInvitationRow(inv))}
+              {tab === "all" && pipelineOnly.map((c) => renderCandidateRow(c))}
               {tab === "invited" && filteredInvitations.map((inv) => renderInvitationRow(inv))}
               {tab === "archived" && filteredArchived.map((inv) => renderInvitationRow(inv))}
 
-              {((tab === "all" && pipelineCandidates.length === 0 && filteredAccepted.length === 0) ||
+              {((tab === "all" && pipelineOnly.length === 0 && filteredAccepted.length === 0) ||
                 (tab === "invited" && filteredInvitations.length === 0) ||
                 (tab === "archived" && filteredArchived.length === 0)) && (
                 <tr><td colSpan={6} className="px-4 py-12 text-center text-stone-400">No candidates found.</td></tr>

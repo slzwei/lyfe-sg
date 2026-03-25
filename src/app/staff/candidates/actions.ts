@@ -2,7 +2,35 @@
 
 import { getAdminClient } from "@/lib/supabase/admin";
 import { sendCandidateAssignedEmail, sendCandidateReassignedEmail } from "@/lib/email";
-import { getStaffUser, requireStaff } from "../actions";
+import { getStaffUser, requireStaff, type StaffUser } from "../actions";
+
+// ─── Team Scoping ─────────────────────────────────────────────────────────────
+
+/**
+ * Returns the manager IDs whose candidates the staff user can access.
+ * Returns null if the user has global access (admin/director).
+ */
+async function getTeamManagerIds(staff: StaffUser): Promise<string[] | null> {
+  if (staff.role === "admin" || staff.role === "director") {
+    return null;
+  }
+
+  if (staff.role === "manager") {
+    return [staff.id];
+  }
+
+  if (staff.role === "pa") {
+    const admin = getAdminClient();
+    const { data: assignments } = await admin
+      .from("pa_manager_assignments")
+      .select("manager_id")
+      .eq("pa_id", staff.id);
+    return (assignments || []).map((a) => a.manager_id);
+  }
+
+  // Other roles (agent): no candidate access
+  return [];
+}
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -111,6 +139,14 @@ export async function getCandidate(candidateId: string): Promise<{
     .single();
 
   if (error || !candidate) return { success: false, error: "Candidate not found." };
+
+  // Team scoping: verify the staff user has access to this candidate
+  const managerIds = await getTeamManagerIds(staff);
+  if (managerIds !== null) {
+    if (!candidate.assigned_manager_id || !managerIds.includes(candidate.assigned_manager_id)) {
+      return { success: false, error: "Candidate not found." };
+    }
+  }
 
   // Parallel: job, stage, DISC, activities, documents, invitation PDFs
   const [activitiesRes, documentsRes, profileRes, invitationRes, managerRes] = await Promise.all([
@@ -282,9 +318,19 @@ export async function searchCandidates(params: {
   const limit = params.limit || 50;
   const offset = params.offset || 0;
 
+  // Team scoping: restrict candidates to assigned managers
+  const teamManagerIds = await getTeamManagerIds(staff);
+  if (teamManagerIds !== null && teamManagerIds.length === 0) {
+    return { success: true, data: [], total: 0 };
+  }
+
   // Build query
   let q = admin.from("candidates")
     .select("id, name, email, phone, status, created_at", { count: "exact" });
+
+  if (teamManagerIds !== null) {
+    q = q.in("assigned_manager_id", teamManagerIds);
+  }
 
   // Text search
   if (params.query?.trim()) {

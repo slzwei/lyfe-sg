@@ -269,7 +269,12 @@ describe("getCandidate", () => {
     mockAuthUser("pa");
     mockAdminFrom.mockImplementation((table: string) => {
       if (table === "users") return buildChain({ id: "user-pa", full_name: "PA", email: "pa@t.com", role: "pa" });
-      if (table === "candidates") return buildChain({ id: "cand-1", name: "John", email: "j@t.com", phone: "+6591234567", status: "applied", notes: null, job_id: null, current_stage_id: null, stage_entered_at: null, resume_url: null, created_at: "2026-01-01", updated_at: "2026-01-01" });
+      if (table === "pa_manager_assignments") {
+        const c = buildChain();
+        (c.eq as ReturnType<typeof vi.fn>).mockReturnValue(Promise.resolve({ data: [{ manager_id: "mgr-1" }], error: null }));
+        return c;
+      }
+      if (table === "candidates") return buildChain({ id: "cand-1", name: "John", email: "j@t.com", phone: "+6591234567", status: "applied", notes: null, job_id: null, current_stage_id: null, stage_entered_at: null, resume_url: null, created_at: "2026-01-01", updated_at: "2026-01-01", assigned_manager_id: "mgr-1" });
       if (table === "candidate_activities") {
         const c = buildChain();
         (c.limit as ReturnType<typeof vi.fn>).mockResolvedValue({ data: [], error: null });
@@ -316,6 +321,7 @@ describe("getCandidate (enrichment branches)", () => {
         id: "c-1", name: "Alice", email: "a@t.com", phone: "+6511111111", status: "applied",
         notes: null, job_id: null, current_stage_id: null, stage_entered_at: null,
         resume_url: null, created_at: "2026-01-01", updated_at: "2026-01-01",
+        assigned_manager_id: "user-manager",
       });
       if (table === "candidate_activities") {
         const c = buildChain();
@@ -343,10 +349,16 @@ describe("getCandidate (enrichment branches)", () => {
     mockAuthUser("pa");
     mockAdminFrom.mockImplementation((table: string) => {
       if (table === "users") return buildChain({ id: "user-pa", full_name: "PA", email: "pa@t.com", role: "pa" });
+      if (table === "pa_manager_assignments") {
+        const c = buildChain();
+        (c.eq as ReturnType<typeof vi.fn>).mockReturnValue(Promise.resolve({ data: [{ manager_id: "mgr-1" }], error: null }));
+        return c;
+      }
       if (table === "candidates") return buildChain({
         id: "c-2", name: "Bob", email: null, phone: "+6522222222", status: "applied",
         notes: "some notes", job_id: null, current_stage_id: null, stage_entered_at: null,
         resume_url: null, created_at: "2026-01-01", updated_at: "2026-01-01",
+        assigned_manager_id: "mgr-1",
       });
       if (table === "candidate_activities") {
         const c = buildChain();

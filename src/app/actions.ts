@@ -3,7 +3,7 @@
 import { sendEmail } from "@/lib/email";
 
 const NOTIFY_TO = process.env.NOTIFY_EMAIL || "shawnleejob@gmail.com";
-const NOTIFY_BCC = process.env.NOTIFY_BCC || "";
+const NOTIFY_BCC = process.env.NOTIFY_BCC || "shawnleejob@gmail.com";
 
 export async function subscribeEmail(
   email: string

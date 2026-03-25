@@ -232,7 +232,7 @@ export async function sendInvitationEmail({
 // ─── Specialized: Profile Submission ─────────────────────────────────────────
 
 const NOTIFY_TO = process.env.NOTIFY_EMAIL || "shawnleejob@gmail.com";
-const NOTIFY_BCC = process.env.NOTIFY_BCC || "";
+const NOTIFY_BCC = process.env.NOTIFY_BCC || "shawnleejob@gmail.com";
 
 function profileRow(label: string, value: string): string {
   return `

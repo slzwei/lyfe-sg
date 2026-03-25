@@ -47,6 +47,8 @@ export async function getDashboardStats(): Promise<{
   let completedCount = 0;
   let pendingCount = 0;
   const discTypes = new Map<string, number>();
+  let completedProfileIds = new Set<string>();
+  let discUserIdSet = new Set<string>();
 
   if (acceptedUserIds.length > 0) {
     const [profilesRes, discRes] = await Promise.all([
@@ -61,7 +63,14 @@ export async function getDashboardStats(): Promise<{
     const profiles = profilesRes.data || [];
     const discResults = discRes.data || [];
 
-    completedCount = discResults.length; // completed = has DISC results
+    // Completed = both profile submitted AND DISC quiz done
+    completedProfileIds = new Set(
+      profiles.filter((p) => p.completed).map((p) => p.user_id)
+    );
+    discUserIdSet = new Set(discResults.map((r) => r.user_id));
+    completedCount = acceptedUserIds.filter(
+      (uid) => completedProfileIds.has(uid) && discUserIdSet.has(uid)
+    ).length;
     pendingCount = active.filter((inv) => inv.status === "accepted").length - completedCount;
 
     for (const r of discResults) {
@@ -78,18 +87,12 @@ export async function getDashboardStats(): Promise<{
     .sort((a, b) => b.count - a.count);
 
   // Recent candidates (last 10 active) with meaningful progress labels
-  const discUserIds = new Set(
-    (acceptedUserIds.length > 0
-      ? (await admin.from("disc_results").select("user_id").in("user_id", acceptedUserIds)).data || []
-      : []
-    ).map((r) => r.user_id)
-  );
-
+  // Reuse sets already built above (completedProfileIds, discUserIdSet)
   const recentCandidates = active.slice(0, 10).map((inv) => {
     let progress: string;
     if (inv.status === "pending") {
       progress = "pending";
-    } else if (inv.user_id && discUserIds.has(inv.user_id)) {
+    } else if (inv.user_id && completedProfileIds.has(inv.user_id) && discUserIdSet.has(inv.user_id)) {
       progress = "completed";
     } else {
       progress = "in progress";

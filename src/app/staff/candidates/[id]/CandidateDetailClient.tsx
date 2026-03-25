@@ -8,6 +8,7 @@ import {
   updateCandidate,
   getInterviews,
   updateInterviewFeedback,
+  scheduleInterview,
   listAssignableManagers,
   reassignCandidate,
   type CandidateDetail,
@@ -75,7 +76,15 @@ export default function CandidateDetailClient({ candidateId }: { candidateId: st
   const [uploading, setUploading] = useState(false);
   const [uploadError, setUploadError] = useState("");
 
+  // Schedule interview
+  const [showSchedule, setShowSchedule] = useState(false);
+  const [scheduleManagers, setScheduleManagers] = useState<AssignableManager[]>([]);
+  const [scheduleForm, setScheduleForm] = useState({ managerId: "", datetime: "", type: "zoom" as "zoom" | "in_person", location: "", zoomLink: "" });
+  const [scheduling, setScheduling] = useState(false);
+  const [scheduleError, setScheduleError] = useState("");
+
   const isManagerPlus = staffRole && ["manager", "director", "admin"].includes(staffRole);
+  const canSchedule = staffRole && ["pa", "manager", "director", "admin"].includes(staffRole);
 
   const fetchData = useCallback(async () => {
     const [candidateResult, interviewsResult] = await Promise.all([
@@ -181,6 +190,40 @@ export default function CandidateDetailClient({ candidateId }: { candidateId: st
     setEditingInterviewId(null);
     setSavingFeedback(false);
     fetchData();
+  }
+
+  async function handleOpenSchedule() {
+    setShowSchedule(true);
+    setScheduleForm({ managerId: "", datetime: "", type: "zoom", location: "", zoomLink: "" });
+    setScheduleError("");
+    const result = await listAssignableManagers();
+    if (result.success && result.managers) {
+      setScheduleManagers(result.managers);
+    }
+  }
+
+  async function handleScheduleInterview(e: React.FormEvent) {
+    e.preventDefault();
+    if (!scheduleForm.managerId || !scheduleForm.datetime) {
+      setScheduleError("Interviewer and date/time are required.");
+      return;
+    }
+    setScheduling(true);
+    setScheduleError("");
+    const result = await scheduleInterview(candidateId, {
+      managerId: scheduleForm.managerId,
+      datetime: new Date(scheduleForm.datetime).toISOString(),
+      type: scheduleForm.type,
+      location: scheduleForm.location || undefined,
+      zoomLink: scheduleForm.zoomLink || undefined,
+    });
+    setScheduling(false);
+    if (result.success) {
+      setShowSchedule(false);
+      fetchData();
+    } else {
+      setScheduleError(result.error || "Failed to schedule interview.");
+    }
   }
 
   async function handleOpenReassign() {
@@ -499,12 +542,104 @@ export default function CandidateDetailClient({ candidateId }: { candidateId: st
 
       {/* Interviews section */}
       <div className="rounded-2xl border border-stone-200 bg-white">
-        <div className="border-b border-stone-100 px-5 py-3">
+        <div className="flex items-center justify-between border-b border-stone-100 px-5 py-3">
           <h3 className="font-semibold text-stone-700">Interviews ({interviews.length})</h3>
+          {canSchedule && !showSchedule && (
+            <button
+              onClick={handleOpenSchedule}
+              className="rounded-lg bg-orange-500 px-3 py-1.5 text-xs font-semibold text-white hover:bg-orange-600"
+            >
+              + Schedule
+            </button>
+          )}
         </div>
-        {interviews.length === 0 ? (
+
+        {/* Schedule interview form */}
+        {showSchedule && (
+          <div className="border-b border-stone-100 px-5 py-4">
+            <form onSubmit={handleScheduleInterview} className="space-y-3">
+              <div className="grid gap-3 sm:grid-cols-2">
+                <div>
+                  <label className="mb-1 block text-xs font-medium text-stone-500">Interviewer *</label>
+                  <select
+                    value={scheduleForm.managerId}
+                    onChange={(e) => setScheduleForm({ ...scheduleForm, managerId: e.target.value })}
+                    className="h-9 w-full rounded-lg border border-stone-200 bg-stone-50 px-2 text-sm outline-none focus:border-orange-400"
+                  >
+                    <option value="">Select interviewer</option>
+                    {scheduleManagers.map((m) => (
+                      <option key={m.id} value={m.id}>{m.full_name}</option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label className="mb-1 block text-xs font-medium text-stone-500">Date & Time *</label>
+                  <input
+                    type="datetime-local"
+                    value={scheduleForm.datetime}
+                    onChange={(e) => setScheduleForm({ ...scheduleForm, datetime: e.target.value })}
+                    className="h-9 w-full rounded-lg border border-stone-200 bg-stone-50 px-2 text-sm outline-none focus:border-orange-400"
+                  />
+                </div>
+                <div>
+                  <label className="mb-1 block text-xs font-medium text-stone-500">Type</label>
+                  <select
+                    value={scheduleForm.type}
+                    onChange={(e) => setScheduleForm({ ...scheduleForm, type: e.target.value as "zoom" | "in_person" })}
+                    className="h-9 w-full rounded-lg border border-stone-200 bg-stone-50 px-2 text-sm outline-none focus:border-orange-400"
+                  >
+                    <option value="zoom">Zoom</option>
+                    <option value="in_person">In-person</option>
+                  </select>
+                </div>
+                {scheduleForm.type === "zoom" ? (
+                  <div>
+                    <label className="mb-1 block text-xs font-medium text-stone-500">Zoom Link</label>
+                    <input
+                      type="url"
+                      value={scheduleForm.zoomLink}
+                      onChange={(e) => setScheduleForm({ ...scheduleForm, zoomLink: e.target.value })}
+                      placeholder="https://zoom.us/j/..."
+                      className="h-9 w-full rounded-lg border border-stone-200 bg-stone-50 px-2 text-sm outline-none focus:border-orange-400"
+                    />
+                  </div>
+                ) : (
+                  <div>
+                    <label className="mb-1 block text-xs font-medium text-stone-500">Location</label>
+                    <input
+                      type="text"
+                      value={scheduleForm.location}
+                      onChange={(e) => setScheduleForm({ ...scheduleForm, location: e.target.value })}
+                      placeholder="Office address..."
+                      className="h-9 w-full rounded-lg border border-stone-200 bg-stone-50 px-2 text-sm outline-none focus:border-orange-400"
+                    />
+                  </div>
+                )}
+              </div>
+              {scheduleError && <p className="text-xs text-red-500">{scheduleError}</p>}
+              <div className="flex items-center gap-2">
+                <button
+                  type="submit"
+                  disabled={scheduling}
+                  className="rounded-lg bg-orange-500 px-4 py-1.5 text-sm font-semibold text-white hover:bg-orange-600 disabled:opacity-50"
+                >
+                  {scheduling ? "Scheduling..." : "Schedule Interview"}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setShowSchedule(false)}
+                  className="rounded-lg border border-stone-200 px-4 py-1.5 text-sm text-stone-500 hover:bg-stone-100"
+                >
+                  Cancel
+                </button>
+              </div>
+            </form>
+          </div>
+        )}
+
+        {interviews.length === 0 && !showSchedule ? (
           <div className="px-5 py-8 text-center text-sm text-stone-400">No interviews scheduled.</div>
-        ) : (
+        ) : interviews.length > 0 ? (
           <div className="divide-y divide-stone-100">
             {interviews.map((interview) => (
               <div key={interview.id} className="px-5 py-4">
@@ -612,7 +747,7 @@ export default function CandidateDetailClient({ candidateId }: { candidateId: st
               </div>
             ))}
           </div>
-        )}
+        ) : null}
       </div>
 
       <div className="grid gap-6 lg:grid-cols-3">

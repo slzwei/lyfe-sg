@@ -1,21 +1,37 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { subscribeEmail } from "./actions";
 
 export default function ComingSoon() {
   const [email, setEmail] = useState("");
   const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState("");
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     setMounted(true);
   }, []);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (email) {
-      setSubmitted(true);
-      setEmail("");
+    if (!email || submitting) return;
+
+    setError("");
+    setSubmitting(true);
+    try {
+      const result = await subscribeEmail(email);
+      if (result.success) {
+        setSubmitted(true);
+        setEmail("");
+      } else {
+        setError(result.error || "Something went wrong.");
+      }
+    } catch {
+      setError("Something went wrong. Please try again.");
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -101,9 +117,10 @@ export default function ComingSoon() {
             />
             <button
               type="submit"
-              className="w-full sm:w-auto px-6 py-3 rounded-xl bg-orange-500 text-white text-sm font-medium hover:bg-orange-400 active:scale-[0.98] transition-all cursor-pointer"
+              disabled={submitting}
+              className="w-full sm:w-auto px-6 py-3 rounded-xl bg-orange-500 text-white text-sm font-medium hover:bg-orange-400 active:scale-[0.98] transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Notify me
+              {submitting ? "Sending..." : "Notify me"}
             </button>
           </form>
         ) : (
@@ -114,6 +131,9 @@ export default function ComingSoon() {
           >
             We&apos;ll keep you posted.
           </div>
+        )}
+        {!submitted && error && (
+          <p className="mt-2 text-red-400 text-xs">{error}</p>
         )}
 
         {/* Footer links */}

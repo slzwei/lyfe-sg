@@ -278,8 +278,8 @@ export async function addDocument(
 }
 
 export async function deleteDocument(docId: string): Promise<{ success: boolean; error?: string }> {
-  const staff = await requireStaff("manager");
-  if (!staff) return { success: false, error: "Manager access required." };
+  const staff = await requireStaff("pa");
+  if (!staff) return { success: false, error: "Staff access required." };
 
   const admin = getAdminClient();
   const { error } = await admin.from("candidate_documents").delete().eq("id", docId);

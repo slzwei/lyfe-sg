@@ -11,6 +11,7 @@ import {
   scheduleInterview,
   listAssignableManagers,
   reassignCandidate,
+  deleteDocument,
   type CandidateDetail,
   type CandidateProfile,
   type Activity,
@@ -75,6 +76,7 @@ export default function CandidateDetailClient({ candidateId }: { candidateId: st
   const [uploadFile, setUploadFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
   const [uploadError, setUploadError] = useState("");
+  const [deletingDocId, setDeletingDocId] = useState<string | null>(null);
 
   // Schedule interview
   const [showSchedule, setShowSchedule] = useState(false);
@@ -129,6 +131,16 @@ export default function CandidateDetailClient({ candidateId }: { candidateId: st
     } else {
       window.open(fileUrl, "_blank");
     }
+  }
+
+  async function handleDeleteDoc(docId: string) {
+    if (!confirm("Delete this document?")) return;
+    setDeletingDocId(docId);
+    const result = await deleteDocument(docId);
+    if (result.success) {
+      setDocuments((prev) => prev.filter((d) => d.id !== docId));
+    }
+    setDeletingDocId(null);
   }
 
   async function handleUploadDoc(e: React.FormEvent) {
@@ -845,20 +857,42 @@ export default function CandidateDetailClient({ candidateId }: { candidateId: st
             ) : documents.length > 0 ? (
               <div className="divide-y divide-stone-50">
                 {documents.map((d) => (
-                  <button
+                  <div
                     key={d.id}
-                    type="button"
-                    onClick={() => handleDownloadDoc(d.file_url)}
-                    className="flex w-full items-center justify-between px-5 py-3 text-left transition-colors hover:bg-stone-50"
+                    className="flex w-full items-center justify-between px-5 py-3 transition-colors hover:bg-stone-50"
                   >
-                    <div>
+                    <button
+                      type="button"
+                      onClick={() => handleDownloadDoc(d.file_url)}
+                      className="flex-1 text-left"
+                    >
                       <div className="text-sm font-medium text-stone-700">{d.label}</div>
                       <div className="text-xs text-stone-400">{d.file_name}</div>
+                    </button>
+                    <div className="flex items-center gap-2">
+                      <button
+                        type="button"
+                        onClick={() => handleDownloadDoc(d.file_url)}
+                        className="p-1 text-stone-400 hover:text-stone-600"
+                        title="Download"
+                      >
+                        <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                        </svg>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleDeleteDoc(d.id)}
+                        disabled={deletingDocId === d.id}
+                        className="p-1 text-stone-400 hover:text-red-500 disabled:opacity-50"
+                        title="Delete"
+                      >
+                        <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                        </svg>
+                      </button>
                     </div>
-                    <svg className="h-4 w-4 text-stone-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-                    </svg>
-                  </button>
+                  </div>
                 ))}
               </div>
             ) : null}

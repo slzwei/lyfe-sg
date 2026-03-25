@@ -13,9 +13,9 @@ interface Step4Props {
 }
 
 const INPUT_CLASS =
-  "h-10 w-full max-w-full box-border rounded-xl border border-stone-200 bg-stone-50 px-3 text-sm outline-none transition-colors focus:border-orange-400 focus:ring-2 focus:ring-orange-100";
+  "h-10 w-full max-w-full box-border rounded-xl border border-stone-200 bg-stone-50 px-3 text-base outline-none transition-colors focus:border-orange-400 focus:ring-2 focus:ring-orange-100";
 const SELECT_CLASS =
-  "h-10 w-full max-w-full box-border rounded-xl border border-stone-200 bg-stone-50 px-3 text-sm outline-none transition-colors focus:border-orange-400 focus:ring-2 focus:ring-orange-100";
+  "h-10 w-full max-w-full box-border rounded-xl border border-stone-200 bg-stone-50 px-3 text-base outline-none transition-colors focus:border-orange-400 focus:ring-2 focus:ring-orange-100";
 const LABEL_CLASS = "mb-1 block text-xs font-medium text-stone-600";
 
 const EMPTY_LANG: LanguageRow = { language: "", spoken: "", written: "" };
@@ -72,7 +72,7 @@ export default function Step4Skills({ data, onChange, errors }: Step4Props) {
             Software you are competent in
           </label>
           <textarea
-            className="w-full rounded-xl border border-stone-200 bg-stone-50 px-3 py-2.5 text-sm outline-none transition-colors focus:border-orange-400 focus:ring-2 focus:ring-orange-100"
+            className="w-full rounded-xl border border-stone-200 bg-stone-50 px-3 py-2.5 text-base outline-none transition-colors focus:border-orange-400 focus:ring-2 focus:ring-orange-100"
             rows={3}
             value={v("software_competencies")}
             onChange={(e) =>

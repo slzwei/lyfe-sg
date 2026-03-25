@@ -9,11 +9,11 @@ interface Step1Props {
 }
 
 const SELECT_CLASS =
-  "h-12 w-full rounded-xl border border-stone-200 bg-stone-50 px-4 text-sm outline-none transition-colors focus:border-orange-400 focus:ring-2 focus:ring-orange-100";
+  "h-12 w-full rounded-xl border border-stone-200 bg-stone-50 px-4 text-base outline-none transition-colors focus:border-orange-400 focus:ring-2 focus:ring-orange-100";
 const INPUT_CLASS =
-  "h-12 w-full max-w-full box-border rounded-xl border border-stone-200 bg-stone-50 px-4 text-sm outline-none transition-colors focus:border-orange-400 focus:ring-2 focus:ring-orange-100";
+  "h-12 w-full max-w-full box-border rounded-xl border border-stone-200 bg-stone-50 px-4 text-base outline-none transition-colors focus:border-orange-400 focus:ring-2 focus:ring-orange-100";
 const READONLY_CLASS =
-  "h-12 w-full rounded-xl border border-stone-100 bg-stone-100 px-4 text-sm text-stone-500 outline-none cursor-not-allowed";
+  "h-12 w-full rounded-xl border border-stone-100 bg-stone-100 px-4 text-base text-stone-500 outline-none cursor-not-allowed";
 const LABEL_CLASS = "mb-1.5 block text-sm font-medium text-stone-700";
 
 const COUNTRIES = [
@@ -137,7 +137,7 @@ export default function Step1Personal({ data, onChange, errors }: Step1Props) {
                 inputMode="decimal"
               />
               <select
-                className="h-12 w-28 shrink-0 rounded-xl border border-stone-200 bg-stone-50 px-2 text-sm outline-none transition-colors focus:border-orange-400 focus:ring-2 focus:ring-orange-100"
+                className="h-12 w-28 shrink-0 rounded-xl border border-stone-200 bg-stone-50 px-2 text-base outline-none transition-colors focus:border-orange-400 focus:ring-2 focus:ring-orange-100"
                 value={v("salary_period") || "month"}
                 onChange={(e) => onChange("salary_period", e.target.value)}
               >

@@ -100,12 +100,12 @@ export default function JobsClient() {
                 <label className="mb-1 block text-xs font-medium text-stone-500">Job Title *</label>
                 <input type="text" value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })}
                   placeholder="e.g. Financial Consultant" required
-                  className="h-10 w-full rounded-lg border border-stone-200 bg-stone-50 px-3 text-sm outline-none focus:border-orange-400 focus:ring-2 focus:ring-orange-100" />
+                  className="h-10 w-full rounded-lg border border-stone-200 bg-stone-50 px-3 text-base outline-none focus:border-orange-400 focus:ring-2 focus:ring-orange-100" />
               </div>
               <div>
                 <label className="mb-1 block text-xs font-medium text-stone-500">Portal</label>
                 <select value={form.portal} onChange={(e) => setForm({ ...form, portal: e.target.value })}
-                  className="h-10 w-full rounded-lg border border-stone-200 bg-stone-50 px-3 text-sm outline-none focus:border-orange-400 focus:ring-2 focus:ring-orange-100">
+                  className="h-10 w-full rounded-lg border border-stone-200 bg-stone-50 px-3 text-base outline-none focus:border-orange-400 focus:ring-2 focus:ring-orange-100">
                   <option value="">Select portal…</option>
                   {PORTALS.map((p) => <option key={p} value={p}>{p}</option>)}
                 </select>
@@ -115,13 +115,13 @@ export default function JobsClient() {
               <label className="mb-1 block text-xs font-medium text-stone-500">Posting URL</label>
               <input type="text" value={form.portal_url} onChange={(e) => setForm({ ...form, portal_url: e.target.value })}
                 placeholder="https://www.indeed.com/job/..."
-                className="h-10 w-full rounded-lg border border-stone-200 bg-stone-50 px-3 text-sm outline-none focus:border-orange-400 focus:ring-2 focus:ring-orange-100" />
+                className="h-10 w-full rounded-lg border border-stone-200 bg-stone-50 px-3 text-base outline-none focus:border-orange-400 focus:ring-2 focus:ring-orange-100" />
             </div>
             <div>
               <label className="mb-1 block text-xs font-medium text-stone-500">Job Description</label>
               <textarea value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })}
                 rows={4} placeholder="Paste the job description here…"
-                className="w-full rounded-lg border border-stone-200 bg-stone-50 px-3 py-2 text-sm outline-none focus:border-orange-400 focus:ring-2 focus:ring-orange-100" />
+                className="w-full rounded-lg border border-stone-200 bg-stone-50 px-3 py-2 text-base outline-none focus:border-orange-400 focus:ring-2 focus:ring-orange-100" />
             </div>
             {error && <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-600">{error}</p>}
             <div className="flex gap-2">
@@ -248,7 +248,7 @@ export default function JobsClient() {
                 if (e.key === "Escape") { setConfirmAction(null); setConfirmText(""); }
                 if (e.key === "Enter" && confirmText.toLowerCase() === confirmAction.type) handleConfirmAction();
               }}
-              className="mt-3 h-10 w-full rounded-lg border border-stone-200 bg-stone-50 px-3 text-sm outline-none focus:border-red-400 focus:ring-2 focus:ring-red-100"
+              className="mt-3 h-10 w-full rounded-lg border border-stone-200 bg-stone-50 px-3 text-base outline-none focus:border-red-400 focus:ring-2 focus:ring-red-100"
             />
             <div className="mt-4 flex justify-end gap-2">
               <button onClick={() => { setConfirmAction(null); setConfirmText(""); }}

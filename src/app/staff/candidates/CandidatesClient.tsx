@@ -253,7 +253,7 @@ export default function CandidatesClient({ staffRole }: { staffRole?: string }) 
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Search candidates…"
-          className="h-10 flex-1 rounded-xl border border-stone-200 bg-white px-4 text-sm outline-none focus:border-orange-400 focus:ring-2 focus:ring-orange-100"
+          className="h-10 flex-1 rounded-xl border border-stone-200 bg-white px-4 text-base outline-none focus:border-orange-400 focus:ring-2 focus:ring-orange-100"
         />
         <button
           onClick={() => setShowInvite(!showInvite)}
@@ -271,19 +271,19 @@ export default function CandidatesClient({ staffRole }: { staffRole?: string }) 
               <label className="mb-1 block text-xs font-medium text-stone-500">Email *</label>
               <input type="email" value={inviteForm.email} onChange={(e) => setInviteForm({ ...inviteForm, email: e.target.value })}
                 placeholder="candidate@email.com" required
-                className="h-10 w-full rounded-lg border border-stone-200 bg-stone-50 px-3 text-sm outline-none focus:border-orange-400 focus:ring-2 focus:ring-orange-100" />
+                className="h-10 w-full rounded-lg border border-stone-200 bg-stone-50 px-3 text-base outline-none focus:border-orange-400 focus:ring-2 focus:ring-orange-100" />
             </div>
             <div className="flex-1">
               <label className="mb-1 block text-xs font-medium text-stone-500">Name</label>
               <input type="text" value={inviteForm.candidateName} onChange={(e) => setInviteForm({ ...inviteForm, candidateName: e.target.value })}
                 placeholder="Full name"
-                className="h-10 w-full rounded-lg border border-stone-200 bg-stone-50 px-3 text-sm outline-none focus:border-orange-400 focus:ring-2 focus:ring-orange-100" />
+                className="h-10 w-full rounded-lg border border-stone-200 bg-stone-50 px-3 text-base outline-none focus:border-orange-400 focus:ring-2 focus:ring-orange-100" />
             </div>
             <div className="flex-1">
               <label className="mb-1 block text-xs font-medium text-stone-500">Position</label>
               <input type="text" value={inviteForm.position} onChange={(e) => setInviteForm({ ...inviteForm, position: e.target.value })}
                 placeholder="e.g. Financial Consultant"
-                className="h-10 w-full rounded-lg border border-stone-200 bg-stone-50 px-3 text-sm outline-none focus:border-orange-400 focus:ring-2 focus:ring-orange-100" />
+                className="h-10 w-full rounded-lg border border-stone-200 bg-stone-50 px-3 text-base outline-none focus:border-orange-400 focus:ring-2 focus:ring-orange-100" />
             </div>
             <button type="submit" disabled={sending || !inviteForm.email}
               className="h-10 shrink-0 rounded-lg bg-orange-500 px-5 text-sm font-semibold text-white hover:bg-orange-600 disabled:opacity-50">

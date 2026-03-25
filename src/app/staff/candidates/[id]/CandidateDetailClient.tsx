@@ -342,23 +342,23 @@ export default function CandidateDetailClient({ candidateId }: { candidateId: st
             <div>
               <label className="mb-1 block text-xs font-medium text-stone-500">Name</label>
               <input type="text" value={editForm.name} onChange={(e) => setEditForm({ ...editForm, name: e.target.value })}
-                className="h-9 w-full rounded-lg border border-stone-200 bg-stone-50 px-3 text-sm outline-none focus:border-orange-400" />
+                className="h-9 w-full rounded-lg border border-stone-200 bg-stone-50 px-3 text-base outline-none focus:border-orange-400" />
             </div>
             <div>
               <label className="mb-1 block text-xs font-medium text-stone-500">Email</label>
               <input type="email" value={editForm.email} onChange={(e) => setEditForm({ ...editForm, email: e.target.value })}
-                className="h-9 w-full rounded-lg border border-stone-200 bg-stone-50 px-3 text-sm outline-none focus:border-orange-400" />
+                className="h-9 w-full rounded-lg border border-stone-200 bg-stone-50 px-3 text-base outline-none focus:border-orange-400" />
             </div>
             <div>
               <label className="mb-1 block text-xs font-medium text-stone-500">Phone</label>
               <input type="tel" value={editForm.phone} onChange={(e) => setEditForm({ ...editForm, phone: e.target.value })}
-                className="h-9 w-full rounded-lg border border-stone-200 bg-stone-50 px-3 text-sm outline-none focus:border-orange-400" />
+                className="h-9 w-full rounded-lg border border-stone-200 bg-stone-50 px-3 text-base outline-none focus:border-orange-400" />
             </div>
           </div>
           <div className="mt-3">
             <label className="mb-1 block text-xs font-medium text-stone-500">Notes</label>
             <textarea value={editForm.notes} onChange={(e) => setEditForm({ ...editForm, notes: e.target.value })}
-              rows={2} className="w-full rounded-lg border border-stone-200 bg-stone-50 px-3 py-2 text-sm outline-none focus:border-orange-400" />
+              rows={2} className="w-full rounded-lg border border-stone-200 bg-stone-50 px-3 py-2 text-base outline-none focus:border-orange-400" />
           </div>
           <button onClick={handleSaveEdit} className="mt-3 rounded-lg bg-orange-500 px-4 py-1.5 text-sm font-semibold text-white hover:bg-orange-600">Save</button>
         </div>
@@ -521,7 +521,7 @@ export default function CandidateDetailClient({ candidateId }: { candidateId: st
                   <select
                     value={scheduleForm.managerId}
                     onChange={(e) => setScheduleForm({ ...scheduleForm, managerId: e.target.value })}
-                    className="h-9 w-full rounded-lg border border-stone-200 bg-stone-50 px-2 text-sm outline-none focus:border-orange-400"
+                    className="h-9 w-full rounded-lg border border-stone-200 bg-stone-50 px-2 text-base outline-none focus:border-orange-400"
                   >
                     <option value="">Select interviewer</option>
                     {scheduleManagers.map((m) => (
@@ -535,7 +535,7 @@ export default function CandidateDetailClient({ candidateId }: { candidateId: st
                     type="datetime-local"
                     value={scheduleForm.datetime}
                     onChange={(e) => setScheduleForm({ ...scheduleForm, datetime: e.target.value })}
-                    className="h-9 w-full rounded-lg border border-stone-200 bg-stone-50 px-2 text-sm outline-none focus:border-orange-400"
+                    className="h-9 w-full rounded-lg border border-stone-200 bg-stone-50 px-2 text-base outline-none focus:border-orange-400"
                   />
                 </div>
                 <div>
@@ -543,7 +543,7 @@ export default function CandidateDetailClient({ candidateId }: { candidateId: st
                   <select
                     value={scheduleForm.type}
                     onChange={(e) => setScheduleForm({ ...scheduleForm, type: e.target.value as "zoom" | "in_person" })}
-                    className="h-9 w-full rounded-lg border border-stone-200 bg-stone-50 px-2 text-sm outline-none focus:border-orange-400"
+                    className="h-9 w-full rounded-lg border border-stone-200 bg-stone-50 px-2 text-base outline-none focus:border-orange-400"
                   >
                     <option value="zoom">Zoom</option>
                     <option value="in_person">In-person</option>
@@ -557,7 +557,7 @@ export default function CandidateDetailClient({ candidateId }: { candidateId: st
                       value={scheduleForm.zoomLink}
                       onChange={(e) => setScheduleForm({ ...scheduleForm, zoomLink: e.target.value })}
                       placeholder="https://zoom.us/j/..."
-                      className="h-9 w-full rounded-lg border border-stone-200 bg-stone-50 px-2 text-sm outline-none focus:border-orange-400"
+                      className="h-9 w-full rounded-lg border border-stone-200 bg-stone-50 px-2 text-base outline-none focus:border-orange-400"
                     />
                   </div>
                 ) : (
@@ -568,7 +568,7 @@ export default function CandidateDetailClient({ candidateId }: { candidateId: st
                       value={scheduleForm.location}
                       onChange={(e) => setScheduleForm({ ...scheduleForm, location: e.target.value })}
                       placeholder="Office address..."
-                      className="h-9 w-full rounded-lg border border-stone-200 bg-stone-50 px-2 text-sm outline-none focus:border-orange-400"
+                      className="h-9 w-full rounded-lg border border-stone-200 bg-stone-50 px-2 text-base outline-none focus:border-orange-400"
                     />
                   </div>
                 )}
@@ -659,7 +659,7 @@ export default function CandidateDetailClient({ candidateId }: { candidateId: st
                         onChange={(e) => setFeedbackForm({ ...feedbackForm, notes: e.target.value })}
                         rows={3}
                         placeholder="Write your interview feedback..."
-                        className="w-full rounded-lg border border-stone-200 bg-white px-3 py-2 text-sm outline-none focus:border-orange-400"
+                        className="w-full rounded-lg border border-stone-200 bg-white px-3 py-2 text-base outline-none focus:border-orange-400"
                       />
                     </div>
                     <div>
@@ -716,11 +716,11 @@ export default function CandidateDetailClient({ candidateId }: { candidateId: st
             <form onSubmit={handleAddNote} className="space-y-2">
               <div className="flex gap-2">
                 <select value={noteType} onChange={(e) => setNoteType(e.target.value)}
-                  className="h-9 rounded-lg border border-stone-200 bg-stone-50 px-2 text-xs outline-none focus:border-orange-400">
+                  className="h-9 rounded-lg border border-stone-200 bg-stone-50 px-2 text-base outline-none focus:border-orange-400">
                   {ACTIVITY_TYPES.map((t) => <option key={t} value={t}>{t}</option>)}
                 </select>
                 <input type="text" value={noteText} onChange={(e) => setNoteText(e.target.value)}
-                  placeholder="Write a note\u2026" className="h-9 flex-1 rounded-lg border border-stone-200 bg-stone-50 px-3 text-sm outline-none focus:border-orange-400" />
+                  placeholder="Write a note\u2026" className="h-9 flex-1 rounded-lg border border-stone-200 bg-stone-50 px-3 text-base outline-none focus:border-orange-400" />
                 <button type="submit" disabled={!noteText.trim() || addingNote}
                   className="h-9 rounded-lg bg-orange-500 px-4 text-sm font-semibold text-white hover:bg-orange-600 disabled:opacity-50">
                   Add
@@ -777,7 +777,7 @@ export default function CandidateDetailClient({ candidateId }: { candidateId: st
                   <select
                     value={uploadLabel}
                     onChange={(e) => setUploadLabel(e.target.value)}
-                    className="w-full rounded-lg border border-stone-200 px-3 py-2 text-sm text-stone-700 focus:border-orange-400 focus:outline-none focus:ring-1 focus:ring-orange-400"
+                    className="w-full rounded-lg border border-stone-200 px-3 py-2 text-base text-stone-700 focus:border-orange-400 focus:outline-none focus:ring-1 focus:ring-orange-400"
                   >
                     {["Resume", "RES5", "M5", "M9", "M9A", "HI", "M8", "M8A", "ComGI", "BCP", "PGI", "Other"].map((l) => (
                       <option key={l} value={l}>{l}</option>

@@ -140,7 +140,7 @@ export default function LoginPage() {
                     setPhone(val);
                   }}
                   placeholder="8123 4567"
-                  className="h-12 flex-1 rounded-xl border border-stone-200 bg-stone-50 px-4 text-sm outline-none transition-colors focus:border-orange-400 focus:ring-2 focus:ring-orange-100"
+                  className="h-12 flex-1 rounded-xl border border-stone-200 bg-stone-50 px-4 text-base outline-none transition-colors focus:border-orange-400 focus:ring-2 focus:ring-orange-100"
                   autoFocus
                 />
               </div>

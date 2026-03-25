@@ -698,7 +698,7 @@ export default function InviteClient() {
               onChange={(e) => setEmail(e.target.value)}
               placeholder="candidate@example.com"
               required
-              className="h-11 w-full rounded-lg border border-stone-200 bg-stone-50 px-3 text-sm outline-none transition-colors focus:border-orange-400 focus:ring-2 focus:ring-orange-100 sm:h-10"
+              className="h-11 w-full rounded-lg border border-stone-200 bg-stone-50 px-3 text-base outline-none transition-colors focus:border-orange-400 focus:ring-2 focus:ring-orange-100 sm:h-10"
             />
           </div>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -715,7 +715,7 @@ export default function InviteClient() {
                 value={candidateName}
                 onChange={(e) => setCandidateName(e.target.value)}
                 placeholder="John Tan"
-                className="h-11 w-full rounded-lg border border-stone-200 bg-stone-50 px-3 text-sm outline-none transition-colors focus:border-orange-400 focus:ring-2 focus:ring-orange-100 sm:h-10"
+                className="h-11 w-full rounded-lg border border-stone-200 bg-stone-50 px-3 text-base outline-none transition-colors focus:border-orange-400 focus:ring-2 focus:ring-orange-100 sm:h-10"
               />
             </div>
             <div>
@@ -731,7 +731,7 @@ export default function InviteClient() {
                 value={position}
                 onChange={(e) => setPosition(e.target.value)}
                 placeholder="Sales Executive"
-                className="h-11 w-full rounded-lg border border-stone-200 bg-stone-50 px-3 text-sm outline-none transition-colors focus:border-orange-400 focus:ring-2 focus:ring-orange-100 sm:h-10"
+                className="h-11 w-full rounded-lg border border-stone-200 bg-stone-50 px-3 text-base outline-none transition-colors focus:border-orange-400 focus:ring-2 focus:ring-orange-100 sm:h-10"
               />
             </div>
           </div>
@@ -750,7 +750,7 @@ export default function InviteClient() {
                 value={selectedManagerId}
                 onChange={(e) => setSelectedManagerId(e.target.value)}
                 required={staffRole === "pa"}
-                className="h-11 w-full rounded-lg border border-stone-200 bg-stone-50 px-3 text-sm outline-none transition-colors focus:border-orange-400 focus:ring-2 focus:ring-orange-100 sm:h-10"
+                className="h-11 w-full rounded-lg border border-stone-200 bg-stone-50 px-3 text-base outline-none transition-colors focus:border-orange-400 focus:ring-2 focus:ring-orange-100 sm:h-10"
               >
                 <option value="">{staffRole === "pa" ? "Select a manager..." : "Myself (default)"}</option>
                 {assignableManagers.map((m) => (
@@ -805,7 +805,7 @@ export default function InviteClient() {
                 <select
                   value={uploadLabel}
                   onChange={(e) => setUploadLabel(e.target.value)}
-                  className="h-10 rounded-lg border border-stone-200 bg-white px-3 text-sm outline-none focus:border-orange-400 focus:ring-2 focus:ring-orange-100"
+                  className="h-10 rounded-lg border border-stone-200 bg-white px-3 text-base outline-none focus:border-orange-400 focus:ring-2 focus:ring-orange-100"
                 >
                   {DOCUMENT_LABELS.map((l) => (
                     <option key={l} value={l}>{l}</option>
@@ -1023,7 +1023,7 @@ export default function InviteClient() {
                 }
               }}
               placeholder={confirmDialog.phrase}
-              className="mt-2 h-10 w-full rounded-lg border border-stone-200 bg-stone-50 px-3 text-sm outline-none transition-colors focus:border-orange-400 focus:ring-2 focus:ring-orange-100"
+              className="mt-2 h-10 w-full rounded-lg border border-stone-200 bg-stone-50 px-3 text-base outline-none transition-colors focus:border-orange-400 focus:ring-2 focus:ring-orange-100"
             />
             <div className="mt-4 flex items-center justify-end gap-2">
               <button

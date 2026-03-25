@@ -254,7 +254,7 @@ export default function DiscQuiz({ userId, initialResponses, initialEmail }: Dis
               type="email"
               value={resultsEmail}
               onChange={(e) => setResultsEmail(e.target.value)}
-              className="h-12 w-full rounded-xl border border-stone-200 bg-white px-4 text-sm outline-none transition-colors focus:border-orange-400 focus:ring-2 focus:ring-orange-100"
+              className="h-12 w-full rounded-xl border border-stone-200 bg-white px-4 text-base outline-none transition-colors focus:border-orange-400 focus:ring-2 focus:ring-orange-100"
               placeholder="you@example.com"
             />
             <p className="mt-1.5 text-xs italic text-stone-400">

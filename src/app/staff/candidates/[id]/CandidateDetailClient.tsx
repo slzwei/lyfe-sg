@@ -326,14 +326,6 @@ export default function CandidateDetailClient({ candidateId }: { candidateId: st
           </div>
         </div>
         <div className="flex items-center gap-2">
-          {isManagerPlus && (
-            <button
-              onClick={handleOpenReassign}
-              className="rounded-lg border border-stone-200 px-3 py-1.5 text-sm text-stone-500 hover:bg-stone-100"
-            >
-              Reassign
-            </button>
-          )}
           <button
             onClick={() => setEditing(!editing)}
             className="rounded-lg border border-stone-200 px-3 py-1.5 text-sm text-stone-500 hover:bg-stone-100"
@@ -342,37 +334,6 @@ export default function CandidateDetailClient({ candidateId }: { candidateId: st
           </button>
         </div>
       </div>
-
-      {/* Reassign panel */}
-      {showReassign && (
-        <div className="rounded-2xl border border-orange-200 bg-orange-50 p-5">
-          <div className="flex items-center justify-between">
-            <h3 className="text-sm font-semibold text-stone-700">Reassign Candidate</h3>
-            <button onClick={() => setShowReassign(false)} className="text-xs text-stone-400 hover:text-stone-600">Cancel</button>
-          </div>
-          <div className="mt-3 flex items-center gap-3">
-            <select
-              value={reassignTarget}
-              onChange={(e) => setReassignTarget(e.target.value)}
-              className="h-9 flex-1 rounded-lg border border-stone-200 bg-white px-3 text-sm outline-none focus:border-orange-400"
-            >
-              <option value="">Select a manager...</option>
-              {reassignManagers.map((m) => (
-                <option key={m.id} value={m.id}>
-                  {m.full_name} ({m.role})
-                </option>
-              ))}
-            </select>
-            <button
-              onClick={handleReassign}
-              disabled={!reassignTarget || reassigning}
-              className="rounded-lg bg-orange-500 px-4 py-1.5 text-sm font-semibold text-white hover:bg-orange-600 disabled:opacity-50"
-            >
-              {reassigning ? "Reassigning..." : "Confirm"}
-            </button>
-          </div>
-        </div>
-      )}
 
       {/* Edit form */}
       {editing && (
@@ -408,10 +369,6 @@ export default function CandidateDetailClient({ candidateId }: { candidateId: st
         <div className="rounded-xl border border-stone-200 bg-white p-4">
           <div className="text-xs text-stone-400">Position</div>
           <div className="mt-1 text-sm font-medium text-stone-700">{profile?.position_applied || "—"}</div>
-        </div>
-        <div className="rounded-xl border border-stone-200 bg-white p-4">
-          <div className="text-xs text-stone-400">Assigned Manager</div>
-          <div className="mt-1 text-sm font-medium text-stone-700">{candidate.assigned_manager_name || "—"}</div>
         </div>
         <div className="rounded-xl border border-stone-200 bg-white p-4">
           <div className="text-xs text-stone-400">Application</div>

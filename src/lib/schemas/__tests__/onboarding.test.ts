@@ -61,27 +61,10 @@ describe("step1Schema", () => {
 });
 
 describe("step2Schema", () => {
-  it("requires emergency contact fields", () => {
-    const result = step2Schema.safeParse({
-      emergency_name: "",
-      emergency_relationship: "",
-      emergency_contact: "",
-    });
-    expect(result.success).toBe(false);
-    if (!result.success) {
-      const paths = result.error.issues.map((i) => i.path.join("."));
-      expect(paths).toContain("emergency_name");
-      expect(paths).toContain("emergency_relationship");
-    }
-  });
-
-  it("accepts valid emergency contact without NS fields for non-SG male", () => {
+  it("accepts empty emergency contact fields (optional)", () => {
     const result = step2Schema.safeParse({
       nationality: "Malaysian",
       gender: "Male",
-      emergency_name: "John Tan",
-      emergency_relationship: "Father",
-      emergency_contact: "+6581234567",
     });
     expect(result.success).toBe(true);
   });

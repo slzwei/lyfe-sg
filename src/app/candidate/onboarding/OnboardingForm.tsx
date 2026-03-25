@@ -22,7 +22,7 @@ import { broadcastProgress } from "@/lib/supabase/progress-broadcast";
 
 const STEP_LABELS = [
   "Personal",
-  "NS & Emergency",
+  "National Service",
   "Education",
   "Skills",
   "Employment",

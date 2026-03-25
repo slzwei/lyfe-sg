@@ -43,12 +43,9 @@ export const step2Schema = z
     ns_service_status: z.string().optional(),
     ns_status: z.string().optional(),
     ns_exemption_reason: z.string().optional(),
-    emergency_name: z.string().min(1, "Required"),
-    emergency_relationship: z.string().min(1, "Required"),
-    emergency_contact: z.string().min(1, "Required").regex(
-      /^\+?\d{8,15}$/,
-      "Must be a valid phone number (8-15 digits, optional + prefix)"
-    ),
+    emergency_name: z.string().optional(),
+    emergency_relationship: z.string().optional(),
+    emergency_contact: z.string().optional(),
   })
   .superRefine((data, ctx) => {
     const isSGMale =

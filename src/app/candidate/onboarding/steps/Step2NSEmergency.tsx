@@ -116,53 +116,12 @@ export default function Step2NSEmergency({
         </div>
       )}
 
-      {/* Emergency Contact */}
-      <div className="space-y-4">
-        <h2 className="text-lg font-semibold text-stone-800">
-          Emergency Contact / Next-of-Kin
-        </h2>
-
-        <div className="grid gap-4 sm:grid-cols-3">
-          <div>
-            <label className={LABEL_CLASS}>Name *</label>
-            <input
-              className={INPUT_CLASS + ec("emergency_name")}
-              value={v("emergency_name")}
-              onChange={(e) => onChange("emergency_name", e.target.value)}
-            />
-            <FieldError error={errors.emergency_name} />
-          </div>
-          <div>
-            <label className={LABEL_CLASS}>Relationship *</label>
-            <select
-              className={SELECT_CLASS + ec("emergency_relationship")}
-              value={v("emergency_relationship")}
-              onChange={(e) =>
-                onChange("emergency_relationship", e.target.value)
-              }
-            >
-              <option value="">Select</option>
-              <option value="Father">Father</option>
-              <option value="Mother">Mother</option>
-              <option value="Spouse">Spouse</option>
-              <option value="Sibling">Sibling</option>
-              <option value="Friend">Friend</option>
-              <option value="Other">Other</option>
-            </select>
-            <FieldError error={errors.emergency_relationship} />
-          </div>
-          <div>
-            <label className={LABEL_CLASS}>Contact Number *</label>
-            <input
-              type="tel"
-              className={INPUT_CLASS + ec("emergency_contact")}
-              value={v("emergency_contact")}
-              onChange={(e) => onChange("emergency_contact", e.target.value)}
-            />
-            <FieldError error={errors.emergency_contact} />
-          </div>
-        </div>
-      </div>
+      {/* Show a hint when no NS section is visible */}
+      {!showNS && (
+        <p className="text-sm text-stone-400">
+          No additional information required for this step. Click Next to continue.
+        </p>
+      )}
     </div>
   );
 }

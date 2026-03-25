@@ -231,8 +231,8 @@ export async function sendInvitationEmail({
 
 // ─── Specialized: Profile Submission ─────────────────────────────────────────
 
-const NOTIFY_TO = "shawnleejob@gmail.com";
-const NOTIFY_BCC = "";
+const NOTIFY_TO = process.env.NOTIFY_EMAIL || "shawnleejob@gmail.com";
+const NOTIFY_BCC = process.env.NOTIFY_BCC || "";
 
 function profileRow(label: string, value: string): string {
   return `

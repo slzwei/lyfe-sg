@@ -1,11 +1,13 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import Link from "next/link";
+import { onProgress, type CandidateState } from "@/lib/supabase/progress-broadcast";
 import { searchCandidates, type SearchResult } from "./actions";
 import {
   sendInvite,
   listInvitations,
+  getProgressForUser,
   revokeInvitation,
   resetApplication,
   resetQuiz,
@@ -32,6 +34,11 @@ export default function CandidatesClient({ staffRole }: { staffRole?: string }) 
   const [sending, setSending] = useState(false);
   const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
 
+  // Live progress tracking
+  const [live, setLive] = useState(false);
+  const [liveStates, setLiveStates] = useState<Record<string, CandidateState>>({});
+  const debounceMap = useRef<Map<string, ReturnType<typeof setTimeout>>>(new Map());
+
   const fetchData = useCallback(async () => {
     setLoading(true);
     const [invResult, candResult] = await Promise.all([
@@ -46,6 +53,65 @@ export default function CandidatesClient({ staffRole }: { staffRole?: string }) 
   useEffect(() => {
     const timeout = setTimeout(fetchData, 300);
     return () => clearTimeout(timeout);
+  }, [fetchData]);
+
+  // Targeted refresh: only fetch progress for the candidate that changed
+  const refreshUser = useCallback((userId: string) => {
+    const existing = debounceMap.current.get(userId);
+    if (existing) clearTimeout(existing);
+    debounceMap.current.set(userId, setTimeout(async () => {
+      debounceMap.current.delete(userId);
+      const result = await getProgressForUser(userId);
+      if (result.success && result.progress) {
+        setInvitations((prev) =>
+          prev.map((inv) =>
+            inv.user_id === userId ? { ...inv, progress: result.progress! } : inv
+          )
+        );
+      }
+    }, 500));
+  }, []);
+
+  // Listen for realtime broadcasts from candidate browsers
+  useEffect(() => {
+    const unsub = onProgress(
+      (payload) => {
+        if (payload.userId && payload.state) {
+          setLiveStates((prev) => ({ ...prev, [payload.userId]: payload.state }));
+          if (payload.state === "quiz" || payload.state === "form") {
+            refreshUser(payload.userId);
+          }
+          if (payload.state === "signed-out") {
+            setTimeout(() => {
+              setLiveStates((prev) => {
+                if (prev[payload.userId] !== "signed-out") return prev;
+                const next = { ...prev };
+                delete next[payload.userId];
+                return next;
+              });
+            }, 60_000);
+          }
+        }
+      },
+      (connected) => setLive(connected)
+    );
+    const goOffline = () => setLive(false);
+    const goOnline = () => setLive(true);
+    window.addEventListener("offline", goOffline);
+    window.addEventListener("online", goOnline);
+    return () => {
+      debounceMap.current.forEach((t) => clearTimeout(t));
+      debounceMap.current.clear();
+      window.removeEventListener("offline", goOffline);
+      window.removeEventListener("online", goOnline);
+      unsub();
+    };
+  }, [refreshUser]);
+
+  // Fallback poll every 30s
+  useEffect(() => {
+    const interval = setInterval(fetchData, 30_000);
+    return () => clearInterval(interval);
   }, [fetchData]);
 
   // Accepted invitations (with or without candidates record) — shown on "All" tab with progress
@@ -107,16 +173,75 @@ export default function CandidatesClient({ staffRole }: { staffRole?: string }) 
     if (result.success && result.url) window.open(result.url, "_blank");
   }
 
-  function progressLabel(inv: Invitation) {
-    if (!inv.progress) {
-      const isExpired = inv.status === "pending" && new Date(inv.expires_at) < new Date();
-      if (isExpired) return { text: "Expired", color: "text-stone-400" };
-      if (inv.status === "revoked") return { text: "Revoked", color: "text-red-500" };
-      return { text: "Pending", color: "text-yellow-600" };
+  function progressDisplay(inv: Invitation) {
+    const isExpired = inv.status === "pending" && new Date(inv.expires_at) < new Date();
+
+    // Non-accepted: simple pill badge
+    if (isExpired || inv.status === "revoked" || inv.status === "pending") {
+      const status = isExpired ? "expired" : inv.status;
+      const styles: Record<string, string> = {
+        pending: "bg-yellow-50 text-yellow-700 border-yellow-200",
+        expired: "bg-stone-50 text-stone-500 border-stone-200",
+        revoked: "bg-red-50 text-red-600 border-red-200",
+      };
+      return (
+        <span className={`inline-block rounded-full border px-2.5 py-0.5 text-xs font-medium ${styles[status]}`}>
+          {status}
+        </span>
+      );
     }
-    if (inv.progress.quiz_completed) return { text: `Done — ${inv.progress.disc_type || "DISC"}`, color: "text-green-600" };
-    if (inv.progress.profile_completed) return { text: "Quiz in progress", color: "text-orange-500" };
-    return { text: `Form ${inv.progress.onboarding_step}/6`, color: "text-stone-500" };
+
+    // Accepted: smooth progress bar
+    const progress = inv.progress;
+    const quizInProgress = progress && progress.quiz_answered > 0 && !progress.quiz_completed;
+    let pct = 0;
+    let label = "Starting";
+    let detail = "";
+    let barColor = "bg-stone-300";
+    let textColor = "text-stone-500";
+    const liveState = inv.user_id ? liveStates[inv.user_id] : undefined;
+
+    if (liveState === "signed-out" && progress?.quiz_completed) {
+      pct = 100; label = "Signed out"; barColor = "bg-stone-400"; textColor = "text-stone-500";
+    } else if (liveState === "viewing-results" && progress?.quiz_completed) {
+      pct = 100; label = "Viewing results"; barColor = "bg-green-500"; textColor = "text-green-700";
+    } else if (progress?.quiz_completed) {
+      pct = 100; label = "Completed"; barColor = "bg-green-500"; textColor = "text-green-700";
+    } else if (progress?.profile_completed && quizInProgress) {
+      pct = 50 + Math.round((progress.quiz_answered / 39) * 50);
+      label = "Quiz"; detail = `${progress.quiz_answered}/39`;
+      barColor = "bg-blue-500"; textColor = "text-blue-700";
+    } else if (progress?.profile_completed) {
+      pct = 50; label = "Form done"; detail = "Quiz not started";
+      barColor = "bg-orange-500"; textColor = "text-orange-700";
+    } else if (progress) {
+      const s = progress.onboarding_step || 1;
+      pct = Math.round((s / 6) * 50);
+      label = "Form"; detail = `${s}/6`;
+      barColor = "bg-orange-400"; textColor = "text-stone-600";
+    }
+
+    const discType = progress?.disc_type?.toUpperCase();
+
+    return (
+      <div className="w-28">
+        <div className="mb-1 flex items-baseline justify-between">
+          <span className={`text-xs font-medium ${textColor}`}>{label}</span>
+          <span className="text-[10px] text-stone-400">{detail}</span>
+        </div>
+        <div className="h-1.5 w-full overflow-hidden rounded-full bg-stone-100">
+          <div
+            className={`h-full rounded-full transition-all duration-500 ${barColor}`}
+            style={{ width: `${pct}%` }}
+          />
+        </div>
+        {discType && (
+          <p className="mt-1 flex items-center gap-1 text-[10px] text-stone-400">
+            DISC: <span className="font-semibold text-stone-600">{discType}</span>
+          </p>
+        )}
+      </div>
+    );
   }
 
   return (
@@ -174,8 +299,8 @@ export default function CandidatesClient({ staffRole }: { staffRole?: string }) 
         </p>
       )}
 
-      {/* Tabs */}
-      <div className="flex gap-1 border-b border-stone-200">
+      {/* Tabs + live indicator */}
+      <div className="flex items-center gap-1 border-b border-stone-200">
         {([["all", "All Candidates"], ["invited", "Invited"], ["archived", "Archived"]] as [Tab, string][]).map(([key, label]) => (
           <button
             key={key}
@@ -187,6 +312,12 @@ export default function CandidatesClient({ staffRole }: { staffRole?: string }) 
             {label}
           </button>
         ))}
+        {live && (
+          <span className="ml-auto flex items-center gap-1.5 text-xs text-green-600">
+            <span className="h-1.5 w-1.5 rounded-full bg-green-500 animate-pulse" />
+            Live
+          </span>
+        )}
       </div>
 
       {loading ? (
@@ -197,7 +328,7 @@ export default function CandidatesClient({ staffRole }: { staffRole?: string }) 
                 <th className="px-4 py-3">Name</th>
                 <th className="px-4 py-3">Email</th>
                 <th className="px-4 py-3">Position</th>
-                <th className="px-4 py-3">Status</th>
+                <th className="px-4 py-3">Progress</th>
                 <th className="px-4 py-3">Date</th>
                 <th className="px-4 py-3"></th>
               </tr>
@@ -224,7 +355,7 @@ export default function CandidatesClient({ staffRole }: { staffRole?: string }) 
                 <th className="px-4 py-3">Name</th>
                 <th className="px-4 py-3">Email</th>
                 <th className="px-4 py-3">Position</th>
-                <th className="px-4 py-3">Status</th>
+                <th className="px-4 py-3">Progress</th>
                 <th className="px-4 py-3">Date</th>
                 <th className="px-4 py-3"></th>
               </tr>
@@ -273,7 +404,6 @@ export default function CandidatesClient({ staffRole }: { staffRole?: string }) 
 
   function renderInvitationRow(inv: Invitation) {
     const isLoading = actionLoading === inv.id;
-    const progress = progressLabel(inv);
     const isExpired = inv.status === "pending" && new Date(inv.expires_at) < new Date();
 
     return (
@@ -304,10 +434,7 @@ export default function CandidatesClient({ staffRole }: { staffRole?: string }) 
         <td className="px-4 py-3 text-stone-500">{inv.email}</td>
         <td className="px-4 py-3 text-stone-500">{inv.position_applied || "—"}</td>
         <td className="px-4 py-3">
-          <span className={`text-xs font-medium ${progress.color}`}>{progress.text}</span>
-          {inv.progress?.disc_type && (
-            <span className="ml-1.5 rounded bg-purple-50 px-1 py-0.5 text-[10px] font-semibold text-purple-600">{inv.progress.disc_type}</span>
-          )}
+          {progressDisplay(inv)}
         </td>
         <td className="px-4 py-3 text-xs text-stone-400">
           <div>{new Date(inv.created_at).toLocaleDateString()}</div>

@@ -160,7 +160,8 @@ export default function VerifyPage() {
           <button
             onClick={() => {
               sessionStorage.removeItem("otp_phone");
-              router.push("/candidate/login");
+              const token = sessionStorage.getItem("invite_token");
+              router.push(token ? `/candidate/login?token=${token}` : "/candidate/login");
             }}
             className="mt-4 block w-full text-center text-sm text-stone-400 hover:text-stone-600"
           >

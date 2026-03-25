@@ -8,6 +8,13 @@ import { uploadCandidatePdf } from "@/lib/supabase/storage";
 import { getAdminClient } from "@/lib/supabase/admin";
 import type { Json } from "@/lib/supabase/database.types";
 
+/** Pad "YYYY-MM" → "YYYY-MM-01" so Postgres date columns accept it. */
+function toDate(v: unknown): string | null {
+  const s = v as string;
+  if (!s) return null;
+  return s.length === 7 ? `${s}-01` : s;
+}
+
 export async function saveProfile(formData: Record<string, unknown>) {
   const supabase = await createClient();
   const {
@@ -37,8 +44,8 @@ export async function saveProfile(formData: Record<string, unknown>) {
     address_postal: formData.address_postal as string,
     contact_number: formData.contact_number as string,
     email: formData.email as string,
-    ns_enlistment_date: (formData.ns_enlistment_date as string) || null,
-    ns_ord_date: (formData.ns_ord_date as string) || null,
+    ns_enlistment_date: toDate(formData.ns_enlistment_date),
+    ns_ord_date: toDate(formData.ns_ord_date),
     ns_service_status: (formData.ns_service_status as string) || null,
     ns_status: (formData.ns_status as string) || null,
     ns_exemption_reason: (formData.ns_exemption_reason as string) || null,
@@ -183,8 +190,8 @@ export async function saveDraft(formData: Record<string, unknown>, currentStep?:
     address_postal: (formData.address_postal as string) || null,
     contact_number: (formData.contact_number as string) || null,
     email: (formData.email as string) || null,
-    ns_enlistment_date: (formData.ns_enlistment_date as string) || null,
-    ns_ord_date: (formData.ns_ord_date as string) || null,
+    ns_enlistment_date: toDate(formData.ns_enlistment_date),
+    ns_ord_date: toDate(formData.ns_ord_date),
     ns_service_status: (formData.ns_service_status as string) || null,
     ns_status: (formData.ns_status as string) || null,
     ns_exemption_reason: (formData.ns_exemption_reason as string) || null,

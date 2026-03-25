@@ -303,7 +303,7 @@ export default function CandidateDetailClient({ candidateId }: { candidateId: st
   if (!candidate) return <div className="py-12 text-center text-sm text-red-500">{error}</div>;
 
   return (
-    <div className="space-y-6">
+    <div className="min-w-0 space-y-6 overflow-x-hidden">
       {/* Header */}
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div className="min-w-0">
@@ -714,13 +714,13 @@ export default function CandidateDetailClient({ candidateId }: { candidateId: st
           <div className="rounded-2xl border border-stone-200 bg-white p-5">
             <h3 className="mb-3 font-semibold text-stone-700">Add Note</h3>
             <form onSubmit={handleAddNote} className="space-y-2">
-              <div className="flex gap-2">
+              <div className="flex flex-wrap gap-2">
                 <select value={noteType} onChange={(e) => setNoteType(e.target.value)}
                   className="h-9 rounded-lg border border-stone-200 bg-stone-50 px-2 text-base outline-none focus:border-orange-400">
                   {ACTIVITY_TYPES.map((t) => <option key={t} value={t}>{t}</option>)}
                 </select>
                 <input type="text" value={noteText} onChange={(e) => setNoteText(e.target.value)}
-                  placeholder="Write a note\u2026" className="h-9 flex-1 rounded-lg border border-stone-200 bg-stone-50 px-3 text-base outline-none focus:border-orange-400" />
+                  placeholder="Write a note\u2026" className="h-9 min-w-0 flex-1 rounded-lg border border-stone-200 bg-stone-50 px-3 text-base outline-none focus:border-orange-400" />
                 <button type="submit" disabled={!noteText.trim() || addingNote}
                   className="h-9 rounded-lg bg-orange-500 px-4 text-sm font-semibold text-white hover:bg-orange-600 disabled:opacity-50">
                   Add

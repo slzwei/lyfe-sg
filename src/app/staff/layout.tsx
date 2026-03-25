@@ -59,7 +59,7 @@ export default async function StaffLayout({
           )}
         </div>
       </header>
-      <main className="mx-auto max-w-3xl px-4 py-6 md:max-w-4xl md:py-8">{children}</main>
+      <main className="mx-auto max-w-3xl overflow-x-hidden px-4 py-6 md:max-w-4xl md:py-8">{children}</main>
     </div>
   );
 }

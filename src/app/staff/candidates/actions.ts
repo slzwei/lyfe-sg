@@ -3,6 +3,7 @@
 import { getAdminClient } from "@/lib/supabase/admin";
 import { sendCandidateAssignedEmail, sendCandidateReassignedEmail } from "@/lib/email";
 import { getStaffUser, requireStaff, type StaffUser } from "../actions";
+import { canScheduleInterviews, type UserRole } from "@/lib/shared-types/roles";
 
 // ─── Team Scoping ─────────────────────────────────────────────────────────────
 
@@ -496,6 +497,69 @@ export async function updateInterviewFeedback(
 
   const { error } = await admin.from("interviews").update(update).eq("id", interviewId);
   if (error) return { success: false, error: error.message };
+  return { success: true };
+}
+
+export async function scheduleInterview(
+  candidateId: string,
+  data: {
+    managerId: string;
+    datetime: string;
+    type: "zoom" | "in_person";
+    location?: string;
+    zoomLink?: string;
+  }
+): Promise<{ success: boolean; error?: string }> {
+  const staff = await getStaffUser();
+  if (!staff) return { success: false, error: "Not authenticated." };
+  if (!canScheduleInterviews(staff.role as UserRole)) {
+    return { success: false, error: "You don't have permission to schedule interviews." };
+  }
+
+  if (!data.datetime || !data.managerId) {
+    return { success: false, error: "Date/time and interviewer are required." };
+  }
+
+  const admin = getAdminClient();
+
+  // Auto-calculate round number
+  const { data: existing } = await admin
+    .from("interviews")
+    .select("round_number")
+    .eq("candidate_id", candidateId)
+    .order("round_number", { ascending: false })
+    .limit(1);
+
+  const roundNumber = (existing?.[0]?.round_number ?? 0) + 1;
+
+  const { error } = await admin.from("interviews").insert({
+    candidate_id: candidateId,
+    manager_id: data.managerId,
+    scheduled_by_id: staff.id,
+    datetime: data.datetime,
+    type: data.type,
+    status: "scheduled",
+    round_number: roundNumber,
+    location: data.location?.trim() || null,
+    zoom_link: data.zoomLink?.trim() || null,
+  });
+
+  if (error) return { success: false, error: error.message };
+
+  // Log activity
+  const { data: manager } = await admin
+    .from("users")
+    .select("full_name")
+    .eq("id", data.managerId)
+    .single();
+
+  await admin.from("candidate_activities").insert({
+    candidate_id: candidateId,
+    user_id: staff.id,
+    type: "interview_scheduled",
+    note: `Round ${roundNumber} ${data.type === "zoom" ? "Zoom" : "in-person"} interview scheduled with ${manager?.full_name || "Unknown"} for ${new Date(data.datetime).toLocaleString()}.`,
+  });
+
   return { success: true };
 }
 

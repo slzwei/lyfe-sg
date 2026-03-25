@@ -305,23 +305,23 @@ export default function CandidateDetailClient({ candidateId }: { candidateId: st
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-start justify-between">
-        <div>
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+        <div className="min-w-0">
           <div className="flex items-center gap-2">
-            <Link href="/staff/candidates" className="text-stone-400 hover:text-stone-600">
+            <Link href="/staff/candidates" className="shrink-0 text-stone-400 hover:text-stone-600">
               <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
               </svg>
             </Link>
-            <h1 className="text-2xl font-bold text-stone-800">{candidate.name}</h1>
+            <h1 className="truncate text-xl font-bold text-stone-800 sm:text-2xl">{candidate.name}</h1>
             {candidate.disc_type && (
-              <span className="rounded bg-purple-50 px-2 py-0.5 text-sm font-semibold text-purple-600">
+              <span className="shrink-0 rounded bg-purple-50 px-2 py-0.5 text-sm font-semibold text-purple-600">
                 {candidate.disc_type}
               </span>
             )}
           </div>
-          <div className="mt-1 flex items-center gap-3 text-sm text-stone-400">
-            {candidate.email && <span>{candidate.email}</span>}
+          <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-0.5 pl-7 text-sm text-stone-400 sm:pl-0">
+            {candidate.email && <span className="truncate">{candidate.email}</span>}
             <span>{candidate.phone}</span>
           </div>
         </div>
@@ -365,7 +365,7 @@ export default function CandidateDetailClient({ candidateId }: { candidateId: st
       )}
 
       {/* Status cards row */}
-      <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-3">
         <div className="rounded-xl border border-stone-200 bg-white p-4">
           <div className="text-xs text-stone-400">Position</div>
           <div className="mt-1 text-sm font-medium text-stone-700">{profile?.position_applied || "—"}</div>
@@ -384,7 +384,7 @@ export default function CandidateDetailClient({ candidateId }: { candidateId: st
           </div>
           <div className="p-5">
             {/* Personal info */}
-            <div className="grid grid-cols-2 gap-x-6 gap-y-3 sm:grid-cols-3 lg:grid-cols-4">
+            <div className="grid grid-cols-1 gap-x-6 gap-y-3 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
               {[
                 ["Salary", profile.expected_salary ? `$${profile.expected_salary}/${profile.salary_period || "month"}` : null],
                 ["Available", profile.date_available ? new Date(profile.date_available).toLocaleDateString() : null],

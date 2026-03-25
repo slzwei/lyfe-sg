@@ -12,21 +12,9 @@ import { canScheduleInterviews, type UserRole } from "@/lib/shared-types/roles";
  * Returns null if the user has global access (admin/director).
  */
 async function getTeamManagerIds(staff: StaffUser): Promise<string[] | null> {
-  if (staff.role === "admin" || staff.role === "director") {
+  // All ATS staff roles see all candidates
+  if (["admin", "director", "manager", "pa"].includes(staff.role)) {
     return null;
-  }
-
-  if (staff.role === "manager") {
-    return [staff.id];
-  }
-
-  if (staff.role === "pa") {
-    const admin = getAdminClient();
-    const { data: assignments } = await admin
-      .from("pa_manager_assignments")
-      .select("manager_id")
-      .eq("pa_id", staff.id);
-    return (assignments || []).map((a) => a.manager_id);
   }
 
   // Other roles (agent): no candidate access

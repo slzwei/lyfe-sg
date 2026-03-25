@@ -1,5 +1,7 @@
 "use client";
 
+import MonthYearPicker from "./MonthYearPicker";
+
 interface Step2Props {
   data: Record<string, unknown>;
   onChange: (field: string, value: unknown) => void;
@@ -48,23 +50,19 @@ export default function Step2NSEmergency({
           <div className="grid gap-4 sm:grid-cols-2">
             <div>
               <label className={LABEL_CLASS}>Enlistment Date</label>
-              <input
-                type="date"
-                className={INPUT_CLASS + ec("ns_enlistment_date")}
+              <MonthYearPicker
                 value={v("ns_enlistment_date")}
-                onChange={(e) =>
-                  onChange("ns_enlistment_date", e.target.value)
-                }
+                onChange={(val) => onChange("ns_enlistment_date", val)}
+                className={"flex items-center " + INPUT_CLASS + ec("ns_enlistment_date")}
               />
               <FieldError error={errors.ns_enlistment_date} />
             </div>
             <div>
               <label className={LABEL_CLASS}>ORD Date</label>
-              <input
-                type="date"
-                className={INPUT_CLASS + ec("ns_ord_date")}
+              <MonthYearPicker
                 value={v("ns_ord_date")}
-                onChange={(e) => onChange("ns_ord_date", e.target.value)}
+                onChange={(val) => onChange("ns_ord_date", val)}
+                className={"flex items-center " + INPUT_CLASS + ec("ns_ord_date")}
               />
               <FieldError error={errors.ns_ord_date} />
             </div>

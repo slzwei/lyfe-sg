@@ -13,9 +13,9 @@ interface Step4Props {
 }
 
 const INPUT_CLASS =
-  "h-10 w-full rounded-xl border border-stone-200 bg-stone-50 px-3 text-sm outline-none transition-colors focus:border-orange-400 focus:ring-2 focus:ring-orange-100";
+  "h-10 w-full max-w-full box-border rounded-xl border border-stone-200 bg-stone-50 px-3 text-sm outline-none transition-colors focus:border-orange-400 focus:ring-2 focus:ring-orange-100";
 const SELECT_CLASS =
-  "h-10 w-full rounded-xl border border-stone-200 bg-stone-50 px-3 text-sm outline-none transition-colors focus:border-orange-400 focus:ring-2 focus:ring-orange-100";
+  "h-10 w-full max-w-full box-border rounded-xl border border-stone-200 bg-stone-50 px-3 text-sm outline-none transition-colors focus:border-orange-400 focus:ring-2 focus:ring-orange-100";
 const LABEL_CLASS = "mb-1 block text-xs font-medium text-stone-600";
 
 const EMPTY_LANG: LanguageRow = { language: "", spoken: "", written: "" };

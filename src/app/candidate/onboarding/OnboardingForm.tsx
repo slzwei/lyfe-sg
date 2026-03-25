@@ -227,7 +227,7 @@ export default function OnboardingForm({ userId, initialData, userPhone }: Onboa
         labels={STEP_LABELS}
       />
 
-      <div className="rounded-3xl border border-stone-200 bg-white p-6 sm:p-8">
+      <div className="overflow-hidden rounded-3xl border border-stone-200 bg-white p-6 sm:p-8">
         {renderStep()}
 
         {errors._form && (

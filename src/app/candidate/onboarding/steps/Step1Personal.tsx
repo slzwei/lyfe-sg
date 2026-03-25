@@ -11,7 +11,7 @@ interface Step1Props {
 const SELECT_CLASS =
   "h-12 w-full rounded-xl border border-stone-200 bg-stone-50 px-4 text-sm outline-none transition-colors focus:border-orange-400 focus:ring-2 focus:ring-orange-100";
 const INPUT_CLASS =
-  "h-12 w-full rounded-xl border border-stone-200 bg-stone-50 px-4 text-sm outline-none transition-colors focus:border-orange-400 focus:ring-2 focus:ring-orange-100";
+  "h-12 w-full max-w-full box-border rounded-xl border border-stone-200 bg-stone-50 px-4 text-sm outline-none transition-colors focus:border-orange-400 focus:ring-2 focus:ring-orange-100";
 const READONLY_CLASS =
   "h-12 w-full rounded-xl border border-stone-100 bg-stone-100 px-4 text-sm text-stone-500 outline-none cursor-not-allowed";
 const LABEL_CLASS = "mb-1.5 block text-sm font-medium text-stone-700";

@@ -719,9 +719,9 @@ export default function CandidateDetailClient({ candidateId }: { candidateId: st
         ) : null}
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-3">
+      <div className="grid min-w-0 gap-6 lg:grid-cols-3">
         {/* Activity timeline (2/3) */}
-        <div className="lg:col-span-2 space-y-4">
+        <div className="min-w-0 lg:col-span-2 space-y-4">
           {/* Add note */}
           <div className="rounded-2xl border border-stone-200 bg-white p-5">
             <h3 className="mb-3 font-semibold text-stone-700">Add Note</h3>
@@ -769,7 +769,7 @@ export default function CandidateDetailClient({ candidateId }: { candidateId: st
         </div>
 
         {/* Documents sidebar (1/3) */}
-        <div className="space-y-4">
+        <div className="min-w-0 space-y-4">
           <div className="rounded-2xl border border-stone-200 bg-white">
             <div className="flex items-center justify-between border-b border-stone-100 px-5 py-3">
               <h3 className="font-semibold text-stone-700">Documents</h3>
@@ -864,10 +864,10 @@ export default function CandidateDetailClient({ candidateId }: { candidateId: st
                     <button
                       type="button"
                       onClick={() => handleDownloadDoc(d.file_url)}
-                      className="flex-1 text-left"
+                      className="min-w-0 flex-1 text-left"
                     >
                       <div className="text-sm font-medium text-stone-700">{d.label}</div>
-                      <div className="text-xs text-stone-400">{d.file_name}</div>
+                      <div className="truncate text-xs text-stone-400">{d.file_name}</div>
                     </button>
                     <div className="flex items-center gap-2">
                       <button

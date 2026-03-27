@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useEffect, useCallback, useRef } from "react";
-import { onProgress, type CandidateState } from "@/lib/supabase/progress-broadcast";
+import { useRealtimeProgress } from "../hooks/useRealtimeProgress";
+import { ProgressDisplay } from "../components/ProgressDisplay";
 import {
   sendInvite,
   listInvitations,
@@ -49,9 +50,6 @@ export default function InviteClient() {
   const [uploading, setUploading] = useState(false);
   const [uploadLabel, setUploadLabel] = useState<string>("Resume");
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [live, setLive] = useState(false);
-  const [liveStates, setLiveStates] = useState<Record<string, CandidateState>>({});
-  const debounceMap = useRef<Map<string, ReturnType<typeof setTimeout>>>(new Map());
   const [staffRole, setStaffRole] = useState<string>("");
   const [assignableManagers, setAssignableManagers] = useState<AssignableManager[]>([]);
   const [selectedManagerId, setSelectedManagerId] = useState<string>("");
@@ -83,64 +81,18 @@ export default function InviteClient() {
     });
   }, [fetchInvitations]);
 
-  // Targeted refresh: only fetch progress for the candidate that changed
-  const refreshUser = useCallback((userId: string) => {
-    const existing = debounceMap.current.get(userId);
-    if (existing) clearTimeout(existing);
-
-    debounceMap.current.set(userId, setTimeout(async () => {
-      debounceMap.current.delete(userId);
-      const result = await getProgressForUser(userId);
-      if (result.success && result.progress) {
-        setInvitations((prev) =>
-          prev.map((inv) =>
-            inv.user_id === userId ? { ...inv, progress: result.progress! } : inv
-          )
-        );
-      }
-    }, 500));
+  // Realtime progress tracking via shared hook
+  const handleRealtimeRefresh = useCallback(async (userId: string) => {
+    const result = await getProgressForUser(userId);
+    if (result.success && result.progress) {
+      setInvitations((prev) =>
+        prev.map((inv) =>
+          inv.user_id === userId ? { ...inv, progress: result.progress! } : inv
+        )
+      );
+    }
   }, []);
-
-  // Listen for realtime broadcasts from candidate browsers
-  useEffect(() => {
-    const unsub = onProgress(
-      (payload) => {
-        if (payload.userId && payload.state) {
-          setLiveStates((prev) => ({ ...prev, [payload.userId]: payload.state }));
-          // Only fetch from DB for states that change data
-          if (payload.state === "quiz" || payload.state === "form") {
-            refreshUser(payload.userId);
-          }
-          // Auto-clear "signed-out" to "completed" after 1 minute
-          if (payload.state === "signed-out") {
-            setTimeout(() => {
-              setLiveStates((prev) => {
-                if (prev[payload.userId] !== "signed-out") return prev;
-                const next = { ...prev };
-                delete next[payload.userId];
-                return next;
-              });
-            }, 60_000);
-          }
-        }
-      },
-      (connected) => setLive(connected)
-    );
-
-    // Browser knows immediately when network drops
-    const goOffline = () => setLive(false);
-    const goOnline = () => setLive(true);
-    window.addEventListener("offline", goOffline);
-    window.addEventListener("online", goOnline);
-
-    return () => {
-      debounceMap.current.forEach((t) => clearTimeout(t));
-      debounceMap.current.clear();
-      window.removeEventListener("offline", goOffline);
-      window.removeEventListener("online", goOnline);
-      unsub();
-    };
-  }, [refreshUser]);
+  const { live, liveStates } = useRealtimeProgress({ onRefresh: handleRealtimeRefresh });
 
   // Fallback poll every 30s in case broadcast is missed
   useEffect(() => {
@@ -403,110 +355,15 @@ export default function InviteClient() {
     return actions;
   }
 
-  // ─── Progress display ───────────────────────────────────────────────────────
+  // ─── Progress display (delegated to shared component) ──────────────────────
 
   function progressDisplay(inv: Invitation) {
-    const isExpired =
-      inv.status === "pending" && new Date(inv.expires_at) < new Date();
-
-    // Non-accepted: simple pill badge
-    if (isExpired || inv.status === "revoked" || inv.status === "pending") {
-      const status = isExpired ? "expired" : inv.status;
-      const styles: Record<string, string> = {
-        pending: "bg-yellow-50 text-yellow-700 border-yellow-200",
-        expired: "bg-stone-50 text-stone-500 border-stone-200",
-        revoked: "bg-red-50 text-red-600 border-red-200",
-      };
-      return (
-        <span
-          className={`inline-block rounded-full border px-2.5 py-0.5 text-xs font-medium ${styles[status]}`}
-        >
-          {status}
-        </span>
-      );
-    }
-
-    // Accepted: smooth progress bar
-    const progress = inv.progress;
-    const quizInProgress =
-      progress && progress.quiz_answered > 0 && !progress.quiz_completed;
-
-    // Calculate overall percentage: form = 0–50%, quiz = 50–100%
-    let pct = 0;
-    let label = "Starting";
-    let detail = "";
-    let barColor = "bg-stone-300";
-    let textColor = "text-stone-500";
-
-    // Check for live broadcast state
-    const liveState = inv.user_id ? liveStates[inv.user_id] : undefined;
-
-    if (liveState === "signed-out" && progress?.quiz_completed) {
-      pct = 100;
-      label = "Signed out";
-      barColor = "bg-stone-400";
-      textColor = "text-stone-500";
-    } else if (liveState === "viewing-results" && progress?.quiz_completed) {
-      pct = 100;
-      label = "Viewing results";
-      barColor = "bg-green-500";
-      textColor = "text-green-700";
-    } else if (progress?.quiz_completed) {
-      pct = 100;
-      label = "Completed";
-      barColor = "bg-green-500";
-      textColor = "text-green-700";
-    } else if (progress?.profile_completed && quizInProgress) {
-      pct = 50 + Math.round((progress.quiz_answered / 39) * 50);
-      label = "Quiz";
-      detail = `${progress.quiz_answered}/39`;
-      barColor = "bg-blue-500";
-      textColor = "text-blue-700";
-    } else if (progress?.profile_completed) {
-      pct = 50;
-      label = "Form done";
-      detail = "Quiz not started";
-      barColor = "bg-orange-500";
-      textColor = "text-orange-700";
-    } else if (progress) {
-      const s = progress.onboarding_step || 1;
-      pct = Math.round((s / 6) * 50);
-      label = "Form";
-      detail = `${s}/6`;
-      barColor = "bg-orange-400";
-      textColor = "text-stone-600";
-    }
-
-    const discType = progress?.disc_type?.toUpperCase();
-
     return (
-      <div className="w-28">
-        <div className="mb-1 flex items-baseline justify-between">
-          <span className={`text-xs font-medium ${textColor}`}>{label}</span>
-          <span className="text-[10px] text-stone-400">{detail}</span>
-        </div>
-        <div className="h-1.5 w-full overflow-hidden rounded-full bg-stone-100">
-          <div
-            className={`h-full rounded-full transition-all duration-500 ${barColor}`}
-            style={{ width: `${pct}%` }}
-          />
-        </div>
-        {discType && (
-          <p className="mt-1 flex items-center gap-1 text-[10px] text-stone-400">
-            DISC Result: <span className="font-semibold text-stone-600">{discType}</span>
-            {inv.disc_pdf_path && (
-              <button
-                type="button"
-                onClick={() => handleDownloadPdf(inv.disc_pdf_path!)}
-                title="Download DISC PDF"
-                className="ml-0.5 text-stone-300 transition-colors hover:text-blue-500"
-              >
-                <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
-              </button>
-            )}
-          </p>
-        )}
-      </div>
+      <ProgressDisplay
+        invitation={inv}
+        liveState={inv.user_id ? liveStates[inv.user_id] : undefined}
+        onDownloadDiscPdf={handleDownloadPdf}
+      />
     );
   }
 

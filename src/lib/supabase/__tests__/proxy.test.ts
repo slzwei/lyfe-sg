@@ -90,20 +90,13 @@ describe("Staff route protection", () => {
     expect(response.status).not.toBe(307);
   });
 
-  it("allows legacy cookie fallback for staff routes", async () => {
+  it("ignores staff_session cookie and redirects unauthenticated users", async () => {
     mockGetUser.mockResolvedValue({ data: { user: null } });
     const response = await updateSession(
       makeRequest("/staff/dashboard", { staff_session: "a".repeat(32) })
     );
-    expect(response.status).not.toBe(307);
-  });
-
-  it("rejects short legacy cookies", async () => {
-    mockGetUser.mockResolvedValue({ data: { user: null } });
-    const response = await updateSession(
-      makeRequest("/staff/dashboard", { staff_session: "short" })
-    );
     expect(response.status).toBe(307);
+    expect(response.headers.get("location")).toContain("/staff/login");
   });
 });
 

@@ -10,6 +10,7 @@ export default defineConfig({
       reporter: ["text", "lcov", "json-summary"],
       include: [
         "src/app/staff/actions.ts",
+        "src/app/staff/actions/**/*.ts",
         "src/app/staff/candidates/actions.ts",
         "src/lib/supabase/proxy.ts",
       ],

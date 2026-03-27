@@ -126,9 +126,9 @@ export async function saveQuizProgress(responses: Record<string, number>) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  if (!user) return;
+  if (!user) return { success: false, error: "Not authenticated" };
 
-  await supabase.from("disc_responses").upsert(
+  const { error } = await supabase.from("disc_responses").upsert(
     {
       user_id: user.id,
       responses,
@@ -136,4 +136,11 @@ export async function saveQuizProgress(responses: Record<string, number>) {
     },
     { onConflict: "user_id" }
   );
+
+  if (error) {
+    console.error("[saveQuizProgress] upsert failed:", error);
+    return { success: false, error: "Failed to save progress. Please try again." };
+  }
+
+  return { success: true };
 }

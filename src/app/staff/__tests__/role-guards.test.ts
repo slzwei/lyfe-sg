@@ -216,31 +216,12 @@ describe("STAFF_ROLES hierarchy", () => {
   });
 });
 
-describe("Legacy cookie sessions", () => {
-  it("denies legacy sessions for minRole-gated actions", async () => {
+describe("Legacy cookie sessions removed", () => {
+  it("rejects requests with only a legacy cookie (no Supabase Auth)", async () => {
     mockGetUser.mockResolvedValue({ data: { user: null } });
     mockCookieGet.mockReturnValue({ value: "a".repeat(32) });
-    const result = await requireStaff("manager");
-    expect(result).toBeNull();
-  });
-
-  it("allows legacy sessions for non-minRole actions", async () => {
-    mockGetUser.mockResolvedValue({ data: { user: null } });
-    mockCookieGet.mockReturnValue({ value: "a".repeat(32) });
-
-    // Mock staff_sessions table lookup
-    mockAdminFrom.mockImplementation((table: string) => {
-      if (table === "staff_sessions") {
-        const c = chainMock();
-        (c.limit as ReturnType<typeof vi.fn>).mockResolvedValue({ data: [{ id: "sess-1" }], error: null });
-        return c;
-      }
-      return chainMock();
-    });
-
     const result = await requireStaff();
-    expect(result).not.toBeNull();
-    expect(result?.id).toBe("legacy");
+    expect(result).toBeNull();
   });
 });
 

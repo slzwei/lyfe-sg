@@ -212,7 +212,14 @@ export async function saveDraft(formData: Record<string, unknown>, currentStep?:
     onboarding_step: currentStep || 1,
   };
 
-  await supabase
+  const { error } = await supabase
     .from("candidate_profiles")
     .upsert(draft, { onConflict: "user_id" });
+
+  if (error) {
+    console.error("[saveDraft] upsert failed:", error);
+    return { success: false, error: "Failed to save draft. Please try again." };
+  }
+
+  return { success: true };
 }

@@ -29,9 +29,8 @@ export async function updateSession(request: NextRequest) {
 
   const path = request.nextUrl.pathname;
 
-  // Staff routes — dual auth during transition (Supabase Auth + legacy cookie)
+  // Staff routes — require Supabase Auth with a staff role
   if (path.startsWith("/staff/") && !path.startsWith("/staff/login") && !path.startsWith("/staff/verify")) {
-    // Check Supabase Auth session first (new method)
     const { data: { user } } = await supabase.auth.getUser();
     if (user) {
       const role = user.app_metadata?.role as string | undefined;
@@ -40,13 +39,6 @@ export async function updateSession(request: NextRequest) {
       }
     }
 
-    // Fallback: check old staff_session cookie (transition period)
-    const staffSession = request.cookies.get("staff_session")?.value;
-    if (staffSession && staffSession.length >= 32) {
-      return supabaseResponse;
-    }
-
-    // Neither auth method worked — redirect to login
     const url = request.nextUrl.clone();
     url.pathname = "/staff/login";
     return NextResponse.redirect(url);

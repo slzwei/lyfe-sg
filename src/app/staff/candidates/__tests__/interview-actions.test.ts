@@ -239,11 +239,15 @@ describe("updateInterviewFeedback", () => {
 });
 
 describe("deleteDocument", () => {
-  it("requires manager role — blocks PA", async () => {
+  it("allows PA role to delete documents", async () => {
     mockAuthUser("pa");
+    mockAdminFrom.mockImplementation((table: string) => {
+      if (table === "users") return buildChain({ id: "user-pa", full_name: "PA", email: "pa@t.com", role: "pa" });
+      if (table === "candidate_documents") return buildChain(null, null);
+      return buildChain();
+    });
     const result = await deleteDocument("doc-1");
-    expect(result.success).toBe(false);
-    expect(result.error).toContain("Manager");
+    expect(result.success).toBe(true);
   });
 
   it("succeeds for manager", async () => {

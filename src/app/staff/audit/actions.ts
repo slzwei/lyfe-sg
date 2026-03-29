@@ -3,6 +3,11 @@
 import { getAdminClient } from "@/lib/supabase/admin";
 import { requireStaff } from "../actions";
 
+const RESTORABLE_TABLES = [
+  "candidates", "invitations", "candidate_profiles", "disc_results",
+  "disc_responses", "leads", "lead_activities", "event_attendees", "pa_manager_assignments",
+] as const;
+
 export interface AuditEntry {
   id: number;
   table_name: string;
@@ -126,4 +131,47 @@ export async function getAuditEntries(filters?: AuditFilters): Promise<{
   }));
 
   return { success: true, data: entries };
+}
+
+export async function restoreDeletedEntry(auditId: number): Promise<{
+  success: boolean;
+  error?: string;
+}> {
+  const staff = await requireStaff("admin");
+  if (!staff) return { success: false, error: "Admin access required." };
+
+  const admin = getAdminClient();
+
+  // Fetch the audit entry
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { data: entry, error: fetchErr } = await (admin.from as any)("audit_log")
+    .select("id, table_name, operation, old_data")
+    .eq("id", auditId)
+    .single();
+
+  if (fetchErr || !entry) return { success: false, error: "Audit entry not found." };
+  if (entry.operation !== "DELETE") return { success: false, error: "Only DELETE entries can be restored." };
+  if (!entry.old_data) return { success: false, error: "No data to restore (old_data is empty)." };
+  if (!RESTORABLE_TABLES.includes(entry.table_name)) {
+    return { success: false, error: `Table "${entry.table_name}" is not restorable.` };
+  }
+
+  // Remove auto-generated columns that would conflict on re-insert
+  const row = { ...entry.old_data };
+  delete row.updated_at;
+
+  // Re-insert the deleted row
+  const { error: insertErr } = await admin.from(entry.table_name).insert(row);
+
+  if (insertErr) {
+    if (insertErr.message.includes("duplicate key") || insertErr.message.includes("unique")) {
+      return { success: false, error: "Row already exists (may have been restored already)." };
+    }
+    if (insertErr.message.includes("foreign key") || insertErr.message.includes("violates")) {
+      return { success: false, error: `Cannot restore: a referenced record no longer exists. ${insertErr.message}` };
+    }
+    return { success: false, error: insertErr.message };
+  }
+
+  return { success: true };
 }

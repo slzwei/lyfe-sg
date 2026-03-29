@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { getAuditEntries, type AuditEntry, type AuditFilters } from "./actions";
+import { getAuditEntries, restoreDeletedEntry, type AuditEntry, type AuditFilters } from "./actions";
 
 const AUDITED_TABLES = [
   "candidates", "invitations", "candidate_profiles", "disc_results",
@@ -44,6 +44,8 @@ export default function AuditClient() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [filters, setFilters] = useState<AuditFilters>({});
+  const [restoring, setRestoring] = useState<number | null>(null);
+  const [restoreMsg, setRestoreMsg] = useState<{ id: number; type: "success" | "error"; text: string } | null>(null);
 
   const fetchData = useCallback(async () => {
     setLoading(true);
@@ -61,6 +63,20 @@ export default function AuditClient() {
     const timeout = setTimeout(fetchData, 300);
     return () => clearTimeout(timeout);
   }, [fetchData]);
+
+  async function handleRestore(id: number) {
+    if (!confirm("Restore this deleted record?")) return;
+    setRestoring(id);
+    setRestoreMsg(null);
+    const result = await restoreDeletedEntry(id);
+    if (result.success) {
+      setRestoreMsg({ id, type: "success", text: "Restored" });
+      fetchData();
+    } else {
+      setRestoreMsg({ id, type: "error", text: result.error || "Failed" });
+    }
+    setRestoring(null);
+  }
 
   const clearFilters = () => setFilters({});
   const hasFilters = !!(filters.tableName || filters.operation || filters.dateFrom || filters.dateTo);
@@ -165,6 +181,7 @@ export default function AuditClient() {
                   <th className="px-4 py-3">Action</th>
                   <th className="px-4 py-3">Table</th>
                   <th className="px-4 py-3">Summary</th>
+                  <th className="px-4 py-3"></th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-stone-50">
@@ -182,6 +199,23 @@ export default function AuditClient() {
                     </td>
                     <td className="px-4 py-3 text-xs text-stone-500">{TABLE_LABELS[e.table_name] || e.table_name}</td>
                     <td className="max-w-xs truncate px-4 py-3 text-xs text-stone-600">{e.summary}</td>
+                    <td className="px-4 py-3">
+                      {e.operation === "DELETE" && (
+                        restoreMsg?.id === e.id ? (
+                          <span className={`text-xs ${restoreMsg.type === "success" ? "text-green-600" : "text-red-500"}`}>
+                            {restoreMsg.text}
+                          </span>
+                        ) : (
+                          <button
+                            onClick={() => handleRestore(e.id)}
+                            disabled={restoring === e.id}
+                            className="rounded-lg px-2 py-1 text-xs font-medium text-orange-500 transition-colors hover:bg-orange-50 hover:text-orange-600 disabled:opacity-50"
+                          >
+                            {restoring === e.id ? "Restoring..." : "Restore"}
+                          </button>
+                        )
+                      )}
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -202,10 +236,27 @@ export default function AuditClient() {
                   <span className="shrink-0 text-[10px] text-stone-300">{formatTime(e.created_at)}</span>
                 </div>
                 <p className="mt-2 text-sm text-stone-700">{e.summary}</p>
-                <p className="mt-1 text-xs text-stone-400">
-                  by {actorLabel(e)}
-                  {e.actor_role && <span className="capitalize"> ({e.actor_role})</span>}
-                </p>
+                <div className="mt-1 flex items-center justify-between">
+                  <p className="text-xs text-stone-400">
+                    by {actorLabel(e)}
+                    {e.actor_role && <span className="capitalize"> ({e.actor_role})</span>}
+                  </p>
+                  {e.operation === "DELETE" && (
+                    restoreMsg?.id === e.id ? (
+                      <span className={`text-xs ${restoreMsg.type === "success" ? "text-green-600" : "text-red-500"}`}>
+                        {restoreMsg.text}
+                      </span>
+                    ) : (
+                      <button
+                        onClick={() => handleRestore(e.id)}
+                        disabled={restoring === e.id}
+                        className="rounded-lg px-2 py-1 text-xs font-medium text-orange-500 hover:bg-orange-50"
+                      >
+                        {restoring === e.id ? "Restoring..." : "Restore"}
+                      </button>
+                    )
+                  )}
+                </div>
               </div>
             ))}
           </div>

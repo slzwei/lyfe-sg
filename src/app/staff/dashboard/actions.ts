@@ -24,85 +24,75 @@ export async function getDashboardStats(): Promise<{
   const admin = getAdminClient();
   const oneWeekAgo = new Date(Date.now() - 7 * 86400000).toISOString();
 
-  // All data from invitations (the real candidate list)
-  const [jobsRes, invitationsRes] = await Promise.all([
+  const [jobsRes, candidatesRes, profilesRes, discRes] = await Promise.all([
     admin.from("jobs").select("id, title, status").is("archived_at", null),
-    admin.from("invitations")
-      .select("id, candidate_name, email, status, user_id, created_at, archived_at, candidate_record_id")
+    admin.from("candidates")
+      .select("id, name, email, phone, status, created_at")
       .order("created_at", { ascending: false }),
+    admin.from("candidate_profiles")
+      .select("candidate_id, user_id, completed"),
+    admin.from("disc_results")
+      .select("user_id, disc_type"),
   ]);
 
   const jobs = jobsRes.data || [];
-  const invitations = invitationsRes.data || [];
+  const candidates = candidatesRes.data || [];
+  const profiles = profilesRes.data || [];
+  const discResults = discRes.data || [];
   const openJobs = jobs.filter((j) => j.status === "open").length;
 
-  const active = invitations.filter((inv) => !inv.archived_at);
-  const thisWeek = active.filter((inv) => inv.created_at && inv.created_at >= oneWeekAgo);
+  const thisWeek = candidates.filter((c) => c.created_at && c.created_at >= oneWeekAgo);
 
-  // Get progress for accepted invitations
-  const acceptedUserIds = active
-    .filter((inv) => inv.status === "accepted" && inv.user_id)
-    .map((inv) => inv.user_id!);
+  // Build lookup maps: candidate_id → profile, user_id → disc
+  const profileByCandidateId = new Map(
+    profiles.map((p) => [p.candidate_id, p])
+  );
+  const discByUserId = new Map(
+    discResults.map((r) => [r.user_id, r.disc_type])
+  );
 
+  // Completed = profile completed AND DISC quiz done
   let completedCount = 0;
-  let pendingCount = 0;
   const discTypes = new Map<string, number>();
-  let completedProfileIds = new Set<string>();
-  let discUserIdSet = new Set<string>();
 
-  if (acceptedUserIds.length > 0) {
-    const [profilesRes, discRes] = await Promise.all([
-      admin.from("candidate_profiles")
-        .select("user_id, completed")
-        .in("user_id", acceptedUserIds),
-      admin.from("disc_results")
-        .select("user_id, disc_type")
-        .in("user_id", acceptedUserIds),
-    ]);
-
-    const profiles = profilesRes.data || [];
-    const discResults = discRes.data || [];
-
-    // Completed = both profile submitted AND DISC quiz done
-    completedProfileIds = new Set(
-      profiles.filter((p) => p.completed).map((p) => p.user_id)
-    );
-    discUserIdSet = new Set(discResults.map((r) => r.user_id));
-    completedCount = acceptedUserIds.filter(
-      (uid) => completedProfileIds.has(uid) && discUserIdSet.has(uid)
-    ).length;
-    pendingCount = active.filter((inv) => inv.status === "accepted").length - completedCount;
-
-    for (const r of discResults) {
-      discTypes.set(r.disc_type, (discTypes.get(r.disc_type) || 0) + 1);
-    }
+  for (const c of candidates) {
+    const profile = profileByCandidateId.get(c.id);
+    if (!profile) continue;
+    const hasDisc = discByUserId.has(profile.user_id);
+    if (profile.completed && hasDisc) completedCount++;
   }
 
-  // Pending invitations (not yet accepted)
-  const pendingInvites = active.filter((inv) => inv.status === "pending").length;
-  pendingCount += pendingInvites;
+  // DISC distribution from all results
+  for (const r of discResults) {
+    discTypes.set(r.disc_type, (discTypes.get(r.disc_type) || 0) + 1);
+  }
+
+  const pendingCount = candidates.length - completedCount;
 
   const discTypeDistribution = [...discTypes.entries()]
     .map(([type, count]) => ({ type, count }))
     .sort((a, b) => b.count - a.count);
 
-  // Recent candidates (last 10 active) with meaningful progress labels
-  // Reuse sets already built above (completedProfileIds, discUserIdSet)
-  const recentCandidates = active.slice(0, 10).map((inv) => {
+  // Recent candidates (last 10) with progress labels
+  const recentCandidates = candidates.slice(0, 10).map((c) => {
+    const profile = profileByCandidateId.get(c.id);
+    const hasDisc = profile ? discByUserId.has(profile.user_id) : false;
     let progress: string;
-    if (inv.status === "pending") {
-      progress = "pending";
-    } else if (inv.user_id && completedProfileIds.has(inv.user_id) && discUserIdSet.has(inv.user_id)) {
+    if (profile?.completed && hasDisc) {
       progress = "completed";
-    } else {
+    } else if (profile) {
       progress = "in progress";
+    } else {
+      progress = c.status;
     }
+    const discType = profile ? discByUserId.get(profile.user_id) : undefined;
     return {
-      id: inv.candidate_record_id || null,
-      name: inv.candidate_name || "—",
-      email: inv.email,
+      id: c.id,
+      name: c.name || "—",
+      email: c.email || "",
       status: progress,
-      created_at: inv.created_at || "",
+      disc_type: discType,
+      created_at: c.created_at || "",
     };
   });
 
@@ -110,7 +100,7 @@ export async function getDashboardStats(): Promise<{
     success: true,
     stats: {
       openJobs,
-      totalCandidates: active.length,
+      totalCandidates: candidates.length,
       candidatesThisWeek: thisWeek.length,
       completedCount,
       pendingCount,

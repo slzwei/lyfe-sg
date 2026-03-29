@@ -58,13 +58,7 @@ export default function CandidatesClient({ staffRole }: { staffRole?: string }) 
       );
     }
   }, []);
-  const { live, liveStates } = useRealtimeProgress({ onRefresh: handleRealtimeRefresh });
-
-  // Fallback poll every 30s
-  useEffect(() => {
-    const interval = setInterval(fetchData, 30_000);
-    return () => clearInterval(interval);
-  }, [fetchData]);
+  const { live, liveStates } = useRealtimeProgress({ onRefresh: handleRealtimeRefresh, onListChanged: fetchData });
 
   // Accepted invitations (with or without candidates record) — shown on "All" tab with progress
   const acceptedInvitations = invitations.filter((inv) => !inv.archived_at && inv.status === "accepted");

@@ -1,22 +1,29 @@
 "use client";
 
 import { useState } from "react";
-import { addActivity, type Activity } from "../../actions";
+import { addActivity, deleteActivity, type Activity } from "../../actions";
 
 const ACTIVITY_TYPES = ["note", "call", "email", "meeting", "status_change", "follow_up"] as const;
 
 export default function ActivityTimeline({
   activities,
   candidateId,
+  staffId,
+  staffRole,
   onRefetch,
 }: {
   activities: Activity[];
   candidateId: string;
+  staffId: string;
+  staffRole: string;
   onRefetch: () => void;
 }) {
   const [noteText, setNoteText] = useState("");
   const [noteType, setNoteType] = useState<string>("note");
   const [addingNote, setAddingNote] = useState(false);
+  const [deleting, setDeleting] = useState<string | null>(null);
+
+  const isAdmin = staffRole === "admin";
 
   async function handleAddNote(e: React.FormEvent) {
     e.preventDefault();
@@ -26,6 +33,13 @@ export default function ActivityTimeline({
     setNoteText("");
     onRefetch();
     setAddingNote(false);
+  }
+
+  async function handleDelete(activityId: string) {
+    setDeleting(activityId);
+    await deleteActivity(activityId);
+    onRefetch();
+    setDeleting(null);
   }
 
   return (
@@ -58,19 +72,34 @@ export default function ActivityTimeline({
           <div className="px-5 py-8 text-center text-sm text-stone-400">No activity yet.</div>
         ) : (
           <div className="divide-y divide-stone-50">
-            {activities.map((a) => (
-              <div key={a.id} className="px-5 py-3">
-                <div className="flex items-center gap-2">
-                  <span className="rounded bg-stone-100 px-1.5 py-0.5 text-[10px] font-medium text-stone-500">{a.type}</span>
-                  <span className="text-xs text-stone-400">{a.user_name}</span>
-                  <span className="text-xs text-stone-300">
-                    {a.created_at ? new Date(a.created_at).toLocaleString() : ""}
-                  </span>
+            {activities.map((a) => {
+              const canDelete = isAdmin || a.user_id === staffId;
+              return (
+                <div key={a.id} className="group px-5 py-3">
+                  <div className="flex items-center gap-2">
+                    <span className="rounded bg-stone-100 px-1.5 py-0.5 text-[10px] font-medium text-stone-500">{a.type}</span>
+                    <span className="text-xs text-stone-400">{a.user_name}</span>
+                    <span className="text-xs text-stone-300">
+                      {a.created_at ? new Date(a.created_at).toLocaleString() : ""}
+                    </span>
+                    {canDelete && (
+                      <button
+                        onClick={() => handleDelete(a.id)}
+                        disabled={deleting === a.id}
+                        title="Delete"
+                        className="ml-auto rounded p-1 text-stone-300 opacity-0 transition-opacity group-hover:opacity-100 hover:bg-red-50 hover:text-red-500 disabled:opacity-50"
+                      >
+                        <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                        </svg>
+                      </button>
+                    )}
+                  </div>
+                  {a.note && <p className="mt-1 text-sm text-stone-600">{a.note}</p>}
+                  {a.outcome && <p className="mt-0.5 text-xs text-stone-400">Outcome: {a.outcome}</p>}
                 </div>
-                {a.note && <p className="mt-1 text-sm text-stone-600">{a.note}</p>}
-                {a.outcome && <p className="mt-0.5 text-xs text-stone-400">Outcome: {a.outcome}</p>}
-              </div>
-            ))}
+              );
+            })}
           </div>
         )}
       </div>

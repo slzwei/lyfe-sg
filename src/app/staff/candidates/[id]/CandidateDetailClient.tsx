@@ -26,6 +26,7 @@ export default function CandidateDetailClient({ candidateId }: { candidateId: st
     profile,
     interviews,
     staffRole,
+    staffId,
     loading,
     error,
     editForm,
@@ -237,6 +238,8 @@ export default function CandidateDetailClient({ candidateId }: { candidateId: st
         <ActivityTimeline
           activities={activities}
           candidateId={candidateId}
+          staffId={staffId}
+          staffRole={staffRole}
           onRefetch={refetch}
         />
 

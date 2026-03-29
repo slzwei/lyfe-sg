@@ -123,6 +123,7 @@ export async function getCandidate(candidateId: string): Promise<{
   activities?: Activity[];
   documents?: CandidateDocument[];
   staffRole?: string;
+  staffId?: string;
   error?: string;
 }> {
   const staff = await getStaffUser();
@@ -239,6 +240,7 @@ export async function getCandidate(candidateId: string): Promise<{
     })),
     documents: (documentsRes.data || []) as CandidateDocument[],
     staffRole: staff.role,
+    staffId: staff.id,
   };
 }
 
@@ -260,6 +262,30 @@ export async function addActivity(
     outcome: data.outcome || null,
   });
 
+  if (error) return { success: false, error: error.message };
+  return { success: true };
+}
+
+export async function deleteActivity(activityId: string): Promise<{
+  success: boolean;
+  error?: string;
+}> {
+  const staff = await getStaffUser();
+  if (!staff) return { success: false, error: "Not authenticated." };
+
+  const admin = getAdminClient();
+
+  // Only the author or an admin can delete
+  if (staff.role !== "admin") {
+    const { data: activity } = await admin.from("candidate_activities")
+      .select("user_id")
+      .eq("id", activityId)
+      .single();
+    if (!activity) return { success: false, error: "Activity not found." };
+    if (activity.user_id !== staff.id) return { success: false, error: "You can only delete your own notes." };
+  }
+
+  const { error } = await admin.from("candidate_activities").delete().eq("id", activityId);
   if (error) return { success: false, error: error.message };
   return { success: true };
 }

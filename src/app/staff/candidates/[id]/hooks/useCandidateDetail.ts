@@ -18,6 +18,7 @@ export function useCandidateDetail(candidateId: string) {
   const [profile, setProfile] = useState<CandidateProfile | null>(null);
   const [interviews, setInterviews] = useState<InterviewRecord[]>([]);
   const [staffRole, setStaffRole] = useState<string>("");
+  const [staffId, setStaffId] = useState<string>("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [editForm, setEditForm] = useState({ name: "", email: "", phone: "", notes: "" });
@@ -36,6 +37,7 @@ export function useCandidateDetail(candidateId: string) {
       setDocuments(candidateResult.documents || []);
       setProfile(candidateResult.profile || null);
       setStaffRole(candidateResult.staffRole || "");
+      setStaffId(candidateResult.staffId || "");
       setEditForm({
         name: candidateResult.candidate.name,
         email: candidateResult.candidate.email || "",
@@ -61,6 +63,7 @@ export function useCandidateDetail(candidateId: string) {
     profile,
     interviews,
     staffRole,
+    staffId,
     loading,
     error,
     editForm,

@@ -11,7 +11,7 @@ const NAV_ITEMS = [
   { href: "/staff/jobs", label: "Job Postings" },
 ];
 
-export default function MobileNav({ name, role }: { name: string; role: string }) {
+export default function MobileNav({ name, role, isAdmin }: { name: string; role: string; isAdmin?: boolean }) {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
 
@@ -57,6 +57,19 @@ export default function MobileNav({ name, role }: { name: string; role: string }
                   {item.label}
                 </Link>
               ))}
+              {isAdmin && (
+                <Link
+                  href="/staff/audit"
+                  onClick={() => setOpen(false)}
+                  className={`block rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${
+                    pathname?.startsWith("/staff/audit")
+                      ? "bg-orange-50 text-orange-600"
+                      : "text-stone-600 hover:bg-stone-50"
+                  }`}
+                >
+                  Audit Log
+                </Link>
+              )}
             </nav>
             <div className="mt-3 border-t border-stone-100 pt-3">
               <button

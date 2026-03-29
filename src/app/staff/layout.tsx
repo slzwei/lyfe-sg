@@ -44,6 +44,11 @@ export default async function StaffLayout({
                 <Link href="/staff/jobs" className="rounded-lg px-3 py-1.5 text-sm text-stone-500 transition-colors hover:bg-stone-100 hover:text-stone-700">
                   Job Postings
                 </Link>
+                {isAdmin && (
+                  <Link href="/staff/audit" className="rounded-lg px-3 py-1.5 text-sm text-stone-500 transition-colors hover:bg-stone-100 hover:text-stone-700">
+                    Audit Log
+                  </Link>
+                )}
                 <div className="text-right">
                   <div className="text-sm font-medium text-stone-700">{name}</div>
                   <div className="text-xs capitalize text-stone-400">{role}</div>
@@ -51,7 +56,7 @@ export default async function StaffLayout({
                 <LogoutButton />
               </div>
               {/* Mobile nav */}
-              <MobileNav name={name || ""} role={role || ""} />
+              <MobileNav name={name || ""} role={role || ""} isAdmin={isAdmin} />
             </>
           )}
           {!isAuthenticated && (

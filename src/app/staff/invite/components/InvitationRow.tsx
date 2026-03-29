@@ -20,7 +20,7 @@ export function InvitationRow({ invitation: inv, actions, actionLoading, progres
     >
       <td className="py-2.5 pr-4 font-medium text-stone-800">
         <span className="flex items-center gap-1.5">
-          {inv.candidate_name || "\u2014"}
+          {inv.candidate_name || "—"}
           {inv.profile_pdf_path && (
             <button
               type="button"
@@ -45,7 +45,7 @@ export function InvitationRow({ invitation: inv, actions, actionLoading, progres
         </span>
       </td>
       <td className="py-2.5 pr-4">
-        {inv.position_applied || "\u2014"}
+        {inv.position_applied || "—"}
       </td>
       <td className="py-2.5 pr-4">{progressDisplay}</td>
       <td className="py-2.5 pr-4 text-stone-400">

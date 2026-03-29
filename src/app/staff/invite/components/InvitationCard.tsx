@@ -22,7 +22,7 @@ export function InvitationCard({ invitation: inv, actions, actionLoading, progre
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0 flex-1">
           <p className="flex items-center gap-1.5 truncate font-medium text-stone-800">
-            {inv.candidate_name || "\u2014"}
+            {inv.candidate_name || "—"}
             {inv.profile_pdf_path && (
               <button
                 type="button"
@@ -49,7 +49,7 @@ export function InvitationCard({ invitation: inv, actions, actionLoading, progre
 
       {/* Meta: Position + Date */}
       <p className="mt-2 text-xs text-stone-400">
-        {inv.position_applied || "\u2014"} &middot; {new Date(inv.created_at).toLocaleDateString()}
+        {inv.position_applied || "—"} &middot; {new Date(inv.created_at).toLocaleDateString()}
       </p>
 
       {/* Actions */}

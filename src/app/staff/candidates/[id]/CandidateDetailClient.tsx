@@ -212,7 +212,7 @@ export default function CandidateDetailClient({ candidateId }: { candidateId: st
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-3">
         <div className="rounded-xl border border-stone-200 bg-white p-4">
           <div className="text-xs text-stone-400">Position</div>
-          <div className="mt-1 text-sm font-medium text-stone-700">{profile?.position_applied || "\u2014"}</div>
+          <div className="mt-1 text-sm font-medium text-stone-700">{profile?.position_applied || "—"}</div>
         </div>
         <div className="rounded-xl border border-stone-200 bg-white p-4">
           <div className="text-xs text-stone-400">Application</div>

@@ -40,7 +40,7 @@ export default function ActivityTimeline({
               {ACTIVITY_TYPES.map((t) => <option key={t} value={t}>{t}</option>)}
             </select>
             <input type="text" value={noteText} onChange={(e) => setNoteText(e.target.value)}
-              placeholder="Write a note\u2026" className="h-9 min-w-0 flex-1 rounded-lg border border-stone-200 bg-stone-50 px-3 text-base outline-none focus:border-orange-400" />
+              placeholder="Write a note…" className="h-9 min-w-0 flex-1 rounded-lg border border-stone-200 bg-stone-50 px-3 text-base outline-none focus:border-orange-400" />
             <button type="submit" disabled={!noteText.trim() || addingNote}
               className="h-9 rounded-lg bg-orange-500 px-4 text-sm font-semibold text-white hover:bg-orange-600 disabled:opacity-50">
               Add

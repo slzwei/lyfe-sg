@@ -155,7 +155,7 @@ export default function CandidatesClient({ staffRole }: { staffRole?: string }) 
           type="text"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          placeholder="Search candidates\u2026"
+          placeholder="Search candidates…"
           className="h-10 flex-1 rounded-xl border border-stone-200 bg-white px-4 text-base outline-none focus:border-orange-400 focus:ring-2 focus:ring-orange-100"
         />
         <button

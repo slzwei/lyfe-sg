@@ -46,7 +46,7 @@ export default function ProfileDetails({ profile }: { profile: CandidateProfile 
             <div className="mt-0.5 text-sm text-stone-700">
               {profile.emergency_name}
               {profile.emergency_relationship && ` (${profile.emergency_relationship})`}
-              {profile.emergency_contact && ` \u2014 ${profile.emergency_contact}`}
+              {profile.emergency_contact && ` — ${profile.emergency_contact}`}
             </div>
           </div>
         )}
@@ -72,7 +72,7 @@ export default function ProfileDetails({ profile }: { profile: CandidateProfile 
                 <span key={i} className="rounded-md border border-stone-200 bg-stone-50 px-2 py-0.5 text-xs text-stone-600">
                   {lang.language}
                   {(lang.spoken || lang.written) && (
-                    <span className="text-stone-400"> \u2014 {[lang.spoken && `Spoken: ${lang.spoken}`, lang.written && `Written: ${lang.written}`].filter(Boolean).join(", ")}</span>
+                    <span className="text-stone-400"> — {[lang.spoken && `Spoken: ${lang.spoken}`, lang.written && `Written: ${lang.written}`].filter(Boolean).join(", ")}</span>
                   )}
                 </span>
               ))}
@@ -87,10 +87,10 @@ export default function ProfileDetails({ profile }: { profile: CandidateProfile 
             <div className="space-y-2">
               {(profile.employment_history as { company?: string; position?: string; from?: string; to?: string; reason_leaving?: string }[]).map((job, i) => (
                 <div key={i} className="rounded-lg bg-stone-50 p-3 text-sm">
-                  <div className="font-medium text-stone-700">{job.position || "\u2014"}</div>
-                  <div className="text-stone-500">{job.company || "\u2014"}</div>
+                  <div className="font-medium text-stone-700">{job.position || "—"}</div>
+                  <div className="text-stone-500">{job.company || "—"}</div>
                   <div className="mt-0.5 text-xs text-stone-400">
-                    {job.from || "?"} \u2014 {job.to || "Present"}
+                    {job.from || "?"} — {job.to || "Present"}
                     {job.reason_leaving && ` | Left: ${job.reason_leaving}`}
                   </div>
                 </div>

@@ -57,10 +57,10 @@ export function CandidateListTable({
           <span className="flex items-center gap-1.5">
             {inv.candidate_record_id ? (
               <Link href={`/staff/candidates/${inv.candidate_record_id}`} className="font-medium text-orange-600 hover:text-orange-700 hover:underline">
-                {inv.candidate_name || "\u2014"}
+                {inv.candidate_name || "—"}
               </Link>
             ) : (
-              <span className="font-medium text-stone-800">{inv.candidate_name || "\u2014"}</span>
+              <span className="font-medium text-stone-800">{inv.candidate_name || "—"}</span>
             )}
             {inv.profile_pdf_path && (
               <button onClick={() => onDownloadPdf(inv.profile_pdf_path!)} title="Application PDF"
@@ -77,7 +77,7 @@ export function CandidateListTable({
           </span>
         </td>
         <td className="px-4 py-3 text-stone-500">{inv.email}</td>
-        <td className="px-4 py-3 text-stone-500">{inv.position_applied || "\u2014"}</td>
+        <td className="px-4 py-3 text-stone-500">{inv.position_applied || "—"}</td>
         <td className="px-4 py-3">
           {progressDisplay(inv)}
         </td>
@@ -130,10 +130,10 @@ export function CandidateListTable({
             <span className="flex items-center gap-1.5">
               {inv.candidate_record_id ? (
                 <Link href={`/staff/candidates/${inv.candidate_record_id}`} className="font-medium text-orange-600 hover:underline">
-                  {inv.candidate_name || "\u2014"}
+                  {inv.candidate_name || "—"}
                 </Link>
               ) : (
-                <span className="font-medium text-stone-800">{inv.candidate_name || "\u2014"}</span>
+                <span className="font-medium text-stone-800">{inv.candidate_name || "—"}</span>
               )}
               {inv.profile_pdf_path && (
                 <button onClick={() => onDownloadPdf(inv.profile_pdf_path!)} title="Application PDF"
@@ -154,7 +154,7 @@ export function CandidateListTable({
         </div>
         <div className="mt-2 flex items-center justify-between">
           <p className="text-xs text-stone-400">
-            {inv.position_applied || "\u2014"} &middot; {new Date(inv.created_at).toLocaleDateString()}
+            {inv.position_applied || "—"} &middot; {new Date(inv.created_at).toLocaleDateString()}
             {inv.invited_by && inv.invited_by !== "staff" && (
               <span className="text-stone-300"> &middot; by {inv.invited_by}</span>
             )}

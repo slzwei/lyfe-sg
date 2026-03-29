@@ -25,7 +25,7 @@ export interface JobPosting {
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
-const MANAGER_ROLES = ["manager", "director", "admin"] as const;
+const MANAGER_ROLES = ["pa", "manager", "director", "admin"] as const;
 
 async function requireManager(): Promise<StaffUser | null> {
   const user = await getStaffUser();

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import { useSearchParams } from "next/navigation";
 import { useRealtimeProgress } from "../hooks/useRealtimeProgress";
 import { searchCandidates, deleteCandidateById, type SearchResult } from "./actions";
 import {
@@ -20,11 +21,13 @@ import { InlineInviteForm } from "./components/InlineInviteForm";
 type Tab = "all" | "invited" | "archived";
 
 export default function CandidatesClient({ staffRole }: { staffRole?: string }) {
+  const searchParams = useSearchParams();
   const [tab, setTab] = useState<Tab>("all");
   const [invitations, setInvitations] = useState<Invitation[]>([]);
   const [pipelineCandidates, setPipelineCandidates] = useState<SearchResult[]>([]);
   const [loading, setLoading] = useState(true);
   const [query, setQuery] = useState("");
+  const [discFilter, setDiscFilter] = useState(searchParams.get("disc") || "");
   const [actionLoading, setActionLoading] = useState<string | null>(null);
 
   // Invite form
@@ -37,12 +40,12 @@ export default function CandidatesClient({ staffRole }: { staffRole?: string }) 
     setLoading(true);
     const [invResult, candResult] = await Promise.all([
       listInvitations(),
-      searchCandidates({ query: query || undefined }),
+      searchCandidates({ query: query || undefined, discType: discFilter || undefined }),
     ]);
     if (invResult.success && invResult.data) setInvitations(invResult.data);
     if (candResult.success && candResult.data) setPipelineCandidates(candResult.data);
     setLoading(false);
-  }, [query]);
+  }, [query, discFilter]);
 
   useEffect(() => {
     const timeout = setTimeout(fetchData, 300);
@@ -165,6 +168,16 @@ export default function CandidatesClient({ staffRole }: { staffRole?: string }) 
           {showInvite ? "Cancel" : "Invite Candidate"}
         </button>
       </div>
+
+      {discFilter && (
+        <div className="flex items-center gap-2">
+          <span className="text-xs text-stone-400">Filtered by DISC type:</span>
+          <span className="inline-flex items-center gap-1 rounded-full border border-purple-200 bg-purple-50 px-2.5 py-0.5 text-xs font-semibold text-purple-600">
+            {discFilter}
+            <button onClick={() => setDiscFilter("")} className="ml-0.5 text-purple-400 hover:text-purple-600">&times;</button>
+          </span>
+        </div>
+      )}
 
       <InlineInviteForm
         showInvite={showInvite}

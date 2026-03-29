@@ -98,10 +98,11 @@ export default function DashboardClient() {
             ) : (
               <div className="flex flex-wrap gap-2">
                 {stats.discTypeDistribution.map((d) => (
-                  <div key={d.type} className="rounded-xl border border-purple-100 bg-purple-50 px-3 py-2 text-center">
+                  <Link key={d.type} href={`/staff/candidates?disc=${encodeURIComponent(d.type)}`}
+                    className="rounded-xl border border-purple-100 bg-purple-50 px-3 py-2 text-center transition-colors hover:border-purple-300 hover:bg-purple-100">
                     <div className="text-lg font-bold text-purple-600">{d.type}</div>
                     <div className="text-xs text-purple-400">{d.count}</div>
-                  </div>
+                  </Link>
                 ))}
               </div>
             )}

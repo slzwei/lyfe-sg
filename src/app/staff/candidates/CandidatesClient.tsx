@@ -65,7 +65,10 @@ export default function CandidatesClient({ staffRole }: { staffRole?: string }) 
   const { live, liveStates } = useRealtimeProgress({ onRefresh: handleRealtimeRefresh, onListChanged: fetchData });
 
   // Merge: accepted invitations + pipeline-only candidates as synthetic invitations
-  const acceptedInvitations = invitations.filter((inv) => !inv.archived_at && inv.status === "accepted");
+  const acceptedInvitations = invitations.filter((inv) =>
+    !inv.archived_at && inv.status === "accepted" &&
+    (!discFilter || inv.progress?.disc_type === discFilter)
+  );
   const acceptedCandidateIds = new Set(acceptedInvitations.map((inv) => inv.candidate_record_id).filter(Boolean));
   const pipelineOnly = pipelineCandidates.filter((c) => !acceptedCandidateIds.has(c.id));
   const syntheticInvitations: Invitation[] = pipelineOnly.map((c) => ({

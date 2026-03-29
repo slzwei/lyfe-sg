@@ -55,6 +55,7 @@ vi.mock("@/lib/email", () => ({
 vi.mock("@/lib/supabase/storage", () => ({
   getSignedPdfUrl: vi.fn(() => Promise.resolve("https://signed-url.example.com")),
   uploadCandidatePdf: vi.fn(() => Promise.resolve("path/to/pdf")),
+  deleteResumeFiles: vi.fn(() => Promise.resolve(true)),
 }));
 
 vi.mock("@/lib/pdf", () => ({
@@ -68,7 +69,11 @@ vi.mock("@/app/candidate/disc-quiz/scoring", () => ({
     strength_pct: 30,
     priorities: ["Action"],
   })),
-  DISC_TYPE_INFO: { Balanced: { name: "Balanced" } },
+  DISC_TYPE_INFO: {
+    Balanced: { name: "Balanced" },
+    Di: { name: "Dominant-Influencer" },
+    Sc: { name: "Steady-Conscientious" },
+  },
 }));
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
@@ -136,6 +141,7 @@ import {
   archiveInvitation,
   getPdfUrl,
   backfillPdfs,
+  removeInviteFile,
 } from "../actions";
 
 // ─── Tests ──────────────────────────────────────────────────────────────────
@@ -849,5 +855,89 @@ describe("staffLogout", () => {
     await staffLogout();
     expect(mockSignOut).toHaveBeenCalled();
     expect(redirect).toHaveBeenCalledWith("/staff/login");
+  });
+});
+
+describe("removeInviteFile", () => {
+  it("requires authentication", async () => {
+    mockNoAuthUser();
+    const result = await removeInviteFile("inv-1", "invitations/inv-1/docs/file.pdf");
+    expect(result.success).toBe(false);
+    expect(result.error).toContain("Not authenticated");
+  });
+
+  it("returns error when invitation not found", async () => {
+    mockAuthUser("pa");
+    mockAdminFrom.mockImplementation((table: string) => {
+      if (table === "users") return chainMock({ id: "user-pa", full_name: "PA", email: "pa@t.com", role: "pa" });
+      if (table === "invitations") return chainMock(null);
+      return chainMock();
+    });
+    const result = await removeInviteFile("inv-1", "invitations/inv-1/docs/file.pdf");
+    expect(result.success).toBe(false);
+    expect(result.error).toContain("not found");
+  });
+
+  it("removes file from attached_files and storage", async () => {
+    mockAuthUser("manager");
+    const attachedFiles = [
+      { name: "file1.pdf", storage_path: "invitations/inv-1/docs/file1.pdf" },
+      { name: "file2.pdf", storage_path: "invitations/inv-1/docs/file2.pdf" },
+    ];
+    let invCallCount = 0;
+    mockAdminFrom.mockImplementation((table: string) => {
+      if (table === "users") return chainMock({ id: "user-mgr", full_name: "Mgr", email: "m@t.com", role: "manager" });
+      if (table === "invitations") {
+        invCallCount++;
+        if (invCallCount === 1) {
+          // First call: select → eq → single (invitation lookup)
+          return chainMock({ id: "inv-1", attached_files: attachedFiles });
+        }
+        // Second call: update → eq (save)
+        return chainMock(null, null);
+      }
+      return chainMock();
+    });
+    const result = await removeInviteFile("inv-1", "invitations/inv-1/docs/file1.pdf");
+    expect(result.success).toBe(true);
+  });
+
+  it("returns error when update fails", async () => {
+    mockAuthUser("manager");
+    let invCallCount = 0;
+    mockAdminFrom.mockImplementation((table: string) => {
+      if (table === "users") return chainMock({ id: "user-mgr", full_name: "Mgr", email: "m@t.com", role: "manager" });
+      if (table === "invitations") {
+        invCallCount++;
+        if (invCallCount === 1) {
+          // First call: select → eq → single (invitation lookup)
+          return chainMock({ id: "inv-1", attached_files: [] });
+        }
+        // Second call: update → eq (save — should error)
+        return chainMock(null, { message: "Update failed" });
+      }
+      return chainMock();
+    });
+    const result = await removeInviteFile("inv-1", "invitations/inv-1/docs/file.pdf");
+    expect(result.success).toBe(false);
+    expect(result.error).toContain("Failed to update");
+  });
+});
+
+describe("deleteCandidate (with attached files)", () => {
+  it("cleans up attached files from storage", async () => {
+    mockAuthUser("admin");
+    mockAdminRpc.mockResolvedValue({ error: null });
+    const attachedFiles = [
+      { name: "doc.pdf", storage_path: "invitations/inv-1/docs/doc.pdf" },
+    ];
+    mockAdminFrom.mockImplementation((table: string) => {
+      if (table === "users") return chainMock({ id: "admin-1", full_name: "Admin", email: "a@a.com", role: "admin" });
+      if (table === "invitations") return chainMock({ user_id: "user-to-delete", attached_files: attachedFiles });
+      return chainMock();
+    });
+    const result = await deleteCandidate("inv-1");
+    expect(result.success).toBe(true);
+    expect(mockAdminDeleteUser).toHaveBeenCalledWith("user-to-delete");
   });
 });

@@ -49,6 +49,11 @@ export default async function StaffLayout({
                     Audit Log
                   </Link>
                 )}
+                {isAdmin && (
+                  <Link href="/admin" className="rounded-lg bg-stone-900 px-3 py-1.5 text-sm text-white transition-colors hover:bg-stone-800">
+                    Admin Panel
+                  </Link>
+                )}
                 <div className="text-right">
                   <div className="text-sm font-medium text-stone-700">{name}</div>
                   <div className="text-xs capitalize text-stone-400">{role}</div>

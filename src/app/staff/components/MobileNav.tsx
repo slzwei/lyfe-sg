@@ -70,6 +70,15 @@ export default function MobileNav({ name, role, isAdmin }: { name: string; role:
                   Audit Log
                 </Link>
               )}
+              {isAdmin && (
+                <Link
+                  href="/admin"
+                  onClick={() => setOpen(false)}
+                  className="block rounded-lg bg-stone-900 px-3 py-2.5 text-center text-sm font-medium text-white transition-colors hover:bg-stone-800"
+                >
+                  Admin Panel
+                </Link>
+              )}
             </nav>
             <div className="mt-3 border-t border-stone-100 pt-3">
               <button

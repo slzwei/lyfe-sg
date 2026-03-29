@@ -29,6 +29,24 @@ export async function updateSession(request: NextRequest) {
 
   const path = request.nextUrl.pathname;
 
+  // Admin routes — require Supabase Auth with admin role
+  if (path.startsWith("/admin") && !path.startsWith("/admin/login")) {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
+      const url = request.nextUrl.clone();
+      url.pathname = "/admin/login";
+      return NextResponse.redirect(url);
+    }
+    const role = user.app_metadata?.role as string | undefined;
+    if (role !== "admin") {
+      const url = request.nextUrl.clone();
+      url.pathname = "/admin/login";
+      url.searchParams.set("error", "unauthorized");
+      return NextResponse.redirect(url);
+    }
+    return supabaseResponse;
+  }
+
   // Staff routes — require Supabase Auth with a staff role
   if (path.startsWith("/staff/") && !path.startsWith("/staff/login") && !path.startsWith("/staff/verify")) {
     const { data: { user } } = await supabase.auth.getUser();

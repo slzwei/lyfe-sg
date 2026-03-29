@@ -352,6 +352,23 @@ export async function archiveInvitation(id: string) {
   return { success: true };
 }
 
+export async function unarchiveInvitation(id: string) {
+  const staff = await requireStaff("manager");
+  if (!staff) return { success: false, error: "Manager access required." };
+
+  const adminClient = getAdminClient();
+  const { error } = await adminClient.from("invitations")
+    .update({ archived_at: null })
+    .eq("id", id)
+    .not("archived_at", "is", null);
+
+  if (error) {
+    return { success: false, error: error.message };
+  }
+
+  return { success: true };
+}
+
 export async function removeInviteFile(invitationId: string, storagePath: string) {
   const staff = await requireStaff();
   if (!staff) return { success: false, error: "Not authenticated." };

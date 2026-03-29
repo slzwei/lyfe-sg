@@ -9,6 +9,7 @@ import {
   getProgressForUser,
   revokeInvitation,
   archiveInvitation,
+  unarchiveInvitation,
   deleteCandidate,
   getPdfUrl,
   type Invitation,
@@ -181,6 +182,7 @@ export default function CandidatesClient({ staffRole }: { staffRole?: string }) 
         staffRole={staffRole}
         onRevoke={(id) => handleAction(id, () => revokeInvitation(id))}
         onArchive={(id) => handleAction(id, () => archiveInvitation(id))}
+        onUnarchive={(id) => handleAction(id, () => unarchiveInvitation(id))}
         onDelete={(id) => handleAction(id, () => deleteCandidate(id))}
         onDownloadPdf={handleDownloadPdf}
       />

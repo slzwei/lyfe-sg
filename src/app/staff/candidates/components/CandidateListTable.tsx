@@ -18,6 +18,7 @@ interface CandidateListTableProps {
   staffRole?: string;
   onRevoke: (id: string) => void;
   onArchive: (id: string) => void;
+  onUnarchive: (id: string) => void;
   onDelete: (id: string) => void;
   onDownloadPdf: (path: string) => void;
 }
@@ -34,6 +35,7 @@ export function CandidateListTable({
   staffRole,
   onRevoke,
   onArchive,
+  onUnarchive,
   onDelete,
   onDownloadPdf,
 }: CandidateListTableProps) {
@@ -126,6 +128,12 @@ export function CandidateListTable({
                 <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M20 7l-8 4-8-4m16 0v10a2 2 0 01-2 2H6a2 2 0 01-2-2V7m16 0l-8-4-8 4" /></svg>
               </button>
             )}
+            {isManagerPlus && inv.archived_at && (
+              <button onClick={() => onUnarchive(inv.id)} disabled={isLoading}
+                title="Unarchive" className="rounded p-1 text-stone-400 hover:bg-green-50 hover:text-green-600 disabled:opacity-50">
+                <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" /></svg>
+              </button>
+            )}
             {staffRole && ["pa", "manager", "director", "admin"].includes(staffRole) && (
               <button onClick={() => onDelete(inv.id)} disabled={isLoading}
                 title="Delete" className="rounded p-1 text-stone-400 hover:bg-red-50 hover:text-red-600 disabled:opacity-50">
@@ -213,6 +221,12 @@ export function CandidateListTable({
               <button onClick={() => onArchive(inv.id)} disabled={isLoading}
                 title="Archive" className="rounded p-1.5 text-stone-400 hover:bg-stone-100 hover:text-stone-600 disabled:opacity-50">
                 <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M20 7l-8 4-8-4m16 0v10a2 2 0 01-2 2H6a2 2 0 01-2-2V7m16 0l-8-4-8 4" /></svg>
+              </button>
+            )}
+            {isManagerPlus && inv.archived_at && (
+              <button onClick={() => onUnarchive(inv.id)} disabled={isLoading}
+                title="Unarchive" className="rounded p-1.5 text-stone-400 hover:bg-green-50 hover:text-green-600 disabled:opacity-50">
+                <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" /></svg>
               </button>
             )}
             {staffRole && ["pa", "manager", "director", "admin"].includes(staffRole) && (

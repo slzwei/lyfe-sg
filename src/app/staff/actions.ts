@@ -22,6 +22,7 @@ export {
   resetQuiz,
   deleteCandidate,
   archiveInvitation,
+  unarchiveInvitation,
   removeInviteFile,
   type Invitation,
   type InvitationProgress,

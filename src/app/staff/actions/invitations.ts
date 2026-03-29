@@ -297,9 +297,8 @@ export async function resetQuiz(invitationId: string) {
 }
 
 export async function deleteCandidate(id: string) {
-  // Admin-only action
-  const staff = await requireStaff("admin");
-  if (!staff) return { success: false, error: "Admin access required." };
+  const staff = await requireStaff("pa");
+  if (!staff) return { success: false, error: "Not authorized." };
 
   const adminClient = getAdminClient();
 

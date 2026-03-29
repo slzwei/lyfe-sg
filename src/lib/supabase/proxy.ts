@@ -47,8 +47,22 @@ export async function updateSession(request: NextRequest) {
     return supabaseResponse;
   }
 
+  // Staff login/verify — redirect to dashboard if already authenticated as staff
+  if (path.startsWith("/staff/login") || path.startsWith("/staff/verify")) {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (user) {
+      const role = user.app_metadata?.role as string | undefined;
+      if (role && (STAFF_ROLES as readonly string[]).includes(role)) {
+        const url = request.nextUrl.clone();
+        url.pathname = "/staff/dashboard";
+        return NextResponse.redirect(url);
+      }
+    }
+    return supabaseResponse;
+  }
+
   // Staff routes — require Supabase Auth with a staff role
-  if (path.startsWith("/staff/") && !path.startsWith("/staff/login") && !path.startsWith("/staff/verify")) {
+  if (path.startsWith("/staff/")) {
     const { data: { user } } = await supabase.auth.getUser();
     if (user) {
       const role = user.app_metadata?.role as string | undefined;

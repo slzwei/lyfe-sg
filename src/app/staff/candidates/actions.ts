@@ -104,6 +104,14 @@ export interface SearchResult {
   position_applied: string | null;
   disc_type: string | null;
   created_at: string | null;
+  // Progress fields for unified rendering
+  user_id: string | null;
+  profile_completed: boolean;
+  onboarding_step: number;
+  quiz_answered: number;
+  quiz_completed: boolean;
+  profile_pdf_path: string | null;
+  disc_pdf_path: string | null;
 }
 
 // ─── Candidate Detail ────────────────────────────────────────────────────────
@@ -336,50 +344,85 @@ export async function searchCandidates(params: {
     return { success: true, data: [], total: 0 };
   }
 
-  // Enrich with position_applied and DISC types
+  // Enrich with position, progress, DISC, and PDF paths
   const candidateIds = candidates.map((c) => c.id);
 
-  const [profilesRes] = await Promise.all([
+  const [profilesRes, invPdfRes] = await Promise.all([
     admin.from("candidate_profiles")
-      .select("candidate_id, user_id, position_applied")
+      .select("candidate_id, user_id, position_applied, completed, onboarding_step")
       .in("candidate_id", candidateIds),
+    admin.from("invitations")
+      .select("candidate_record_id, profile_pdf_path, disc_pdf_path")
+      .in("candidate_record_id", candidateIds),
   ]);
 
   const profiles = profilesRes.data || [];
   const positionMap = new Map<string, string>();
+  const profileMap = new Map<string, { user_id: string; completed: boolean; onboarding_step: number }>();
   for (const p of profiles) {
-    if (p.position_applied && p.candidate_id) positionMap.set(p.candidate_id, p.position_applied);
+    if (p.candidate_id) {
+      if (p.position_applied) positionMap.set(p.candidate_id, p.position_applied);
+      profileMap.set(p.candidate_id, { user_id: p.user_id, completed: p.completed, onboarding_step: p.onboarding_step });
+    }
   }
 
-  // DISC types via profiles → results
+  // PDF paths from invitations
+  const pdfMap = new Map<string, { profile: string | null; disc: string | null }>();
+  for (const inv of invPdfRes.data || []) {
+    if (inv.candidate_record_id) {
+      pdfMap.set(inv.candidate_record_id, { profile: inv.profile_pdf_path, disc: inv.disc_pdf_path });
+    }
+  }
+
+  // DISC types + quiz progress via profiles → results/responses
   const discMap = new Map<string, string>();
-  if (profiles.length > 0) {
-    const userIds = profiles.map((p) => p.user_id).filter(Boolean);
-    if (userIds.length > 0) {
-      const { data: results } = await admin.from("disc_results")
-        .select("user_id, disc_type")
-        .in("user_id", userIds);
-      if (results) {
-        const userToDisc = new Map(results.map((r) => [r.user_id, r.disc_type]));
-        for (const p of profiles) {
-          const dt = userToDisc.get(p.user_id);
-          if (dt && p.candidate_id) discMap.set(p.candidate_id, dt);
-        }
+  const quizAnsweredMap = new Map<string, number>();
+  const userIds = profiles.map((p) => p.user_id).filter(Boolean);
+  if (userIds.length > 0) {
+    const [discRes, responsesRes] = await Promise.all([
+      admin.from("disc_results").select("user_id, disc_type").in("user_id", userIds),
+      admin.from("disc_responses").select("user_id, responses").in("user_id", userIds),
+    ]);
+    if (discRes.data) {
+      const userToDisc = new Map(discRes.data.map((r) => [r.user_id, r.disc_type]));
+      for (const p of profiles) {
+        const dt = userToDisc.get(p.user_id);
+        if (dt && p.candidate_id) discMap.set(p.candidate_id, dt);
+      }
+    }
+    if (responsesRes.data) {
+      for (const r of responsesRes.data) {
+        const count = r.responses ? Object.keys(r.responses).length : 0;
+        // Map user_id back to candidate_id
+        const profile = profiles.find((p) => p.user_id === r.user_id);
+        if (profile?.candidate_id) quizAnsweredMap.set(profile.candidate_id, count);
       }
     }
   }
 
   // Filter by DISC type if requested (post-query since it's cross-table)
-  let enriched: SearchResult[] = candidates.map((c) => ({
-    id: c.id,
-    name: c.name,
-    email: c.email,
-    phone: c.phone,
-    status: c.status,
-    position_applied: positionMap.get(c.id) || null,
-    disc_type: discMap.get(c.id) || null,
-    created_at: c.created_at,
-  }));
+  let enriched: SearchResult[] = candidates.map((c) => {
+    const prof = profileMap.get(c.id);
+    const pdfs = pdfMap.get(c.id);
+    const hasDisc = discMap.has(c.id);
+    return {
+      id: c.id,
+      name: c.name,
+      email: c.email,
+      phone: c.phone,
+      status: c.status,
+      position_applied: positionMap.get(c.id) || null,
+      disc_type: discMap.get(c.id) || null,
+      created_at: c.created_at,
+      user_id: prof?.user_id || null,
+      profile_completed: prof?.completed || false,
+      onboarding_step: prof?.onboarding_step || 0,
+      quiz_answered: quizAnsweredMap.get(c.id) || 0,
+      quiz_completed: hasDisc,
+      profile_pdf_path: pdfs?.profile || null,
+      disc_pdf_path: pdfs?.disc || null,
+    };
+  });
 
   if (params.discType) {
     enriched = enriched.filter((c) => c.disc_type === params.discType);

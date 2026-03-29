@@ -61,22 +61,49 @@ export default function CandidatesClient({ staffRole }: { staffRole?: string }) 
   }, []);
   const { live, liveStates } = useRealtimeProgress({ onRefresh: handleRealtimeRefresh, onListChanged: fetchData });
 
-  // Accepted invitations (with or without candidates record) — shown on "All" tab with progress
+  // Merge: accepted invitations + pipeline-only candidates as synthetic invitations
   const acceptedInvitations = invitations.filter((inv) => !inv.archived_at && inv.status === "accepted");
   const acceptedCandidateIds = new Set(acceptedInvitations.map((inv) => inv.candidate_record_id).filter(Boolean));
-  // Pipeline candidates not already covered by an invitation row
   const pipelineOnly = pipelineCandidates.filter((c) => !acceptedCandidateIds.has(c.id));
+  const syntheticInvitations: Invitation[] = pipelineOnly.map((c) => ({
+    id: c.id,
+    token: "",
+    email: c.email || "",
+    candidate_name: c.name,
+    position_applied: c.position_applied,
+    status: "accepted",
+    user_id: c.user_id,
+    invited_by: "",
+    created_at: c.created_at || "",
+    expires_at: "",
+    accepted_at: c.created_at,
+    archived_at: null,
+    candidate_record_id: c.id,
+    profile_pdf_path: c.profile_pdf_path,
+    disc_pdf_path: c.disc_pdf_path,
+    attached_files: null,
+    progress: {
+      profile_completed: c.profile_completed,
+      onboarding_step: c.onboarding_step,
+      quiz_answered: c.quiz_answered,
+      quiz_completed: c.quiz_completed,
+      disc_type: c.disc_type || undefined,
+    },
+    _synthetic: true,
+  }));
+  const allCandidates = [...acceptedInvitations, ...syntheticInvitations];
+
   // Invited = not yet signed up (pending/expired/revoked, no candidate_record_id)
   const pendingInvitations = invitations.filter((inv) => !inv.archived_at && inv.status !== "accepted" && !inv.candidate_record_id);
   const archivedInvitations = invitations.filter((inv) => inv.archived_at);
 
   // Search filter (for invitation tabs — candidates are already server-filtered by query)
-  const filteredAccepted = query
-    ? acceptedInvitations.filter((inv) =>
+  const filteredAll = query
+    ? allCandidates.filter((inv) =>
         inv.candidate_name?.toLowerCase().includes(query.toLowerCase()) ||
         inv.email.toLowerCase().includes(query.toLowerCase())
       )
-    : acceptedInvitations;
+    : allCandidates;
 
   const filteredInvitations = query
     ? pendingInvitations.filter((inv) =>
@@ -173,10 +200,9 @@ export default function CandidatesClient({ staffRole }: { staffRole?: string }) 
       <CandidateListTable
         loading={loading}
         tab={tab}
-        acceptedInvitations={filteredAccepted}
+        acceptedInvitations={filteredAll}
         pendingInvitations={filteredInvitations}
         archivedInvitations={filteredArchived}
-        pipelineOnly={pipelineOnly}
         actionLoading={actionLoading}
         liveStates={liveStates}
         staffRole={staffRole}

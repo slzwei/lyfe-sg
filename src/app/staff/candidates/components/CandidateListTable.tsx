@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { ProgressDisplay } from "../../components/ProgressDisplay";
 import type { Invitation } from "../../actions";
-import type { SearchResult } from "../actions";
 import type { CandidateState } from "@/lib/supabase/progress-broadcast";
 
 interface CandidateListTableProps {
@@ -12,7 +11,6 @@ interface CandidateListTableProps {
   acceptedInvitations: Invitation[];
   pendingInvitations: Invitation[];
   archivedInvitations: Invitation[];
-  pipelineOnly: SearchResult[];
   actionLoading: string | null;
   liveStates: Record<string, CandidateState>;
   staffRole?: string;
@@ -29,7 +27,6 @@ export function CandidateListTable({
   acceptedInvitations,
   pendingInvitations,
   archivedInvitations,
-  pipelineOnly,
   actionLoading,
   liveStates,
   staffRole,
@@ -47,30 +44,6 @@ export function CandidateListTable({
         invitation={inv}
         liveState={inv.user_id ? liveStates[inv.user_id] : undefined}
       />
-    );
-  }
-
-  function renderCandidateRow(c: SearchResult) {
-    return (
-      <tr key={c.id} className="transition-colors hover:bg-stone-50">
-        <td className="px-4 py-3">
-          <Link href={`/staff/candidates/${c.id}`} className="font-medium text-orange-600 hover:text-orange-700 hover:underline">
-            {c.name || "\u2014"}
-          </Link>
-        </td>
-        <td className="px-4 py-3 text-stone-500">{c.email || "\u2014"}</td>
-        <td className="px-4 py-3 text-stone-500">{c.position_applied || "\u2014"}</td>
-        <td className="px-4 py-3">
-          <span className="text-xs font-medium capitalize text-stone-600">{c.status}</span>
-          {c.disc_type && (
-            <span className="ml-1.5 rounded bg-purple-50 px-1 py-0.5 text-[10px] font-semibold text-purple-600">{c.disc_type}</span>
-          )}
-        </td>
-        <td className="px-4 py-3 text-xs text-stone-400">
-          {c.created_at ? new Date(c.created_at).toLocaleDateString() : "\u2014"}
-        </td>
-        <td className="px-4 py-3" />
-      </tr>
     );
   }
 
@@ -116,25 +89,25 @@ export function CandidateListTable({
         </td>
         <td className="px-4 py-3">
           <div className="flex items-center gap-1">
-            {isManagerPlus && !inv.archived_at && (inv.status === "pending" && !isExpired || inv.status === "accepted") && (
+            {!inv._synthetic && isManagerPlus && !inv.archived_at && (inv.status === "pending" && !isExpired || inv.status === "accepted") && (
               <button onClick={() => onRevoke(inv.id)} disabled={isLoading}
                 title="Revoke" className="rounded p-1 text-stone-400 hover:bg-red-50 hover:text-red-500 disabled:opacity-50">
                 <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" /></svg>
               </button>
             )}
-            {isManagerPlus && !inv.archived_at && inv.progress?.quiz_completed && (
+            {!inv._synthetic && isManagerPlus && !inv.archived_at && inv.progress?.quiz_completed && (
               <button onClick={() => onArchive(inv.id)} disabled={isLoading}
                 title="Archive" className="rounded p-1 text-stone-400 hover:bg-stone-100 hover:text-stone-600 disabled:opacity-50">
                 <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M20 7l-8 4-8-4m16 0v10a2 2 0 01-2 2H6a2 2 0 01-2-2V7m16 0l-8-4-8 4" /></svg>
               </button>
             )}
-            {isManagerPlus && inv.archived_at && (
+            {!inv._synthetic && isManagerPlus && inv.archived_at && (
               <button onClick={() => onUnarchive(inv.id)} disabled={isLoading}
                 title="Unarchive" className="rounded p-1 text-stone-400 hover:bg-green-50 hover:text-green-600 disabled:opacity-50">
                 <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" /></svg>
               </button>
             )}
-            {staffRole && ["pa", "manager", "director", "admin"].includes(staffRole) && (
+            {!inv._synthetic && staffRole && ["pa", "manager", "director", "admin"].includes(staffRole) && (
               <button onClick={() => onDelete(inv.id)} disabled={isLoading}
                 title="Delete" className="rounded p-1 text-stone-400 hover:bg-red-50 hover:text-red-600 disabled:opacity-50">
                 <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
@@ -143,30 +116,6 @@ export function CandidateListTable({
           </div>
         </td>
       </tr>
-    );
-  }
-
-  function renderCandidateCard(c: SearchResult) {
-    return (
-      <div key={c.id} className="rounded-xl border border-stone-200 bg-white p-4">
-        <div className="flex items-start justify-between gap-3">
-          <div className="min-w-0 flex-1">
-            <Link href={`/staff/candidates/${c.id}`} className="font-medium text-orange-600 hover:underline">
-              {c.name || "\u2014"}
-            </Link>
-            <p className="mt-0.5 truncate text-xs text-stone-400">{c.email || "\u2014"}</p>
-          </div>
-          <div className="shrink-0">
-            <span className="text-xs font-medium capitalize text-stone-600">{c.status}</span>
-            {c.disc_type && (
-              <span className="ml-1.5 rounded bg-purple-50 px-1 py-0.5 text-[10px] font-semibold text-purple-600">{c.disc_type}</span>
-            )}
-          </div>
-        </div>
-        <p className="mt-2 text-xs text-stone-400">
-          {c.position_applied || "\u2014"} &middot; {c.created_at ? new Date(c.created_at).toLocaleDateString() : "\u2014"}
-        </p>
-      </div>
     );
   }
 
@@ -211,25 +160,25 @@ export function CandidateListTable({
             )}
           </p>
           <div className="flex items-center gap-1">
-            {isManagerPlus && !inv.archived_at && (inv.status === "pending" && !isExpired || inv.status === "accepted") && (
+            {!inv._synthetic && isManagerPlus && !inv.archived_at && (inv.status === "pending" && !isExpired || inv.status === "accepted") && (
               <button onClick={() => onRevoke(inv.id)} disabled={isLoading}
                 title="Revoke" className="rounded p-1.5 text-stone-400 hover:bg-red-50 hover:text-red-500 disabled:opacity-50">
                 <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" /></svg>
               </button>
             )}
-            {isManagerPlus && !inv.archived_at && inv.progress?.quiz_completed && (
+            {!inv._synthetic && isManagerPlus && !inv.archived_at && inv.progress?.quiz_completed && (
               <button onClick={() => onArchive(inv.id)} disabled={isLoading}
                 title="Archive" className="rounded p-1.5 text-stone-400 hover:bg-stone-100 hover:text-stone-600 disabled:opacity-50">
                 <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M20 7l-8 4-8-4m16 0v10a2 2 0 01-2 2H6a2 2 0 01-2-2V7m16 0l-8-4-8 4" /></svg>
               </button>
             )}
-            {isManagerPlus && inv.archived_at && (
+            {!inv._synthetic && isManagerPlus && inv.archived_at && (
               <button onClick={() => onUnarchive(inv.id)} disabled={isLoading}
                 title="Unarchive" className="rounded p-1.5 text-stone-400 hover:bg-green-50 hover:text-green-600 disabled:opacity-50">
                 <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" /></svg>
               </button>
             )}
-            {staffRole && ["pa", "manager", "director", "admin"].includes(staffRole) && (
+            {!inv._synthetic && staffRole && ["pa", "manager", "director", "admin"].includes(staffRole) && (
               <button onClick={() => onDelete(inv.id)} disabled={isLoading}
                 title="Delete" className="rounded p-1.5 text-stone-400 hover:bg-red-50 hover:text-red-600 disabled:opacity-50">
                 <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
@@ -286,7 +235,7 @@ export function CandidateListTable({
   }
 
   const isEmpty =
-    (tab === "all" && pipelineOnly.length === 0 && acceptedInvitations.length === 0) ||
+    (tab === "all" && acceptedInvitations.length === 0) ||
     (tab === "invited" && pendingInvitations.length === 0) ||
     (tab === "archived" && archivedInvitations.length === 0);
 
@@ -307,7 +256,6 @@ export function CandidateListTable({
           </thead>
           <tbody className="divide-y divide-stone-50">
             {tab === "all" && acceptedInvitations.map((inv) => renderInvitationRow(inv))}
-            {tab === "all" && pipelineOnly.map((c) => renderCandidateRow(c))}
             {tab === "invited" && pendingInvitations.map((inv) => renderInvitationRow(inv))}
             {tab === "archived" && archivedInvitations.map((inv) => renderInvitationRow(inv))}
 
@@ -320,7 +268,6 @@ export function CandidateListTable({
       {/* Mobile: Cards */}
       <div className="space-y-3 md:hidden">
         {tab === "all" && acceptedInvitations.map((inv) => renderInvitationCard(inv))}
-        {tab === "all" && pipelineOnly.map((c) => renderCandidateCard(c))}
         {tab === "invited" && pendingInvitations.map((inv) => renderInvitationCard(inv))}
         {tab === "archived" && archivedInvitations.map((inv) => renderInvitationCard(inv))}
 

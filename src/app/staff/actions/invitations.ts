@@ -41,6 +41,7 @@ export interface Invitation {
   disc_pdf_path: string | null;
   attached_files: AttachedFile[] | null;
   progress: InvitationProgress | null;
+  _synthetic?: boolean;
 }
 
 // ─── Invitation CRUD ─────────────────────────────────────────────────────────

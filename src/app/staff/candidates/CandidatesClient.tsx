@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { useRealtimeProgress } from "../hooks/useRealtimeProgress";
-import { searchCandidates, type SearchResult } from "./actions";
+import { searchCandidates, deleteCandidateById, type SearchResult } from "./actions";
 import {
   sendInvite,
   listInvitations,
@@ -209,7 +209,9 @@ export default function CandidatesClient({ staffRole }: { staffRole?: string }) 
         onRevoke={(id) => handleAction(id, () => revokeInvitation(id))}
         onArchive={(id) => handleAction(id, () => archiveInvitation(id))}
         onUnarchive={(id) => handleAction(id, () => unarchiveInvitation(id))}
-        onDelete={(id) => handleAction(id, () => deleteCandidate(id))}
+        onDelete={(id, isSynthetic) => handleAction(id, () =>
+          isSynthetic ? deleteCandidateById(id) : deleteCandidate(id)
+        )}
         onDownloadPdf={handleDownloadPdf}
       />
     </div>

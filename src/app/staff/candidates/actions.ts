@@ -645,6 +645,42 @@ export async function listAssignableManagers(): Promise<{
   return { success: true, managers: (managers || []) as AssignableManager[] };
 }
 
+// ─── Delete Candidate (by candidate ID) ──────────────────────────────────────
+
+export async function deleteCandidateById(candidateId: string): Promise<{
+  success: boolean;
+  error?: string;
+}> {
+  const staff = await getStaffUser();
+  if (!staff) return { success: false, error: "Not authenticated." };
+
+  const admin = getAdminClient();
+
+  // Get linked profile user_id for cleanup
+  const { data: profile } = await admin.from("candidate_profiles")
+    .select("user_id")
+    .eq("candidate_id", candidateId)
+    .maybeSingle();
+
+  // Delete related records with NO ACTION FK constraints
+  if (profile?.user_id) {
+    await admin.from("disc_results").delete().eq("user_id", profile.user_id);
+    await admin.from("disc_responses").delete().eq("user_id", profile.user_id);
+    await admin.from("candidate_profiles").delete().eq("candidate_id", candidateId);
+  }
+
+  // Clear invitation links
+  await admin.from("invitations")
+    .update({ candidate_record_id: null })
+    .eq("candidate_record_id", candidateId);
+
+  // Delete candidate (cascades to activities, documents, interviews)
+  const { error } = await admin.from("candidates").delete().eq("id", candidateId);
+  if (error) return { success: false, error: error.message };
+
+  return { success: true };
+}
+
 // ─── Reassign Candidate ───────────────────────────────────────────────────────
 
 export async function reassignCandidate(

@@ -1,6 +1,6 @@
 "use server";
 
-import { getAdminClient } from "@/lib/supabase/admin";
+import { getAdminClient, getAdminClientAs } from "@/lib/supabase/admin";
 import { sendCandidateAssignedEmail, sendCandidateReassignedEmail } from "@/lib/email";
 import { getStaffUser, requireStaff, type StaffUser } from "../actions";
 import { canScheduleInterviews, type UserRole } from "@/lib/shared-types/roles";
@@ -466,7 +466,7 @@ export async function updateCandidate(
   const staff = await getStaffUser();
   if (!staff) return { success: false, error: "Not authenticated." };
 
-  const admin = getAdminClient();
+  const admin = getAdminClientAs(staff);
   const update: Record<string, unknown> = {};
   if (data.name !== undefined) update.name = data.name.trim();
   if (data.email !== undefined) update.email = data.email.trim() || null;
@@ -680,7 +680,7 @@ export async function deleteCandidateById(candidateId: string): Promise<{
   const staff = await getStaffUser();
   if (!staff) return { success: false, error: "Not authenticated." };
 
-  const admin = getAdminClient();
+  const admin = getAdminClientAs(staff);
 
   // Get linked profile user_id for cleanup
   const { data: profile } = await admin.from("candidate_profiles")
@@ -716,7 +716,7 @@ export async function reassignCandidate(
   const staff = await requireStaff("manager");
   if (!staff) return { success: false, error: "Manager access required." };
 
-  const admin = getAdminClient();
+  const admin = getAdminClientAs(staff);
 
   // Validate new manager exists and has correct role
   const { data: targetUser } = await admin

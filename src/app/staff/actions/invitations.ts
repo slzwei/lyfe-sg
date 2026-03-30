@@ -2,7 +2,7 @@
 
 import { randomBytes } from "crypto";
 import { z } from "zod";
-import { getAdminClient } from "@/lib/supabase/admin";
+import { getAdminClient, getAdminClientAs } from "@/lib/supabase/admin";
 import { sendInvitationEmail } from "@/lib/email";
 import { deleteResumeFiles } from "@/lib/supabase/storage";
 import { requireStaff } from "./auth";
@@ -60,7 +60,7 @@ export async function sendInvite(data: {
     return { success: false, error: "Please enter a valid email address." };
   }
 
-  const adminClient = getAdminClient();
+  const adminClient = getAdminClientAs(staff);
 
   // Check if email already has an active invitation (pending or accepted)
   const { data: existing } = await adminClient.from("invitations")
@@ -234,7 +234,7 @@ export async function revokeInvitation(id: string) {
   const staff = await requireStaff("manager");
   if (!staff) return { success: false, error: "Manager access required." };
 
-  const adminClient = getAdminClient();
+  const adminClient = getAdminClientAs(staff);
   const { error } = await adminClient.from("invitations")
     .update({ status: "revoked" })
     .eq("id", id)
@@ -251,7 +251,7 @@ export async function resetApplication(invitationId: string) {
   const staff = await requireStaff("manager");
   if (!staff) return { success: false, error: "Manager access required." };
 
-  const adminClient = getAdminClient();
+  const adminClient = getAdminClientAs(staff);
   const { data: invitation, error: fetchError } = await adminClient.from("invitations")
     .select("user_id")
     .eq("id", invitationId)
@@ -279,7 +279,7 @@ export async function resetQuiz(invitationId: string) {
   const staff = await requireStaff("manager");
   if (!staff) return { success: false, error: "Manager access required." };
 
-  const adminClient = getAdminClient();
+  const adminClient = getAdminClientAs(staff);
   const { data: invitation, error: fetchError } = await adminClient.from("invitations")
     .select("user_id")
     .eq("id", invitationId)
@@ -301,7 +301,7 @@ export async function deleteCandidate(id: string) {
   const staff = await requireStaff("pa");
   if (!staff) return { success: false, error: "Not authorized." };
 
-  const adminClient = getAdminClient();
+  const adminClient = getAdminClientAs(staff);
 
   // Get user_id and attached files before RPC
   const { data: invitation } = await adminClient
@@ -340,7 +340,7 @@ export async function archiveInvitation(id: string) {
   const staff = await requireStaff("manager");
   if (!staff) return { success: false, error: "Manager access required." };
 
-  const adminClient = getAdminClient();
+  const adminClient = getAdminClientAs(staff);
   const { error } = await adminClient.from("invitations")
     .update({ archived_at: new Date().toISOString() })
     .eq("id", id)
@@ -357,7 +357,7 @@ export async function unarchiveInvitation(id: string) {
   const staff = await requireStaff("manager");
   if (!staff) return { success: false, error: "Manager access required." };
 
-  const adminClient = getAdminClient();
+  const adminClient = getAdminClientAs(staff);
   const { error } = await adminClient.from("invitations")
     .update({ archived_at: null })
     .eq("id", id)
@@ -374,7 +374,7 @@ export async function removeInviteFile(invitationId: string, storagePath: string
   const staff = await requireStaff();
   if (!staff) return { success: false, error: "Not authenticated." };
 
-  const adminClient = getAdminClient();
+  const adminClient = getAdminClientAs(staff);
 
   const { data: invitation } = await adminClient.from("invitations")
     .select("id, attached_files")

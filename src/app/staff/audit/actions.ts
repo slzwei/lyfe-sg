@@ -1,6 +1,6 @@
 "use server";
 
-import { getAdminClient } from "@/lib/supabase/admin";
+import { getAdminClient, getAdminClientAs } from "@/lib/supabase/admin";
 import { requireStaff } from "../actions";
 
 const RESTORABLE_TABLES = [
@@ -140,7 +140,7 @@ export async function restoreDeletedEntry(auditId: number): Promise<{
   const staff = await requireStaff("admin");
   if (!staff) return { success: false, error: "Admin access required." };
 
-  const admin = getAdminClient();
+  const admin = getAdminClientAs(staff);
 
   // Fetch the audit entry
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

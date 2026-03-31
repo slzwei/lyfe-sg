@@ -66,7 +66,7 @@ export default function CandidatesClient({ staffRole }: { staffRole?: string }) 
       );
     }
   }, []);
-  const { live, liveStates } = useRealtimeProgress({ onRefresh: handleRealtimeRefresh, onListChanged: fetchData });
+  const { live, liveStates } = useRealtimeProgress({ onRefresh: handleRealtimeRefresh });
 
   // Merge: accepted invitations + pipeline-only candidates as synthetic invitations
   const acceptedInvitations = invitations.filter((inv) =>

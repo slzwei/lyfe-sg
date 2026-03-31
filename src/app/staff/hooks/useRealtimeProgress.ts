@@ -1,14 +1,11 @@
 "use client";
 
 import { useState, useEffect, useCallback, useRef } from "react";
-import { createClient } from "@/lib/supabase/client";
 import { onProgress, type CandidateState } from "@/lib/supabase/progress-broadcast";
 
 interface UseRealtimeProgressOptions {
   /** Called when a candidate's data should be refreshed from the DB. */
   onRefresh: (userId: string) => Promise<void>;
-  /** Called when any candidate/invitation data changes in the DB. */
-  onListChanged?: () => void;
 }
 
 interface UseRealtimeProgressReturn {
@@ -23,11 +20,10 @@ interface UseRealtimeProgressReturn {
  * Debounces DB refresh calls per user (500ms) and auto-clears
  * "signed-out" states after 60 seconds.
  */
-export function useRealtimeProgress({ onRefresh, onListChanged }: UseRealtimeProgressOptions): UseRealtimeProgressReturn {
+export function useRealtimeProgress({ onRefresh }: UseRealtimeProgressOptions): UseRealtimeProgressReturn {
   const [live, setLive] = useState(false);
   const [liveStates, setLiveStates] = useState<Record<string, CandidateState>>({});
   const debounceMap = useRef<Map<string, ReturnType<typeof setTimeout>>>(new Map());
-  const listDebounce = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Stable refresh callback with debounce
   const refreshUser = useCallback((userId: string) => {
@@ -66,27 +62,6 @@ export function useRealtimeProgress({ onRefresh, onListChanged }: UseRealtimePro
       (connected) => setLive(connected)
     );
 
-    // Subscribe to DB changes via progress_signals (fires on candidate/invitation/profile/DISC changes)
-    let unsubDb: (() => void) | undefined;
-    if (onListChanged) {
-      const supabase = createClient();
-      const dbChannel = supabase
-        .channel("db-progress-signal")
-        .on(
-          "postgres_changes",
-          { event: "UPDATE", schema: "public", table: "progress_signals" },
-          () => {
-            if (listDebounce.current) clearTimeout(listDebounce.current);
-            listDebounce.current = setTimeout(() => {
-              listDebounce.current = null;
-              onListChanged();
-            }, 1000);
-          }
-        )
-        .subscribe();
-      unsubDb = () => supabase.removeChannel(dbChannel);
-    }
-
     // Track browser network state
     const goOffline = () => setLive(false);
     const goOnline = () => setLive(true);
@@ -96,13 +71,11 @@ export function useRealtimeProgress({ onRefresh, onListChanged }: UseRealtimePro
     return () => {
       debounceMap.current.forEach((t) => clearTimeout(t));
       debounceMap.current.clear();
-      if (listDebounce.current) clearTimeout(listDebounce.current);
       window.removeEventListener("offline", goOffline);
       window.removeEventListener("online", goOnline);
       unsub();
-      unsubDb?.();
     };
-  }, [refreshUser, onListChanged]);
+  }, [refreshUser]);
 
   return { live, liveStates };
 }

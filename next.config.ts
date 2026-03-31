@@ -1,5 +1,4 @@
 import type { NextConfig } from "next";
-import { withSentryConfig } from "@sentry/nextjs";
 
 const nextConfig: NextConfig = {
   serverExternalPackages: ["pdfkit"],
@@ -39,9 +38,15 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default withSentryConfig(nextConfig, {
-  silent: !process.env.NEXT_PUBLIC_SENTRY_DSN,
-  sourcemaps: {
-    disable: !process.env.NEXT_PUBLIC_SENTRY_DSN,
-  },
-});
+// Only wrap with Sentry when DSN is configured — the wrapper modifies
+// server action and component rendering which can break without a valid DSN.
+let config: NextConfig = nextConfig;
+if (process.env.NEXT_PUBLIC_SENTRY_DSN) {
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const { withSentryConfig } = require("@sentry/nextjs");
+  config = withSentryConfig(nextConfig, {
+    silent: false,
+    sourcemaps: { disable: false },
+  });
+}
+export default config;

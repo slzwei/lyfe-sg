@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useSearchParams } from "next/navigation";
 import { useRealtimeProgress } from "../hooks/useRealtimeProgress";
 import { searchCandidates, deleteCandidateById, type SearchResult } from "./actions";
@@ -38,8 +38,9 @@ export default function CandidatesClient({ staffRole }: { staffRole?: string }) 
   const [sending, setSending] = useState(false);
   const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
 
+  const initialLoadDone = useRef(false);
   const fetchData = useCallback(async () => {
-    setLoading(true);
+    if (!initialLoadDone.current) setLoading(true);
     const [invResult, candResult] = await Promise.all([
       listInvitations(),
       searchCandidates({ query: query || undefined, discType: discFilter || undefined }),
@@ -47,6 +48,7 @@ export default function CandidatesClient({ staffRole }: { staffRole?: string }) 
     if (invResult.success && invResult.data) setInvitations(invResult.data);
     if (candResult.success && candResult.data) setPipelineCandidates(candResult.data);
     setLoading(false);
+    initialLoadDone.current = true;
   }, [query, discFilter]);
 
   useEffect(() => {

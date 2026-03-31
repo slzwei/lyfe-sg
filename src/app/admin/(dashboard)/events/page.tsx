@@ -1,10 +1,10 @@
 import { Topbar } from '@/components/admin/layout/topbar';
-import { createClient } from '@/lib/supabase/server';
+import { getAdminClient } from '@/lib/supabase/admin';
 import { AgencyEvent, EVENT_TYPES, EVENT_TYPE_LABELS, joinName, NameJoin } from '@/lib/admin/types';
 import { EventsClient } from './events-client';
 
 async function getEventsData() {
-  const supabase = await createClient();
+  const supabase = getAdminClient();
 
   const [
     { data: events },

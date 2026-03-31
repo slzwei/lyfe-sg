@@ -1,5 +1,6 @@
 import { Topbar } from '@/components/admin/layout/topbar';
 import { createClient } from '@/lib/supabase/server';
+import { getAdminClient } from '@/lib/supabase/admin';
 import type {
     RoadmapProgramme,
     RoadmapModule,
@@ -11,7 +12,8 @@ import type {
 import { TrainingClient } from './training-client';
 
 export default async function TrainingPage() {
-    const supabase = await createClient();
+    const authClient = await createClient();
+    const supabase = getAdminClient();
 
     const [
         {
@@ -24,7 +26,7 @@ export default async function TrainingPage() {
         papersResult,
         itemsResult,
     ] = await Promise.all([
-        supabase.auth.getUser(),
+        authClient.auth.getUser(),
         supabase.from('roadmap_programmes').select('*').order('display_order'),
         supabase.from('roadmap_modules').select('*, exam_papers(code, title)').order('display_order'),
         supabase.from('roadmap_resources').select('*').order('display_order'),

@@ -1,10 +1,10 @@
 import { Topbar } from '@/components/admin/layout/topbar';
-import { createClient } from '@/lib/supabase/server';
+import { getAdminClient } from '@/lib/supabase/admin';
 import type { ExamPaper, ExamQuestion, ExamAttempt } from '@/lib/admin/types';
 import { ExamsClient } from './exams-client';
 
 export default async function ExamsPage() {
-  const supabase = await createClient();
+  const supabase = getAdminClient();
 
   const [papersResult, questionsResult, attemptsResult] = await Promise.all([
     supabase.from('exam_papers').select('*').order('display_order'),

@@ -1,5 +1,5 @@
 import { Topbar } from '@/components/admin/layout/topbar';
-import { createClient } from '@/lib/supabase/server';
+import { getAdminClient } from '@/lib/supabase/admin';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { LeadsClient } from './leads-client';
 import {
@@ -11,7 +11,7 @@ import {
 } from '@/lib/admin/types';
 
 export default async function LeadsPage() {
-  const supabase = await createClient();
+  const supabase = getAdminClient();
 
   // Fetch leads with joined user names
   const { data: rawLeads } = await supabase

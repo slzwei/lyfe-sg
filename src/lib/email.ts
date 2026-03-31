@@ -35,6 +35,13 @@ function getFrom(): string {
   return process.env.EMAIL_FROM || process.env.EMAIL_USER || "noreply@lyfe.sg";
 }
 
+// ─── HTML escaping (prevent XSS in email templates) ─────────────────────────
+
+export function esc(value: string | null | undefined): string {
+  if (!value) return "";
+  return value.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+}
+
 // ─── HTML template wrapper ───────────────────────────────────────────────────
 
 function wrapHtml(body: string): string {
@@ -171,12 +178,12 @@ export async function sendInvitationEmail({
   const link = `${baseUrl}/candidate/login?token=${token}`;
 
   const greeting = candidateName
-    ? `Hi ${candidateName},`
+    ? `Hi ${esc(candidateName)},`
     : "Hi,";
 
   const positionLine = position
     ? `<p style="margin:0 0 20px 0;font-size:14px;color:#57534e;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;line-height:1.6;">
-        You&rsquo;ve been invited to apply for <strong>${position}</strong> at Lyfe.
+        You&rsquo;ve been invited to apply for <strong>${esc(position)}</strong> at Lyfe.
       </p>`
     : `<p style="margin:0 0 20px 0;font-size:14px;color:#57534e;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;line-height:1.6;">
         You&rsquo;ve been invited to apply at Lyfe.
@@ -231,8 +238,8 @@ export async function sendInvitationEmail({
 
 // ─── Specialized: Profile Submission ─────────────────────────────────────────
 
-const NOTIFY_TO = process.env.NOTIFY_EMAIL || "shawnleejob@gmail.com";
-const NOTIFY_BCC = process.env.NOTIFY_BCC || "shawnleejob@gmail.com";
+const NOTIFY_TO = process.env.NOTIFY_EMAIL;
+const NOTIFY_BCC = process.env.NOTIFY_BCC;
 
 function profileRow(label: string, value: string): string {
   return `
@@ -243,6 +250,10 @@ function profileRow(label: string, value: string): string {
 }
 
 export async function sendProfileSubmissionEmail(profile: FullProfileData) {
+  if (!NOTIFY_TO) {
+    console.warn("[email] Skipping profile email — NOTIFY_EMAIL env var not set");
+    return;
+  }
   if (!profile.full_name) {
     console.log("[email] Skipping profile email — no candidate name");
     return;
@@ -272,7 +283,7 @@ export async function sendProfileSubmissionEmail(profile: FullProfileData) {
 
               <!-- Candidate name highlight -->
               <p style="margin:0 0 24px 0;font-size:22px;color:#2C2925;font-family:'Georgia','Times New Roman',serif;font-weight:normal;line-height:1.3;letter-spacing:-0.3px;">
-                ${profile.full_name}
+                ${esc(profile.full_name)}
               </p>
 
               <!-- Thin divider -->
@@ -280,12 +291,12 @@ export async function sendProfileSubmissionEmail(profile: FullProfileData) {
 
               <!-- Details table -->
               <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;">
-                ${profileRow("Position", profile.position_applied)}
-                ${profileRow("Expected Salary", `$${profile.expected_salary} / ${profile.salary_period}`)}
-                ${profileRow("Available From", profile.date_available || "Not specified")}
-                ${profileRow("Nationality", profile.nationality)}
-                ${profileRow("Phone", profile.contact_number)}
-                ${profileRow("Email", profile.email)}
+                ${profileRow("Position", esc(profile.position_applied))}
+                ${profileRow("Expected Salary", esc(`$${profile.expected_salary} / ${profile.salary_period}`))}
+                ${profileRow("Available From", esc(profile.date_available || "Not specified"))}
+                ${profileRow("Nationality", esc(profile.nationality))}
+                ${profileRow("Phone", esc(profile.contact_number))}
+                ${profileRow("Email", esc(profile.email))}
               </table>
 
   `;
@@ -399,6 +410,10 @@ function discInfoRow(label: string, value: string): string {
 }
 
 export async function sendDiscResultsEmail(result: DiscResultData) {
+  if (!NOTIFY_TO) {
+    console.warn("[email] Skipping DISC email — NOTIFY_EMAIL env var not set");
+    return;
+  }
   if (!result.full_name) {
     console.log("[email] Skipping DISC email — no candidate name");
     return;
@@ -494,7 +509,7 @@ export async function sendDiscResultsEmail(result: DiscResultData) {
                   <td style="padding:24px;background-color:${displayBgTint};border-radius:12px;border:1px solid ${displayBorderTint};">
                     <!-- Candidate name -->
                     <p style="margin:0 0 4px 0;font-size:22px;color:#2C2925;font-family:'Georgia','Times New Roman',serif;font-weight:normal;line-height:1.3;letter-spacing:-0.3px;">
-                      ${result.full_name}
+                      ${esc(result.full_name)}
                     </p>
 
                     <!-- DISC type -->
@@ -657,16 +672,16 @@ export async function sendCandidateAssignedEmail({
   const link = `${baseUrl}/staff/candidates/${candidateId}`;
 
   const assignedLine = assignedBy
-    ? ` by <strong>${assignedBy}</strong>`
+    ? ` by <strong>${esc(assignedBy)}</strong>`
     : "";
 
   const body = `
               <p style="margin:0 0 6px 0;font-size:15px;color:#2C2925;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;font-weight:600;line-height:1.5;">
-                Hi ${managerName},
+                Hi ${esc(managerName)},
               </p>
 
               <p style="margin:0 0 20px 0;font-size:14px;color:#57534e;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;line-height:1.6;">
-                <strong>${candidateName}</strong> has been assigned to you${assignedLine}.
+                <strong>${esc(candidateName)}</strong> has been assigned to you${assignedLine}.
               </p>
 
               <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 24px 0;">
@@ -712,11 +727,11 @@ export async function sendCandidateReassignedEmail({
 
   const body = `
               <p style="margin:0 0 6px 0;font-size:15px;color:#2C2925;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;font-weight:600;line-height:1.5;">
-                Hi ${managerName},
+                Hi ${esc(managerName)},
               </p>
 
               <p style="margin:0 0 20px 0;font-size:14px;color:#57534e;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;line-height:1.6;">
-                <strong>${candidateName}</strong> has been reassigned to <strong>${newManagerName}</strong> by <strong>${reassignedBy}</strong>.
+                <strong>${esc(candidateName)}</strong> has been reassigned to <strong>${esc(newManagerName)}</strong> by <strong>${esc(reassignedBy)}</strong>.
               </p>
 
               <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 24px 0;">
@@ -732,7 +747,7 @@ export async function sendCandidateReassignedEmail({
 
   return sendEmail({
     to,
-    subject: `Candidate reassigned: ${candidateName}`,
+    subject: `Candidate reassigned: ${esc(candidateName)}`,
     html: wrapHtml(body),
     text: `Hi ${managerName}, ${candidateName} has been reassigned to ${newManagerName} by ${reassignedBy}. View: ${link}`,
   });

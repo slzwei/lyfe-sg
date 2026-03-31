@@ -21,6 +21,24 @@ async function getTeamManagerIds(staff: StaffUser): Promise<string[] | null> {
   return [];
 }
 
+/** Verify the caller has team-scoped access to a specific candidate. */
+async function verifyCandidateAccess(
+  candidateId: string,
+  staff: StaffUser
+): Promise<boolean> {
+  const managerIds = await getTeamManagerIds(staff);
+  if (managerIds === null) return true; // global access
+  if (managerIds.length === 0) return false;
+  const admin = getAdminClient();
+  const { data } = await admin
+    .from("candidates")
+    .select("assigned_manager_id")
+    .eq("id", candidateId)
+    .single();
+  if (!data) return false;
+  return data.assigned_manager_id !== null && managerIds.includes(data.assigned_manager_id);
+}
+
 // ─── Types ───────────────────────────────────────────────────────────────────
 
 export interface CandidateDetail {
@@ -252,6 +270,8 @@ export async function addActivity(
 ): Promise<{ success: boolean; error?: string }> {
   const staff = await getStaffUser();
   if (!staff) return { success: false, error: "Not authenticated." };
+  if (!(await verifyCandidateAccess(candidateId, staff)))
+    return { success: false, error: "Candidate not found." };
 
   const admin = getAdminClient();
   const { error } = await admin.from("candidate_activities").insert({
@@ -298,6 +318,8 @@ export async function addDocument(
 ): Promise<{ success: boolean; error?: string }> {
   const staff = await getStaffUser();
   if (!staff) return { success: false, error: "Not authenticated." };
+  if (!(await verifyCandidateAccess(candidateId, staff)))
+    return { success: false, error: "Candidate not found." };
 
   const admin = getAdminClient();
   const { error } = await admin.from("candidate_documents").insert({
@@ -358,7 +380,8 @@ export async function searchCandidates(params: {
   // Text search
   if (params.query?.trim()) {
     const search = params.query.trim();
-    q = q.or(`name.ilike.%${search}%,email.ilike.%${search}%,phone.ilike.%${search}%`);
+    const safe = search.replace(/[%_(),.*]/g, "");
+    q = q.or(`name.ilike.%${safe}%,email.ilike.%${safe}%,phone.ilike.%${safe}%`);
   }
 
   q = q.order("created_at", { ascending: false }).range(offset, offset + limit - 1);
@@ -465,6 +488,8 @@ export async function updateCandidate(
 ): Promise<{ success: boolean; error?: string }> {
   const staff = await getStaffUser();
   if (!staff) return { success: false, error: "Not authenticated." };
+  if (!(await verifyCandidateAccess(candidateId, staff)))
+    return { success: false, error: "Candidate not found." };
 
   const admin = getAdminClientAs(staff);
   const update: Record<string, unknown> = {};
@@ -677,8 +702,8 @@ export async function deleteCandidateById(candidateId: string): Promise<{
   success: boolean;
   error?: string;
 }> {
-  const staff = await getStaffUser();
-  if (!staff) return { success: false, error: "Not authenticated." };
+  const staff = await requireStaff("admin");
+  if (!staff) return { success: false, error: "Not authorized. Admin role required." };
 
   const admin = getAdminClientAs(staff);
 

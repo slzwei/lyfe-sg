@@ -1,10 +1,10 @@
 import { Topbar } from '@/components/admin/layout/topbar';
-import { createClient } from '@/lib/supabase/server';
+import { getAdminClient } from '@/lib/supabase/admin';
 import { User, USER_ROLES, ROLE_LABELS } from '@/lib/admin/types';
 import { UsersClient } from './users-client';
 
 export default async function UsersPage() {
-  const supabase = await createClient();
+  const supabase = getAdminClient();
 
   const { data: rawUsers } = await supabase
     .from('users')

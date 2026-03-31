@@ -1,15 +1,21 @@
 "use server";
 
+import { headers } from "next/headers";
 import { createClient } from "@/lib/supabase/server";
 import { getAdminClient } from "@/lib/supabase/admin";
 import { sendCandidateAssignedEmail } from "@/lib/email";
 import { redirect } from "next/navigation";
+import { checkRateLimit } from "@/lib/rate-limit";
 
 export async function sendOtp(phone: string) {
   const cleaned = phone.replace(/\s/g, "");
   if (!/^\+65\d{8}$/.test(cleaned)) {
     return { success: false, error: "Please enter a valid SG mobile number." };
   }
+
+  const ip = (await headers()).get("x-forwarded-for") || "unknown";
+  const { allowed } = checkRateLimit(`candidate-otp:${ip}`, 5);
+  if (!allowed) return { success: false, error: "Too many attempts. Please wait a minute." };
 
   const supabase = await createClient();
   const { error } = await supabase.auth.signInWithOtp({ phone: cleaned });
@@ -247,9 +253,11 @@ export async function verifyOtp(phone: string, token: string, inviteToken?: stri
         stageId = firstStage?.id || null;
       }
 
+      // Strip '+' prefix to match auth.users / public.users phone format
+      const normalizedPhone = phone.replace(/^\+/, "");
       const { data: candidateRecord } = await admin.from("candidates").insert({
         name: invitation.candidate_name || phone,
-        phone,
+        phone: normalizedPhone,
         email: invitation.email,
         status: "applied",
         job_id: invitation.job_id || null,

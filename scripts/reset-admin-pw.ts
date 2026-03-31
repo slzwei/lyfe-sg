@@ -18,11 +18,11 @@ if (!newPassword) { console.error("Usage: npx tsx scripts/reset-admin-pw.ts <new
 
 async function main() {
   const { error } = await admin.auth.admin.updateUserById(
-    "bc17d0b0-607f-4ef1-807b-d70a436db255",
+    "edfe2761-60db-471d-9f49-32f93f686324",
     { password: newPassword }
   );
   if (error) { console.error("Failed:", error.message); process.exit(1); }
-  console.log("Password updated successfully for shawnleejob@gmail.com");
+  console.log("Password updated successfully for shawnleeapps@gmail.com");
 }
 
 main();

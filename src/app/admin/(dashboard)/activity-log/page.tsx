@@ -1,11 +1,11 @@
 import { Topbar } from '@/components/admin/layout/topbar';
-import { createClient } from '@/lib/supabase/server';
+import { getAdminClient } from '@/lib/supabase/admin';
 import { joinName, joinCandidateName, NameJoin } from '@/lib/admin/types';
 import { ActivityLogClient } from './activity-log-client';
 import type { ActivityRow } from './columns';
 
 async function getActivityData() {
-  const supabase = await createClient();
+  const supabase = getAdminClient();
 
   const [{ data: leadActivities }, { data: candidateActivities }] = await Promise.all([
     supabase

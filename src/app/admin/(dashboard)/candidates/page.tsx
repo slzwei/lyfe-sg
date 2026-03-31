@@ -1,5 +1,5 @@
 import { Topbar } from '@/components/admin/layout/topbar';
-import { createClient } from '@/lib/supabase/server';
+import { getAdminClient } from '@/lib/supabase/admin';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
   Candidate,
@@ -26,7 +26,7 @@ const FUNNEL_STAGES: CandidateStatus[] = [
 // -- Server component ----
 
 export default async function CandidatesPage() {
-  const supabase = await createClient();
+  const supabase = getAdminClient();
 
   const [candidatesRes, interviewsRes, activitiesRes] = await Promise.all([
     supabase

@@ -2,11 +2,20 @@
 
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
+import { after } from "next/server";
 import { sendProfileSubmissionEmail } from "@/lib/email";
 import { generateProfilePdf, type FullProfileData } from "@/lib/pdf";
 import { uploadCandidatePdf } from "@/lib/supabase/storage";
 import { getAdminClient } from "@/lib/supabase/admin";
 import type { Json } from "@/lib/supabase/database.types";
+import {
+  step1Schema,
+  step2Schema,
+  step3Schema,
+  step4Schema,
+  step5Schema,
+  step6Schema,
+} from "@/lib/schemas/onboarding";
 
 /** Pad "YYYY-MM" → "YYYY-MM-01" so Postgres date columns accept it. */
 function toDate(v: unknown): string | null {
@@ -24,6 +33,20 @@ export async function saveProfile(formData: Record<string, unknown>) {
   if (!user) {
     return { error: "Not authenticated." };
   }
+
+  // Server-side validation (mirrors client-side Zod schemas)
+  const v1 = step1Schema.safeParse(formData);
+  if (!v1.success) return { error: "Validation failed: personal details are incomplete or invalid." };
+  const v2 = step2Schema.safeParse(formData);
+  if (!v2.success) return { error: "Validation failed: NS/emergency details are incomplete." };
+  const v3 = step3Schema.safeParse(formData);
+  if (!v3.success) return { error: "Validation failed: education details are incomplete." };
+  const v4 = step4Schema.safeParse(formData);
+  if (!v4.success) return { error: "Validation failed: skills details are invalid." };
+  const v5 = step5Schema.safeParse(formData);
+  if (!v5.success) return { error: "Validation failed: employment history is invalid." };
+  const v6 = step6Schema.safeParse(formData);
+  if (!v6.success) return { error: "Validation failed: declaration is incomplete." };
 
   const profile = {
     user_id: user.id,
@@ -139,25 +162,27 @@ export async function saveProfile(formData: Record<string, unknown>) {
     declaration_date: profile.declaration_date,
   };
 
-  // Generate PDF, upload to storage, and update invitation (don't block on failure)
-  (async () => {
+  // Generate PDF + send email after response (runs reliably via Next.js after())
+  const userId = user.id;
+  after(async () => {
     try {
       const pdfBuffer = await generateProfilePdf(profileData);
-      const filePath = await uploadCandidatePdf(user.id, "application", pdfBuffer);
+      const filePath = await uploadCandidatePdf(userId, "application", pdfBuffer);
       if (filePath) {
         const admin = getAdminClient();
         await admin.from("invitations")
           .update({ profile_pdf_path: filePath })
-          .eq("user_id", user.id);
+          .eq("user_id", userId);
       }
     } catch (err) {
       console.error("[pdf-upload] Profile PDF storage failed:", err);
     }
-  })();
 
-  // Send email notification with PDF attachment (don't block on failure)
-  sendProfileSubmissionEmail(profileData).catch((err) => {
-    console.error("[email] sendProfileSubmissionEmail failed:", err);
+    try {
+      await sendProfileSubmissionEmail(profileData);
+    } catch (err) {
+      console.error("[email] sendProfileSubmissionEmail failed:", err);
+    }
   });
 
   redirect("/candidate/disc-quiz");

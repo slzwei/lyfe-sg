@@ -2,6 +2,7 @@
 
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
+import { after } from "next/server";
 import { calculateDiscScores, DISC_TYPE_INFO } from "./scoring";
 import { sendDiscResultsEmail } from "@/lib/email";
 import { generateDiscPdf } from "@/lib/pdf";
@@ -72,11 +73,15 @@ export async function submitDiscQuiz(responses: Record<string, number>, resultsE
   // Generate PDF, upload to storage, and update invitation (don't block on failure)
   const isBalanced = profile_strength === "balanced";
   const typeInfo = isBalanced ? DISC_TYPE_INFO["Balanced"] : DISC_TYPE_INFO[scores.disc_type];
-  if (typeInfo) {
-    (async () => {
+  // Generate PDF + send email after response (runs reliably via Next.js after())
+  const userId = user.id;
+  const candidateName = profile?.full_name || "Unknown";
+  const contactNumber = profile?.contact_number || "";
+  after(async () => {
+    if (typeInfo) {
       try {
         const pdfBuffer = await generateDiscPdf({
-          full_name: profile?.full_name || "Unknown",
+          full_name: candidateName,
           disc_type: scores.disc_type,
           d_pct: scores.d_pct,
           i_pct: scores.i_pct,
@@ -88,34 +93,37 @@ export async function submitDiscQuiz(responses: Record<string, number>, resultsE
           priorities,
           typeInfo,
         });
-        const filePath = await uploadCandidatePdf(user.id, "disc-profile", pdfBuffer);
+        const filePath = await uploadCandidatePdf(userId, "disc-profile", pdfBuffer);
         if (filePath) {
           const admin = getAdminClient();
           await admin.from("invitations")
             .update({ disc_pdf_path: filePath })
-            .eq("user_id", user.id);
+            .eq("user_id", userId);
         }
       } catch (err) {
         console.error("[pdf-upload] DISC PDF storage failed:", err);
       }
-    })();
-  }
+    }
 
-  // Send email notification (don't block on failure)
-  sendDiscResultsEmail({
-    full_name: profile?.full_name || "Unknown",
-    disc_type: scores.disc_type,
-    d_pct: scores.d_pct,
-    i_pct: scores.i_pct,
-    s_pct: scores.s_pct,
-    c_pct: scores.c_pct,
-    angle: scores.angle,
-    profile_strength,
-    strength_pct,
-    priorities,
-    results_email: resultsEmail || "",
-    contact_number: profile?.contact_number || "",
-  }).catch(() => {});
+    try {
+      await sendDiscResultsEmail({
+        full_name: candidateName,
+        disc_type: scores.disc_type,
+        d_pct: scores.d_pct,
+        i_pct: scores.i_pct,
+        s_pct: scores.s_pct,
+        c_pct: scores.c_pct,
+        angle: scores.angle,
+        profile_strength,
+        strength_pct,
+        priorities,
+        results_email: resultsEmail || "",
+        contact_number: contactNumber,
+      });
+    } catch (err) {
+      console.error("[email] sendDiscResultsEmail failed:", err);
+    }
+  });
 
   redirect("/candidate/disc-results");
 }

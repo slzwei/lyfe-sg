@@ -11,6 +11,11 @@ export async function getPdfUrl(filePath: string): Promise<{
   const staff = await requireStaff();
   if (!staff) return { success: false, error: "Not authenticated." };
 
+  // Validate path: must be {uuid}/{type}.pdf within candidate-pdfs bucket
+  if (!/^[0-9a-f-]+\/(application|disc-profile)\.pdf$/.test(filePath)) {
+    return { success: false, error: "Invalid file path." };
+  }
+
   const url = await getSignedPdfUrl(filePath);
   if (!url) return { success: false, error: "Failed to generate download URL." };
 

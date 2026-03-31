@@ -2,14 +2,19 @@
 
 import { sendEmail } from "@/lib/email";
 
-const NOTIFY_TO = process.env.NOTIFY_EMAIL || "shawnleejob@gmail.com";
-const NOTIFY_BCC = process.env.NOTIFY_BCC || "shawnleejob@gmail.com";
+const NOTIFY_TO = process.env.NOTIFY_EMAIL;
+const NOTIFY_BCC = process.env.NOTIFY_BCC;
 
 export async function subscribeEmail(
   email: string
 ): Promise<{ success: boolean; error?: string }> {
   if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
     return { success: false, error: "Invalid email address" };
+  }
+
+  if (!NOTIFY_TO) {
+    console.warn("[waitlist] NOTIFY_EMAIL env var not set — skipping notification");
+    return { success: false, error: "Notification service not configured." };
   }
 
   const result = await sendEmail({

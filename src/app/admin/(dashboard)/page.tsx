@@ -1,10 +1,10 @@
 import { Topbar } from '@/components/admin/layout/topbar';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { createClient } from '@/lib/supabase/server';
+import { getAdminClient } from '@/lib/supabase/admin';
 import { Users, Target, UserCheck, Calendar, GraduationCap } from 'lucide-react';
 
 async function getDashboardStats() {
-  const supabase = await createClient();
+  const supabase = getAdminClient();
 
   const [
     { count: userCount },

@@ -1,10 +1,10 @@
 import { Topbar } from '@/components/admin/layout/topbar';
-import { createClient } from '@/lib/supabase/server';
+import { getAdminClient } from '@/lib/supabase/admin';
 import { User, PaManagerAssignment, joinName, NameJoin } from '@/lib/admin/types';
 import { RolesClient } from './roles-client';
 
 async function getRolesData() {
-  const supabase = await createClient();
+  const supabase = getAdminClient();
 
   const [{ data: users }, { data: assignments }] = await Promise.all([
     supabase.from('users').select('*').order('full_name'),

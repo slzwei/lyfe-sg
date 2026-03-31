@@ -1,10 +1,11 @@
 "use server";
 
-import { cookies } from "next/headers";
+import { cookies, headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { getAdminClient } from "@/lib/supabase/admin";
 import { STAFF_ROLES } from "@/lib/shared-types/roles";
+import { checkRateLimit } from "@/lib/rate-limit";
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 
@@ -18,6 +19,10 @@ export interface StaffUser {
 // ─── Staff Authentication ────────────────────────────────────────────────────
 
 export async function staffLogin(email: string, password: string) {
+  const ip = (await headers()).get("x-forwarded-for") || "unknown";
+  const { allowed } = checkRateLimit(`staff-login:${ip}`, 5);
+  if (!allowed) return { success: false, error: "Too many attempts. Please wait a minute." };
+
   const supabase = await createClient();
   const { data, error } = await supabase.auth.signInWithPassword({ email, password });
 
@@ -45,6 +50,10 @@ export async function staffSendOtp(phone: string) {
   if (!/^\+65\d{8}$/.test(cleaned)) {
     return { success: false, error: "Please enter a valid SG mobile number." };
   }
+
+  const ip = (await headers()).get("x-forwarded-for") || "unknown";
+  const { allowed } = checkRateLimit(`staff-otp:${ip}`, 5);
+  if (!allowed) return { success: false, error: "Too many attempts. Please wait a minute." };
 
   const supabase = await createClient();
   const { error } = await supabase.auth.signInWithOtp({ phone: cleaned });
@@ -112,9 +121,12 @@ export async function requireStaff(minRole?: string): Promise<StaffUser | null> 
     const adminClient = getAdminClient();
     const { data: profile } = await adminClient
       .from("users")
-      .select("id, full_name, email, role")
+      .select("id, full_name, email, role, is_active")
       .eq("id", user.id)
       .single();
+
+    // Block deactivated users
+    if (profile && profile.is_active === false) return null;
 
     if (profile) return profile as StaffUser;
 

@@ -1,9 +1,9 @@
 import { Topbar } from '@/components/admin/layout/topbar';
-import { createClient } from '@/lib/supabase/server';
+import { getAdminClient } from '@/lib/supabase/admin';
 import { AnalyticsClient } from './analytics-client';
 
 async function getAnalyticsData() {
-  const supabase = await createClient();
+  const supabase = getAdminClient();
 
   const [
     { data: leads },

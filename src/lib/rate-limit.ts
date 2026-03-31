@@ -90,11 +90,16 @@ export async function checkRateLimitAsync(
   const upstash = getUpstashLimiter(maxRequests, windowMs);
 
   if (upstash) {
-    const result = await upstash.limit(key);
-    if (!result.success) {
-      return { allowed: false, retryAfterMs: result.reset - Date.now() };
+    try {
+      const result = await upstash.limit(key);
+      if (!result.success) {
+        return { allowed: false, retryAfterMs: result.reset - Date.now() };
+      }
+      return { allowed: true };
+    } catch (err) {
+      console.warn("[rate-limit] Upstash failed, falling back to in-memory:", err);
+      // Fall through to in-memory limiter
     }
-    return { allowed: true };
   }
 
   return checkMemoryRateLimit(key, maxRequests, windowMs);

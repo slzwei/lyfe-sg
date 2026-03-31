@@ -14,14 +14,8 @@ export default async function StaffLayout({
 }: {
   children: React.ReactNode;
 }) {
-  let user = null;
-  try {
-    const supabase = await createClient();
-    const { data } = await supabase.auth.getUser();
-    user = data.user;
-  } catch (err) {
-    console.error("[staff-layout] auth.getUser failed:", err);
-  }
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
 
   const name = (user?.user_metadata?.full_name as string) || user?.email || user?.phone;
   const role = user?.app_metadata?.role as string | undefined;

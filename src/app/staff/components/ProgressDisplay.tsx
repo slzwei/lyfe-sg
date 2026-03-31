@@ -43,9 +43,9 @@ export function ProgressDisplay({ invitation: inv, liveState, onDownloadDiscPdf 
     pct = 100; label = "Viewing results"; barColor = "bg-green-500"; textColor = "text-green-700";
   } else if (progress?.quiz_completed) {
     pct = 100; label = "Completed"; barColor = "bg-green-500"; textColor = "text-green-700";
-  } else if (progress?.profile_completed && quizInProgress) {
-    pct = 50 + Math.round((progress.quiz_answered / 39) * 50);
-    label = "Quiz"; detail = `${progress.quiz_answered}/39`;
+  } else if (progress?.profile_completed && (quizInProgress || liveState === "quiz")) {
+    pct = 50 + Math.round(((progress.quiz_answered || 0) / 39) * 50);
+    label = "Quiz"; detail = `${progress.quiz_answered || 0}/39`;
     barColor = "bg-blue-500"; textColor = "text-blue-700";
   } else if (progress?.profile_completed) {
     pct = 50; label = "Form done"; detail = "Quiz not started";

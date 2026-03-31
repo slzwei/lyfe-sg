@@ -81,6 +81,11 @@ export default function DiscQuiz({ userId, initialResponses, initialEmail }: Dis
     return () => clearInterval(interval);
   }, [submitting]);
 
+  // Broadcast quiz state when quiz becomes visible (intro dismissed)
+  useEffect(() => {
+    if (!showIntro) broadcastProgress(userId, "quiz");
+  }, [showIntro, userId]);
+
   // Save progress to DB after every answer and notify staff portal
   useEffect(() => {
     if (Object.keys(responses).length === 0) return;

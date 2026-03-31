@@ -29,6 +29,8 @@ export default function CandidatesClient({ staffRole }: { staffRole?: string }) 
   const [query, setQuery] = useState("");
   const [discFilter, setDiscFilter] = useState(searchParams.get("disc") || "");
   const [actionLoading, setActionLoading] = useState<string | null>(null);
+  const [deleteConfirm, setDeleteConfirm] = useState<{ id: string; name: string; isSynthetic?: boolean } | null>(null);
+  const [deleteText, setDeleteText] = useState("");
 
   // Invite form
   const [showInvite, setShowInvite] = useState(false);
@@ -151,6 +153,16 @@ export default function CandidatesClient({ staffRole }: { staffRole?: string }) 
     setActionLoading(null);
   }
 
+  async function handleConfirmDelete() {
+    if (!deleteConfirm) return;
+    const { id, isSynthetic } = deleteConfirm;
+    setDeleteConfirm(null);
+    setDeleteText("");
+    await handleAction(id, () =>
+      isSynthetic ? deleteCandidateById(id) : deleteCandidate(id)
+    );
+  }
+
   async function handleDownloadPdf(path: string) {
     const result = await getPdfUrl(path);
     if (result.success && result.url) window.open(result.url, "_blank");
@@ -228,11 +240,49 @@ export default function CandidatesClient({ staffRole }: { staffRole?: string }) 
         onRevoke={(id) => handleAction(id, () => revokeInvitation(id))}
         onArchive={(id) => handleAction(id, () => archiveInvitation(id))}
         onUnarchive={(id) => handleAction(id, () => unarchiveInvitation(id))}
-        onDelete={(id, isSynthetic) => handleAction(id, () =>
-          isSynthetic ? deleteCandidateById(id) : deleteCandidate(id)
-        )}
+        onDelete={(id, name, isSynthetic) => {
+          setDeleteConfirm({ id, name, isSynthetic });
+          setDeleteText("");
+        }}
         onDownloadPdf={handleDownloadPdf}
       />
+
+      {/* Delete confirmation dialog */}
+      {deleteConfirm && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40" onClick={() => { setDeleteConfirm(null); setDeleteText(""); }}>
+          <div className="mx-4 w-full max-w-sm rounded-2xl bg-white p-6 shadow-xl" onClick={(e) => e.stopPropagation()}>
+            <h3 className="text-lg font-semibold text-stone-800">Delete Candidate</h3>
+            <p className="mt-2 text-sm text-stone-500">
+              This will permanently delete <span className="font-semibold text-stone-700">{deleteConfirm.name}</span> and all associated data.
+              Type <span className="font-semibold text-stone-700">&quot;delete&quot;</span> to confirm.
+            </p>
+            <input
+              type="text"
+              value={deleteText}
+              onChange={(e) => setDeleteText(e.target.value)}
+              placeholder="delete"
+              autoFocus
+              onKeyDown={(e) => {
+                if (e.key === "Escape") { setDeleteConfirm(null); setDeleteText(""); }
+                if (e.key === "Enter" && deleteText.toLowerCase() === "delete") handleConfirmDelete();
+              }}
+              className="mt-3 h-10 w-full rounded-lg border border-stone-200 bg-stone-50 px-3 text-base outline-none focus:border-red-400 focus:ring-2 focus:ring-red-100"
+            />
+            <div className="mt-4 flex justify-end gap-2">
+              <button onClick={() => { setDeleteConfirm(null); setDeleteText(""); }}
+                className="rounded-lg border border-stone-200 px-4 py-2 text-sm text-stone-500 hover:bg-stone-100">
+                Cancel
+              </button>
+              <button
+                onClick={handleConfirmDelete}
+                disabled={deleteText.toLowerCase() !== "delete"}
+                className="rounded-lg bg-red-500 px-4 py-2 text-sm font-semibold text-white hover:bg-red-600 disabled:opacity-30">
+                Confirm
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

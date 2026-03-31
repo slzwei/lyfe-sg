@@ -99,10 +99,9 @@ function getDefaultData(): Record<string, unknown> {
 interface OnboardingFormProps {
   userId: string;
   initialData?: Record<string, unknown> | null;
-  userPhone?: string;
 }
 
-export default function OnboardingForm({ userId, initialData, userPhone }: OnboardingFormProps) {
+export default function OnboardingForm({ userId, initialData }: OnboardingFormProps) {
   const router = useRouter();
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState<Record<string, unknown>>(() => {
@@ -124,10 +123,6 @@ export default function OnboardingForm({ userId, initialData, userPhone }: Onboa
           }
         }
       }
-    }
-    // Auto-populate contact number from login phone
-    if (userPhone && !defaults.contact_number) {
-      defaults.contact_number = userPhone;
     }
     return defaults;
   });

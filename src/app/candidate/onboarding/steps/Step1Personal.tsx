@@ -343,54 +343,34 @@ export default function Step1Personal({ data, onChange, errors }: Step1Props) {
         <div className="grid gap-4 sm:grid-cols-2">
           <div>
             <label className={LABEL_CLASS}>Contact Number *</label>
-            {v("contact_number") ? (
+            <div className="flex gap-2">
+              <div className="flex h-12 items-center rounded-xl border border-stone-200 bg-stone-50 px-3 text-sm text-stone-500">
+                +65
+              </div>
               <input
                 type="tel"
-                className={READONLY_CLASS}
-                value={v("contact_number")}
-                readOnly
-                tabIndex={-1}
+                inputMode="numeric"
+                maxLength={8}
+                className={INPUT_CLASS + " flex-1" + ec("contact_number")}
+                value={v("contact_number").replace(/^\+65/, "")}
+                onChange={(e) => {
+                  const val = e.target.value.replace(/\D/g, "").slice(0, 8);
+                  onChange("contact_number", val ? `+65${val}` : "");
+                }}
+                placeholder="8123 4567"
               />
-            ) : (
-              <div className="flex gap-2">
-                <div className="flex h-12 items-center rounded-xl border border-stone-200 bg-stone-50 px-3 text-sm text-stone-500">
-                  +65
-                </div>
-                <input
-                  type="tel"
-                  inputMode="numeric"
-                  maxLength={8}
-                  className={INPUT_CLASS + " flex-1"}
-                  value={(v("contact_number") as string).replace(/^\+65/, "")}
-                  onChange={(e) => {
-                    const val = e.target.value.replace(/\D/g, "").slice(0, 8);
-                    onChange("contact_number", val ? `+65${val}` : "");
-                  }}
-                  placeholder="8123 4567"
-                />
-              </div>
-            )}
+            </div>
             <FieldError error={errors.contact_number} />
           </div>
           <div>
             <label className={LABEL_CLASS}>Email *</label>
-            {v("email") ? (
-              <input
-                type="email"
-                className={READONLY_CLASS}
-                value={v("email")}
-                readOnly
-                tabIndex={-1}
-              />
-            ) : (
-              <input
-                type="email"
-                className={INPUT_CLASS}
-                value={v("email") as string}
-                onChange={(e) => onChange("email", e.target.value)}
-                placeholder="you@example.com"
-              />
-            )}
+            <input
+              type="email"
+              className={INPUT_CLASS + ec("email")}
+              value={v("email")}
+              onChange={(e) => onChange("email", e.target.value)}
+              placeholder="you@example.com"
+            />
             <FieldError error={errors.email} />
           </div>
         </div>

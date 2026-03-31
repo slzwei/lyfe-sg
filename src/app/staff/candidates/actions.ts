@@ -1,6 +1,7 @@
 "use server";
 
 import { getAdminClient, getAdminClientAs } from "@/lib/supabase/admin";
+import { deleteCandidateDocFiles, deletePdfFiles, deleteResumeFiles } from "@/lib/supabase/storage";
 import { sendCandidateAssignedEmail, sendCandidateReassignedEmail } from "@/lib/email";
 import { getStaffUser, requireStaff, type StaffUser } from "../actions";
 import { canScheduleInterviews, type UserRole } from "@/lib/shared-types/roles";
@@ -264,12 +265,23 @@ export async function getCandidate(candidateId: string): Promise<{
 
 // ─── Activities ──────────────────────────────────────────────────────────────
 
+const VALID_ACTIVITY_TYPES = ["call", "whatsapp", "note"] as const;
+const VALID_OUTCOMES = ["reached", "no_answer", "sent"] as const;
+
 export async function addActivity(
   candidateId: string,
   data: { type: string; note?: string; outcome?: string }
 ): Promise<{ success: boolean; error?: string }> {
   const staff = await getStaffUser();
   if (!staff) return { success: false, error: "Not authenticated." };
+  // P3-7: Validate activity type and outcome against allowlists
+  if (!VALID_ACTIVITY_TYPES.includes(data.type as typeof VALID_ACTIVITY_TYPES[number]))
+    return { success: false, error: "Invalid activity type." };
+  if (data.outcome && !VALID_OUTCOMES.includes(data.outcome as typeof VALID_OUTCOMES[number]))
+    return { success: false, error: "Invalid outcome." };
+  // P3-6: Input length limit
+  if (data.note && data.note.length > 10000)
+    return { success: false, error: "Note too long (max 10,000 characters)." };
   if (!(await verifyCandidateAccess(candidateId, staff)))
     return { success: false, error: "Candidate not found." };
 
@@ -338,8 +350,21 @@ export async function deleteDocument(docId: string): Promise<{ success: boolean;
   if (!staff) return { success: false, error: "Staff access required." };
 
   const admin = getAdminClient();
+
+  // Fetch file URL before deleting the record
+  const { data: doc } = await admin.from("candidate_documents")
+    .select("file_url")
+    .eq("id", docId)
+    .single();
+
   const { error } = await admin.from("candidate_documents").delete().eq("id", docId);
   if (error) return { success: false, error: error.message };
+
+  // Clean up storage file (best-effort — DB record already deleted)
+  if (doc?.file_url) {
+    await deleteCandidateDocFiles([doc.file_url]);
+  }
+
   return { success: true };
 }
 
@@ -490,6 +515,15 @@ export async function updateCandidate(
   if (!staff) return { success: false, error: "Not authenticated." };
   if (!(await verifyCandidateAccess(candidateId, staff)))
     return { success: false, error: "Candidate not found." };
+  // P3-6: Input length limits
+  if (data.name !== undefined && data.name.length > 255)
+    return { success: false, error: "Name too long (max 255 characters)." };
+  if (data.email !== undefined && data.email.length > 255)
+    return { success: false, error: "Email too long (max 255 characters)." };
+  if (data.phone !== undefined && data.phone.length > 20)
+    return { success: false, error: "Phone number too long." };
+  if (data.notes !== undefined && data.notes.length > 10000)
+    return { success: false, error: "Notes too long (max 10,000 characters)." };
 
   const admin = getAdminClientAs(staff);
   const update: Record<string, unknown> = {};
@@ -532,6 +566,9 @@ export async function getInterviews(candidateId: string): Promise<{
 }> {
   const staff = await getStaffUser();
   if (!staff) return { success: false, error: "Not authenticated." };
+  // P3-1: Verify candidate access
+  if (!(await verifyCandidateAccess(candidateId, staff)))
+    return { success: false, error: "Candidate not found." };
 
   const admin = getAdminClient();
   const { data: interviews, error } = await admin.from("interviews")
@@ -572,7 +609,26 @@ export async function updateInterviewFeedback(
   const staff = await requireStaff("manager");
   if (!staff) return { success: false, error: "Manager access required." };
 
+  // P3-7: Validate recommendation against allowlist
+  const VALID_RECOMMENDATIONS = ["second_interview", "on_hold", "pass"];
+  if (data.recommendation !== undefined && data.recommendation !== null &&
+      !VALID_RECOMMENDATIONS.includes(data.recommendation))
+    return { success: false, error: "Invalid recommendation value." };
+  // P3-6: Input length limit
+  if (data.notes !== undefined && data.notes.length > 10000)
+    return { success: false, error: "Notes too long (max 10,000 characters)." };
+
   const admin = getAdminClient();
+
+  // P3-2: Verify access to the candidate this interview belongs to
+  const { data: interview } = await admin.from("interviews")
+    .select("candidate_id")
+    .eq("id", interviewId)
+    .single();
+  if (!interview) return { success: false, error: "Interview not found." };
+  if (!(await verifyCandidateAccess(interview.candidate_id, staff)))
+    return { success: false, error: "Candidate not found." };
+
   const update: Record<string, unknown> = { updated_at: new Date().toISOString() };
   if (data.notes !== undefined) update.notes = data.notes.trim() || null;
   if (data.recommendation !== undefined) update.recommendation = data.recommendation;
@@ -601,6 +657,14 @@ export async function scheduleInterview(
   if (!data.datetime || !data.managerId) {
     return { success: false, error: "Date/time and interviewer are required." };
   }
+  // P3-3: Verify candidate access
+  if (!(await verifyCandidateAccess(candidateId, staff)))
+    return { success: false, error: "Candidate not found." };
+  // P3-6: Input length limits
+  if (data.location && data.location.length > 500)
+    return { success: false, error: "Location too long (max 500 characters)." };
+  if (data.zoomLink && data.zoomLink.length > 2000)
+    return { success: false, error: "Zoom link too long." };
 
   const admin = getAdminClient();
 
@@ -626,7 +690,32 @@ export async function scheduleInterview(
     zoom_link: data.zoomLink?.trim() || null,
   });
 
-  if (error) return { success: false, error: error.message };
+  // Handle duplicate round number from concurrent scheduling
+  if (error) {
+    if (error.message?.includes("duplicate") || error.message?.includes("unique")) {
+      // Retry once with recalculated round number
+      const { data: retry } = await admin.from("interviews")
+        .select("round_number")
+        .eq("candidate_id", candidateId)
+        .order("round_number", { ascending: false })
+        .limit(1);
+      const retryRound = (retry?.[0]?.round_number ?? 0) + 1;
+      const { error: retryErr } = await admin.from("interviews").insert({
+        candidate_id: candidateId,
+        manager_id: data.managerId,
+        scheduled_by_id: staff.id,
+        datetime: data.datetime,
+        type: data.type,
+        status: "scheduled",
+        round_number: retryRound,
+        location: data.location?.trim() || null,
+        zoom_link: data.zoomLink?.trim() || null,
+      });
+      if (retryErr) return { success: false, error: retryErr.message };
+    } else {
+      return { success: false, error: error.message };
+    }
+  }
 
   // Log activity
   const { data: manager } = await admin
@@ -702,8 +791,8 @@ export async function deleteCandidateById(candidateId: string): Promise<{
   success: boolean;
   error?: string;
 }> {
-  const staff = await requireStaff("pa");
-  if (!staff) return { success: false, error: "Not authorized." };
+  const staff = await requireStaff("admin");
+  if (!staff) return { success: false, error: "Not authorized. Admin role required." };
 
   const admin = getAdminClientAs(staff);
 
@@ -712,6 +801,46 @@ export async function deleteCandidateById(candidateId: string): Promise<{
     .select("user_id")
     .eq("candidate_id", candidateId)
     .maybeSingle();
+
+  // Collect storage files to clean up before DB deletes
+  const storageCleanup: Promise<boolean>[] = [];
+
+  if (profile?.user_id) {
+    // PDFs in candidate-pdfs bucket
+    storageCleanup.push(
+      deletePdfFiles([
+        `${profile.user_id}/application.pdf`,
+        `${profile.user_id}/disc-profile.pdf`,
+      ])
+    );
+  }
+
+  // Documents in candidate-documents bucket
+  const { data: docs } = await admin.from("candidate_documents")
+    .select("file_url")
+    .eq("candidate_id", candidateId);
+  if (docs && docs.length > 0) {
+    const docPaths = docs.map((d) => d.file_url).filter(Boolean);
+    if (docPaths.length > 0) storageCleanup.push(deleteCandidateDocFiles(docPaths));
+  }
+
+  // Attached files in candidate-resumes bucket (from linked invitations)
+  const { data: invitations } = await admin.from("invitations")
+    .select("attached_files")
+    .eq("candidate_record_id", candidateId);
+  if (invitations) {
+    const resumePaths: string[] = [];
+    for (const inv of invitations) {
+      if (inv.attached_files) {
+        const files = inv.attached_files as unknown as { storage_path: string }[];
+        resumePaths.push(...files.map((f) => f.storage_path));
+      }
+    }
+    if (resumePaths.length > 0) storageCleanup.push(deleteResumeFiles(resumePaths));
+  }
+
+  // Fire storage cleanup (best-effort, don't block DB deletes)
+  await Promise.allSettled(storageCleanup);
 
   // Delete related records with NO ACTION FK constraints
   if (profile?.user_id) {

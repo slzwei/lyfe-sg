@@ -5,7 +5,7 @@ import { createClient } from "@/lib/supabase/server";
 import { getAdminClient } from "@/lib/supabase/admin";
 import { sendCandidateAssignedEmail } from "@/lib/email";
 import { redirect } from "next/navigation";
-import { checkRateLimit } from "@/lib/rate-limit";
+import { checkRateLimitAsync } from "@/lib/rate-limit";
 
 export async function sendOtp(phone: string) {
   const cleaned = phone.replace(/\s/g, "");
@@ -14,7 +14,7 @@ export async function sendOtp(phone: string) {
   }
 
   const ip = (await headers()).get("x-forwarded-for") || "unknown";
-  const { allowed } = checkRateLimit(`candidate-otp:${ip}`, 5);
+  const { allowed } = await checkRateLimitAsync(`candidate-otp:${ip}`, 5);
   if (!allowed) return { success: false, error: "Too many attempts. Please wait a minute." };
 
   const supabase = await createClient();
@@ -66,6 +66,11 @@ export async function verifyOtp(phone: string, token: string, inviteToken?: stri
     return { success: false, error: "Please enter a 6-digit code." };
   }
 
+  // P4-3: Rate limit OTP verification to prevent brute-force
+  const ip = (await headers()).get("x-forwarded-for") || "unknown";
+  const { allowed } = await checkRateLimitAsync(`verify-otp:${ip}`, 10);
+  if (!allowed) return { success: false, error: "Too many attempts. Please wait a minute." };
+
   const supabase = await createClient();
   const { data, error } = await supabase.auth.verifyOtp({
     phone,
@@ -88,7 +93,8 @@ export async function verifyOtp(phone: string, token: string, inviteToken?: stri
   if (!role) {
     // New user — assign candidate role
     try {
-      await supabase.rpc("assign_candidate_role");
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      await (supabase.rpc as any)("assign_candidate_role");
       await supabase.auth.refreshSession();
     } catch (e) {
       console.error("[auth] Failed to assign candidate role:", e);
@@ -112,21 +118,20 @@ export async function verifyOtp(phone: string, token: string, inviteToken?: stri
   if (existingProfile) {
     // Existing candidate — if they have an invite token, apply invitation data
     if (inviteToken) {
+      // Atomic: UPDATE only matches if status is still 'pending' and not expired
       const { data: inv } = await admin.from("invitations")
-        .select("id, email, candidate_name, position_applied, expires_at, job_id, invited_by_user_id, attached_files")
+        .update({
+          status: "accepted",
+          user_id: user.id,
+          accepted_at: new Date().toISOString(),
+        })
         .eq("token", inviteToken)
         .eq("status", "pending")
-        .single();
+        .gt("expires_at", new Date().toISOString())
+        .select("id, email, candidate_name, position_applied, expires_at, job_id, invited_by_user_id, attached_files")
+        .maybeSingle();
 
-      if (inv && new Date(inv.expires_at) > new Date()) {
-        // Mark invitation as accepted
-        await admin.from("invitations")
-          .update({
-            status: "accepted",
-            user_id: user.id,
-            accepted_at: new Date().toISOString(),
-          })
-          .eq("id", inv.id);
+      if (inv) {
 
         // Update profile with invitation data
         await admin.from("candidate_profiles")
@@ -177,38 +182,29 @@ export async function verifyOtp(phone: string, token: string, inviteToken?: stri
     };
   }
 
-  // Validate and consume invitation
-  const { data: invitation, error: invError } = await admin
+  // Atomic: validate + consume invitation in one UPDATE.
+  // Only matches if token is valid, status is still 'pending', and not expired.
+  // Prevents duplicate candidate records from concurrent OTP submissions.
+  const { data: invitation } = await admin
     .from("invitations")
-    .select("id, email, candidate_name, position_applied, expires_at, job_id, invited_by_user_id, assigned_manager_id, attached_files")
+    .update({
+      status: "accepted",
+      user_id: user.id,
+      accepted_at: new Date().toISOString(),
+    })
     .eq("token", inviteToken)
     .eq("status", "pending")
-    .single();
+    .gt("expires_at", new Date().toISOString())
+    .select("id, email, candidate_name, position_applied, expires_at, job_id, invited_by_user_id, assigned_manager_id, attached_files")
+    .maybeSingle();
 
-  if (invError || !invitation) {
+  if (!invitation) {
     await supabase.auth.signOut();
     return {
       success: false,
       error: "Invalid or expired invitation. Please contact us for a new one.",
     };
   }
-
-  if (new Date(invitation.expires_at) < new Date()) {
-    await supabase.auth.signOut();
-    return {
-      success: false,
-      error: "This invitation has expired. Please contact us for a new one.",
-    };
-  }
-
-  // Mark invitation as accepted
-  await admin.from("invitations")
-    .update({
-      status: "accepted",
-      user_id: user.id,
-      accepted_at: new Date().toISOString(),
-    })
-    .eq("id", invitation.id);
 
   // Create draft profile with pre-filled data
   const profileUpsert = await admin.from("candidate_profiles").upsert(

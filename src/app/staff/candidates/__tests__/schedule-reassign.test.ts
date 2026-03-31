@@ -29,6 +29,9 @@ vi.mock("@/lib/supabase/admin", () => ({
   getAdminClient: vi.fn(() => ({
     from: mockAdminFrom,
   })),
+  getAdminClientAs: vi.fn(() => ({
+    from: mockAdminFrom,
+  })),
 }));
 
 vi.mock("@/lib/email", () => ({

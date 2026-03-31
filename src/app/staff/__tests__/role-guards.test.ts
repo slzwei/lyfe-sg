@@ -5,6 +5,7 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 // Mock next/headers
 const mockCookieGet = vi.fn();
 vi.mock("next/headers", () => ({
+  headers: vi.fn(async () => ({ get: () => "127.0.0.1" })),
   cookies: vi.fn(() => Promise.resolve({
     get: mockCookieGet,
     delete: vi.fn(),
@@ -40,6 +41,11 @@ const mockAdminRpc = vi.fn();
 const mockAdminDeleteUser = vi.fn();
 vi.mock("@/lib/supabase/admin", () => ({
   getAdminClient: vi.fn(() => ({
+    from: mockAdminFrom,
+    rpc: mockAdminRpc,
+    auth: { admin: { deleteUser: mockAdminDeleteUser } },
+  })),
+  getAdminClientAs: vi.fn(() => ({
     from: mockAdminFrom,
     rpc: mockAdminRpc,
     auth: { admin: { deleteUser: mockAdminDeleteUser } },
@@ -488,7 +494,7 @@ describe("Non-destructive actions accessible to PA", () => {
 
   it("getPdfUrl works for PA", async () => {
     mockAuthUser("pa");
-    const result = await getPdfUrl("path/to/file.pdf");
+    const result = await getPdfUrl("a1b2c3d4-e5f6-7890-abcd-ef1234567890/application.pdf");
     expect(result.success).toBe(true);
     expect(result.url).toBeTruthy();
   });
@@ -593,7 +599,7 @@ describe("getProgressForUser", () => {
 
     mockAdminFrom.mockImplementation((table: string) => {
       if (table === "users") return chainMock({ id: "user-123", full_name: "Mgr", email: "m@t.com", role: "manager" });
-      if (table === "candidate_profiles") return chainMock({ completed: true, onboarding_step: 5 });
+      if (table === "candidate_profiles") return chainMock({ candidate_id: "cand-1", completed: true, onboarding_step: 5 });
       if (table === "disc_responses") return chainMock({ responses: { "1": 3, "2": 4, "3": 5 } });
       if (table === "disc_results") return chainMock({ disc_type: "Sc" });
       return chainMock();
@@ -607,7 +613,7 @@ describe("getProgressForUser", () => {
     expect(result.progress!.disc_type).toBe("Sc");
   });
 
-  it("returns defaults when no data exists", async () => {
+  it("rejects when userId has no candidate profile (IDOR prevention)", async () => {
     mockAuthUser("pa");
     mockAdminFrom.mockImplementation((table: string) => {
       if (table === "users") return chainMock({ id: "user-pa", full_name: "PA", email: "pa@t.com", role: "pa" });
@@ -615,10 +621,7 @@ describe("getProgressForUser", () => {
     });
 
     const result = await getProgressForUser("u-999");
-    expect(result.success).toBe(true);
-    expect(result.progress!.profile_completed).toBe(false);
-    expect(result.progress!.quiz_answered).toBe(0);
-    expect(result.progress!.quiz_completed).toBe(false);
+    expect(result.success).toBe(false);
   });
 });
 
@@ -837,7 +840,7 @@ describe("listInvitations (error branch)", () => {
 describe("getPdfUrl", () => {
   it("returns signed URL", async () => {
     mockAuthUser("pa");
-    const result = await getPdfUrl("path/to/file.pdf");
+    const result = await getPdfUrl("a1b2c3d4-e5f6-7890-abcd-ef1234567890/application.pdf");
     expect(result.success).toBe(true);
     expect(result.url).toBeTruthy();
   });
@@ -902,18 +905,31 @@ describe("removeInviteFile", () => {
     expect(result.success).toBe(true);
   });
 
+  it("returns error when file not found in invitation", async () => {
+    mockAuthUser("manager");
+    mockAdminFrom.mockImplementation((table: string) => {
+      if (table === "users") return chainMock({ id: "user-mgr", full_name: "Mgr", email: "m@t.com", role: "manager" });
+      if (table === "invitations") {
+        return chainMock({ id: "inv-1", attached_files: [] });
+      }
+      return chainMock();
+    });
+    const result = await removeInviteFile("inv-1", "invitations/inv-1/docs/nonexistent.pdf");
+    expect(result.success).toBe(false);
+    expect(result.error).toContain("File not found");
+  });
+
   it("returns error when update fails", async () => {
     mockAuthUser("manager");
+    const targetFile = { name: "file.pdf", storage_path: "invitations/inv-1/docs/file.pdf" };
     let invCallCount = 0;
     mockAdminFrom.mockImplementation((table: string) => {
       if (table === "users") return chainMock({ id: "user-mgr", full_name: "Mgr", email: "m@t.com", role: "manager" });
       if (table === "invitations") {
         invCallCount++;
         if (invCallCount === 1) {
-          // First call: select → eq → single (invitation lookup)
-          return chainMock({ id: "inv-1", attached_files: [] });
+          return chainMock({ id: "inv-1", attached_files: [targetFile] });
         }
-        // Second call: update → eq (save — should error)
         return chainMock(null, { message: "Update failed" });
       }
       return chainMock();

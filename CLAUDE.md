@@ -13,6 +13,8 @@
 | PDF | PDFKit | ^0.18.0 |
 | Email | Nodemailer | ^8.0.3 |
 | Testing | Vitest (unit), Playwright (E2E) | vitest ^4.1.0, @playwright/test ^1.58.2 |
+| Error tracking | Sentry | @sentry/nextjs ^10.47.0 |
+| Rate limiting | Upstash Redis (in-memory fallback) | @upstash/ratelimit, @upstash/redis |
 | Hosting | Vercel (sin1 region — Singapore) | — |
 
 ## Folder Structure
@@ -25,8 +27,8 @@ lyfe-sg/
 │   │   ├── page.tsx                "Coming Soon" landing page
 │   │   ├── globals.css             Tailwind v4 theme (orange palette)
 │   │   ├── api/
-│   │   │   ├── upload-candidate-doc/route.ts   File upload for candidate docs
-│   │   │   └── upload-invite-doc/route.ts      File upload for invitation attachments
+│   │   │   ├── upload-candidate-doc/route.ts   File upload for candidate docs (rate-limited)
+│   │   │   └── upload-invite-doc/route.ts      File upload for invitation attachments (rate-limited)
 │   │   ├── candidate/              Candidate-facing portal
 │   │   │   ├── layout.tsx          Header with sign-out
 │   │   │   ├── actions.ts          Auth (sendOtp, verifyOtp, validateInviteToken, signOut)
@@ -234,6 +236,40 @@ These are linked via `invitations.candidate_record_id → candidates.id` and `ca
 - **Push notifications**: `notifications` INSERT triggers edge function → Expo Push API (mobile)
 - **Users table**: Shared. Auth users created in either app appear in both.
 
+## Security & Rate Limiting
+
+### Rate Limits (via `checkRateLimitAsync` in `src/lib/rate-limit.ts`)
+
+| Endpoint | Key | Limit | Window |
+|----------|-----|-------|--------|
+| Candidate OTP send | `candidate-otp:{ip}` | 5 | 1 min |
+| Candidate OTP verify | `verify-otp:{ip}` | 10 | 1 min |
+| Staff login (email) | `staff-login:{ip}` | 5 | 1 min |
+| Staff OTP send | `staff-otp:{ip}` | 5 | 1 min |
+| Staff OTP verify | `staff-verify-otp:{ip}` | 10 | 1 min |
+| Send invitation | `send-invite:{staffId}` | 20 | 1 hour |
+| Upload candidate doc | `upload-doc:{staffId}` | 30 | 1 hour |
+| Upload invite doc | `upload-invite:{staffId}` | 30 | 1 hour |
+| Waitlist signup | `waitlist:{ip}` | 3 | 1 hour |
+
+Uses Upstash Redis when `UPSTASH_REDIS_REST_URL` is set; falls back to per-instance in-memory.
+
+### Access Control Patterns
+
+- **Team scoping**: `verifyCandidateAccess(candidateId, staff)` in `candidates/actions.ts` — checks `getTeamManagerIds()` for role-based candidate visibility
+- **Interview endpoints**: All 3 (get/schedule/feedback) verify candidate access
+- **File operations**: `removeInviteFile` checks `invited_by_user_id` ownership or manager+ role
+- **Input validation**: All staff actions enforce max lengths (255 for names, 10K for text, 2K for URLs)
+- **Enum validation**: Activity types (`call/whatsapp/note`), outcomes (`reached/no_answer/sent`), recommendations (`second_interview/on_hold/pass`) validated server-side
+
+### Error Tracking (Sentry)
+
+- Configured via `sentry.{client,server,edge}.config.ts` + `instrumentation.ts`
+- `global-error.tsx` captures root-level unhandled errors
+- `after()` blocks in disc-quiz and onboarding actions call `Sentry.captureException()` for PDF/email failures
+- CSP allows `connect-src` to `*.sentry.io` and `*.ingest.sentry.io`
+- Inactive until `NEXT_PUBLIC_SENTRY_DSN` is set
+
 ## Naming Conventions & Code Patterns
 
 - **Server Actions**: `"use server"` files in each route directory's `actions.ts`
@@ -247,18 +283,24 @@ These are linked via `invitations.candidate_record_id → candidates.id` and `ca
 
 ## Known Technical Debt
 
-1. ~~Middleware naming~~: Next.js 16 renamed `middleware.ts` → `proxy.ts`. Current naming is correct.
-2. **Legacy auth**: `staff_session` cookie fallback in `requireStaff()` and proxy should be removed after migration.
+1. ~~Middleware naming~~: Fixed — Next.js 16 renamed `middleware.ts` → `proxy.ts`.
+2. **Legacy auth**: `staff_session` cookie fallback in proxy should be removed after migration. Note: `requireStaff()` in `auth.ts` no longer has legacy fallback.
 3. **Contact form stub**: `src/components/Contact.tsx` form handler sets state but doesn't submit anywhere.
 4. **Public website unused**: Components exist (Navbar, Hero, About, etc.) but root page is "Coming Soon".
-5. ~~**Hardcoded admin email**~~: Fixed — now reads `NOTIFY_EMAIL` and `NOTIFY_BCC` env vars (falls back to hardcoded).
+5. ~~**Hardcoded admin email**~~: Fixed — reads `NOTIFY_EMAIL` and `NOTIFY_BCC` env vars.
 6. **Font file dependency**: `src/lib/pdf.ts` loads Pacifico font via `fs.readFileSync()` — may fail in serverless.
-7. **Team isolation**: `searchCandidates()` and `reassignCandidate()` don't filter by team — all staff see all candidates.
+7. ~~**Team isolation**~~: Fixed — all candidate endpoints use `verifyCandidateAccess()`. PA scoping via `pa_manager_assignments` deferred (only 1 PA in prod).
 8. **Pipeline stages unused**: `pipeline_stages` table has 0 rows; `candidates.current_stage_id` is always null.
-9. **Dashboard "completed" metric**: Counts candidates with DISC results, not necessarily completed profiles.
-10. ~~**Supabase RLS gaps**~~ — Fixed via migration `add_rls_policies_invitations_and_staff_sessions`. 5 policies on invitations, 1 on staff_sessions.
-11. ~~**9 DB functions have mutable search_path**~~ — Fixed via migration `fix_mutable_search_path_on_9_functions`.
+9. ~~**Dashboard "completed" metric**~~: Fixed — now counts candidates with completed profile AND DISC results. Dashboard uses COUNT aggregates.
+10. ~~**Supabase RLS gaps**~~ — Fixed via migration.
+11. ~~**9 DB functions have mutable search_path**~~ — Fixed via migration.
 12. **Leaked password protection disabled** in Supabase Auth settings.
+
+### Deferred DB migrations (need lyfe-app repo)
+- `remove_invitation_file` RPC — atomic JSONB array removal (currently validated client-side)
+- `UNIQUE(candidate_id, round_number)` on `interviews` — retry logic in place as interim fix
+- `accept_invitation` RPC — atomic invitation acceptance (currently uses UPDATE...WHERE...RETURNING)
+- `jsonb_object_length()` computed column for quiz progress counting
 
 ## Environment Variables Required
 
@@ -270,10 +312,13 @@ NEXT_PUBLIC_SITE_URL         — Public URL (default: https://lyfe.sg)
 EMAIL_HOST                   — SMTP host
 EMAIL_PORT                   — SMTP port
 EMAIL_USER                   — SMTP username
-EMAIL_PASS                   — SMTP password
+EMAIL_PASSWORD               — SMTP password
 EMAIL_FROM                   — Sender address (default: EMAIL_USER or noreply@lyfe.sg)
 STAFF_SECRET                 — Legacy staff auth secret (deprecated)
 E2E_BASE_URL                 — Playwright base URL (default: http://localhost:3000)
+NEXT_PUBLIC_SENTRY_DSN       — Sentry DSN for error tracking (optional — inactive if unset)
+UPSTASH_REDIS_REST_URL       — Upstash Redis URL for distributed rate limiting (optional — falls back to in-memory)
+UPSTASH_REDIS_REST_TOKEN     — Upstash Redis token (required with URL above)
 ```
 
 ## Scripts

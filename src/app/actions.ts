@@ -1,6 +1,8 @@
 "use server";
 
+import { headers } from "next/headers";
 import { sendEmail } from "@/lib/email";
+import { checkRateLimitAsync } from "@/lib/rate-limit";
 
 const NOTIFY_TO = process.env.NOTIFY_EMAIL;
 const NOTIFY_BCC = process.env.NOTIFY_BCC;
@@ -11,6 +13,11 @@ export async function subscribeEmail(
   if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
     return { success: false, error: "Invalid email address" };
   }
+
+  // P4-5: Rate limit waitlist signups (3/hour per IP)
+  const ip = (await headers()).get("x-forwarded-for") || "unknown";
+  const { allowed } = await checkRateLimitAsync(`waitlist:${ip}`, 3, 3_600_000);
+  if (!allowed) return { success: false, error: "Please wait before signing up again." };
 
   if (!NOTIFY_TO) {
     console.warn("[waitlist] NOTIFY_EMAIL env var not set — skipping notification");

@@ -29,6 +29,9 @@ vi.mock("@/lib/supabase/admin", () => ({
   getAdminClient: vi.fn(() => ({
     from: mockAdminFrom,
   })),
+  getAdminClientAs: vi.fn(() => ({
+    from: mockAdminFrom,
+  })),
 }));
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
@@ -192,7 +195,7 @@ describe("updateInterviewFeedback", () => {
     mockAuthUser("manager");
     mockAdminFrom.mockImplementation((table: string) => {
       if (table === "users") return buildChain({ id: "user-manager", full_name: "Manager", email: "m@t.com", role: "manager" });
-      if (table === "interviews") return buildChain(null, null);
+      if (table === "interviews") return buildChain({ candidate_id: "cand-1" }, null);
       return buildChain();
     });
 
@@ -207,7 +210,7 @@ describe("updateInterviewFeedback", () => {
     mockAuthUser("director");
     mockAdminFrom.mockImplementation((table: string) => {
       if (table === "users") return buildChain({ id: "user-director", full_name: "Director", email: "d@t.com", role: "director" });
-      if (table === "interviews") return buildChain(null, null);
+      if (table === "interviews") return buildChain({ candidate_id: "cand-1" }, null);
       return buildChain();
     });
 
@@ -223,7 +226,7 @@ describe("updateInterviewFeedback", () => {
     mockAdminFrom.mockImplementation((table: string) => {
       if (table === "users") return buildChain({ id: "user-admin", full_name: "Admin", email: "a@t.com", role: "admin" });
       if (table === "interviews") {
-        const c = buildChain();
+        const c = buildChain({ candidate_id: "cand-1" });
         c.update = vi.fn(() => Object.assign(
           Promise.resolve({ data: null, error: { message: "Update failed" } }),
           { eq: vi.fn(() => Promise.resolve({ data: null, error: { message: "Update failed" } })) }
@@ -628,7 +631,7 @@ describe("updateInterviewFeedback (branch coverage)", () => {
     mockAuthUser("manager");
     mockAdminFrom.mockImplementation((table: string) => {
       if (table === "users") return buildChain({ id: "user-manager", full_name: "Mgr", email: "m@t.com", role: "manager" });
-      if (table === "interviews") return buildChain(null, null);
+      if (table === "interviews") return buildChain({ candidate_id: "cand-1" }, null);
       return buildChain();
     });
     const result = await updateInterviewFeedback("int-1", { recommendation: "pass" });
@@ -639,7 +642,7 @@ describe("updateInterviewFeedback (branch coverage)", () => {
     mockAuthUser("director");
     mockAdminFrom.mockImplementation((table: string) => {
       if (table === "users") return buildChain({ id: "user-director", full_name: "Dir", email: "d@t.com", role: "director" });
-      if (table === "interviews") return buildChain(null, null);
+      if (table === "interviews") return buildChain({ candidate_id: "cand-1" }, null);
       return buildChain();
     });
     const result = await updateInterviewFeedback("int-1", { notes: "feedback only" });
@@ -650,7 +653,7 @@ describe("updateInterviewFeedback (branch coverage)", () => {
     mockAuthUser("manager");
     mockAdminFrom.mockImplementation((table: string) => {
       if (table === "users") return buildChain({ id: "user-manager", full_name: "Mgr", email: "m@t.com", role: "manager" });
-      if (table === "interviews") return buildChain(null, null);
+      if (table === "interviews") return buildChain({ candidate_id: "cand-1" }, null);
       return buildChain();
     });
     const result = await updateInterviewFeedback("int-1", { notes: "   " });

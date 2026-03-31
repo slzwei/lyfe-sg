@@ -1,11 +1,11 @@
 "use server";
 
-import { cookies, headers } from "next/headers";
+import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { getAdminClient } from "@/lib/supabase/admin";
 import { STAFF_ROLES } from "@/lib/shared-types/roles";
-import { checkRateLimit } from "@/lib/rate-limit";
+import { checkRateLimitAsync } from "@/lib/rate-limit";
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 
@@ -20,7 +20,7 @@ export interface StaffUser {
 
 export async function staffLogin(email: string, password: string) {
   const ip = (await headers()).get("x-forwarded-for") || "unknown";
-  const { allowed } = checkRateLimit(`staff-login:${ip}`, 5);
+  const { allowed } = await checkRateLimitAsync(`staff-login:${ip}`, 5);
   if (!allowed) return { success: false, error: "Too many attempts. Please wait a minute." };
 
   const supabase = await createClient();
@@ -52,7 +52,7 @@ export async function staffSendOtp(phone: string) {
   }
 
   const ip = (await headers()).get("x-forwarded-for") || "unknown";
-  const { allowed } = checkRateLimit(`staff-otp:${ip}`, 5);
+  const { allowed } = await checkRateLimitAsync(`staff-otp:${ip}`, 5);
   if (!allowed) return { success: false, error: "Too many attempts. Please wait a minute." };
 
   const supabase = await createClient();
@@ -69,6 +69,11 @@ export async function staffVerifyOtp(phone: string, token: string) {
   if (!/^\d{6}$/.test(token)) {
     return { success: false, error: "Please enter a 6-digit code." };
   }
+
+  // P4-3: Rate limit OTP verification to prevent brute-force
+  const ip = (await headers()).get("x-forwarded-for") || "unknown";
+  const { allowed } = await checkRateLimitAsync(`staff-verify-otp:${ip}`, 10);
+  if (!allowed) return { success: false, error: "Too many attempts. Please wait a minute." };
 
   const supabase = await createClient();
   const { data, error } = await supabase.auth.verifyOtp({
@@ -145,11 +150,6 @@ export async function requireStaff(minRole?: string): Promise<StaffUser | null> 
 export async function staffLogout() {
   const supabase = await createClient();
   await supabase.auth.signOut();
-
-  // Also clear old cookie if present (transition)
-  const cookieStore = await cookies();
-  cookieStore.delete("staff_session");
-
   redirect("/staff/login");
 }
 

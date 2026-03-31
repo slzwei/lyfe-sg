@@ -24,26 +24,37 @@ export async function getDashboardStats(): Promise<{
   const admin = getAdminClient();
   const oneWeekAgo = new Date(Date.now() - 7 * 86400000).toISOString();
 
-  const [jobsRes, candidatesRes, profilesRes, discRes] = await Promise.all([
-    admin.from("jobs").select("id, title, status").is("archived_at", null),
+  // Use COUNT queries instead of fetching all rows
+  const [
+    jobsCountRes,
+    candidatesCountRes,
+    candidatesThisWeekRes,
+    discRes,
+    recentCandidatesRes,
+    profilesRes,
+  ] = await Promise.all([
+    admin.from("jobs").select("id", { count: "exact", head: true })
+      .is("archived_at", null).eq("status", "open"),
+    admin.from("candidates").select("id", { count: "exact", head: true }),
+    admin.from("candidates").select("id", { count: "exact", head: true })
+      .gte("created_at", oneWeekAgo),
+    admin.from("disc_results").select("user_id, disc_type"),
     admin.from("candidates")
       .select("id, name, email, phone, status, created_at")
-      .order("created_at", { ascending: false }),
+      .order("created_at", { ascending: false })
+      .limit(10),
     admin.from("candidate_profiles")
       .select("candidate_id, user_id, completed"),
-    admin.from("disc_results")
-      .select("user_id, disc_type"),
   ]);
 
-  const jobs = jobsRes.data || [];
-  const candidates = candidatesRes.data || [];
-  const profiles = profilesRes.data || [];
+  const openJobs = jobsCountRes.count ?? 0;
+  const totalCandidates = candidatesCountRes.count ?? 0;
+  const candidatesThisWeek = candidatesThisWeekRes.count ?? 0;
   const discResults = discRes.data || [];
-  const openJobs = jobs.filter((j) => j.status === "open").length;
+  const recentCandidates = recentCandidatesRes.data || [];
+  const profiles = profilesRes.data || [];
 
-  const thisWeek = candidates.filter((c) => c.created_at && c.created_at >= oneWeekAgo);
-
-  // Build lookup maps: candidate_id → profile, user_id → disc
+  // Build lookup maps
   const profileByCandidateId = new Map(
     profiles.map((p) => [p.candidate_id, p])
   );
@@ -53,28 +64,24 @@ export async function getDashboardStats(): Promise<{
 
   // Completed = profile completed AND DISC quiz done
   let completedCount = 0;
-  const discTypes = new Map<string, number>();
-
-  for (const c of candidates) {
-    const profile = profileByCandidateId.get(c.id);
-    if (!profile) continue;
-    const hasDisc = discByUserId.has(profile.user_id);
-    if (profile.completed && hasDisc) completedCount++;
+  for (const p of profiles) {
+    if (p.completed && discByUserId.has(p.user_id)) completedCount++;
   }
 
-  // DISC distribution from all results
+  // DISC distribution
+  const discTypes = new Map<string, number>();
   for (const r of discResults) {
     discTypes.set(r.disc_type, (discTypes.get(r.disc_type) || 0) + 1);
   }
 
-  const pendingCount = candidates.length - completedCount;
+  const pendingCount = totalCandidates - completedCount;
 
   const discTypeDistribution = [...discTypes.entries()]
     .map(([type, count]) => ({ type, count }))
     .sort((a, b) => b.count - a.count);
 
-  // Recent candidates (last 10) with progress labels
-  const recentCandidates = candidates.slice(0, 10).map((c) => {
+  // Enrich recent candidates with progress
+  const enrichedRecent = recentCandidates.map((c) => {
     const profile = profileByCandidateId.get(c.id);
     const hasDisc = profile ? discByUserId.has(profile.user_id) : false;
     let progress: string;
@@ -100,12 +107,12 @@ export async function getDashboardStats(): Promise<{
     success: true,
     stats: {
       openJobs,
-      totalCandidates: candidates.length,
-      candidatesThisWeek: thisWeek.length,
+      totalCandidates,
+      candidatesThisWeek,
       completedCount,
       pendingCount,
       discTypeDistribution,
-      recentCandidates,
+      recentCandidates: enrichedRecent,
     },
   };
 }

@@ -7,6 +7,7 @@ import { sendProfileSubmissionEmail } from "@/lib/email";
 import { generateProfilePdf, type FullProfileData } from "@/lib/pdf";
 import { uploadCandidatePdf } from "@/lib/supabase/storage";
 import { getAdminClient } from "@/lib/supabase/admin";
+import * as Sentry from "@sentry/nextjs";
 import type { Json } from "@/lib/supabase/database.types";
 import {
   step1Schema,
@@ -175,12 +176,14 @@ export async function saveProfile(formData: Record<string, unknown>) {
           .eq("user_id", userId);
       }
     } catch (err) {
+      Sentry.captureException(err, { tags: { action: "profile-pdf-upload" } });
       console.error("[pdf-upload] Profile PDF storage failed:", err);
     }
 
     try {
       await sendProfileSubmissionEmail(profileData);
     } catch (err) {
+      Sentry.captureException(err, { tags: { action: "profile-submission-email" } });
       console.error("[email] sendProfileSubmissionEmail failed:", err);
     }
   });

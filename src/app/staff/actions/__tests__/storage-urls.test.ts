@@ -98,7 +98,7 @@ describe("getPdfUrl", () => {
   it("returns signed URL on success", async () => {
     mockAuthUser("manager");
     mockGetSignedPdfUrl.mockResolvedValue("https://storage.example.com/signed-pdf");
-    const result = await getPdfUrl("user-1/application.pdf");
+    const result = await getPdfUrl("a1b2c3d4-e5f6-7890-abcd-ef1234567890/application.pdf");
     expect(result.success).toBe(true);
     expect(result.url).toBe("https://storage.example.com/signed-pdf");
   });
@@ -106,7 +106,7 @@ describe("getPdfUrl", () => {
   it("returns error when signed URL generation fails", async () => {
     mockAuthUser("pa");
     mockGetSignedPdfUrl.mockResolvedValue(null);
-    const result = await getPdfUrl("user-1/application.pdf");
+    const result = await getPdfUrl("a1b2c3d4-e5f6-7890-abcd-ef1234567890/application.pdf");
     expect(result.success).toBe(false);
     expect(result.error).toContain("download URL");
   });

@@ -5,6 +5,7 @@ import { z } from "zod";
 import { getAdminClient, getAdminClientAs } from "@/lib/supabase/admin";
 import { sendInvitationEmail } from "@/lib/email";
 import { deleteResumeFiles } from "@/lib/supabase/storage";
+import { checkRateLimitAsync } from "@/lib/rate-limit";
 import { requireStaff } from "./auth";
 
 // ─── Types ──────────────────────────────────────────────────────────────────
@@ -56,9 +57,20 @@ export async function sendInvite(data: {
   const staff = await requireStaff();
   if (!staff) return { success: false, error: "Not authenticated." };
 
+  // P4-4: Rate limit invite sending per staff (20/hour)
+  const { allowed } = await checkRateLimitAsync(`send-invite:${staff.id}`, 20, 3_600_000);
+  if (!allowed) return { success: false, error: "Too many invitations sent. Please wait before sending more." };
+
   if (!data.email || !z.string().email().safeParse(data.email).success) {
     return { success: false, error: "Please enter a valid email address." };
   }
+  // P3-6: Input length limits
+  if (data.email.length > 255)
+    return { success: false, error: "Email too long (max 255 characters)." };
+  if (data.candidateName && data.candidateName.length > 255)
+    return { success: false, error: "Name too long (max 255 characters)." };
+  if (data.position && data.position.length > 255)
+    return { success: false, error: "Position too long (max 255 characters)." };
 
   const adminClient = getAdminClientAs(staff);
 
@@ -198,6 +210,13 @@ export async function getProgressForUser(userId: string): Promise<{
 
   const adminClient = getAdminClient();
 
+  // P3-4: Verify this userId belongs to a candidate (prevent IDOR on arbitrary users)
+  const { data: candidateProfile } = await adminClient.from("candidate_profiles")
+    .select("candidate_id")
+    .eq("user_id", userId)
+    .single();
+  if (!candidateProfile?.candidate_id) return { success: false };
+
   // 3 parallel queries for a single user
   const [profileRes, responsesRes, resultsRes] = await Promise.all([
     adminClient.from("candidate_profiles")
@@ -298,8 +317,8 @@ export async function resetQuiz(invitationId: string) {
 }
 
 export async function deleteCandidate(id: string) {
-  const staff = await requireStaff("pa");
-  if (!staff) return { success: false, error: "Not authorized." };
+  const staff = await requireStaff("admin");
+  if (!staff) return { success: false, error: "Not authorized. Admin role required." };
 
   const adminClient = getAdminClientAs(staff);
 
@@ -383,14 +402,26 @@ export async function removeInviteFile(invitationId: string, storagePath: string
   const adminClient = getAdminClientAs(staff);
 
   const { data: invitation } = await adminClient.from("invitations")
-    .select("id, attached_files")
+    .select("id, attached_files, invited_by_user_id")
     .eq("id", invitationId)
     .single();
 
   if (!invitation) return { success: false, error: "Invitation not found." };
 
+  // P3-5: Only the inviting staff member or manager+ can remove files
+  const isOwner = invitation.invited_by_user_id === staff.id;
+  const isManagerPlus = ["manager", "director", "admin"].includes(staff.role);
+  if (!isOwner && !isManagerPlus) {
+    return { success: false, error: "Only the inviting staff or a manager can remove files." };
+  }
+
   const files = (invitation.attached_files as unknown[] || []) as AttachedFile[];
   const updated = files.filter((f) => f.storage_path !== storagePath);
+
+  // Only proceed if the file was actually found in the array
+  if (updated.length === files.length) {
+    return { success: false, error: "File not found in invitation." };
+  }
 
   const { error: updateErr } = await adminClient.from("invitations")
     .update({ attached_files: JSON.parse(JSON.stringify(updated)) })
@@ -398,6 +429,7 @@ export async function removeInviteFile(invitationId: string, storagePath: string
 
   if (updateErr) return { success: false, error: "Failed to update file list." };
 
+  // Only delete from storage after DB update succeeds AND file was in the array
   await deleteResumeFiles([storagePath]);
 
   return { success: true };

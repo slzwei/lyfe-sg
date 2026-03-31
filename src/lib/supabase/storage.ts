@@ -172,6 +172,21 @@ export async function deleteCandidateDocFiles(paths: string[]): Promise<boolean>
 }
 
 /**
+ * Delete files from the candidate-pdfs bucket.
+ */
+export async function deletePdfFiles(paths: string[]): Promise<boolean> {
+  if (paths.length === 0) return true;
+  const admin = getAdminClient();
+  const { error } = await admin.storage.from(BUCKET).remove(paths);
+
+  if (error) {
+    console.error("[storage] Failed to delete PDF files:", error);
+    return false;
+  }
+  return true;
+}
+
+/**
  * Delete files from the candidate-resumes bucket.
  */
 export async function deleteResumeFiles(paths: string[]): Promise<boolean> {

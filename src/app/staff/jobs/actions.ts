@@ -48,6 +48,13 @@ export async function createJobPosting(data: {
   if (!staff) return { success: false, error: "Manager access required." };
 
   if (!data.title.trim()) return { success: false, error: "Title is required." };
+  // P3-6: Input length limits
+  if (data.title.length > 255) return { success: false, error: "Title too long (max 255 characters)." };
+  if (data.department && data.department.length > 255) return { success: false, error: "Department too long." };
+  if (data.location && data.location.length > 255) return { success: false, error: "Location too long." };
+  if (data.description && data.description.length > 10000) return { success: false, error: "Description too long." };
+  if (data.portal && data.portal.length > 255) return { success: false, error: "Portal name too long." };
+  if (data.portal_url && data.portal_url.length > 2000) return { success: false, error: "Portal URL too long." };
 
   const admin = getAdminClient();
   const { error } = await admin.from("jobs").insert({
@@ -97,6 +104,14 @@ export async function updateJobPosting(
 ): Promise<{ success: boolean; error?: string }> {
   const staff = await requireManager();
   if (!staff) return { success: false, error: "Manager access required." };
+
+  // P3-6: Input length limits
+  if (data.title !== undefined && data.title.length > 255) return { success: false, error: "Title too long (max 255 characters)." };
+  if (data.department !== undefined && data.department.length > 255) return { success: false, error: "Department too long." };
+  if (data.location !== undefined && data.location.length > 255) return { success: false, error: "Location too long." };
+  if (data.description !== undefined && data.description.length > 10000) return { success: false, error: "Description too long." };
+  if (data.portal !== undefined && data.portal.length > 255) return { success: false, error: "Portal name too long." };
+  if (data.portal_url !== undefined && data.portal_url.length > 2000) return { success: false, error: "Portal URL too long." };
 
   const admin = getAdminClient();
   const update: Record<string, unknown> = {};

@@ -14,6 +14,45 @@ export type Database = {
   }
   public: {
     Tables: {
+      audit_log: {
+        Row: {
+          actor_id: string | null
+          actor_role: string | null
+          created_at: string
+          id: number
+          new_data: Json | null
+          old_data: Json | null
+          operation: string
+          source: string
+          table_name: string
+          tx_id: number
+        }
+        Insert: {
+          actor_id?: string | null
+          actor_role?: string | null
+          created_at?: string
+          id?: never
+          new_data?: Json | null
+          old_data?: Json | null
+          operation: string
+          source?: string
+          table_name: string
+          tx_id: number
+        }
+        Update: {
+          actor_id?: string | null
+          actor_role?: string | null
+          created_at?: string
+          id?: never
+          new_data?: Json | null
+          old_data?: Json | null
+          operation?: string
+          source?: string
+          table_name?: string
+          tx_id?: number
+        }
+        Relationships: []
+      }
       candidate_activities: {
         Row: {
           candidate_id: string
@@ -625,6 +664,33 @@ export type Database = {
           results_email?: string | null
           s_pct?: number
           s_raw?: number
+          user_id?: string
+        }
+        Relationships: []
+      }
+      email_otp_codes: {
+        Row: {
+          code_hash: string
+          created_at: string
+          email: string
+          expires_at: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          code_hash: string
+          created_at?: string
+          email: string
+          expires_at?: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          code_hash?: string
+          created_at?: string
+          email?: string
+          expires_at?: string
+          id?: string
           user_id?: string
         }
         Relationships: []
@@ -1265,6 +1331,73 @@ export type Database = {
           {
             foreignKeyName: "leads_created_by_fkey"
             columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      member_invitations: {
+        Row: {
+          accepted_at: string | null
+          accepted_by_id: string | null
+          assigned_manager_id: string | null
+          created_at: string
+          expires_at: string
+          full_name: string
+          id: string
+          intended_role: Database["public"]["Enums"]["user_role"]
+          invited_by_id: string
+          notes: string | null
+          phone: string
+          status: string
+        }
+        Insert: {
+          accepted_at?: string | null
+          accepted_by_id?: string | null
+          assigned_manager_id?: string | null
+          created_at?: string
+          expires_at?: string
+          full_name: string
+          id?: string
+          intended_role: Database["public"]["Enums"]["user_role"]
+          invited_by_id: string
+          notes?: string | null
+          phone: string
+          status?: string
+        }
+        Update: {
+          accepted_at?: string | null
+          accepted_by_id?: string | null
+          assigned_manager_id?: string | null
+          created_at?: string
+          expires_at?: string
+          full_name?: string
+          id?: string
+          intended_role?: Database["public"]["Enums"]["user_role"]
+          invited_by_id?: string
+          notes?: string | null
+          phone?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "member_invitations_accepted_by_id_fkey"
+            columns: ["accepted_by_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "member_invitations_assigned_manager_id_fkey"
+            columns: ["assigned_manager_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "member_invitations_invited_by_id_fkey"
+            columns: ["invited_by_id"]
             isOneToOne: false
             referencedRelation: "users"
             referencedColumns: ["id"]
@@ -1949,6 +2082,7 @@ export type Database = {
           created_at: string | null
           date_of_birth: string | null
           email: string | null
+          email_verified: boolean | null
           external_id: string | null
           full_name: string
           id: string
@@ -1968,6 +2102,7 @@ export type Database = {
           created_at?: string | null
           date_of_birth?: string | null
           email?: string | null
+          email_verified?: boolean | null
           external_id?: string | null
           full_name: string
           id: string
@@ -1989,6 +2124,7 @@ export type Database = {
           created_at?: string | null
           date_of_birth?: string | null
           email?: string | null
+          email_verified?: boolean | null
           external_id?: string | null
           full_name?: string
           id?: string
@@ -2024,7 +2160,6 @@ export type Database = {
         Args: { p_file: Json; p_invitation_id: string; p_max_files?: number }
         Returns: Json
       }
-      assign_candidate_role: { Args: never; Returns: undefined }
       assign_lead_with_activity: {
         Args: {
           p_acting_user_id: string
@@ -2042,7 +2177,7 @@ export type Database = {
         Returns: boolean
       }
       can_access_candidate_user: {
-        Args: { p_candidate_user_id: string }
+        Args: { p_candidate_id: string }
         Returns: boolean
       }
       can_access_lead: {
@@ -2050,6 +2185,8 @@ export type Database = {
         Returns: boolean
       }
       can_manage_event: { Args: { p_created_by: string }; Returns: boolean }
+      cleanup_old_notifications: { Args: never; Returns: undefined }
+      cleanup_orphaned_users: { Args: never; Returns: number }
       create_default_pipeline: {
         Args: { p_job_id: string }
         Returns: undefined
@@ -2134,6 +2271,7 @@ export type Database = {
         }
         Returns: Json
       }
+      sync_auth_metadata: { Args: never; Returns: undefined }
       update_lead_status_with_activity: {
         Args: {
           p_lead_id: string
@@ -2412,4 +2550,3 @@ export const Constants = {
     },
   },
 } as const
-

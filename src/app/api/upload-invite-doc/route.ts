@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { requireStaff } from "@/app/staff/actions";
 import { getAdminClient } from "@/lib/supabase/admin";
 import { uploadInviteDocument, deleteResumeFiles } from "@/lib/supabase/storage";
+import { checkRateLimitAsync } from "@/lib/rate-limit";
 
 const ALLOWED_LABELS = [
   "Resume", "RES5", "M5", "M9", "M9A", "HI", "M8", "M8A", "ComGI", "BCP", "PGI", "Other",
@@ -19,6 +20,12 @@ export async function POST(req: NextRequest) {
   const staff = await requireStaff();
   if (!staff) {
     return NextResponse.json({ error: "Not authenticated." }, { status: 401 });
+  }
+
+  // Rate limit: 30 uploads per hour per staff
+  const { allowed } = await checkRateLimitAsync(`upload-invite:${staff.id}`, 30, 3_600_000);
+  if (!allowed) {
+    return NextResponse.json({ error: "Too many uploads. Please wait before uploading more." }, { status: 429 });
   }
 
   const formData = await req.formData();

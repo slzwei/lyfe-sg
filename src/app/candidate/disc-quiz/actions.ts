@@ -8,6 +8,7 @@ import { sendDiscResultsEmail } from "@/lib/email";
 import { generateDiscPdf } from "@/lib/pdf";
 import { uploadCandidatePdf } from "@/lib/supabase/storage";
 import { getAdminClient } from "@/lib/supabase/admin";
+import * as Sentry from "@sentry/nextjs";
 
 export async function submitDiscQuiz(responses: Record<string, number>, resultsEmail?: string, durationSeconds?: number) {
   const supabase = await createClient();
@@ -101,6 +102,7 @@ export async function submitDiscQuiz(responses: Record<string, number>, resultsE
             .eq("user_id", userId);
         }
       } catch (err) {
+        Sentry.captureException(err, { tags: { action: "disc-pdf-upload" } });
         console.error("[pdf-upload] DISC PDF storage failed:", err);
       }
     }
@@ -121,6 +123,7 @@ export async function submitDiscQuiz(responses: Record<string, number>, resultsE
         contact_number: contactNumber,
       });
     } catch (err) {
+      Sentry.captureException(err, { tags: { action: "disc-results-email" } });
       console.error("[email] sendDiscResultsEmail failed:", err);
     }
   });

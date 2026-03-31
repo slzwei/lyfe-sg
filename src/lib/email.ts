@@ -651,6 +651,111 @@ export async function sendDiscResultsEmail(result: DiscResultData) {
     text: `DISC quiz completed by ${result.full_name}. Type: ${typeName}. D:${result.d_pct}% I:${result.i_pct}% S:${result.s_pct}% C:${result.c_pct}%`,
     attachments,
   });
+
+  // Send results to the candidate if they provided an email
+  if (result.results_email) {
+    const candidateBody = `
+              <p style="margin:0 0 6px 0;font-size:15px;color:#2C2925;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;font-weight:600;line-height:1.5;">
+                Hi ${esc(result.full_name)}, here are your DISC results!
+              </p>
+              <p style="margin:0 0 28px 0;font-size:13px;color:#A09B93;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;font-weight:400;line-height:1.5;">
+                Thank you for completing the personality assessment.${pdfBuffer ? " Your full report is attached as a PDF." : ""}
+              </p>
+
+              <!-- Hero card -->
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;">
+                <tr>
+                  <td style="padding:24px;background-color:${displayBgTint};border-radius:12px;border:1px solid ${displayBorderTint};">
+                    <p style="margin:0 0 2px 0;font-size:18px;color:${displayColor};font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;font-weight:700;letter-spacing:0.3px;">
+                      ${displayName}
+                    </p>
+                    ${isBalanced ? `
+                    <p style="margin:4px 0 0 0;font-size:11px;color:#A09B93;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
+                      Closest style: ${typeName}
+                    </p>` : ""}
+
+                    ${displayTypeInfo ? `
+                    <p style="margin:0 0 12px 0;font-size:13px;color:#A09B93;font-family:'Georgia','Times New Roman',serif;font-style:italic;">
+                      &ldquo;${displayTypeInfo.motto}&rdquo;
+                    </p>
+                    <div style="margin:0 0 0 0;">
+                      ${descriptorPills}
+                    </div>
+                    ` : ""}
+                  </td>
+                </tr>
+              </table>
+
+              ${displayTypeInfo ? `
+              <p style="margin:20px 0 0 0;font-size:13px;color:#57534e;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;line-height:1.6;">
+                ${displayTypeInfo.description}
+              </p>
+              ` : ""}
+
+              <!-- Score section -->
+              <p style="margin:28px 0 16px 0;font-size:11px;color:#A09B93;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;text-transform:uppercase;letter-spacing:1px;font-weight:600;">
+                Your Style Tendencies
+              </p>
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;">
+                ${scoreBar("Drive", result.d_pct, "D")}
+                ${scoreBar("Influence", result.i_pct, "I")}
+                ${scoreBar("Support", result.s_pct, "S")}
+                ${scoreBar("Clarity", result.c_pct, "C")}
+              </table>
+
+              ${displayTypeInfo ? `
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;margin-top:28px;">
+                <tr>
+                  <td width="48%" style="vertical-align:top;padding-right:8px;">
+                    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;background-color:#ecfdf5;border-radius:8px;border:1px solid #d1fae5;">
+                      <tr>
+                        <td style="padding:14px 16px 4px 16px;">
+                          <p style="margin:0 0 8px 0;font-size:12px;font-weight:700;color:#059669;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
+                            Strengths
+                          </p>
+                          <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;">
+                            ${strengthsList}
+                          </table>
+                        </td>
+                      </tr>
+                      <tr><td style="height:10px;"></td></tr>
+                    </table>
+                  </td>
+                  <td width="4%"></td>
+                  <td width="48%" style="vertical-align:top;padding-left:8px;">
+                    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;background-color:#fffbeb;border-radius:8px;border:1px solid #fef3c7;">
+                      <tr>
+                        <td style="padding:14px 16px 4px 16px;">
+                          <p style="margin:0 0 8px 0;font-size:12px;font-weight:700;color:#d97706;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
+                            Blind Spots
+                          </p>
+                          <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;">
+                            ${blindSpotsList}
+                          </table>
+                        </td>
+                      </tr>
+                      <tr><td style="height:10px;"></td></tr>
+                    </table>
+                  </td>
+                </tr>
+              </table>
+              ` : ""}
+
+              ${pdfBuffer ? `
+              <p style="margin:24px 0 0 0;font-size:12px;color:#A09B93;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;text-align:center;font-style:italic;">
+                Full personality profile report attached as PDF.
+              </p>
+              ` : ""}
+    `;
+
+    await sendEmail({
+      to: result.results_email,
+      subject: `Your DISC Personality Profile — ${displayName}`,
+      html: wrapHtml(candidateBody),
+      text: `Hi ${result.full_name}, your DISC personality type is ${displayName}. D:${result.d_pct}% I:${result.i_pct}% S:${result.s_pct}% C:${result.c_pct}%`,
+      attachments,
+    });
+  }
 }
 
 // ─── Specialized: Candidate Assigned ─────────────────────────────────────────

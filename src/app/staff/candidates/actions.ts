@@ -46,7 +46,7 @@ export interface CandidateDetail {
   id: string;
   name: string;
   email: string | null;
-  phone: string;
+  phone: string | null;
   status: string;
   notes: string | null;
   job_id: string | null;
@@ -118,7 +118,7 @@ export interface SearchResult {
   id: string;
   name: string;
   email: string | null;
-  phone: string;
+  phone: string | null;
   status: string;
   position_applied: string | null;
   disc_type: string | null;
@@ -520,7 +520,7 @@ export async function updateCandidate(
     return { success: false, error: "Name too long (max 255 characters)." };
   if (data.email !== undefined && data.email.length > 255)
     return { success: false, error: "Email too long (max 255 characters)." };
-  if (data.phone !== undefined && data.phone.length > 20)
+  if (data.phone !== undefined && data.phone && data.phone.length > 20)
     return { success: false, error: "Phone number too long." };
   if (data.notes !== undefined && data.notes.length > 10000)
     return { success: false, error: "Notes too long (max 10,000 characters)." };
@@ -529,7 +529,7 @@ export async function updateCandidate(
   const update: Record<string, unknown> = {};
   if (data.name !== undefined) update.name = data.name.trim();
   if (data.email !== undefined) update.email = data.email.trim() || null;
-  if (data.phone !== undefined) update.phone = data.phone.trim();
+  if (data.phone !== undefined) update.phone = data.phone?.trim() || null;
   if (data.notes !== undefined) update.notes = data.notes.trim() || null;
 
   const { error } = await admin.from("candidates").update(update).eq("id", candidateId);

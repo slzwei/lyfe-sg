@@ -22,6 +22,7 @@ export default async function CandidateLayout({
   const formatted = phone
     ? `+${phone.slice(0, 2)} ${phone.slice(2, 6)} ${phone.slice(6)}`
     : null;
+  const displayIdentifier = formatted || user?.email || null;
 
   return (
     <div className="min-h-screen bg-stone-50">
@@ -30,11 +31,11 @@ export default async function CandidateLayout({
           <Link href="/" className="font-display text-2xl text-orange-500">
             Lyfe
           </Link>
-          {formatted && (
+          {displayIdentifier && (
             <div className="flex items-center gap-3">
               <span className="text-sm text-stone-500">
                 Logged in as{" "}
-                <span className="font-medium text-stone-700">{formatted}</span>
+                <span className="font-medium text-stone-700">{displayIdentifier}</span>
               </span>
               <form action={signOut}>
                 <button

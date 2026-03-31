@@ -197,7 +197,7 @@ export async function sendInvitationEmail({
               ${positionLine}
 
               <p style="margin:0 0 24px 0;font-size:14px;color:#57534e;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;line-height:1.6;">
-                Click the button below to start your application. You&rsquo;ll verify your identity with a phone OTP before proceeding.
+                Click the button below to start your application.
               </p>
 
               <!-- CTA Button -->

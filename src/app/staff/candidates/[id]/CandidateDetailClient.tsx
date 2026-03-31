@@ -167,7 +167,8 @@ export default function CandidateDetailClient({ candidateId }: { candidateId: st
           </div>
           <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-0.5 pl-7 text-sm text-stone-400 sm:pl-0">
             {candidate.email && <span className="truncate">{candidate.email}</span>}
-            <span>{candidate.phone}</span>
+            {candidate.phone && <span>{candidate.phone}</span>}
+            {!candidate.phone && !candidate.email && <span className="italic text-stone-300">Phone pending</span>}
           </div>
         </div>
         <div className="flex items-center gap-2">

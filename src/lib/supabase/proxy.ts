@@ -105,8 +105,14 @@ export async function updateSession(request: NextRequest) {
   }
 
   // Already authenticated as candidate — redirect away from login/verify
+  // Exception: allow through if ?token= is present (returning candidate clicking new invite link)
   const authPaths = ["/candidate/login", "/candidate/verify"];
-  if (user && isCandidate && authPaths.some((p) => path.startsWith(p))) {
+  if (
+    user &&
+    isCandidate &&
+    authPaths.some((p) => path.startsWith(p)) &&
+    !request.nextUrl.searchParams.has("token")
+  ) {
     const url = request.nextUrl.clone();
     url.pathname = "/candidate/onboarding";
     return NextResponse.redirect(url);

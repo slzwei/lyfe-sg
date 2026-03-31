@@ -122,7 +122,7 @@ export interface CandidateDiscResults {
 export interface RecruitmentCandidate {
     id: string;
     name: string;
-    phone: string;
+    phone: string | null;
     email: string | null;
     status: CandidateStatus;
     assigned_manager_id: string;

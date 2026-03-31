@@ -115,6 +115,35 @@ export async function saveProfile(formData: Record<string, unknown>) {
     return { error: error.message };
   }
 
+  // Sync phone to candidates table and auth user (for token-auth candidates
+  // who didn't have a phone at sign-up time)
+  if (profile.contact_number) {
+    const adminClient = getAdminClient();
+    const normalizedPhone = profile.contact_number.replace(/^\+/, "");
+
+    // Update candidates.phone
+    const { data: cp } = await adminClient.from("candidate_profiles")
+      .select("candidate_id")
+      .eq("user_id", user.id)
+      .single();
+    if (cp?.candidate_id) {
+      await adminClient.from("candidates")
+        .update({
+          phone: normalizedPhone,
+          name: profile.full_name || undefined,
+        })
+        .eq("id", cp.candidate_id);
+    }
+
+    // Update auth.users.phone so it's available for display
+    await adminClient.auth.admin.updateUserById(user.id, {
+      phone: normalizedPhone,
+    }).catch((err) => {
+      // Non-fatal: phone may already be in use by another auth user
+      console.warn("[saveProfile] Failed to sync phone to auth user:", err);
+    });
+  }
+
   const profileData: FullProfileData = {
     full_name: profile.full_name,
     position_applied: profile.position_applied,

@@ -519,7 +519,7 @@ export type Database = {
           job_id: string | null
           name: string
           notes: string | null
-          phone: string
+          phone: string | null
           resume_url: string | null
           stage_entered_at: string | null
           status: Database["public"]["Enums"]["candidate_status"]
@@ -536,7 +536,7 @@ export type Database = {
           job_id?: string | null
           name: string
           notes?: string | null
-          phone: string
+          phone?: string | null
           resume_url?: string | null
           stage_entered_at?: string | null
           status?: Database["public"]["Enums"]["candidate_status"]
@@ -553,7 +553,7 @@ export type Database = {
           job_id?: string | null
           name?: string
           notes?: string | null
-          phone?: string
+          phone?: string | null
           resume_url?: string | null
           stage_entered_at?: string | null
           status?: Database["public"]["Enums"]["candidate_status"]

@@ -41,7 +41,7 @@ export function useCandidateDetail(candidateId: string) {
       setEditForm({
         name: candidateResult.candidate.name,
         email: candidateResult.candidate.email || "",
-        phone: candidateResult.candidate.phone,
+        phone: candidateResult.candidate.phone || "",
         notes: candidateResult.candidate.notes || "",
       });
     } else {

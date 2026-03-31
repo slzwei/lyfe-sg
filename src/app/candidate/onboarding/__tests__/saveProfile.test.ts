@@ -24,9 +24,19 @@ vi.mock("@/lib/pdf", () => ({
 vi.mock("@/lib/supabase/storage", () => ({
   uploadCandidatePdf: vi.fn(),
 }));
+const mockAdminUpdate = vi.fn(() => ({ eq: () => ({}) }));
+const mockAdminSelect = vi.fn(() => ({ eq: () => ({ single: () => ({ data: { candidate_id: "cand-1" } }) }) }));
 vi.mock("@/lib/supabase/admin", () => ({
   getAdminClient: vi.fn(() => ({
-    from: () => ({ update: () => ({ eq: () => ({}) }) }),
+    from: () => ({
+      update: mockAdminUpdate,
+      select: mockAdminSelect,
+    }),
+    auth: {
+      admin: {
+        updateUserById: vi.fn().mockResolvedValue({ data: {}, error: null }),
+      },
+    },
   })),
 }));
 

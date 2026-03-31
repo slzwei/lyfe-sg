@@ -336,6 +336,8 @@ interface DiscResultData {
   priorities: string[];
   results_email: string;
   contact_number: string;
+  /** Pre-generated PDF buffer to attach instead of regenerating */
+  pdfBuffer?: Buffer;
 }
 
 const TYPE_NAMES: Record<string, string> = {
@@ -436,31 +438,31 @@ export async function sendDiscResultsEmail(result: DiscResultData) {
     `[email] Preparing DISC results email for ${result.full_name} (${typeName})`
   );
 
-  // Import type info for PDF
-  const { DISC_TYPE_INFO } = await import("@/app/candidate/disc-quiz/scoring");
-  const typeInfo = DISC_TYPE_INFO[result.disc_type];
-  const displayTypeInfo = isBalanced ? DISC_TYPE_INFO["Balanced"] : typeInfo;
-
-  // Generate PDF attachment
-  let pdfBuffer: Buffer | null = null;
-  if (typeInfo) {
-    try {
-      pdfBuffer = await generateDiscPdf({
-        full_name: result.full_name,
-        disc_type: result.disc_type,
-        d_pct: result.d_pct,
-        i_pct: result.i_pct,
-        s_pct: result.s_pct,
-        c_pct: result.c_pct,
-        angle: result.angle,
-        profile_strength: result.profile_strength,
-        strength_pct: result.strength_pct,
-        priorities: result.priorities,
-        typeInfo: displayTypeInfo || typeInfo,
-      });
-      console.log(`[email] DISC PDF generated (${pdfBuffer.length} bytes)`);
-    } catch (err) {
-      console.error("[email] DISC PDF generation failed:", err);
+  // Use pre-generated PDF if provided, otherwise generate one
+  let pdfBuffer: Buffer | null = result.pdfBuffer || null;
+  if (!pdfBuffer) {
+    const { DISC_TYPE_INFO } = await import("@/app/candidate/disc-quiz/scoring");
+    const typeInfo = DISC_TYPE_INFO[result.disc_type];
+    const displayTypeInfo = isBalanced ? DISC_TYPE_INFO["Balanced"] : typeInfo;
+    if (typeInfo) {
+      try {
+        pdfBuffer = await generateDiscPdf({
+          full_name: result.full_name,
+          disc_type: result.disc_type,
+          d_pct: result.d_pct,
+          i_pct: result.i_pct,
+          s_pct: result.s_pct,
+          c_pct: result.c_pct,
+          angle: result.angle,
+          profile_strength: result.profile_strength,
+          strength_pct: result.strength_pct,
+          priorities: result.priorities,
+          typeInfo: displayTypeInfo || typeInfo,
+        });
+        console.log(`[email] DISC PDF generated (${pdfBuffer.length} bytes)`);
+      } catch (err) {
+        console.error("[email] DISC PDF generation failed:", err);
+      }
     }
   }
 

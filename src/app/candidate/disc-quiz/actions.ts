@@ -79,9 +79,11 @@ export async function submitDiscQuiz(responses: Record<string, number>, resultsE
   const candidateName = profile?.full_name || "Unknown";
   const contactNumber = profile?.contact_number || "";
   after(async () => {
+    let pdfBuffer: Buffer | null = null;
+
     if (typeInfo) {
       try {
-        const pdfBuffer = await generateDiscPdf({
+        pdfBuffer = await generateDiscPdf({
           full_name: candidateName,
           disc_type: scores.disc_type,
           d_pct: scores.d_pct,
@@ -121,6 +123,7 @@ export async function submitDiscQuiz(responses: Record<string, number>, resultsE
         priorities,
         results_email: resultsEmail || "",
         contact_number: contactNumber,
+        pdfBuffer: pdfBuffer || undefined,
       });
     } catch (err) {
       Sentry.captureException(err, { tags: { action: "disc-results-email" } });

@@ -37,9 +37,9 @@ export function ProgressDisplay({ invitation: inv, liveState, onDownloadDiscPdf 
   let barColor = "bg-stone-300";
   let textColor = "text-stone-500";
 
-  if (liveState === "signed-out" && progress?.quiz_completed) {
+  if (liveState === "signed-out") {
     pct = 100; label = "Signed out"; barColor = "bg-stone-400"; textColor = "text-stone-500";
-  } else if (liveState === "viewing-results" && progress?.quiz_completed) {
+  } else if (liveState === "viewing-results") {
     pct = 100; label = "Viewing results"; barColor = "bg-green-500"; textColor = "text-green-700";
   } else if (progress?.quiz_completed) {
     pct = 100; label = "Completed"; barColor = "bg-green-500"; textColor = "text-green-700";

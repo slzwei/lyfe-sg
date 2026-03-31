@@ -141,9 +141,12 @@ export default function CandidatesClient({ staffRole }: { staffRole?: string }) 
     setSending(false);
   }
 
-  async function handleAction(id: string, action: () => Promise<{ success: boolean }>) {
+  async function handleAction(id: string, action: () => Promise<{ success: boolean; error?: string }>) {
     setActionLoading(id);
-    await action();
+    const result = await action();
+    if (!result.success) {
+      setMessage({ type: "error", text: result.error || "Action failed." });
+    }
     fetchData();
     setActionLoading(null);
   }

@@ -702,8 +702,8 @@ export async function deleteCandidateById(candidateId: string): Promise<{
   success: boolean;
   error?: string;
 }> {
-  const staff = await requireStaff("admin");
-  if (!staff) return { success: false, error: "Not authorized. Admin role required." };
+  const staff = await requireStaff("pa");
+  if (!staff) return { success: false, error: "Not authorized." };
 
   const admin = getAdminClientAs(staff);
 

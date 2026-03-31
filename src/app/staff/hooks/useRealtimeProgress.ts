@@ -42,10 +42,8 @@ export function useRealtimeProgress({ onRefresh }: UseRealtimeProgressOptions): 
       (payload) => {
         if (payload.userId && payload.state) {
           setLiveStates((prev) => ({ ...prev, [payload.userId]: payload.state }));
-          // Only fetch from DB for states that change data
-          if (payload.state === "quiz" || payload.state === "form") {
-            refreshUser(payload.userId);
-          }
+          // Refresh from DB for any state that may reflect a data change
+          refreshUser(payload.userId);
           // Auto-clear "signed-out" after 1 minute
           if (payload.state === "signed-out") {
             setTimeout(() => {

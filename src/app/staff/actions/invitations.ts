@@ -303,19 +303,25 @@ export async function deleteCandidate(id: string) {
 
   const adminClient = getAdminClientAs(staff);
 
-  // Get user_id and attached files before RPC
+  // Get user_id, candidate_record_id, and attached files before RPC
   const { data: invitation } = await adminClient
     .from("invitations")
-    .select("user_id, attached_files")
+    .select("user_id, candidate_record_id, attached_files")
     .eq("id", id)
     .single();
 
   const userId = invitation?.user_id ?? null;
+  const candidateRecordId = invitation?.candidate_record_id ?? null;
 
-  // Transactional delete of all DB records
+  // Transactional delete of all DB records (invitation, profiles, disc data)
   const { error } = await adminClient.rpc("delete_candidate", { p_invitation_id: id });
   if (error) {
     return { success: false, error: error.message };
+  }
+
+  // Delete the candidates row (cascades to activities, documents, interviews)
+  if (candidateRecordId) {
+    await adminClient.from("candidates").delete().eq("id", candidateRecordId);
   }
 
   // Clean up attached files from storage

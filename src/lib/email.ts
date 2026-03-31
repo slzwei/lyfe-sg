@@ -203,15 +203,15 @@ export async function sendInvitationEmail({
               <!-- CTA Button -->
               <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 24px 0;">
                 <tr>
-                  <td style="background-color:#ff9500;border-radius:12px;border-bottom:3px solid #e07800;">
+                  <td style="background-color:#ffffff;border-radius:10px;border:2px solid #f97316;">
                     <!--[if mso]>
-                    <v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="${link}" style="height:48px;v-text-anchor:middle;width:220px;" arcsize="25%" fillcolor="#ff9500" stroke="f">
+                    <v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="${link}" style="height:48px;v-text-anchor:middle;width:220px;" arcsize="20%" fillcolor="#ffffff" strokecolor="#f97316" strokeweight="2px">
                       <w:anchorlock/>
-                      <center style="color:#ffffff;font-family:sans-serif;font-size:15px;font-weight:bold;">Start Application &rarr;</center>
+                      <center style="color:#f97316;font-family:sans-serif;font-size:15px;font-weight:bold;">Start Application &rarr;</center>
                     </v:roundrect>
                     <![endif]-->
                     <!--[if !mso]><!-->
-                    <a href="${link}" style="display:inline-block;padding:14px 32px;background-color:#ff9500;color:#ffffff;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;font-size:15px;font-weight:600;text-decoration:none;border-radius:12px;">
+                    <a href="${link}" style="display:inline-block;padding:14px 32px;background-color:#ffffff;color:#f97316;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;font-size:15px;font-weight:700;text-decoration:none;border-radius:10px;">
                       Start Application &rarr;
                     </a>
                     <!--<![endif]-->
@@ -686,8 +686,8 @@ export async function sendCandidateAssignedEmail({
 
               <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 24px 0;">
                 <tr>
-                  <td style="background-color:#ff9500;border-radius:12px;border-bottom:3px solid #e07800;">
-                    <a href="${link}" style="display:inline-block;padding:14px 32px;background-color:#ff9500;color:#ffffff;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;font-size:15px;font-weight:600;text-decoration:none;border-radius:12px;">
+                  <td style="background-color:#ffffff;border-radius:10px;border:2px solid #f97316;">
+                    <a href="${link}" style="display:inline-block;padding:14px 32px;background-color:#ffffff;color:#f97316;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;font-size:15px;font-weight:700;text-decoration:none;border-radius:10px;">
                       View Candidate &rarr;
                     </a>
                   </td>
@@ -736,8 +736,8 @@ export async function sendCandidateReassignedEmail({
 
               <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 24px 0;">
                 <tr>
-                  <td style="background-color:#ff9500;border-radius:12px;border-bottom:3px solid #e07800;">
-                    <a href="${link}" style="display:inline-block;padding:14px 32px;background-color:#ff9500;color:#ffffff;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;font-size:15px;font-weight:600;text-decoration:none;border-radius:12px;">
+                  <td style="background-color:#ffffff;border-radius:10px;border:2px solid #f97316;">
+                    <a href="${link}" style="display:inline-block;padding:14px 32px;background-color:#ffffff;color:#f97316;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;font-size:15px;font-weight:700;text-decoration:none;border-radius:10px;">
                       View Candidate &rarr;
                     </a>
                   </td>

@@ -12,6 +12,7 @@ import {
 
 interface UseInviteActionsOptions {
   onRefresh: () => void;
+  staffRole: string;
 }
 
 export interface ActionDef {
@@ -23,7 +24,7 @@ export interface ActionDef {
   canUseWhileLoading?: boolean;
 }
 
-export function useInviteActions({ onRefresh }: UseInviteActionsOptions) {
+export function useInviteActions({ onRefresh, staffRole }: UseInviteActionsOptions) {
   const [actionLoading, setActionLoading] = useState<string | null>(null);
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [confirmDialog, setConfirmDialog] = useState<{
@@ -113,6 +114,7 @@ export function useInviteActions({ onRefresh }: UseInviteActionsOptions) {
   function getActions(inv: Invitation, showArchive: boolean): ActionDef[] {
     const isExpired = inv.status === "pending" && new Date(inv.expires_at) < new Date();
     const isAccepted = inv.status === "accepted";
+    const isManagerPlus = ["manager", "director", "admin"].includes(staffRole);
 
     const actions: ActionDef[] = [];
 
@@ -169,13 +171,16 @@ export function useInviteActions({ onRefresh }: UseInviteActionsOptions) {
       });
     }
 
-    actions.push({
-      key: "delete",
-      label: "Delete",
-      onClick: () => handleDelete(inv.id),
-      icon: <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>,
-      hoverClass: "hover:bg-red-50 hover:text-red-600",
-    });
+    // PAs can only delete pending invitations; manager+ can delete any
+    if (isManagerPlus || inv.status === "pending") {
+      actions.push({
+        key: "delete",
+        label: "Delete",
+        onClick: () => handleDelete(inv.id),
+        icon: <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>,
+        hoverClass: "hover:bg-red-50 hover:text-red-600",
+      });
+    }
 
     return actions;
   }

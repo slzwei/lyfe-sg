@@ -317,17 +317,23 @@ export async function resetQuiz(invitationId: string) {
 }
 
 export async function deleteCandidate(id: string) {
-  const staff = await requireStaff("manager");
-  if (!staff) return { success: false, error: "Not authorized. Manager access required." };
+  const staff = await requireStaff("pa");
+  if (!staff) return { success: false, error: "Not authorized." };
 
   const adminClient = getAdminClientAs(staff);
 
   // Get invitation details before deletion for cleanup + logging
   const { data: invitation } = await adminClient
     .from("invitations")
-    .select("user_id, candidate_record_id, attached_files, candidate_name, email")
+    .select("user_id, candidate_record_id, attached_files, candidate_name, email, status")
     .eq("id", id)
     .single();
+
+  // PAs can only delete pending invitations (candidate never started)
+  const isManagerPlus = ["manager", "director", "admin"].includes(staff.role);
+  if (!isManagerPlus && invitation?.status !== "pending") {
+    return { success: false, error: "Not authorized. Only pending invitations can be deleted." };
+  }
 
   const userId = invitation?.user_id ?? null;
   const candidateRecordId = invitation?.candidate_record_id ?? null;

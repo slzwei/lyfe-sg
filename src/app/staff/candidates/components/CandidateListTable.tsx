@@ -37,6 +37,7 @@ export function CandidateListTable({
   onDownloadPdf,
 }: CandidateListTableProps) {
   const isManagerPlus = staffRole && ["manager", "director", "admin"].includes(staffRole);
+  const isPaOrAbove = staffRole && ["pa", "manager", "director", "admin"].includes(staffRole);
 
   function progressDisplay(inv: Invitation) {
     return (
@@ -95,19 +96,19 @@ export function CandidateListTable({
                 <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" /></svg>
               </button>
             )}
-            {!inv._synthetic && isManagerPlus && !inv.archived_at && inv.progress?.quiz_completed && (
+            {!inv._synthetic && isPaOrAbove && !inv.archived_at && inv.progress?.quiz_completed && (
               <button onClick={() => onArchive(inv.id)} disabled={isLoading}
                 title="Archive" className="rounded p-1 text-stone-400 hover:bg-stone-100 hover:text-stone-600 disabled:opacity-50">
                 <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M20 7l-8 4-8-4m16 0v10a2 2 0 01-2 2H6a2 2 0 01-2-2V7m16 0l-8-4-8 4" /></svg>
               </button>
             )}
-            {!inv._synthetic && isManagerPlus && inv.archived_at && (
+            {!inv._synthetic && isPaOrAbove && inv.archived_at && (
               <button onClick={() => onUnarchive(inv.id)} disabled={isLoading}
                 title="Unarchive" className="rounded p-1 text-stone-400 hover:bg-green-50 hover:text-green-600 disabled:opacity-50">
                 <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" /></svg>
               </button>
             )}
-            {staffRole && ["pa", "manager", "director", "admin"].includes(staffRole) && (
+            {isManagerPlus && (
               <button onClick={() => onDelete(inv.id, inv.candidate_name || inv.email, inv._synthetic)} disabled={isLoading}
                 title="Delete" className="rounded p-1 text-stone-400 hover:bg-red-50 hover:text-red-600 disabled:opacity-50">
                 <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
@@ -166,19 +167,19 @@ export function CandidateListTable({
                 <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" /></svg>
               </button>
             )}
-            {!inv._synthetic && isManagerPlus && !inv.archived_at && inv.progress?.quiz_completed && (
+            {!inv._synthetic && isPaOrAbove && !inv.archived_at && inv.progress?.quiz_completed && (
               <button onClick={() => onArchive(inv.id)} disabled={isLoading}
                 title="Archive" className="rounded p-1.5 text-stone-400 hover:bg-stone-100 hover:text-stone-600 disabled:opacity-50">
                 <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M20 7l-8 4-8-4m16 0v10a2 2 0 01-2 2H6a2 2 0 01-2-2V7m16 0l-8-4-8 4" /></svg>
               </button>
             )}
-            {!inv._synthetic && isManagerPlus && inv.archived_at && (
+            {!inv._synthetic && isPaOrAbove && inv.archived_at && (
               <button onClick={() => onUnarchive(inv.id)} disabled={isLoading}
                 title="Unarchive" className="rounded p-1.5 text-stone-400 hover:bg-green-50 hover:text-green-600 disabled:opacity-50">
                 <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" /></svg>
               </button>
             )}
-            {staffRole && ["pa", "manager", "director", "admin"].includes(staffRole) && (
+            {isManagerPlus && (
               <button onClick={() => onDelete(inv.id, inv.candidate_name || inv.email, inv._synthetic)} disabled={isLoading}
                 title="Delete" className="rounded p-1.5 text-stone-400 hover:bg-red-50 hover:text-red-600 disabled:opacity-50">
                 <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>

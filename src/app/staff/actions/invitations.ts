@@ -317,15 +317,15 @@ export async function resetQuiz(invitationId: string) {
 }
 
 export async function deleteCandidate(id: string) {
-  const staff = await requireStaff("admin");
-  if (!staff) return { success: false, error: "Not authorized. Admin role required." };
+  const staff = await requireStaff("manager");
+  if (!staff) return { success: false, error: "Not authorized. Manager access required." };
 
   const adminClient = getAdminClientAs(staff);
 
-  // Get user_id, candidate_record_id, and attached files before RPC
+  // Get invitation details before deletion for cleanup + logging
   const { data: invitation } = await adminClient
     .from("invitations")
-    .select("user_id, candidate_record_id, attached_files")
+    .select("user_id, candidate_record_id, attached_files, candidate_name, email")
     .eq("id", id)
     .single();
 
@@ -358,12 +358,14 @@ export async function deleteCandidate(id: string) {
     await adminClient.auth.admin.deleteUser(userId);
   }
 
+  console.log(`[deleteCandidate] Deleted by ${staff.full_name} (${staff.role}) — invitation=${id}, candidate=${invitation?.candidate_name || invitation?.email || "unknown"}`);
+
   return { success: true };
 }
 
 export async function archiveInvitation(id: string) {
-  const staff = await requireStaff("manager");
-  if (!staff) return { success: false, error: "Manager access required." };
+  const staff = await requireStaff("pa");
+  if (!staff) return { success: false, error: "Staff access required." };
 
   const adminClient = getAdminClientAs(staff);
   const { error } = await adminClient.from("invitations")
@@ -379,8 +381,8 @@ export async function archiveInvitation(id: string) {
 }
 
 export async function unarchiveInvitation(id: string) {
-  const staff = await requireStaff("manager");
-  if (!staff) return { success: false, error: "Manager access required." };
+  const staff = await requireStaff("pa");
+  if (!staff) return { success: false, error: "Staff access required." };
 
   const adminClient = getAdminClientAs(staff);
   const { error } = await adminClient.from("invitations")

@@ -791,12 +791,17 @@ export async function deleteCandidateById(candidateId: string): Promise<{
   success: boolean;
   error?: string;
 }> {
-  const staff = await requireStaff("admin");
-  if (!staff) return { success: false, error: "Not authorized. Admin role required." };
+  const staff = await requireStaff("manager");
+  if (!staff) return { success: false, error: "Not authorized. Manager access required." };
 
   const admin = getAdminClientAs(staff);
 
-  // Get linked profile user_id for cleanup
+  // Get candidate name for logging + linked profile user_id for cleanup
+  const { data: candidate } = await admin.from("candidates")
+    .select("name, email")
+    .eq("id", candidateId)
+    .maybeSingle();
+
   const { data: profile } = await admin.from("candidate_profiles")
     .select("user_id")
     .eq("candidate_id", candidateId)
@@ -857,6 +862,8 @@ export async function deleteCandidateById(candidateId: string): Promise<{
   // Delete candidate (cascades to activities, documents, interviews)
   const { error } = await admin.from("candidates").delete().eq("id", candidateId);
   if (error) return { success: false, error: error.message };
+
+  console.log(`[deleteCandidateById] Deleted by ${staff.full_name} (${staff.role}) — candidateId=${candidateId}, name=${candidate?.name || candidate?.email || "unknown"}`);
 
   return { success: true };
 }

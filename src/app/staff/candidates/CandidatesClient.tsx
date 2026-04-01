@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback, useRef } from "react";
 import { useSearchParams } from "next/navigation";
+import { createClient } from "@/lib/supabase/client";
 import { useRealtimeProgress } from "../hooks/useRealtimeProgress";
 import { searchCandidates, deleteCandidateById, type SearchResult } from "./actions";
 import {
@@ -67,6 +68,21 @@ export default function CandidatesClient({ staffRole }: { staffRole?: string }) 
     }
   }, []);
   const { live, liveStates } = useRealtimeProgress({ onRefresh: handleRealtimeRefresh });
+
+  // Subscribe to invitation inserts/updates so new invites appear dynamically
+  useEffect(() => {
+    const supabase = createClient();
+    const channel = supabase
+      .channel("invitations-changes")
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "invitations" },
+        () => { fetchData(); }
+      )
+      .subscribe();
+
+    return () => { supabase.removeChannel(channel); };
+  }, [fetchData]);
 
   // Merge: accepted invitations + pipeline-only candidates as synthetic invitations
   const acceptedInvitations = invitations.filter((inv) =>

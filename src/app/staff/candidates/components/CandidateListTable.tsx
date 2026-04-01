@@ -99,7 +99,7 @@ export function CandidateListTable({
             {!inv._synthetic && isPaOrAbove && !inv.archived_at && inv.progress?.quiz_completed && (
               <button onClick={() => onArchive(inv.id)} disabled={isLoading}
                 title="Archive" className="rounded p-1 text-stone-400 hover:bg-stone-100 hover:text-stone-600 disabled:opacity-50">
-                <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M20 7l-8 4-8-4m16 0v10a2 2 0 01-2 2H6a2 2 0 01-2-2V7m16 0l-8-4-8 4" /></svg>
+                <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M20 7.5V18a2 2 0 01-2 2H6a2 2 0 01-2-2V7.5m16 0h-16m16 0l-1.5-3h-13l-1.5 3m8 4v4m0 0l-2-2m2 2l2-2" /></svg>
               </button>
             )}
             {!inv._synthetic && isPaOrAbove && inv.archived_at && (
@@ -170,7 +170,7 @@ export function CandidateListTable({
             {!inv._synthetic && isPaOrAbove && !inv.archived_at && inv.progress?.quiz_completed && (
               <button onClick={() => onArchive(inv.id)} disabled={isLoading}
                 title="Archive" className="rounded p-1.5 text-stone-400 hover:bg-stone-100 hover:text-stone-600 disabled:opacity-50">
-                <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M20 7l-8 4-8-4m16 0v10a2 2 0 01-2 2H6a2 2 0 01-2-2V7m16 0l-8-4-8 4" /></svg>
+                <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M20 7.5V18a2 2 0 01-2 2H6a2 2 0 01-2-2V7.5m16 0h-16m16 0l-1.5-3h-13l-1.5 3m8 4v4m0 0l-2-2m2 2l2-2" /></svg>
               </button>
             )}
             {!inv._synthetic && isPaOrAbove && inv.archived_at && (

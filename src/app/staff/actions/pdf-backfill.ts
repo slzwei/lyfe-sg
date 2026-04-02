@@ -43,7 +43,7 @@ export async function backfillPdfs(): Promise<{ generated: number }> {
             full_name: profile.full_name,
             position_applied: profile.position_applied || "",
             expected_salary: profile.expected_salary || "",
-            salary_period: profile.salary_period || "month",
+            salary_period: profile.salary_period || "hour",
             date_available: profile.date_available,
             date_of_birth: profile.date_of_birth,
             place_of_birth: profile.place_of_birth || "",

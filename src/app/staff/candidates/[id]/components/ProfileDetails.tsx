@@ -12,7 +12,7 @@ export default function ProfileDetails({ profile }: { profile: CandidateProfile 
         {/* Personal info */}
         <div className="grid grid-cols-1 gap-x-6 gap-y-3 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
           {[
-            ["Salary", profile.expected_salary ? `$${profile.expected_salary}/${profile.salary_period || "month"}` : null],
+            ["Salary", profile.expected_salary ? `$${profile.expected_salary}/${profile.salary_period || "hour"}` : null],
             ["Available", profile.date_available ? new Date(profile.date_available).toLocaleDateString() : null],
             ["DOB", profile.date_of_birth ? new Date(profile.date_of_birth).toLocaleDateString() : null],
             ["Nationality", profile.nationality],

@@ -138,7 +138,7 @@ export default function Step1Personal({ data, onChange, errors }: Step1Props) {
               />
               <select
                 className="h-12 w-28 shrink-0 rounded-xl border border-stone-200 bg-stone-50 px-2 text-base outline-none transition-colors focus:border-orange-400 focus:ring-2 focus:ring-orange-100"
-                value={v("salary_period") || "month"}
+                value={v("salary_period") || "hour"}
                 onChange={(e) => onChange("salary_period", e.target.value)}
               >
                 <option value="hour">/ hour</option>

@@ -655,7 +655,7 @@ describe("backfillPdfs", () => {
       { id: "inv-1", user_id: "u-1", profile_pdf_path: null, disc_pdf_path: "existing.pdf" },
     ];
     const profile = {
-      full_name: "Test", position_applied: "Agent", expected_salary: "3000", salary_period: "month",
+      full_name: "Test", position_applied: "Agent", expected_salary: "3000", salary_period: "hour",
       date_available: "2026-04-01", date_of_birth: "1990-01-01", place_of_birth: "SG",
       nationality: "Singaporean", race: "Chinese", gender: "Male", marital_status: "Single",
       address_block: "123", address_street: "Main St", address_unit: "#01-01", address_postal: "123456",

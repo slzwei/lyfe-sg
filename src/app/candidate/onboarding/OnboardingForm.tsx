@@ -42,7 +42,7 @@ function getDefaultData(): Record<string, unknown> {
   return {
     position_applied: "",
     expected_salary: "",
-    salary_period: "month",
+    salary_period: "hour",
     date_available: "",
     full_name: "",
     date_of_birth: "",

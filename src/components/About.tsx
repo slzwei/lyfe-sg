@@ -26,7 +26,7 @@ const highlights = [
 
 export default function About() {
   return (
-    <section id="about" className="py-28 sm:py-36">
+    <section id="about" className="py-24 sm:py-32">
       <div className="mx-auto max-w-7xl px-5 sm:px-8 lg:px-10">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
           {/* Left — text */}
@@ -38,9 +38,9 @@ export default function About() {
             </AnimateIn>
             <AnimateIn delay={0.1}>
               <h2 className="text-3xl sm:text-[2.5rem] font-extrabold tracking-tight text-stone-900 leading-tight">
-                Financial guidance
+                Honest advice,
                 <br />
-                you can count on
+                real results
               </h2>
             </AnimateIn>
             <AnimateIn delay={0.2}>

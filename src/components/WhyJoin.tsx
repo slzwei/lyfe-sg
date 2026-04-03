@@ -38,10 +38,6 @@ const reasons = [
 export default function WhyJoin() {
   return (
     <section id="join" className="relative py-28 sm:py-36 bg-stone-900 overflow-hidden">
-      {/* Decorative glow */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] blob bg-orange-500/10" />
-      <div className="absolute top-[20%] right-[10%] w-[200px] h-[200px] blob bg-orange-600/8" />
-
       <div className="relative mx-auto max-w-7xl px-5 sm:px-8 lg:px-10">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-20 items-start">
           {/* Left column */}

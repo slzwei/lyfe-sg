@@ -1,14 +1,33 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
+import { useState, useTransition } from "react";
 import AnimateIn from "./AnimateIn";
 
-export default function Contact() {
-  const [submitted, setSubmitted] = useState(false);
+interface ContactProps {
+  action?: (formData: FormData) => Promise<{ success: boolean; error?: string }>;
+}
 
-  function handleSubmit(e: FormEvent<HTMLFormElement>) {
+export default function Contact({ action }: ContactProps) {
+  const [submitted, setSubmitted] = useState(false);
+  const [error, setError] = useState("");
+  const [isPending, startTransition] = useTransition();
+
+  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    setSubmitted(true);
+    if (!action) {
+      setSubmitted(true);
+      return;
+    }
+    const formData = new FormData(e.currentTarget);
+    setError("");
+    startTransition(async () => {
+      const result = await action(formData);
+      if (result.success) {
+        setSubmitted(true);
+      } else {
+        setError(result.error || "Something went wrong.");
+      }
+    });
   }
 
   return (
@@ -139,11 +158,15 @@ export default function Contact() {
                       placeholder="Tell us how we can help..."
                     />
                   </div>
+                  {error && (
+                    <p className="text-red-500 text-sm">{error}</p>
+                  )}
                   <button
                     type="submit"
-                    className="w-full rounded-xl bg-orange-500 px-8 py-3.5 text-sm font-semibold text-white hover:bg-orange-600 shadow-lg shadow-orange-500/25 hover:shadow-xl hover:shadow-orange-500/30 transition-all"
+                    disabled={isPending}
+                    className="w-full rounded-xl bg-orange-500 px-8 py-3.5 text-sm font-semibold text-white hover:bg-orange-600 shadow-lg shadow-orange-500/25 hover:shadow-xl hover:shadow-orange-500/30 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    Send Message
+                    {isPending ? "Sending..." : "Send Message"}
                   </button>
                 </form>
               )}

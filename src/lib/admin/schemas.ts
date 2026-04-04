@@ -2,6 +2,10 @@ import { z } from 'zod';
 import { USER_ROLES } from './types';
 
 export const userUpdateSchema = z.object({
+    full_name: z.string().min(1, 'Name is required').max(255),
+    email: z.string().email().max(255).nullable(),
+    phone: z.string().max(20).nullable(),
+    date_of_birth: z.string().nullable(),
     role: z.enum(USER_ROLES),
     reports_to: z.string().uuid().nullable(),
     is_active: z.boolean(),

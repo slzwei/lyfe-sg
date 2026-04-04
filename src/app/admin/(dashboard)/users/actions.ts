@@ -6,11 +6,19 @@ import { revalidatePath } from 'next/cache';
 
 export async function updateUser(
   id: string,
-  data: { role?: string; reports_to?: string | null; is_active?: boolean },
+  data: {
+    full_name?: string;
+    email?: string | null;
+    phone?: string | null;
+    date_of_birth?: string | null;
+    role?: string;
+    reports_to?: string | null;
+    is_active?: boolean;
+  },
 ) {
   return adminAction(async () => {
     const supabase = getAdminClient();
-    const { error } = await supabase.from('users').update(data as { role?: 'admin' | 'director' | 'manager' | 'agent' | 'pa' | 'candidate'; reports_to?: string | null; is_active?: boolean }).eq('id', id);
+    const { error } = await supabase.from('users').update(data as { full_name?: string; email?: string | null; phone?: string | null; date_of_birth?: string | null; role?: 'admin' | 'director' | 'manager' | 'agent' | 'pa' | 'candidate'; reports_to?: string | null; is_active?: boolean }).eq('id', id);
     if (error) throw new Error(error.message);
 
     // Sync role change to auth.users app_metadata so JWT claims update immediately

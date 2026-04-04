@@ -30,6 +30,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Checkbox } from '@/components/ui/checkbox';
+import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 
 interface UserDialogProps {
@@ -43,6 +44,10 @@ export function UserDialog({ open, onOpenChange, user, allUsers }: UserDialogPro
   const form = useForm<UserUpdateInput>({
     resolver: zodResolver(userUpdateSchema),
     defaultValues: {
+      full_name: '',
+      email: null,
+      phone: null,
+      date_of_birth: null,
       role: 'agent',
       reports_to: null,
       is_active: true,
@@ -52,6 +57,10 @@ export function UserDialog({ open, onOpenChange, user, allUsers }: UserDialogPro
   useEffect(() => {
     if (user) {
       form.reset({
+        full_name: user.full_name,
+        email: user.email ?? null,
+        phone: user.phone ?? null,
+        date_of_birth: user.date_of_birth ?? null,
         role: user.role,
         reports_to: user.reports_to ?? null,
         is_active: user.is_active,
@@ -84,6 +93,78 @@ export function UserDialog({ open, onOpenChange, user, allUsers }: UserDialogPro
 
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            {/* Name */}
+            <FormField
+              control={form.control}
+              name="full_name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Name</FormLabel>
+                  <FormControl>
+                    <Input {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {/* Email & Phone */}
+            <div className="grid grid-cols-2 gap-3">
+              <FormField
+                control={form.control}
+                name="email"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Email</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="email"
+                        value={field.value ?? ''}
+                        onChange={(e) => field.onChange(e.target.value || null)}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="phone"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Phone</FormLabel>
+                    <FormControl>
+                      <Input
+                        value={field.value ?? ''}
+                        onChange={(e) => field.onChange(e.target.value || null)}
+                        placeholder="6591234567"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+
+            {/* Date of Birth */}
+            <FormField
+              control={form.control}
+              name="date_of_birth"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Date of Birth</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="date"
+                      value={field.value ?? ''}
+                      onChange={(e) => field.onChange(e.target.value || null)}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
             {/* Role */}
             <FormField
               control={form.control}

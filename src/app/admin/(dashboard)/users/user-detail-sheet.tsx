@@ -21,6 +21,16 @@ export function UserDetailSheet({ open, onOpenChange, user, allUsers, onEdit }: 
 
   const directReports = allUsers.filter((u) => u.reports_to === user.id);
 
+  // Walk up the reporting chain (manager → director → ...)
+  const reportingChain: User[] = [];
+  let current = user;
+  while (current.reports_to) {
+    const superior = allUsers.find((u) => u.id === current.reports_to);
+    if (!superior || reportingChain.some((u) => u.id === superior.id)) break;
+    reportingChain.push(superior);
+    current = superior;
+  }
+
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent side="right" className="w-full sm:max-w-md overflow-y-auto">
@@ -74,7 +84,18 @@ export function UserDetailSheet({ open, onOpenChange, user, allUsers, onEdit }: 
 
           <section className="flex flex-col gap-3">
             <h3 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Reporting Structure</h3>
-            <DetailRow label="Reports To" value={user.reports_to_name} />
+            {reportingChain.length === 0 ? (
+              <DetailRow label="Reports To" value={null} />
+            ) : (
+              <div className="flex flex-col gap-1">
+                {reportingChain.map((sup) => (
+                  <div key={sup.id} className="flex items-center justify-between text-sm">
+                    <span>{sup.full_name}</span>
+                    <Badge variant="secondary" className="text-xs">{ROLE_LABELS[sup.role]}</Badge>
+                  </div>
+                ))}
+              </div>
+            )}
             <div className="flex flex-col gap-1.5">
               <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
                 Direct Reports ({directReports.length})

@@ -15,6 +15,13 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
 
+function formatPhone(phone: string): string {
+  if (phone.length === 10 && phone.startsWith('65')) {
+    return `+${phone.slice(0, 2)} ${phone.slice(2, 6)} ${phone.slice(6)}`;
+  }
+  return `+${phone}`;
+}
+
 export function getColumns(onEdit: (user: User) => void): ColumnDef<User>[] {
   return [
     {
@@ -35,7 +42,7 @@ export function getColumns(onEdit: (user: User) => void): ColumnDef<User>[] {
       header: 'Phone',
       cell: ({ row }) => {
         const phone = row.getValue<string | null>('phone');
-        return phone ? <span className="text-sm">{phone}</span> : <span className="text-muted-foreground text-sm">—</span>;
+        return phone ? <span className="text-sm">{formatPhone(phone)}</span> : <span className="text-muted-foreground text-sm">—</span>;
       },
     },
     {

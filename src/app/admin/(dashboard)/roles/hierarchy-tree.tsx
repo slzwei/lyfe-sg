@@ -74,7 +74,7 @@ function TreeItem({ node, users, depth }: { node: TreeNode; users: User[]; depth
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="__none__">No manager</SelectItem>
-              {users.filter((u) => u.id !== node.user.id).map((u) => (
+              {users.filter((u) => u.id !== node.user.id && u.role !== 'admin').map((u) => (
                 <SelectItem key={u.id} value={u.id}>{u.full_name} ({ROLE_LABELS[u.role]})</SelectItem>
               ))}
             </SelectContent>
@@ -94,7 +94,7 @@ function TreeItem({ node, users, depth }: { node: TreeNode; users: User[]; depth
 
 export function HierarchyTree({ users }: HierarchyTreeProps) {
   // Exclude PAs — they appear in the PA Assignments tab instead (can serve multiple managers)
-  const tree = buildTree(users.filter((u) => u.role !== 'pa'));
+  const tree = buildTree(users.filter((u) => u.role !== 'pa' && u.role !== 'admin'));
 
   return (
     <div className="rounded-md border p-2">

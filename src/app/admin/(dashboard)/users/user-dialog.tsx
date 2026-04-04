@@ -178,7 +178,7 @@ export function UserDialog({ open, onOpenChange, user, allUsers }: UserDialogPro
                         <SelectValue placeholder="Select role" />
                       </SelectTrigger>
                       <SelectContent>
-                        {USER_ROLES.map((role) => (
+                        {USER_ROLES.filter((role) => role !== 'admin').map((role) => (
                           <SelectItem key={role} value={role}>
                             {ROLE_LABELS[role]}
                           </SelectItem>

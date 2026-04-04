@@ -8,6 +8,14 @@ import { Button } from '@/components/ui/button';
 import { DetailRow } from '@/components/admin/detail-row';
 import { User, ROLE_LABELS, LIFECYCLE_STAGE_LABELS } from '@/lib/admin/types';
 
+function formatPhone(phone: string): string {
+  // SG numbers: 65XXXXXXXX → +65 XXXX XXXX
+  if (phone.length === 10 && phone.startsWith('65')) {
+    return `+${phone.slice(0, 2)} ${phone.slice(2, 6)} ${phone.slice(6)}`;
+  }
+  return `+${phone}`;
+}
+
 interface UserDetailSheetProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -36,14 +44,14 @@ export function UserDetailSheet({ open, onOpenChange, user, allUsers, onEdit }: 
       <SheetContent side="right" className="w-full sm:max-w-md overflow-y-auto">
         <SheetHeader className="pb-2">
           <SheetTitle>{user.full_name}</SheetTitle>
-          <SheetDescription>{user.email ?? user.phone ?? '—'}</SheetDescription>
+          <SheetDescription>{user.email ?? (user.phone ? formatPhone(user.phone) : '—')}</SheetDescription>
         </SheetHeader>
 
         <div className="flex flex-col gap-6 px-4 pb-6">
           <section className="flex flex-col gap-3">
             <h3 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Profile</h3>
             <div className="grid grid-cols-2 gap-3">
-              <DetailRow label="Phone" value={user.phone} />
+              <DetailRow label="Phone" value={user.phone ? formatPhone(user.phone) : null} />
               <DetailRow label="Email" value={user.email} />
               <DetailRow label="Role" value={<Badge variant="secondary">{ROLE_LABELS[user.role]}</Badge>} />
               <DetailRow

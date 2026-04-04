@@ -222,6 +222,16 @@ export const LEAD_STATUS_LABELS: Record<(typeof LEAD_STATUSES)[number], string> 
     lost: 'Lost',
 };
 
+export const LIFECYCLE_STAGE_LABELS: Record<(typeof LIFECYCLE_STAGES)[number], string> = {
+    applied: 'Applied',
+    interview_scheduled: 'Interview Scheduled',
+    interviewed: 'Interviewed',
+    approved: 'Approved',
+    exam_prep: 'Exam Prep',
+    licensed: 'Licensed',
+    active_agent: 'Active Agent',
+};
+
 export const CANDIDATE_STATUS_LABELS: Record<(typeof CANDIDATE_STATUSES)[number], string> = {
     applied: 'Applied',
     interview_scheduled: 'Interview Scheduled',

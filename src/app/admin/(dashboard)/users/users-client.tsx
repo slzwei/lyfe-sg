@@ -5,6 +5,7 @@ import { User, USER_ROLES, ROLE_LABELS } from '@/lib/admin/types';
 import { DataTable } from '@/components/admin/data-table';
 import { getColumns } from './columns';
 import { UserDialog } from './user-dialog';
+import { UserDetailSheet } from './user-detail-sheet';
 
 interface UsersClientProps {
   users: User[];
@@ -13,15 +14,27 @@ interface UsersClientProps {
 export function UsersClient({ users }: UsersClientProps) {
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [sheetOpen, setSheetOpen] = useState(false);
+
+  const handleRowClick = (user: User) => {
+    setSelectedUser(user);
+    setSheetOpen(true);
+  };
 
   const handleEdit = (user: User) => {
+    setSheetOpen(false);
     setSelectedUser(user);
     setDialogOpen(true);
   };
 
   const handleDialogOpenChange = (open: boolean) => {
     setDialogOpen(open);
-    if (!open) setSelectedUser(null);
+    if (!open && !sheetOpen) setSelectedUser(null);
+  };
+
+  const handleSheetOpenChange = (open: boolean) => {
+    setSheetOpen(open);
+    if (!open && !dialogOpen) setSelectedUser(null);
   };
 
   const columns = getColumns(handleEdit);
@@ -43,6 +56,7 @@ export function UsersClient({ users }: UsersClientProps) {
         data={users}
         searchColumn="full_name"
         searchPlaceholder="Search users..."
+        onRowClick={handleRowClick}
         facetedFilters={[
           {
             columnId: 'role',
@@ -55,6 +69,14 @@ export function UsersClient({ users }: UsersClientProps) {
             options: activeFacetOptions,
           },
         ]}
+      />
+
+      <UserDetailSheet
+        open={sheetOpen}
+        onOpenChange={handleSheetOpenChange}
+        user={selectedUser}
+        allUsers={users}
+        onEdit={handleEdit}
       />
 
       <UserDialog

@@ -93,7 +93,8 @@ function TreeItem({ node, users, depth }: { node: TreeNode; users: User[]; depth
 }
 
 export function HierarchyTree({ users }: HierarchyTreeProps) {
-  const tree = buildTree(users);
+  // Exclude PAs — they appear in the PA Assignments tab instead (can serve multiple managers)
+  const tree = buildTree(users.filter((u) => u.role !== 'pa'));
 
   return (
     <div className="rounded-md border p-2">

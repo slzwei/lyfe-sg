@@ -47,7 +47,7 @@ test.describe("DISC Quiz - Authenticated with completed profile", () => {
 
   test("shows intro screen with quiz info", async ({ page }) => {
     // First login to create the user
-    await loginAsCandidate(page, inviteToken, phone);
+    await loginAsCandidate(page, inviteToken);
 
     // Get the user ID and complete their profile via admin
     const userId = await getUserByPhone(TEST_PHONES.candidate5.full);
@@ -61,7 +61,7 @@ test.describe("DISC Quiz - Authenticated with completed profile", () => {
   });
 
   test("intro shows ~5 minutes and 38 questions", async ({ page }) => {
-    await loginAsCandidate(page, inviteToken, phone);
+    await loginAsCandidate(page, inviteToken);
     await page.goto("/candidate/disc-quiz");
 
     await expect(page.locator("text=38 questions")).toBeVisible();
@@ -69,7 +69,7 @@ test.describe("DISC Quiz - Authenticated with completed profile", () => {
   });
 
   test("Continue to Quiz button starts the quiz", async ({ page }) => {
-    await loginAsCandidate(page, inviteToken, phone);
+    await loginAsCandidate(page, inviteToken);
     await page.goto("/candidate/disc-quiz");
 
     const quiz = new DiscQuizPage(page);
@@ -80,7 +80,7 @@ test.describe("DISC Quiz - Authenticated with completed profile", () => {
   });
 
   test("Step 1 shows word pair questions with 5 circular buttons", async ({ page }) => {
-    await loginAsCandidate(page, inviteToken, phone);
+    await loginAsCandidate(page, inviteToken);
     await page.goto("/candidate/disc-quiz");
 
     const quiz = new DiscQuizPage(page);
@@ -98,7 +98,7 @@ test.describe("DISC Quiz - Authenticated with completed profile", () => {
   });
 
   test("clicking Next without answering all shows error", async ({ page }) => {
-    await loginAsCandidate(page, inviteToken, phone);
+    await loginAsCandidate(page, inviteToken);
     await page.goto("/candidate/disc-quiz");
 
     const quiz = new DiscQuizPage(page);
@@ -111,7 +111,7 @@ test.describe("DISC Quiz - Authenticated with completed profile", () => {
   });
 
   test("answering all questions enables Next", async ({ page }) => {
-    await loginAsCandidate(page, inviteToken, phone);
+    await loginAsCandidate(page, inviteToken);
     await page.goto("/candidate/disc-quiz");
 
     const quiz = new DiscQuizPage(page);
@@ -128,7 +128,7 @@ test.describe("DISC Quiz - Authenticated with completed profile", () => {
   });
 
   test("Step 5 shows scenario format with binary choices", async ({ page }) => {
-    await loginAsCandidate(page, inviteToken, phone);
+    await loginAsCandidate(page, inviteToken);
     await page.goto("/candidate/disc-quiz");
 
     const quiz = new DiscQuizPage(page);
@@ -150,7 +150,7 @@ test.describe("DISC Quiz - Authenticated with completed profile", () => {
   });
 
   test("Step 5 has email input field", async ({ page }) => {
-    await loginAsCandidate(page, inviteToken, phone);
+    await loginAsCandidate(page, inviteToken);
     await page.goto("/candidate/disc-quiz");
 
     const quiz = new DiscQuizPage(page);
@@ -169,7 +169,7 @@ test.describe("DISC Quiz - Authenticated with completed profile", () => {
   });
 
   test("button shows See Results on step 5", async ({ page }) => {
-    await loginAsCandidate(page, inviteToken, phone);
+    await loginAsCandidate(page, inviteToken);
     await page.goto("/candidate/disc-quiz");
 
     const quiz = new DiscQuizPage(page);
@@ -186,7 +186,7 @@ test.describe("DISC Quiz - Authenticated with completed profile", () => {
   });
 
   test("disclaimer is shown on step 1", async ({ page }) => {
-    await loginAsCandidate(page, inviteToken, phone);
+    await loginAsCandidate(page, inviteToken);
     await page.goto("/candidate/disc-quiz");
 
     const quiz = new DiscQuizPage(page);

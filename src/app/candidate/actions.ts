@@ -213,6 +213,49 @@ export async function acceptInvite(token: string): Promise<{
     redirect("/candidate/onboarding");
   }
 
+  // ── Step 4b: Recovery — accepted invitation but missing profile ────────
+  // This handles invitations accepted before the profile-creation fix was deployed.
+  if (invitation.status === "accepted" && invitation.user_id === authUserId) {
+    let createdByRecovery: string | null = invitation.invited_by_user_id;
+    if (!createdByRecovery) {
+      const { data: fb } = await admin.from("users").select("id").eq("role", "admin").limit(1).single();
+      createdByRecovery = fb?.id ?? null;
+    }
+    if (createdByRecovery) {
+      // Find or create candidates row
+      let candidateId = invitation.candidate_record_id;
+      if (!candidateId) {
+        const { data: cr } = await admin.from("candidates").insert({
+          name: invitation.candidate_name || invitation.email || "Unknown",
+          phone: null,
+          email: invitation.email,
+          status: "applied",
+          assigned_manager_id: invitation.assigned_manager_id || createdByRecovery,
+          created_by_id: createdByRecovery,
+        }).select("id").single();
+        if (cr) {
+          candidateId = cr.id;
+          await admin.from("invitations").update({ candidate_record_id: cr.id }).eq("id", invitation.id);
+        }
+      }
+      if (candidateId) {
+        await admin.from("candidate_profiles").upsert({
+          user_id: authUserId,
+          candidate_id: candidateId,
+          email: invitation.email,
+          full_name: invitation.candidate_name || "",
+          position_applied: invitation.position_applied || "",
+          contact_number: "",
+          invitation_id: invitation.id,
+          completed: false,
+          onboarding_step: 1,
+        }, { onConflict: "user_id" });
+        redirect("/candidate/onboarding");
+      }
+    }
+    return { success: false, error: "Account setup failed. Please contact us." };
+  }
+
   // ── Step 5: New candidate — consume invitation + create records ────────
   // Atomic: only matches if status is still 'pending' and not expired
   const { data: consumed } = await admin

@@ -80,7 +80,7 @@ test.describe("Route Guards - Candidate Flow Redirects (authenticated)", () => {
   });
 
   test("incomplete profile: /candidate/disc-quiz -> /candidate/onboarding", async ({ page }) => {
-    await loginAsCandidate(page, inviteToken, phone);
+    await loginAsCandidate(page, inviteToken);
 
     // Profile is not completed yet, quiz page should redirect to onboarding
     await page.goto("/candidate/disc-quiz");
@@ -88,7 +88,7 @@ test.describe("Route Guards - Candidate Flow Redirects (authenticated)", () => {
   });
 
   test("completed profile, no quiz: /candidate/disc-results -> /candidate/disc-quiz", async ({ page }) => {
-    await loginAsCandidate(page, inviteToken, phone);
+    await loginAsCandidate(page, inviteToken);
 
     // Complete profile via admin
     const userId = await getUserByPhone(TEST_PHONES.candidate1.full);
@@ -100,7 +100,7 @@ test.describe("Route Guards - Candidate Flow Redirects (authenticated)", () => {
   });
 
   test("completed quiz: /candidate/onboarding -> /candidate/disc-quiz (already done)", async ({ page }) => {
-    await loginAsCandidate(page, inviteToken, phone);
+    await loginAsCandidate(page, inviteToken);
 
     // Complete quiz via admin
     const userId = await getUserByPhone(TEST_PHONES.candidate1.full);
@@ -112,7 +112,7 @@ test.describe("Route Guards - Candidate Flow Redirects (authenticated)", () => {
   });
 
   test("completed quiz: /candidate/disc-quiz -> /candidate/disc-results", async ({ page }) => {
-    await loginAsCandidate(page, inviteToken, phone);
+    await loginAsCandidate(page, inviteToken);
 
     // Quiz page should redirect to results (already has results)
     await page.goto("/candidate/disc-quiz");

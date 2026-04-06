@@ -41,25 +41,25 @@ test.describe("Onboarding Form - Authenticated", () => {
   });
 
   test("shows Application Form heading after login", async ({ page }) => {
-    await loginAsCandidate(page, inviteToken, phone);
+    await loginAsCandidate(page, inviteToken);
     const onboarding = new OnboardingPage(page);
     await onboarding.expectLoaded();
   });
 
   test("starts on Step 1 - Personal Particulars", async ({ page }) => {
-    await loginAsCandidate(page, inviteToken, phone);
+    await loginAsCandidate(page, inviteToken);
     await expect(page.getByText("Personal Particulars")).toBeVisible();
   });
 
   test("pre-fills contact number from phone login", async ({ page }) => {
-    await loginAsCandidate(page, inviteToken, phone);
+    await loginAsCandidate(page, inviteToken);
     // Contact number field should have the login phone number
     const contactField = page.locator('input[type="tel"]').first();
     await expect(contactField).toHaveValue(/80000004/);
   });
 
   test("pre-fills name and position from invitation", async ({ page }) => {
-    await loginAsCandidate(page, inviteToken, phone);
+    await loginAsCandidate(page, inviteToken);
     // Should have "Onboarding Tester" pre-filled in full_name
     const nameInput = page.locator('label:has-text("Full Name") + input, label:has-text("Full Name") ~ input').first();
     // The full_name field should be pre-filled
@@ -67,7 +67,7 @@ test.describe("Onboarding Form - Authenticated", () => {
   });
 
   test("shows validation errors when clicking Next on empty step 1", async ({ page }) => {
-    await loginAsCandidate(page, inviteToken, phone);
+    await loginAsCandidate(page, inviteToken);
     const onboarding = new OnboardingPage(page);
 
     // Clear required fields that might be pre-filled
@@ -81,7 +81,7 @@ test.describe("Onboarding Form - Authenticated", () => {
   });
 
   test("Back button is invisible on step 1", async ({ page }) => {
-    await loginAsCandidate(page, inviteToken, phone);
+    await loginAsCandidate(page, inviteToken);
     const onboarding = new OnboardingPage(page);
 
     // Back button should not be visible (disabled:invisible class)
@@ -89,7 +89,7 @@ test.describe("Onboarding Form - Authenticated", () => {
   });
 
   test("step indicator shows 6 steps", async ({ page }) => {
-    await loginAsCandidate(page, inviteToken, phone);
+    await loginAsCandidate(page, inviteToken);
     // The StepIndicator should show labels for all 6 steps
     const labels = ["Personal", "NS & Emergency", "Education", "Skills", "Employment", "Declaration"];
     for (const label of labels) {
@@ -98,7 +98,7 @@ test.describe("Onboarding Form - Authenticated", () => {
   });
 
   test("postal code auto-fills address from OneMap API", async ({ page }) => {
-    await loginAsCandidate(page, inviteToken, phone);
+    await loginAsCandidate(page, inviteToken);
 
     // Enter a known postal code
     const postalInput = page.locator('input[placeholder="e.g. 570187"]');
@@ -113,7 +113,7 @@ test.describe("Onboarding Form - Authenticated", () => {
   });
 
   test("can navigate to step 2 with valid step 1 data", async ({ page }) => {
-    await loginAsCandidate(page, inviteToken, phone);
+    await loginAsCandidate(page, inviteToken);
     const onboarding = new OnboardingPage(page);
 
     await onboarding.fillStep1(step1Data());
@@ -125,7 +125,7 @@ test.describe("Onboarding Form - Authenticated", () => {
   });
 
   test("can navigate back from step 2 to step 1", async ({ page }) => {
-    await loginAsCandidate(page, inviteToken, phone);
+    await loginAsCandidate(page, inviteToken);
     const onboarding = new OnboardingPage(page);
 
     await onboarding.fillStep1(step1Data());

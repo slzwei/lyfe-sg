@@ -47,7 +47,7 @@ test.describe("DISC Results - Full Display", () => {
 
   // Log in and set up the full state before tests
   async function setupAndNavigate(page: import("@playwright/test").Page) {
-    await loginAsCandidate(page, inviteToken, phone);
+    await loginAsCandidate(page, inviteToken);
 
     // Set up completed profile + quiz via admin
     const userId = await getUserByPhone(TEST_PHONES.candidate6.full);

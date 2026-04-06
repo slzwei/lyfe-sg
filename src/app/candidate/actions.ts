@@ -239,22 +239,7 @@ export async function acceptInvite(token: string): Promise<{
     return { success: false, error: "This invitation is no longer valid. Please contact us." };
   }
 
-  // Create draft profile
-  const profileUpsert = await admin.from("candidate_profiles").upsert(
-    {
-      user_id: authUserId,
-      email: invitation.email,
-      full_name: invitation.candidate_name || "",
-      position_applied: invitation.position_applied || "",
-      contact_number: "",
-      invitation_id: invitation.id,
-      completed: false,
-      onboarding_step: 1,
-    },
-    { onConflict: "user_id" }
-  ).select("id").single();
-
-  // Create candidates pipeline record
+  // Create candidates pipeline record FIRST (profile needs candidate_id)
   let createdBy: string | null = invitation.invited_by_user_id;
   if (!createdBy) {
     const { data: fallbackAdmin } = await admin.from("users")
@@ -264,6 +249,9 @@ export async function acceptInvite(token: string): Promise<{
       .single();
     createdBy = fallbackAdmin?.id ?? null;
   }
+
+  const candidateName = invitation.candidate_name || invitation.email || "Unknown";
+  let candidateRecordId: string | null = null;
 
   if (createdBy) {
     const now = new Date().toISOString();
@@ -279,12 +267,9 @@ export async function acceptInvite(token: string): Promise<{
       stageId = firstStage?.id || null;
     }
 
-    // FM-11: name fallback uses candidate_name → email → "Unknown"
-    const candidateName = invitation.candidate_name || invitation.email || "Unknown";
-
     const { data: candidateRecord } = await admin.from("candidates").insert({
       name: candidateName,
-      phone: null, // Collected during onboarding Step 1
+      phone: null,
       email: invitation.email,
       status: "applied",
       job_id: invitation.job_id || null,
@@ -294,12 +279,10 @@ export async function acceptInvite(token: string): Promise<{
       created_by_id: createdBy,
     }).select("id").single();
 
-    // Link records
-    if (candidateRecord && profileUpsert.data) {
-      await admin.from("candidate_profiles")
-        .update({ candidate_id: candidateRecord.id })
-        .eq("id", profileUpsert.data.id);
+    if (candidateRecord) {
+      candidateRecordId = candidateRecord.id;
 
+      // Link invitation to candidates row
       await admin.from("invitations")
         .update({ candidate_record_id: candidateRecord.id })
         .eq("id", invitation.id);
@@ -349,6 +332,24 @@ export async function acceptInvite(token: string): Promise<{
         }
       }
     }
+  }
+
+  // Create draft profile (now with candidate_id available)
+  if (candidateRecordId) {
+    await admin.from("candidate_profiles").upsert(
+      {
+        user_id: authUserId,
+        candidate_id: candidateRecordId,
+        email: invitation.email,
+        full_name: invitation.candidate_name || "",
+        position_applied: invitation.position_applied || "",
+        contact_number: "",
+        invitation_id: invitation.id,
+        completed: false,
+        onboarding_step: 1,
+      },
+      { onConflict: "user_id" }
+    );
   }
 
   redirect("/candidate/onboarding");

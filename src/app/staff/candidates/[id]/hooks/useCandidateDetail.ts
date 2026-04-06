@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import { createClient } from "@/lib/supabase/client";
 import {
   getCandidate,
   getInterviews,
@@ -54,6 +55,26 @@ export function useCandidateDetail(candidateId: string) {
   }, [candidateId]);
 
   useEffect(() => { fetchData(); }, [fetchData]);
+
+  // Realtime: refetch when interviews are updated (e.g. confirmed_at set via webhook)
+  useEffect(() => {
+    const supabase = createClient();
+    const channel = supabase
+      .channel(`interviews:${candidateId}`)
+      .on(
+        "postgres_changes",
+        {
+          event: "UPDATE",
+          schema: "public",
+          table: "interviews",
+          filter: `candidate_id=eq.${candidateId}`,
+        },
+        () => { fetchData(); }
+      )
+      .subscribe();
+
+    return () => { supabase.removeChannel(channel); };
+  }, [candidateId, fetchData]);
 
   return {
     candidate,

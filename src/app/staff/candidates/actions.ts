@@ -1,8 +1,10 @@
 "use server";
 
+import { after } from "next/server";
 import { getAdminClient, getAdminClientAs } from "@/lib/supabase/admin";
 import { deleteCandidateDocFiles, deletePdfFiles, deleteResumeFiles } from "@/lib/supabase/storage";
 import { sendCandidateAssignedEmail, sendCandidateReassignedEmail } from "@/lib/email";
+import { sendInterviewScheduled, sendInterviewUpdated, sendInterviewCancelled } from "@/lib/whatsapp";
 import { getStaffUser, requireStaff, type StaffUser } from "../actions";
 import { canScheduleInterviews, type UserRole } from "@/lib/shared-types/roles";
 
@@ -552,6 +554,7 @@ export interface InterviewRecord {
   status: string;
   notes: string | null;
   recommendation: string | null;
+  confirmed_at: string | null;
   created_at: string | null;
   updated_at: string | null;
   // Enriched
@@ -729,6 +732,157 @@ export async function scheduleInterview(
     user_id: staff.id,
     type: "interview_scheduled",
     note: `Round ${roundNumber} ${data.type === "zoom" ? "Zoom" : "in-person"} interview scheduled with ${manager?.full_name || "Unknown"} for ${new Date(data.datetime).toLocaleString()}.`,
+  });
+
+  // Send WhatsApp notification (fire-and-forget, post-response)
+  after(async () => {
+    const { data: cand } = await admin.from("candidates")
+      .select("phone, name").eq("id", candidateId).single();
+    if (!cand?.phone) return;
+    const dt = new Date(data.datetime);
+    const dateStr = dt.toLocaleDateString("en-SG", { timeZone: "Asia/Singapore", day: "numeric", month: "short", year: "numeric" });
+    const timeStr = dt.toLocaleTimeString("en-SG", { timeZone: "Asia/Singapore", hour: "numeric", minute: "2-digit", hour12: true });
+    const loc = data.type === "zoom" ? (data.zoomLink || "Zoom") : (data.location || "TBC");
+    await sendInterviewScheduled(cand.phone, cand.name, dateStr, timeStr, loc);
+  });
+
+  return { success: true };
+}
+
+// ─── Reschedule Interview ────────────────────────────────────────────────────
+
+export async function rescheduleInterview(
+  interviewId: string,
+  data: {
+    datetime: string;
+    type: "zoom" | "in_person";
+    location?: string;
+    zoomLink?: string;
+  }
+): Promise<{ success: boolean; error?: string }> {
+  const staff = await getStaffUser();
+  if (!staff) return { success: false, error: "Not authenticated." };
+  if (!canScheduleInterviews(staff.role as UserRole))
+    return { success: false, error: "You don't have permission to reschedule interviews." };
+
+  if (!data.datetime) return { success: false, error: "Date/time is required." };
+  if (data.location && data.location.length > 500)
+    return { success: false, error: "Location too long (max 500 characters)." };
+  if (data.zoomLink && data.zoomLink.length > 2000)
+    return { success: false, error: "Zoom link too long." };
+
+  const admin = getAdminClient();
+
+  // Fetch existing interview
+  const { data: interview } = await admin.from("interviews")
+    .select("candidate_id, datetime, status, type, location, zoom_link, round_number")
+    .eq("id", interviewId)
+    .single();
+  if (!interview) return { success: false, error: "Interview not found." };
+  if (interview.status !== "scheduled")
+    return { success: false, error: "Only scheduled interviews can be rescheduled." };
+  if (!(await verifyCandidateAccess(interview.candidate_id, staff)))
+    return { success: false, error: "Candidate not found." };
+
+  const oldDatetime = interview.datetime;
+
+  // Update in-place, with status guard to prevent race condition
+  const { data: updated, error } = await admin.from("interviews")
+    .update({
+      datetime: data.datetime,
+      type: data.type,
+      location: data.location?.trim() || null,
+      zoom_link: data.zoomLink?.trim() || null,
+      updated_at: new Date().toISOString(),
+    })
+    .eq("id", interviewId)
+    .eq("status", "scheduled")
+    .select("id");
+
+  if (error) return { success: false, error: error.message };
+  if (!updated || updated.length === 0)
+    return { success: false, error: "Interview is no longer scheduled." };
+
+  // Log activity
+  const oldDt = new Date(oldDatetime);
+  const newDt = new Date(data.datetime);
+  const fmtDt = (d: Date) => d.toLocaleString("en-SG", { timeZone: "Asia/Singapore" });
+  await admin.from("candidate_activities").insert({
+    candidate_id: interview.candidate_id,
+    user_id: staff.id,
+    type: "interview_rescheduled",
+    note: `Round ${interview.round_number} interview rescheduled from ${fmtDt(oldDt)} to ${fmtDt(newDt)}.`,
+  });
+
+  // Send WhatsApp notification (fire-and-forget)
+  after(async () => {
+    const { data: cand } = await admin.from("candidates")
+      .select("phone, name").eq("id", interview.candidate_id).single();
+    if (!cand?.phone) return;
+    const dt = new Date(data.datetime);
+    const dateStr = dt.toLocaleDateString("en-SG", { timeZone: "Asia/Singapore", day: "numeric", month: "short", year: "numeric" });
+    const timeStr = dt.toLocaleTimeString("en-SG", { timeZone: "Asia/Singapore", hour: "numeric", minute: "2-digit", hour12: true });
+    const loc = data.type === "zoom" ? (data.zoomLink || "Zoom") : (data.location || "TBC");
+    await sendInterviewUpdated(cand.phone, cand.name, dateStr, timeStr, loc);
+  });
+
+  return { success: true };
+}
+
+// ─── Cancel Interview ────────────────────────────────────────────────────────
+
+export async function cancelInterview(
+  interviewId: string,
+): Promise<{ success: boolean; error?: string }> {
+  const staff = await getStaffUser();
+  if (!staff) return { success: false, error: "Not authenticated." };
+  if (!canScheduleInterviews(staff.role as UserRole))
+    return { success: false, error: "You don't have permission to cancel interviews." };
+
+  const admin = getAdminClient();
+
+  const { data: interview } = await admin.from("interviews")
+    .select("candidate_id, datetime, status, round_number, type, location")
+    .eq("id", interviewId)
+    .single();
+  if (!interview) return { success: false, error: "Interview not found." };
+  if (interview.status !== "scheduled")
+    return { success: false, error: "Only scheduled interviews can be cancelled." };
+  if (!(await verifyCandidateAccess(interview.candidate_id, staff)))
+    return { success: false, error: "Candidate not found." };
+
+  // Cancel with status guard
+  const { data: updated, error } = await admin.from("interviews")
+    .update({
+      status: "cancelled" as const,
+      updated_at: new Date().toISOString(),
+    })
+    .eq("id", interviewId)
+    .eq("status", "scheduled")
+    .select("id");
+
+  if (error) return { success: false, error: error.message };
+  if (!updated || updated.length === 0)
+    return { success: false, error: "Interview is no longer scheduled." };
+
+  // Log activity
+  const dt = new Date(interview.datetime);
+  const fmtDt = dt.toLocaleString("en-SG", { timeZone: "Asia/Singapore" });
+  await admin.from("candidate_activities").insert({
+    candidate_id: interview.candidate_id,
+    user_id: staff.id,
+    type: "interview_cancelled",
+    note: `Round ${interview.round_number} ${interview.type === "zoom" ? "Zoom" : "in-person"} interview on ${fmtDt} cancelled.`,
+  });
+
+  // Send WhatsApp notification (fire-and-forget)
+  after(async () => {
+    const { data: cand } = await admin.from("candidates")
+      .select("phone, name").eq("id", interview.candidate_id).single();
+    if (!cand?.phone) return;
+    const dateStr = dt.toLocaleDateString("en-SG", { timeZone: "Asia/Singapore", day: "numeric", month: "short", year: "numeric" });
+    const timeStr = dt.toLocaleTimeString("en-SG", { timeZone: "Asia/Singapore", hour: "numeric", minute: "2-digit", hour12: true });
+    await sendInterviewCancelled(cand.phone, cand.name, dateStr, timeStr);
   });
 
   return { success: true };

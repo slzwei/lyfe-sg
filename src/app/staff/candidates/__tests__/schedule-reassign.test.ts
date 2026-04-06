@@ -2,6 +2,13 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 
 // ─── Mocks ──────────────────────────────────────────────────────────────────
 
+vi.mock("next/server", () => ({ after: vi.fn() }));
+vi.mock("@/lib/whatsapp", () => ({
+  sendInterviewScheduled: vi.fn(() => Promise.resolve(true)),
+  sendInterviewUpdated: vi.fn(() => Promise.resolve(true)),
+  sendInterviewCancelled: vi.fn(() => Promise.resolve(true)),
+}));
+
 const mockCookieGet = vi.fn();
 vi.mock("next/headers", () => ({
   cookies: vi.fn(() => Promise.resolve({

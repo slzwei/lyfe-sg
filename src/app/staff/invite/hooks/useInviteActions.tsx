@@ -171,8 +171,9 @@ export function useInviteActions({ onRefresh, staffRole }: UseInviteActionsOptio
       });
     }
 
-    // PAs can only delete pending invitations; manager+ can delete any
-    if (isManagerPlus || inv.status === "pending") {
+    // PAs can delete pending or in-progress; not completed applications
+    const isCompleted = inv.progress?.profile_completed && inv.progress?.quiz_completed;
+    if (isManagerPlus || !isCompleted) {
       actions.push({
         key: "delete",
         label: "Delete",

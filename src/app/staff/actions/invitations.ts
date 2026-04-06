@@ -329,10 +329,29 @@ export async function deleteCandidate(id: string) {
     .eq("id", id)
     .single();
 
-  // PAs can only delete pending invitations (candidate never started)
+  // PAs can delete pending or in-progress invitations; not completed applications
   const isManagerPlus = ["manager", "director", "admin"].includes(staff.role);
-  if (!isManagerPlus && invitation?.status !== "pending") {
-    return { success: false, error: "Not authorized. Only pending invitations can be deleted." };
+  if (!isManagerPlus) {
+    if (invitation?.status === "pending") {
+      // Allow — candidate hasn't accepted yet
+    } else if (invitation?.status === "accepted" && invitation.user_id) {
+      // Block if application is fully completed (profile + DISC done)
+      const { data: discResult } = await adminClient
+        .from("disc_results")
+        .select("id")
+        .eq("user_id", invitation.user_id)
+        .maybeSingle();
+      const { data: profile } = await adminClient
+        .from("candidate_profiles")
+        .select("completed")
+        .eq("user_id", invitation.user_id)
+        .maybeSingle();
+      if (profile?.completed && discResult) {
+        return { success: false, error: "Cannot delete completed applications. Contact a manager." };
+      }
+    } else {
+      return { success: false, error: "Not authorized to delete this invitation." };
+    }
   }
 
   const userId = invitation?.user_id ?? null;

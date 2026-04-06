@@ -24,7 +24,7 @@ export function step1Data() {
     position_applied: "Software Engineer",
     expected_salary: "5000",
     salary_period: "month",
-    date_available: "2026-04-01",
+    date_available: new Date(Date.now() + 7 * 86400000).toISOString().slice(0, 10),
     full_name: "Test Candidate",
     date_of_birth: "1995-06-15",
     place_of_birth: "Singapore",
@@ -34,15 +34,16 @@ export function step1Data() {
     marital_status: "Single",
     address_postal: "570187",
     address_unit: "#10-123",
+    contact_number: "91234567",
+    email: "test@example.com",
   };
 }
 
 /** Minimal valid data to pass Step 2 validation. */
 export function step2Data() {
   return {
-    ns_status: "Completed",
-    ns_enlistment_date: "2014-01-01",
-    ns_ord_date: "2016-01-01",
+    ns_service_status: "NSman",
+    ns_status: "ORD",
     emergency_name: "Jane Doe",
     emergency_relationship: "Mother",
     emergency_contact: "+6591234567",

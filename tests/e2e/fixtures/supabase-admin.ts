@@ -58,6 +58,14 @@ export async function createInvitation(opts: {
   crypto.getRandomValues(bytes);
   const token = Buffer.from(bytes).toString("base64url");
 
+  // Look up an admin user to serve as invited_by_user_id (required for candidate record creation)
+  const { data: adminUser } = await adminClient
+    .from("users")
+    .select("id")
+    .eq("role", "admin")
+    .limit(1)
+    .single();
+
   const { data, error } = await adminClient
     .from("invitations")
     .insert({
@@ -66,6 +74,7 @@ export async function createInvitation(opts: {
       candidate_name: opts.name || null,
       position_applied: opts.position || null,
       invited_by: "e2e-test",
+      invited_by_user_id: adminUser?.id || null,
       status: "pending",
     })
     .select("id, token")
@@ -174,11 +183,29 @@ export async function completeQuiz(userId: string) {
 
 /** Delete a test user and all associated data. */
 export async function deleteTestUser(userId: string) {
-  // Delete in order: disc_results → disc_responses → candidate_profiles → invitations → auth user
+  // Look up candidate_id before deleting profiles
+  const { data: profile } = await adminClient
+    .from("candidate_profiles")
+    .select("candidate_id")
+    .eq("user_id", userId)
+    .maybeSingle();
+
+  // Delete in order: disc data → profiles → candidates → invitations → auth user
   await adminClient.from("disc_results").delete().eq("user_id", userId);
   await adminClient.from("disc_responses").delete().eq("user_id", userId);
   await adminClient.from("candidate_profiles").delete().eq("user_id", userId);
+
+  if (profile?.candidate_id) {
+    // Unlink invitations before deleting candidate
+    await adminClient.from("invitations").update({ candidate_record_id: null }).eq("candidate_record_id", profile.candidate_id);
+    await adminClient.from("candidate_activities").delete().eq("candidate_id", profile.candidate_id);
+    await adminClient.from("candidate_documents").delete().eq("candidate_id", profile.candidate_id);
+    await adminClient.from("interviews").delete().eq("candidate_id", profile.candidate_id);
+    await adminClient.from("candidates").delete().eq("id", profile.candidate_id);
+  }
+
   await adminClient.from("invitations").delete().eq("user_id", userId);
+  await adminClient.from("notifications").delete().eq("user_id", userId);
   await adminClient.auth.admin.deleteUser(userId);
 }
 

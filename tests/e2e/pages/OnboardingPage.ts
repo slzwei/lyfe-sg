@@ -10,7 +10,7 @@ export class OnboardingPage {
   constructor(page: Page) {
     this.page = page;
     this.heading = page.getByRole("heading", { name: "Application Form" });
-    this.nextButton = page.getByRole("button", { name: /Next|Submit & Continue/ });
+    this.nextButton = page.getByRole("button", { name: /^Next$|Submit & Continue/ });
     this.backButton = page.getByRole("button", { name: "Back" });
     this.formError = page.locator(".bg-red-50");
   }
@@ -53,6 +53,8 @@ export class OnboardingPage {
     marital_status: string;
     address_postal: string;
     address_unit?: string;
+    contact_number?: string;
+    email?: string;
   }) {
     // Application details
     await this.fillInput("Position Applied For", data.position_applied);
@@ -75,30 +77,41 @@ export class OnboardingPage {
     if (data.address_unit) {
       await this.page.locator('input[placeholder="#01-23"]').fill(data.address_unit);
     }
+
+    // Contact
+    if (data.contact_number) {
+      await this.page.locator('input[placeholder="8123 4567"]').fill(data.contact_number);
+    }
+    if (data.email) {
+      await this.page.locator('input[placeholder="name@example.com"]').fill(data.email);
+    }
   }
 
   /** Fill Step 2: NS & Emergency Contact. */
   async fillStep2(data: {
+    ns_service_status: string;
     ns_status: string;
-    ns_enlistment_date?: string;
-    ns_ord_date?: string;
     emergency_name: string;
     emergency_relationship: string;
     emergency_contact: string;
   }) {
-    await this.selectByLabel("National Service Status", data.ns_status);
-    if (data.ns_enlistment_date) {
-      await this.fillDateInput("Enlistment Date", data.ns_enlistment_date);
+    // NS fields — only required selects (dates are optional month inputs)
+    await this.selectByLabel("Service Status", data.ns_service_status);
+    await this.selectByLabel("NS Status", data.ns_status);
+
+    // Emergency contact section (scroll down if needed)
+    const emergencySection = this.page.locator("text=Emergency Contact").first();
+    if (await emergencySection.isVisible().catch(() => false)) {
+      await emergencySection.scrollIntoViewIfNeeded();
+      // Fill emergency fields by placeholder/position
+      const emergencyInputs = this.page.locator('section').filter({ hasText: 'Emergency' }).locator('input');
+      const nameInput = emergencyInputs.nth(0);
+      const relInput = emergencyInputs.nth(1);
+      const contactInput = emergencyInputs.nth(2);
+      await nameInput.fill(data.emergency_name).catch(() => {});
+      await relInput.fill(data.emergency_relationship).catch(() => {});
+      await contactInput.fill(data.emergency_contact).catch(() => {});
     }
-    if (data.ns_ord_date) {
-      await this.fillDateInput("ORD Date", data.ns_ord_date);
-    }
-    await this.fillInput("Name", data.emergency_name);
-    await this.fillInput("Relationship", data.emergency_relationship);
-    // Emergency contact field
-    const contactInputs = this.page.locator('input[type="tel"]').or(this.page.locator('input').filter({ has: this.page.locator('[placeholder*="contact"]') }));
-    const emergencyInput = this.page.locator('section').filter({ hasText: 'Emergency' }).locator('input').first();
-    await emergencyInput.fill(data.emergency_contact);
   }
 
   /** Fill Step 3: Education (minimal — no current studies, just highest). */

@@ -1,5 +1,5 @@
 import { test as base, type Page } from "@playwright/test";
-import { STAFF_PASSWORD, TEST_OTP } from "./test-data";
+import { STAFF_PASSWORD } from "./test-data";
 
 /**
  * Authenticate the staff portal by logging in via UI.
@@ -12,39 +12,30 @@ export async function loginAsStaff(page: Page) {
 }
 
 /**
- * Authenticate as a candidate by going through the invite → OTP UI flow.
- * Fast — uses test phone numbers that auto-verify (no real SMS).
- *
- * @param page - Playwright page
- * @param inviteToken - Valid invitation token (create via supabase-admin.createInvitation)
- * @param phone - 8-digit SG number (e.g. "80000001")
- * @returns The URL the page landed on after auth
+ * Authenticate as a candidate by visiting the invite link.
+ * Token-based auth — no phone/OTP step. The page auto-authenticates
+ * and redirects to onboarding (or disc-quiz/disc-results if returning).
  */
 export async function loginAsCandidate(
   page: Page,
   inviteToken: string,
-  phone: string,
-  otp: string = TEST_OTP
 ): Promise<string> {
+  // Capture console errors for debugging
+  page.on("console", (msg) => {
+    if (msg.type() === "error") console.log(`[BROWSER] ${msg.text()}`);
+  });
+  page.on("pageerror", (err) => console.log(`[PAGE ERROR] ${err.message}`));
+
   await page.goto(`/candidate/login?token=${inviteToken}`);
 
-  // Wait for token validation
-  await page.waitForSelector("#phone", { timeout: 10_000 });
-
-  // Enter phone and submit
-  await page.locator("#phone").fill(phone);
-  await page.getByRole("button", { name: "Send OTP" }).click();
-  await page.waitForURL("/candidate/verify", { timeout: 10_000 });
-
-  // Enter OTP digits
-  const otpInputs = page.locator('input[inputmode="numeric"][maxlength="1"]');
-  for (let i = 0; i < 6; i++) {
-    await otpInputs.nth(i).fill(otp[i]);
-  }
-
-  // Wait for auth redirect (onboarding, disc-quiz, or disc-results)
+  // Wait for auto-auth redirect OR error state
   await page.waitForURL(/\/candidate\/(onboarding|disc-quiz|disc-results)/, {
-    timeout: 15_000,
+    timeout: 30_000,
+  }).catch(async () => {
+    // If redirect didn't happen, capture what we see
+    const errorText = await page.locator(".bg-red-50").textContent().catch(() => null);
+    const bodyText = await page.locator("body").innerText().catch(() => "");
+    throw new Error(`Auth redirect failed. Error: ${errorText || "none"}. Page text: ${bodyText.slice(0, 300)}`);
   });
 
   return page.url();

@@ -191,7 +191,7 @@ async function handleConfirm(phone: string) {
       },
       body: JSON.stringify({
         messages: [{
-          topic: "realtime:interview-updates",
+          topic: "interview-updates",
           event: "interview-confirmed",
           payload: { candidateId: match.id },
         }],

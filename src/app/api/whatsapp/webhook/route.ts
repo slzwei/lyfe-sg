@@ -180,22 +180,8 @@ async function handleConfirm(phone: string) {
 
   console.log(`[whatsapp-webhook] Interview ${interview.id} confirmed by ${phone}`);
 
-  // Broadcast to staff UI so the Confirmed badge appears live
-  const channel = admin.channel("interview-updates");
-  await new Promise<void>((resolve) => {
-    channel.subscribe((status) => {
-      if (status === "SUBSCRIBED") {
-        channel.send({
-          type: "broadcast",
-          event: "interview-confirmed",
-          payload: { candidateId: match.id, interviewId: interview.id },
-        }).then(() => {
-          admin.removeChannel(channel);
-          resolve();
-        });
-      }
-    });
-  });
+  // Notify staff UI by touching progress_signals (triggers postgres_changes)
+  await admin.from("progress_signals").update({ updated_at: new Date().toISOString() }).eq("id", 1);
 
   // Reply with follow-up options
   await sendInteractiveButtons(

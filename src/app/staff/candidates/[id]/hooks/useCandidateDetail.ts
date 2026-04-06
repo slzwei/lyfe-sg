@@ -12,7 +12,6 @@ import {
   type InterviewRecord,
 } from "../../actions";
 
-const INTERVIEW_CHANNEL = "interview-updates";
 
 export function useCandidateDetail(candidateId: string) {
   const [candidate, setCandidate] = useState<CandidateDetail | null>(null);
@@ -58,16 +57,16 @@ export function useCandidateDetail(candidateId: string) {
 
   useEffect(() => { fetchData(); }, [fetchData]);
 
-  // Realtime: refetch when an interview is confirmed via WhatsApp webhook
+  // Realtime: refetch when progress_signals is updated (e.g. interview confirmed via webhook)
   useEffect(() => {
     const supabase = createClient();
     const channel = supabase
-      .channel(INTERVIEW_CHANNEL)
-      .on("broadcast", { event: "interview-confirmed" }, (msg) => {
-        if (msg.payload?.candidateId === candidateId) {
-          fetchData();
-        }
-      })
+      .channel("interview-detail-sync")
+      .on(
+        "postgres_changes",
+        { event: "UPDATE", schema: "public", table: "progress_signals" },
+        () => { fetchData(); }
+      )
       .subscribe();
 
     return () => { supabase.removeChannel(channel); };

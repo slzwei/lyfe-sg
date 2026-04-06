@@ -52,6 +52,10 @@ interface WhatsAppMessage {
     type: string;
     button_reply?: { id: string; title: string };
   };
+  button?: {
+    payload: string;
+    text: string;
+  };
 }
 
 interface WhatsAppEntry {
@@ -82,19 +86,36 @@ export async function POST(req: NextRequest) {
           if (!messages) continue;
 
           for (const msg of messages) {
-            if (msg.type !== "interactive" || !msg.interactive?.button_reply) continue;
-
-            const buttonId = msg.interactive.button_reply.id;
             const fromPhone = msg.from.replace(/\D/g, "");
 
-            if (buttonId === "CONFIRM_INTERVIEW") {
-              await handleConfirm(fromPhone);
-            } else if (buttonId === "RESCHEDULE_INTERVIEW" || buttonId === "CANCEL_INTERVIEW") {
-              await sendTextMessage(
-                fromPhone,
-                "Please contact your PA or recruiter to reschedule or cancel your interview.",
-              );
+            // Interactive button reply (from our sendInteractiveButtons messages)
+            if (msg.type === "interactive" && msg.interactive?.button_reply) {
+              const buttonId = msg.interactive.button_reply.id;
+              console.log(`[whatsapp-webhook] Interactive button: ${buttonId} from ${fromPhone}`);
+
+              if (buttonId === "CONFIRM_INTERVIEW") {
+                await handleConfirm(fromPhone);
+              } else if (buttonId === "RESCHEDULE_INTERVIEW" || buttonId === "CANCEL_INTERVIEW") {
+                await sendTextMessage(
+                  fromPhone,
+                  "Please contact your PA or recruiter to reschedule or cancel your interview.",
+                );
+              }
+              continue;
             }
+
+            // Template Quick Reply button (from interview_scheduled_1 etc.)
+            if (msg.type === "button" && msg.button) {
+              const payload = msg.button.payload;
+              console.log(`[whatsapp-webhook] Template button: "${payload}" from ${fromPhone}`);
+
+              if (payload === "CONFIRM_INTERVIEW" || payload.toLowerCase().includes("confirm")) {
+                await handleConfirm(fromPhone);
+              }
+              continue;
+            }
+
+            console.log(`[whatsapp-webhook] Unhandled message type: ${msg.type} from ${fromPhone}`);
           }
         }
       }

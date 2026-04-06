@@ -116,7 +116,7 @@ export default function Step1Personal({ data, onChange, errors }: Step1Props) {
       {/* Application Details */}
       <section>
         <SectionHeader title="Application Details" />
-        <div className="grid gap-4 sm:grid-cols-3">
+        <div className="grid gap-4 sm:grid-cols-3 overflow-hidden">
           <div>
             <label className={LABEL_CLASS}>Position Applied For *</label>
             <input
@@ -147,11 +147,11 @@ export default function Step1Personal({ data, onChange, errors }: Step1Props) {
             </div>
             <FieldError error={errors.expected_salary} />
           </div>
-          <div>
+          <div className="overflow-hidden">
             <label className={LABEL_CLASS}>Date of Availability *</label>
             <input
               type="date"
-              className={INPUT_CLASS + ec("date_available")}
+              className={INPUT_CLASS + " appearance-none" + ec("date_available")}
               value={v("date_available")}
               onChange={(e) => onChange("date_available", e.target.value)}
             />
@@ -180,7 +180,7 @@ export default function Step1Personal({ data, onChange, errors }: Step1Props) {
               <label className={LABEL_CLASS}>Date of Birth *</label>
               <input
                 type="date"
-                className={INPUT_CLASS + ec("date_of_birth")}
+                className={INPUT_CLASS + " appearance-none" + ec("date_of_birth")}
                 value={v("date_of_birth")}
                 onChange={(e) => onChange("date_of_birth", e.target.value)}
               />

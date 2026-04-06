@@ -250,106 +250,108 @@ export async function acceptInvite(token: string): Promise<{
     createdBy = fallbackAdmin?.id ?? null;
   }
 
-  const candidateName = invitation.candidate_name || invitation.email || "Unknown";
-  let candidateRecordId: string | null = null;
-
-  if (createdBy) {
-    const now = new Date().toISOString();
-
-    let stageId: string | null = null;
-    if (invitation.job_id) {
-      const { data: firstStage } = await admin.from("pipeline_stages")
-        .select("id")
-        .eq("job_id", invitation.job_id)
-        .order("display_order")
-        .limit(1)
-        .single();
-      stageId = firstStage?.id || null;
-    }
-
-    const { data: candidateRecord } = await admin.from("candidates").insert({
-      name: candidateName,
-      phone: null,
-      email: invitation.email,
-      status: "applied",
-      job_id: invitation.job_id || null,
-      current_stage_id: stageId,
-      stage_entered_at: stageId ? now : null,
-      assigned_manager_id: invitation.assigned_manager_id || createdBy,
-      created_by_id: createdBy,
-    }).select("id").single();
-
-    if (candidateRecord) {
-      candidateRecordId = candidateRecord.id;
-
-      // Link invitation to candidates row
-      await admin.from("invitations")
-        .update({ candidate_record_id: candidateRecord.id })
-        .eq("id", invitation.id);
-
-      // Notify assigned manager
-      const managerId = invitation.assigned_manager_id || createdBy;
-      if (managerId) {
-        const { data: manager } = await admin.from("users")
-          .select("full_name, email")
-          .eq("id", managerId)
-          .single();
-
-        await admin.from("notifications").insert({
-          user_id: managerId,
-          type: "candidate_assigned",
-          title: "New candidate assigned",
-          body: `${candidateName} has been assigned to you.`,
-          data: { candidate_id: candidateRecord.id },
-        });
-
-        if (manager?.email) {
-          sendCandidateAssignedEmail({
-            to: manager.email,
-            managerName: manager.full_name,
-            candidateName,
-            candidateId: candidateRecord.id,
-          });
-        }
-      }
-
-      // Bridge attached files to candidate_documents
-      if (invitation.attached_files) {
-        const files = invitation.attached_files as {
-          label: string;
-          file_name: string;
-          storage_path: string;
-        }[];
-        if (files.length > 0) {
-          await admin.from("candidate_documents").insert(
-            files.map((f) => ({
-              candidate_id: candidateRecord.id,
-              label: f.label,
-              file_name: f.file_name,
-              file_url: f.storage_path,
-            }))
-          );
-        }
-      }
-    }
+  if (!createdBy) {
+    console.error("[acceptInvite] No invited_by_user_id and no admin user found — cannot create candidate record");
+    return { success: false, error: "Account setup failed. Please contact us." };
   }
 
-  // Create draft profile (now with candidate_id available)
-  if (candidateRecordId) {
-    await admin.from("candidate_profiles").upsert(
-      {
-        user_id: authUserId,
-        candidate_id: candidateRecordId,
-        email: invitation.email,
-        full_name: invitation.candidate_name || "",
-        position_applied: invitation.position_applied || "",
-        contact_number: "",
-        invitation_id: invitation.id,
-        completed: false,
-        onboarding_step: 1,
-      },
-      { onConflict: "user_id" }
-    );
+  const candidateName = invitation.candidate_name || invitation.email || "Unknown";
+  const now = new Date().toISOString();
+
+  let stageId: string | null = null;
+  if (invitation.job_id) {
+    const { data: firstStage } = await admin.from("pipeline_stages")
+      .select("id")
+      .eq("job_id", invitation.job_id)
+      .order("display_order")
+      .limit(1)
+      .single();
+    stageId = firstStage?.id || null;
+  }
+
+  const { data: candidateRecord, error: candidateError } = await admin.from("candidates").insert({
+    name: candidateName,
+    phone: null,
+    email: invitation.email,
+    status: "applied",
+    job_id: invitation.job_id || null,
+    current_stage_id: stageId,
+    stage_entered_at: stageId ? now : null,
+    assigned_manager_id: invitation.assigned_manager_id || createdBy,
+    created_by_id: createdBy,
+  }).select("id").single();
+
+  if (candidateError || !candidateRecord) {
+    console.error("[acceptInvite] Failed to create candidates record:", candidateError?.message);
+    return { success: false, error: "Account setup failed. Please try again." };
+  }
+
+  // Link invitation to candidates row
+  await admin.from("invitations")
+    .update({ candidate_record_id: candidateRecord.id })
+    .eq("id", invitation.id);
+
+  // Create draft profile
+  const { error: profileError } = await admin.from("candidate_profiles").upsert(
+    {
+      user_id: authUserId,
+      candidate_id: candidateRecord.id,
+      email: invitation.email,
+      full_name: invitation.candidate_name || "",
+      position_applied: invitation.position_applied || "",
+      contact_number: "",
+      invitation_id: invitation.id,
+      completed: false,
+      onboarding_step: 1,
+    },
+    { onConflict: "user_id" }
+  );
+
+  if (profileError) {
+    console.error("[acceptInvite] Failed to create candidate_profiles record:", profileError.message);
+    return { success: false, error: "Account setup failed. Please try again." };
+  }
+
+  // Non-critical: notify manager + bridge files (fire-and-forget)
+  const managerId = invitation.assigned_manager_id || createdBy;
+  const { data: manager } = await admin.from("users")
+    .select("full_name, email")
+    .eq("id", managerId)
+    .single();
+
+  await admin.from("notifications").insert({
+    user_id: managerId,
+    type: "candidate_assigned",
+    title: "New candidate assigned",
+    body: `${candidateName} has been assigned to you.`,
+    data: { candidate_id: candidateRecord.id },
+  }).then(null, (err) => console.error("[acceptInvite] notification insert failed:", err));
+
+  if (manager?.email) {
+    sendCandidateAssignedEmail({
+      to: manager.email,
+      managerName: manager.full_name,
+      candidateName,
+      candidateId: candidateRecord.id,
+    });
+  }
+
+  if (invitation.attached_files) {
+    const files = invitation.attached_files as {
+      label: string;
+      file_name: string;
+      storage_path: string;
+    }[];
+    if (files.length > 0) {
+      await admin.from("candidate_documents").insert(
+        files.map((f) => ({
+          candidate_id: candidateRecord.id,
+          label: f.label,
+          file_name: f.file_name,
+          file_url: f.storage_path,
+        }))
+      ).then(null, (err) => console.error("[acceptInvite] candidate_documents insert failed:", err));
+    }
   }
 
   redirect("/candidate/onboarding");

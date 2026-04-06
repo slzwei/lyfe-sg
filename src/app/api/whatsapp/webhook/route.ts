@@ -180,8 +180,26 @@ async function handleConfirm(phone: string) {
 
   console.log(`[whatsapp-webhook] Interview ${interview.id} confirmed by ${phone}`);
 
-  // Notify staff UI by touching progress_signals (triggers postgres_changes)
-  await admin.from("progress_signals").update({ updated_at: new Date().toISOString() }).eq("id", 1);
+  // Notify staff UI via Supabase Realtime REST broadcast (HTTP POST — works in serverless)
+  try {
+    await fetch(`${process.env.NEXT_PUBLIC_SUPABASE_URL}/realtime/v1/api/broadcast`, {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${process.env.SUPABASE_SERVICE_ROLE_KEY}`,
+        "apikey": process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        messages: [{
+          topic: "realtime:interview-updates",
+          event: "interview-confirmed",
+          payload: { candidateId: match.id },
+        }],
+      }),
+    });
+  } catch (err) {
+    console.error("[whatsapp-webhook] Broadcast failed:", err);
+  }
 
   // Reply with follow-up options
   await sendInteractiveButtons(

@@ -49,8 +49,21 @@ export async function saveProfile(formData: Record<string, unknown>) {
   const v6 = step6Schema.safeParse(formData);
   if (!v6.success) return { error: "Validation failed: declaration is incomplete." };
 
+  // Look up candidate_id (required NOT NULL for upsert)
+  const adminClient = getAdminClient();
+  const { data: linkData } = await adminClient
+    .from("candidate_profiles")
+    .select("candidate_id")
+    .eq("user_id", user.id)
+    .maybeSingle();
+
+  if (!linkData?.candidate_id) {
+    return { error: "Profile not initialized. Please reload the page and try again." };
+  }
+
   const profile = {
     user_id: user.id,
+    candidate_id: linkData.candidate_id,
     position_applied: formData.position_applied as string,
     expected_salary: formData.expected_salary as string,
     salary_period: (formData.salary_period as string) || "hour",
@@ -228,8 +241,21 @@ export async function saveDraft(formData: Record<string, unknown>, currentStep?:
 
   if (!user) return;
 
+  // Look up candidate_id (required NOT NULL for upsert)
+  const adminClient = getAdminClient();
+  const { data: linkData } = await adminClient
+    .from("candidate_profiles")
+    .select("candidate_id")
+    .eq("user_id", user.id)
+    .maybeSingle();
+
+  if (!linkData?.candidate_id) {
+    return { success: false, error: "Profile not initialized. Please reload the page." };
+  }
+
   const draft = {
     user_id: user.id,
+    candidate_id: linkData.candidate_id,
     full_name: (formData.full_name as string) || "",
     position_applied: (formData.position_applied as string) || null,
     expected_salary: (formData.expected_salary as string) || null,

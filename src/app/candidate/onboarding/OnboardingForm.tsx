@@ -99,9 +99,11 @@ function getDefaultData(): Record<string, unknown> {
 interface OnboardingFormProps {
   userId: string;
   initialData?: Record<string, unknown> | null;
+  userEmail?: string;
+  userPhone?: string;
 }
 
-export default function OnboardingForm({ userId, initialData }: OnboardingFormProps) {
+export default function OnboardingForm({ userId, initialData, userEmail, userPhone }: OnboardingFormProps) {
   const router = useRouter();
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState<Record<string, unknown>>(() => {
@@ -124,6 +126,9 @@ export default function OnboardingForm({ userId, initialData }: OnboardingFormPr
         }
       }
     }
+    // Pre-fill email and contact from auth if not already in profile
+    if (!defaults.email && userEmail) defaults.email = userEmail;
+    if (!defaults.contact_number && userPhone) defaults.contact_number = userPhone;
     return defaults;
   });
   const [errors, setErrors] = useState<Record<string, string>>({});

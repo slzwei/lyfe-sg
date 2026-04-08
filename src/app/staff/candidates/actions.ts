@@ -947,8 +947,8 @@ export async function deleteCandidateById(candidateId: string): Promise<{
   success: boolean;
   error?: string;
 }> {
-  const staff = await requireStaff("manager");
-  if (!staff) return { success: false, error: "Not authorized. Manager access required." };
+  const staff = await requireStaff("pa");
+  if (!staff) return { success: false, error: "Not authorized." };
 
   // Use singleton admin client — getAdminClientAs can silently fail deletes
   const admin = getAdminClient();

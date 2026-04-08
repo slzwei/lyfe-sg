@@ -9,9 +9,8 @@ import {
   type FormatCQuestion,
   type Question,
 } from "@/app/candidate/disc-quiz/questions";
-import { submitJoinUsQuiz } from "../actions";
+import { submitJoinUsQuiz, saveJoinUsProgress } from "../actions";
 import { broadcastProgress } from "@/lib/supabase/progress-broadcast";
-import { createClient } from "@/lib/supabase/client";
 
 const STEP_LABELS = ["Pairs 1", "Pairs 2", "Pairs 3", "Ratings", "Scenarios"];
 
@@ -77,14 +76,12 @@ export default function JoinUsQuiz({ userId, initialResponses }: JoinUsQuizProps
     broadcastProgress(userId, "quiz");
   }, [userId]);
 
-  // Auto-save directly via browser client (no server action), then broadcast
+  // Auto-save via server action (admin client bypasses RLS), then broadcast
   useEffect(() => {
     if (Object.keys(responses).length === 0) return;
-    const supabase = createClient();
-    supabase.from("disc_responses").upsert(
-      { user_id: userId, responses, updated_at: new Date().toISOString() },
-      { onConflict: "user_id" }
-    ).then(() => broadcastProgress(userId, "quiz"));
+    saveJoinUsProgress(userId, responses)
+      .then(() => broadcastProgress(userId, "quiz"))
+      .catch(() => {});
   }, [responses, userId]);
 
   const questions = DISC_STEPS[currentStep - 1];
@@ -103,11 +100,7 @@ export default function JoinUsQuiz({ userId, initialResponses }: JoinUsQuizProps
       return;
     }
     setError("");
-    const supabase = createClient();
-    supabase.from("disc_responses").upsert(
-      { user_id: userId, responses, updated_at: new Date().toISOString() },
-      { onConflict: "user_id" }
-    );
+    saveJoinUsProgress(userId, responses).catch(() => {});
 
     if (currentStep < 5) {
       setCurrentStep(currentStep + 1);

@@ -206,16 +206,7 @@ export async function saveJoinUsProgress(userId: string, responses: Record<strin
   if (!userId || Object.keys(responses).length === 0) return;
 
   const admin = getAdminClient();
-
-  // Verify userId belongs to a candidate (prevent abuse)
-  const { data: profile } = await admin
-    .from("candidate_profiles")
-    .select("id")
-    .eq("user_id", userId)
-    .maybeSingle();
-  if (!profile) return;
-
-  await admin.from("disc_responses").upsert(
+  const { error } = await admin.from("disc_responses").upsert(
     {
       user_id: userId,
       responses,
@@ -223,6 +214,7 @@ export async function saveJoinUsProgress(userId: string, responses: Record<strin
     },
     { onConflict: "user_id" }
   );
+  if (error) console.error("[saveJoinUsProgress] upsert failed:", error.message);
 }
 
 // ── Submit completed quiz ───────────────────────────────────────────────────

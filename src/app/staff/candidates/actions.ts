@@ -950,7 +950,8 @@ export async function deleteCandidateById(candidateId: string): Promise<{
   const staff = await requireStaff("manager");
   if (!staff) return { success: false, error: "Not authorized. Manager access required." };
 
-  const admin = getAdminClientAs(staff);
+  // Use singleton admin client — getAdminClientAs can silently fail deletes
+  const admin = getAdminClient();
 
   // Get candidate name for logging + linked profile user_id for cleanup
   const { data: candidate } = await admin.from("candidates")

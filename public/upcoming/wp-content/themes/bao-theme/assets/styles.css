@@ -709,13 +709,13 @@
 
 /* Slider */
 .slick-loading .slick-list {
-  background: #fff url("https://daddybao.co.uk/wp-content/themes/bao-theme/assets/ajax-loader.gif") center center no-repeat; }
+  background: #fff url("./ajax-loader.gif") center center no-repeat; }
 
 /* Icons */
 @font-face {
   font-family: "slick";
-  src: url("https://daddybao.co.uk/wp-content/themes/bao-theme/assets/fonts/slick.eot");
-  src: url("https://daddybao.co.uk/wp-content/themes/bao-theme/assets/fonts/slick.eot?") format("embedded-opentype"), url("https://daddybao.co.uk/wp-content/themes/bao-theme/assets/fonts/slick.woff") format("woff"), url("https://daddybao.co.uk/wp-content/themes/bao-theme/assets/fonts/slick.ttf") format("truetype"), url("https://daddybao.co.uk/wp-content/themes/bao-theme/assets/fonts/slick.svg") format("svg");
+  src: url("./fonts/slick.eot");
+  src: url("./fonts/slick.eot?") format("embedded-opentype"), url("./fonts/slick.woff") format("woff"), url("./fonts/slick.ttf") format("truetype"), url("./fonts/slick.svg") format("svg");
   font-weight: normal;
   font-style: normal; }
 

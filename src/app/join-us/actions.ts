@@ -203,11 +203,13 @@ export async function submitApplication(data: ApplicationData): Promise<{
 // ── Save quiz progress (auto-save) ──────────────────────────────────────────
 
 export async function saveJoinUsProgress(responses: Record<string, number>) {
+  // Use server client to verify identity, admin client to write (bypasses RLS)
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return;
 
-  await supabase.from("disc_responses").upsert(
+  const admin = getAdminClient();
+  await admin.from("disc_responses").upsert(
     {
       user_id: user.id,
       responses,
@@ -233,8 +235,11 @@ export async function submitJoinUsQuiz(
     return { error: `Please answer all questions (${answeredCount}/38).` };
   }
 
+  // Use admin client for writes (bypasses RLS)
+  const admin = getAdminClient();
+
   // Save raw responses
-  const { error: respError } = await supabase.from("disc_responses").upsert(
+  const { error: respError } = await admin.from("disc_responses").upsert(
     { user_id: user.id, responses, updated_at: new Date().toISOString() },
     { onConflict: "user_id" }
   );
@@ -245,14 +250,14 @@ export async function submitJoinUsQuiz(
   const { profile_strength, strength_pct, priorities, ...dbScores } = scores;
 
   // Save results
-  const { error: resultError } = await supabase.from("disc_results").upsert(
+  const { error: resultError } = await admin.from("disc_results").upsert(
     { user_id: user.id, duration_seconds: durationSeconds, ...dbScores },
     { onConflict: "user_id" }
   );
   if (resultError) return { error: resultError.message };
 
   // Fetch profile for PDF/email
-  const { data: profile } = await supabase
+  const { data: profile } = await admin
     .from("candidate_profiles")
     .select("full_name, contact_number")
     .eq("user_id", user.id)

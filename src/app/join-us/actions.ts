@@ -202,16 +202,22 @@ export async function submitApplication(data: ApplicationData): Promise<{
 
 // ── Save quiz progress (auto-save) ──────────────────────────────────────────
 
-export async function saveJoinUsProgress(responses: Record<string, number>) {
-  // Use server client to verify identity, admin client to write (bypasses RLS)
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return;
+export async function saveJoinUsProgress(userId: string, responses: Record<string, number>) {
+  if (!userId || Object.keys(responses).length === 0) return;
 
   const admin = getAdminClient();
+
+  // Verify userId belongs to a candidate (prevent abuse)
+  const { data: profile } = await admin
+    .from("candidate_profiles")
+    .select("id")
+    .eq("user_id", userId)
+    .maybeSingle();
+  if (!profile) return;
+
   await admin.from("disc_responses").upsert(
     {
-      user_id: user.id,
+      user_id: userId,
       responses,
       updated_at: new Date().toISOString(),
     },

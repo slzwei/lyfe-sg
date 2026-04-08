@@ -79,7 +79,7 @@ export default function JoinUsQuiz({ userId, initialResponses }: JoinUsQuizProps
   // Auto-save after every answer, broadcast AFTER save completes so staff sees fresh data
   useEffect(() => {
     if (Object.keys(responses).length === 0) return;
-    saveJoinUsProgress(responses)
+    saveJoinUsProgress(userId, responses)
       .then(() => broadcastProgress(userId, "quiz"))
       .catch(() => {});
   }, [responses, userId]);
@@ -100,7 +100,7 @@ export default function JoinUsQuiz({ userId, initialResponses }: JoinUsQuizProps
       return;
     }
     setError("");
-    saveJoinUsProgress(responses).catch(() => {});
+    saveJoinUsProgress(userId, responses).catch(() => {});
 
     if (currentStep < 5) {
       setCurrentStep(currentStep + 1);

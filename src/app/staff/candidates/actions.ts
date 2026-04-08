@@ -1028,6 +1028,13 @@ export async function deleteCandidateById(candidateId: string): Promise<{
     return { success: false, error: "Failed to delete candidate. Please try again." };
   }
 
+  // Clean up auth user so the email/phone can be reused for new applications
+  if (profile?.user_id) {
+    await admin.auth.admin.deleteUser(profile.user_id).catch((err) =>
+      console.error(`[deleteCandidateById] auth user cleanup failed:`, err)
+    );
+  }
+
   console.log(`[deleteCandidateById] Deleted by ${staff.full_name} (${staff.role}) — candidateId=${candidateId}, name=${candidate?.name || candidate?.email || "unknown"}`);
 
   return { success: true };

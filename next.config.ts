@@ -10,7 +10,7 @@ const nextConfig: NextConfig = {
   async headers() {
     return [
       {
-        source: "/(.*)",
+        source: "/((?!upcoming).*)",
         headers: [
           { key: "X-Content-Type-Options", value: "nosniff" },
           { key: "X-Frame-Options", value: "DENY" },
@@ -24,7 +24,7 @@ const nextConfig: NextConfig = {
             key: "Content-Security-Policy",
             value: [
               "default-src 'self'",
-              "script-src 'self' 'unsafe-inline' https://use.typekit.net https://widgets.resy.com https://www.googletagmanager.com",
+              `script-src 'self' 'unsafe-inline' ${process.env.NODE_ENV === "development" ? "'unsafe-eval' " : ""}https://use.typekit.net https://widgets.resy.com https://www.googletagmanager.com`,
               "style-src 'self' 'unsafe-inline' https://use.typekit.net https://p.typekit.net https://fonts.googleapis.com",
               "img-src 'self' data: blob: https://*.supabase.co https://daddybao.co.uk",
               "font-src 'self' https://use.typekit.net https://p.typekit.net https://fonts.gstatic.com",

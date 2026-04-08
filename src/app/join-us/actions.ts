@@ -42,7 +42,7 @@ export async function submitApplication(data: ApplicationData): Promise<{
 
   // Rate limit
   const ip = (await headers()).get("x-forwarded-for") || "unknown";
-  const { allowed } = await checkRateLimitAsync(`join-us:${ip}`, 5, 3_600_000);
+  const { allowed } = await checkRateLimitAsync(`join-us:${ip}`, 20, 3_600_000);
   if (!allowed) return { success: false, error: "Too many submissions. Please try again later." };
 
   // ── Validate fields ────────────────────────────────────────────────────

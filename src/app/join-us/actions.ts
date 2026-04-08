@@ -35,6 +35,7 @@ interface ApplicationData {
 
 export async function submitApplication(data: ApplicationData): Promise<{
   success: boolean;
+  userId?: string;
   error?: string;
 }> {
   // Honeypot check
@@ -197,7 +198,7 @@ export async function submitApplication(data: ApplicationData): Promise<{
     return { success: false, error: "Something went wrong. Please try again." };
   }
 
-  return { success: true };
+  return { success: true, userId: authUserId };
 }
 
 // ── Save quiz progress (auto-save) ──────────────────────────────────────────

@@ -58,6 +58,16 @@ export default function CandidatesClient({ staffRole }: { staffRole?: string }) 
   }, [fetchData]);
 
   const handleRealtimeRefresh = useCallback(async (userId: string) => {
+    // Check if this userId exists in our current data
+    const knownInInvitations = invitations.some((inv) => inv.user_id === userId);
+    const knownInPipeline = pipelineCandidates.some((c) => c.user_id === userId);
+
+    if (!knownInInvitations && !knownInPipeline) {
+      // New candidate (just submitted application) — full refresh to pick them up
+      fetchData();
+      return;
+    }
+
     const result = await getProgressForUser(userId);
     if (result.success && result.progress) {
       // Update real invitations
@@ -82,7 +92,8 @@ export default function CandidatesClient({ staffRole }: { staffRole?: string }) 
         )
       );
     }
-  }, []);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [fetchData]);
   const { live, liveStates } = useRealtimeProgress({ onRefresh: handleRealtimeRefresh });
 
   // Subscribe to invitation inserts/updates so new invites appear dynamically

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { submitApplication } from "./actions";
+import { broadcastProgress } from "@/lib/supabase/progress-broadcast";
 
 const EDUCATION_OPTIONS = [
   "PSLE",
@@ -57,6 +58,9 @@ export default function JoinUsForm() {
       setSubmitting(false);
       return;
     }
+
+    // Notify staff dashboard so the new candidate appears without refresh
+    if (result.userId) broadcastProgress(result.userId, "form");
 
     router.push("/join-us/quiz");
   }

@@ -43,6 +43,7 @@ export interface Invitation {
   attached_files: AttachedFile[] | null;
   progress: InvitationProgress | null;
   _synthetic?: boolean;
+  notes?: string | null;
 }
 
 // ─── Invitation CRUD ─────────────────────────────────────────────────────────

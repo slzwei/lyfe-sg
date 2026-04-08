@@ -133,6 +133,7 @@ export interface SearchResult {
   quiz_completed: boolean;
   profile_pdf_path: string | null;
   disc_pdf_path: string | null;
+  notes: string | null;
 }
 
 // ─── Candidate Detail ────────────────────────────────────────────────────────
@@ -398,7 +399,7 @@ export async function searchCandidates(params: {
 
   // Build query
   let q = admin.from("candidates")
-    .select("id, name, email, phone, status, created_at", { count: "exact" });
+    .select("id, name, email, phone, status, notes, created_at", { count: "exact" });
 
   if (teamManagerIds !== null) {
     q = q.in("assigned_manager_id", teamManagerIds);
@@ -497,6 +498,7 @@ export async function searchCandidates(params: {
       quiz_completed: hasDisc,
       profile_pdf_path: pdfs?.profile || null,
       disc_pdf_path: pdfs?.disc || null,
+      notes: c.notes,
     };
   });
 

@@ -7,8 +7,9 @@ import type { CandidateState } from "@/lib/supabase/progress-broadcast";
 
 interface CandidateListTableProps {
   loading: boolean;
-  tab: "all" | "invited" | "archived";
+  tab: "all" | "lead_gen" | "invited" | "archived";
   acceptedInvitations: Invitation[];
+  leadGenInvitations: Invitation[];
   pendingInvitations: Invitation[];
   archivedInvitations: Invitation[];
   actionLoading: string | null;
@@ -25,6 +26,7 @@ export function CandidateListTable({
   loading,
   tab,
   acceptedInvitations,
+  leadGenInvitations,
   pendingInvitations,
   archivedInvitations,
   actionLoading,
@@ -237,6 +239,7 @@ export function CandidateListTable({
 
   const isEmpty =
     (tab === "all" && acceptedInvitations.length === 0) ||
+    (tab === "lead_gen" && leadGenInvitations.length === 0) ||
     (tab === "invited" && pendingInvitations.length === 0) ||
     (tab === "archived" && archivedInvitations.length === 0);
 
@@ -257,6 +260,7 @@ export function CandidateListTable({
           </thead>
           <tbody className="divide-y divide-stone-50">
             {tab === "all" && acceptedInvitations.map((inv) => renderInvitationRow(inv))}
+            {tab === "lead_gen" && leadGenInvitations.map((inv) => renderInvitationRow(inv))}
             {tab === "invited" && pendingInvitations.map((inv) => renderInvitationRow(inv))}
             {tab === "archived" && archivedInvitations.map((inv) => renderInvitationRow(inv))}
 
@@ -269,6 +273,7 @@ export function CandidateListTable({
       {/* Mobile: Cards */}
       <div className="space-y-3 md:hidden">
         {tab === "all" && acceptedInvitations.map((inv) => renderInvitationCard(inv))}
+        {tab === "lead_gen" && leadGenInvitations.map((inv) => renderInvitationCard(inv))}
         {tab === "invited" && pendingInvitations.map((inv) => renderInvitationCard(inv))}
         {tab === "archived" && archivedInvitations.map((inv) => renderInvitationCard(inv))}
 

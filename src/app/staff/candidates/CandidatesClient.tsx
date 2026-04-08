@@ -19,7 +19,7 @@ import {
 import { CandidateListTable } from "./components/CandidateListTable";
 import { InlineInviteForm } from "./components/InlineInviteForm";
 
-type Tab = "all" | "invited" | "archived";
+type Tab = "all" | "lead_gen" | "invited" | "archived";
 
 export default function CandidatesClient({ staffRole }: { staffRole?: string }) {
   const searchParams = useSearchParams();
@@ -116,8 +116,10 @@ export default function CandidatesClient({ staffRole }: { staffRole?: string }) 
       disc_type: c.disc_type || undefined,
     },
     _synthetic: true,
+    notes: c.notes,
   }));
   const allCandidates = [...acceptedInvitations, ...syntheticInvitations];
+  const leadGenCandidates = allCandidates.filter((inv) => inv.notes?.includes("Public application via /join-us"));
 
   // Invited = not yet signed up (pending/expired/revoked, no candidate_record_id)
   const pendingInvitations = invitations.filter((inv) => !inv.archived_at && inv.status !== "accepted" && !inv.candidate_record_id);
@@ -130,6 +132,13 @@ export default function CandidatesClient({ staffRole }: { staffRole?: string }) 
         inv.email.toLowerCase().includes(query.toLowerCase())
       )
     : allCandidates;
+
+  const filteredLeadGen = query
+    ? leadGenCandidates.filter((inv) =>
+        inv.candidate_name?.toLowerCase().includes(query.toLowerCase()) ||
+        inv.email.toLowerCase().includes(query.toLowerCase())
+      )
+    : leadGenCandidates;
 
   const filteredInvitations = query
     ? pendingInvitations.filter((inv) =>
@@ -227,7 +236,7 @@ export default function CandidatesClient({ staffRole }: { staffRole?: string }) 
 
       {/* Tabs + live indicator */}
       <div className="flex items-center gap-1 overflow-x-auto border-b border-stone-200">
-        {([["all", "All"], ["invited", "Invited"], ["archived", "Archived"]] as [Tab, string][]).map(([key, label]) => (
+        {([["all", "All"], ["lead_gen", "Lead Gen"], ["invited", "Invited"], ["archived", "Archived"]] as [Tab, string][]).map(([key, label]) => (
           <button
             key={key}
             onClick={() => setTab(key)}
@@ -250,6 +259,7 @@ export default function CandidatesClient({ staffRole }: { staffRole?: string }) 
         loading={loading}
         tab={tab}
         acceptedInvitations={filteredAll}
+        leadGenInvitations={filteredLeadGen}
         pendingInvitations={filteredInvitations}
         archivedInvitations={filteredArchived}
         actionLoading={actionLoading}

@@ -71,16 +71,17 @@ export default function JoinUsQuiz({ userId, initialResponses }: JoinUsQuizProps
     return () => clearInterval(interval);
   }, [submitting]);
 
-  // Broadcast quiz state to staff portal
+  // Broadcast quiz state to staff portal on mount
   useEffect(() => {
     broadcastProgress(userId, "quiz");
   }, [userId]);
 
-  // Auto-save after every answer + broadcast progress
+  // Auto-save after every answer, broadcast AFTER save completes so staff sees fresh data
   useEffect(() => {
     if (Object.keys(responses).length === 0) return;
-    saveJoinUsProgress(responses).catch(() => {});
-    broadcastProgress(userId, "quiz");
+    saveJoinUsProgress(responses)
+      .then(() => broadcastProgress(userId, "quiz"))
+      .catch(() => {});
   }, [responses, userId]);
 
   const questions = DISC_STEPS[currentStep - 1];

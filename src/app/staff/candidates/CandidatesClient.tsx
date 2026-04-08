@@ -60,20 +60,29 @@ export default function CandidatesClient({ staffRole }: { staffRole?: string }) 
   const handleRealtimeRefresh = useCallback(async (userId: string) => {
     const result = await getProgressForUser(userId);
     if (result.success && result.progress) {
-      // Check if this userId belongs to a real invitation
-      const isInvited = invitations.some((inv) => inv.user_id === userId);
-      if (isInvited) {
-        setInvitations((prev) =>
-          prev.map((inv) =>
-            inv.user_id === userId ? { ...inv, progress: result.progress! } : inv
-          )
-        );
-      } else {
-        // Synthetic candidate (e.g. /join-us) — full refresh to update pipeline data
-        fetchData();
-      }
+      // Update real invitations
+      setInvitations((prev) =>
+        prev.map((inv) =>
+          inv.user_id === userId ? { ...inv, progress: result.progress! } : inv
+        )
+      );
+      // Also update pipeline candidates (join-us / synthetic)
+      setPipelineCandidates((prev) =>
+        prev.map((c) =>
+          c.user_id === userId
+            ? {
+                ...c,
+                profile_completed: result.progress!.profile_completed,
+                onboarding_step: result.progress!.onboarding_step,
+                quiz_answered: result.progress!.quiz_answered,
+                quiz_completed: result.progress!.quiz_completed,
+                disc_type: result.progress!.disc_type || c.disc_type,
+              }
+            : c
+        )
+      );
     }
-  }, [invitations, fetchData]);
+  }, []);
   const { live, liveStates } = useRealtimeProgress({ onRefresh: handleRealtimeRefresh });
 
   // Subscribe to invitation inserts/updates so new invites appear dynamically

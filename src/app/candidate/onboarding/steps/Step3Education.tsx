@@ -57,7 +57,7 @@ export default function Step3Education({
 }: Step3Props) {
   const ec = (key: string) =>
     errors[key] ? " !border-red-400 !bg-red-50" : "";
-  const education = (data.education as EducationData) || {
+  const education: EducationData = {
     currently_studying: false,
     current_qualification: "",
     current_institution: "",
@@ -66,6 +66,7 @@ export default function Step3Education({
     highest_qualification: "",
     highest_institution: "",
     highest_year_completed: "",
+    ...(data.education as Partial<EducationData>),
   };
 
   function update(field: keyof EducationData, value: string | boolean) {

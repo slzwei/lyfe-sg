@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import DateDropdownPicker from "./DateDropdownPicker";
 
 interface Step1Props {
   data: Record<string, unknown>;
@@ -133,7 +134,7 @@ export default function Step1Personal({ data, onChange, errors }: Step1Props) {
                 className={INPUT_CLASS + " flex-1" + ec("expected_salary")}
                 value={v("expected_salary")}
                 onChange={(e) => onChange("expected_salary", e.target.value)}
-                placeholder="2500"
+                placeholder="e.g. 0.00"
                 inputMode="decimal"
               />
               <select
@@ -149,11 +150,13 @@ export default function Step1Personal({ data, onChange, errors }: Step1Props) {
           </div>
           <div className="overflow-hidden">
             <label className={LABEL_CLASS}>Date of Availability *</label>
-            <input
-              type="date"
-              className={INPUT_CLASS + " appearance-none" + ec("date_available")}
+            <DateDropdownPicker
               value={v("date_available")}
-              onChange={(e) => onChange("date_available", e.target.value)}
+              onChange={(val) => onChange("date_available", val)}
+              yearStart={new Date().getFullYear()}
+              yearEnd={new Date().getFullYear() + 2}
+              yearOrder="asc"
+              error={!!errors.date_available}
             />
             <FieldError error={errors.date_available} />
           </div>
@@ -178,11 +181,13 @@ export default function Step1Personal({ data, onChange, errors }: Step1Props) {
           <div className="grid gap-4 sm:grid-cols-2">
             <div>
               <label className={LABEL_CLASS}>Date of Birth *</label>
-              <input
-                type="date"
-                className={INPUT_CLASS + " appearance-none" + ec("date_of_birth")}
+              <DateDropdownPicker
                 value={v("date_of_birth")}
-                onChange={(e) => onChange("date_of_birth", e.target.value)}
+                onChange={(val) => onChange("date_of_birth", val)}
+                yearStart={1940}
+                yearEnd={new Date().getFullYear() - 16}
+                yearOrder="desc"
+                error={!!errors.date_of_birth}
               />
               <FieldError error={errors.date_of_birth} />
             </div>

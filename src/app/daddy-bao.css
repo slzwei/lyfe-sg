@@ -1,0 +1,108 @@
+/* Scoped styles for Daddy Bao page replica — keyframes & animations only */
+
+@keyframes db-ticker {
+  0% { transform: translate3d(0, 0, 0); }
+  100% { transform: translate3d(-50%, 0, 0); }
+}
+
+@keyframes db-pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.25); }
+}
+
+.daddy-bao .ticker-inner {
+  animation: db-ticker 30s linear infinite;
+}
+
+.daddy-bao .mute-pulse {
+  animation: db-pulse 2s ease-in-out infinite;
+}
+
+/* Hamburger squeeze animation */
+.daddy-bao .hamburger-line {
+  transition: transform 0.15s ease, opacity 0.15s ease;
+}
+
+.daddy-bao .hamburger-active .hamburger-top {
+  transform: translateY(10px) rotate(45deg);
+}
+
+.daddy-bao .hamburger-active .hamburger-mid {
+  opacity: 0;
+}
+
+.daddy-bao .hamburger-active .hamburger-bot {
+  transform: translateY(-10px) rotate(-45deg);
+}
+
+/* Nav overlay slide — 0.65s to match original GSAP timeline */
+.daddy-bao .nav-overlay {
+  transform: translateX(-100%);
+  transition: transform 0.65s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.daddy-bao .nav-overlay.nav-slide-open {
+  transform: translateX(0);
+}
+
+/* Menu items cascade — fade in + slide up with staggered delays */
+.daddy-bao .nav-overlay .nav-menu-item {
+  opacity: 0;
+  transform: translateY(3rem);
+  transition: opacity 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+              transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.daddy-bao .nav-overlay.nav-slide-open .nav-menu-item {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.daddy-bao .nav-overlay.nav-slide-open .nav-menu-item:nth-child(1) { transition-delay: 0s; }
+.daddy-bao .nav-overlay.nav-slide-open .nav-menu-item:nth-child(2) { transition-delay: 0.075s; }
+.daddy-bao .nav-overlay.nav-slide-open .nav-menu-item:nth-child(3) { transition-delay: 0.15s; }
+.daddy-bao .nav-overlay.nav-slide-open .nav-menu-item:nth-child(4) { transition-delay: 0.225s; }
+.daddy-bao .nav-overlay.nav-slide-open .nav-menu-item:nth-child(5) { transition-delay: 0.3s; }
+.daddy-bao .nav-overlay.nav-slide-open .nav-menu-item:nth-child(6) { transition-delay: 0.375s; }
+.daddy-bao .nav-overlay.nav-slide-open .nav-menu-item:nth-child(7) { transition-delay: 0.45s; }
+
+/* Nav footer fade in */
+.daddy-bao .nav-overlay .nav-footer-content {
+  opacity: 0;
+  transition: opacity 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.daddy-bao .nav-overlay.nav-slide-open .nav-footer-content {
+  opacity: 1;
+  transition-delay: 0.35s;
+}
+
+/* Dropdown slide */
+.daddy-bao .dropdown-content {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease;
+}
+
+.daddy-bao .dropdown-content.open {
+  max-height: 300px;
+}
+
+/* Mobile CTA buttons — !important needed to override Tailwind v4 utility layer */
+@media screen and (max-width: 639px) {
+  .daddy-bao .cta-btn {
+    display: block !important;
+    width: 85px !important;
+    font-size: 10px !important;
+    text-align: center !important;
+    padding: 3px 0 !important;
+    box-sizing: border-box !important;
+    border-width: 1px !important;
+  }
+}
+@media screen and (max-width: 500px) {
+  .daddy-bao .cta-btn {
+    width: 78px !important;
+    font-size: 9px !important;
+  }
+}

@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import CircumplexChart from "@/app/candidate/disc-results/CircumplexChart";
 import { DISC_TYPE_INFO, computeDerivedFields, DISC_PRIORITIES } from "@/app/candidate/disc-quiz/scoring";
 import { signOutJoinUs } from "../actions";
+import ResultsLive from "@/app/candidate/disc-results/ResultsLive";
 
 const DISC_COLORS: Record<string, { hex: string; text: string; bg: string; bar: string; border: string }> = {
   D: { hex: "#2B8C8C", text: "text-[#2B8C8C]", bg: "bg-[#2B8C8C]/5", bar: "bg-[#2B8C8C]", border: "border-[#2B8C8C]/20" },
@@ -52,6 +53,7 @@ export default async function JoinUsResultsPage() {
 
   return (
     <div className="space-y-6">
+      <ResultsLive userId={user.id} />
       {/* Hero card */}
       <div className={`relative overflow-hidden rounded-3xl border ${primaryColor.border} ${primaryColor.bg} px-6 py-8 text-center`}>
         <div className="pointer-events-none absolute -right-10 -top-10 h-40 w-40 rounded-full bg-gradient-to-br from-white/60 to-transparent" />

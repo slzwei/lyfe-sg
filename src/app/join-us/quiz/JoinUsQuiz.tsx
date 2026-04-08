@@ -10,6 +10,7 @@ import {
   type Question,
 } from "@/app/candidate/disc-quiz/questions";
 import { submitJoinUsQuiz, saveJoinUsProgress } from "../actions";
+import { broadcastProgress } from "@/lib/supabase/progress-broadcast";
 
 const STEP_LABELS = ["Pairs 1", "Pairs 2", "Pairs 3", "Ratings", "Scenarios"];
 
@@ -40,10 +41,11 @@ function CalculatingOverlay({ progress, stage }: { progress: number; stage: stri
 }
 
 interface JoinUsQuizProps {
+  userId: string;
   initialResponses: Record<string, number> | null;
 }
 
-export default function JoinUsQuiz({ initialResponses }: JoinUsQuizProps) {
+export default function JoinUsQuiz({ userId, initialResponses }: JoinUsQuizProps) {
   const hasProgress = initialResponses && Object.keys(initialResponses).length > 0;
   const quizStartRef = useRef<number>(Date.now());
   const [currentStep, setCurrentStep] = useState(1);
@@ -69,11 +71,17 @@ export default function JoinUsQuiz({ initialResponses }: JoinUsQuizProps) {
     return () => clearInterval(interval);
   }, [submitting]);
 
-  // Auto-save after every answer
+  // Broadcast quiz state to staff portal
+  useEffect(() => {
+    broadcastProgress(userId, "quiz");
+  }, [userId]);
+
+  // Auto-save after every answer + broadcast progress
   useEffect(() => {
     if (Object.keys(responses).length === 0) return;
     saveJoinUsProgress(responses).catch(() => {});
-  }, [responses]);
+    broadcastProgress(userId, "quiz");
+  }, [responses, userId]);
 
   const questions = DISC_STEPS[currentStep - 1];
 

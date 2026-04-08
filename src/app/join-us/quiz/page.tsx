@@ -58,6 +58,7 @@ export default async function JoinUsQuizPage() {
       </div>
 
       <JoinUsQuiz
+        userId={user.id}
         initialResponses={(saved?.responses as Record<string, number>) || null}
       />
     </div>

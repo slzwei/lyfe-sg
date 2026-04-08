@@ -1028,11 +1028,17 @@ export async function deleteCandidateById(candidateId: string): Promise<{
     return { success: false, error: "Failed to delete candidate. Please try again." };
   }
 
-  // Clean up auth user so the email/phone can be reused for new applications
+  // Clean up auth user for public applicants (no invitation) so email/phone can be reused.
+  // Skip for invited candidates so the audit log restore can re-link them.
   if (profile?.user_id) {
-    await admin.auth.admin.deleteUser(profile.user_id).catch((err) =>
-      console.error(`[deleteCandidateById] auth user cleanup failed:`, err)
-    );
+    const { count } = await admin.from("invitations")
+      .select("id", { count: "exact", head: true })
+      .eq("user_id", profile.user_id);
+    if (!count || count === 0) {
+      await admin.auth.admin.deleteUser(profile.user_id).catch((err) =>
+        console.error(`[deleteCandidateById] auth user cleanup failed:`, err)
+      );
+    }
   }
 
   console.log(`[deleteCandidateById] Deleted by ${staff.full_name} (${staff.role}) — candidateId=${candidateId}, name=${candidate?.name || candidate?.email || "unknown"}`);

@@ -7,6 +7,14 @@ const nextConfig: NextConfig = {
     "/candidate/onboarding": ["./src/lib/fonts/**/*"],
     "/candidate/disc-quiz": ["./src/lib/fonts/**/*"],
   },
+  async rewrites() {
+    return [
+      {
+        source: "/upcoming",
+        destination: "/upcoming/index.html",
+      },
+    ];
+  },
   async headers() {
     return [
       {

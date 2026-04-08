@@ -1016,8 +1016,16 @@ export async function deleteCandidateById(candidateId: string): Promise<{
     .eq("candidate_record_id", candidateId);
 
   // Delete candidate (cascades to activities, documents, interviews)
-  const { error } = await admin.from("candidates").delete().eq("id", candidateId);
-  if (error) return { success: false, error: error.message };
+  // Use .select('id') so PostgREST returns deleted rows — lets us verify the delete happened
+  const { data: deleted, error } = await admin.from("candidates").delete().eq("id", candidateId).select("id");
+  if (error) {
+    console.error(`[deleteCandidateById] Delete failed:`, error.message);
+    return { success: false, error: error.message };
+  }
+  if (!deleted || deleted.length === 0) {
+    console.error(`[deleteCandidateById] Delete returned 0 rows for candidateId=${candidateId}`);
+    return { success: false, error: "Failed to delete candidate. Please try again." };
+  }
 
   console.log(`[deleteCandidateById] Deleted by ${staff.full_name} (${staff.role}) — candidateId=${candidateId}, name=${candidate?.name || candidate?.email || "unknown"}`);
 

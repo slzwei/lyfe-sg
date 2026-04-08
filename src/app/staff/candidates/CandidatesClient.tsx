@@ -172,9 +172,14 @@ export default function CandidatesClient({ staffRole }: { staffRole?: string }) 
 
   async function handleAction(id: string, action: () => Promise<{ success: boolean; error?: string }>) {
     setActionLoading(id);
-    const result = await action();
-    if (!result.success) {
-      setMessage({ type: "error", text: result.error || "Action failed." });
+    try {
+      const result = await action();
+      if (!result.success) {
+        setMessage({ type: "error", text: result.error || "Action failed." });
+      }
+    } catch (err) {
+      console.error("[handleAction] Server action threw:", err);
+      setMessage({ type: "error", text: "Something went wrong. Please try again." });
     }
     fetchData();
     setActionLoading(null);

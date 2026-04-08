@@ -1,0 +1,80 @@
+/*!***************************************************************************************************************************************************************************************************************************************!*\
+  !*** css ./node_modules/css-loader/dist/cjs.js??ruleSet[1].rules[3].use[1]!./node_modules/postcss-loader/dist/cjs.js??ruleSet[1].rules[3].use[2]!./node_modules/sass-loader/dist/cjs.js??ruleSet[1].rules[3].use[3]!./src/style.scss ***!
+  \***************************************************************************************************************************************************************************************************************************************/
+/*
+Author: Vladimir Dukoski
+for code bellow
+*/
+.overlayz {
+  inset: 0px;
+  position: fixed;
+  overflow-y: auto;
+  z-index: 9999999;
+}
+.overlayz.hidden {
+  display: none !important;
+}
+.overlayz .back-drop {
+  background: rgba(111, 111, 111, 0.9);
+  background-color: rgba(69, 69, 69, 0.96) !important;
+  height: 1654px;
+  left: 0px;
+  min-height: 100%;
+  opacity: 1;
+  position: absolute;
+  right: 0px;
+  top: 0px;
+  z-index: -1;
+}
+.overlayz .inner {
+  z-index: 1;
+  height: 1459px;
+  margin: 40px auto 10px;
+  position: relative;
+  width: 700px;
+  opacity: 1;
+  transform: translate3d(0px, 0px, 0px);
+}
+.overlayz .inner .menu-close {
+  position: relative;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+.overlayz .inner .menu-close .close-me {
+  width: 37px;
+  height: 37px;
+  position: absolute;
+  right: 11px;
+  top: 11px;
+}
+.overlayz .inner .menu-close .close-me:hover {
+  cursor: pointer;
+}
+
+.link-boxes .link-box .box-title .buttons p {
+  text-transform: uppercase;
+  font-size: 0.85em;
+  padding: 0 1.5em;
+  transition: all 0.3s ease;
+  border-left: 0.1rem solid;
+  border-left-color: var(--text-color);
+  border-bottom-color: var(--text-color);
+  border-right-color: var(--text-color);
+  border-top-color: var(--text-color);
+  display: flex;
+  align-items: center;
+  margin: 0 !important;
+  cursor: pointer;
+}
+
+nav > ul > li p {
+  display: block;
+  color: inherit;
+  font-family: var(--heading-font);
+  margin: 0 !important;
+  cursor: pointer;
+}
+
+/*# sourceMappingURL=style-index.css.map*/

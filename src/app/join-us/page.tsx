@@ -1,29 +1,6 @@
-import { createClient } from "@/lib/supabase/server";
-import { redirect } from "next/navigation";
 import JoinUsForm from "./JoinUsForm";
 
-export default async function JoinUsPage() {
-  // If already authenticated as candidate, redirect to quiz or results
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-
-  if (user) {
-    const role = user.app_metadata?.role;
-    if (role === "candidate") {
-      // Check if they already completed the quiz
-      const { data: discResult } = await supabase
-        .from("disc_results")
-        .select("id")
-        .eq("user_id", user.id)
-        .maybeSingle();
-
-      if (discResult) {
-        redirect("/join-us/results");
-      }
-      redirect("/join-us/quiz");
-    }
-  }
-
+export default function JoinUsPage() {
   return (
     <div>
       <div className="mb-8 text-center">

@@ -7,15 +7,6 @@ const nextConfig: NextConfig = {
     "/candidate/onboarding": ["./src/lib/fonts/**/*"],
     "/candidate/disc-quiz": ["./src/lib/fonts/**/*"],
   },
-  async redirects() {
-    return [
-      {
-        source: "/upcoming",
-        destination: "/upcoming/index.html",
-        permanent: true,
-      },
-    ];
-  },
   async headers() {
     return [
       {
@@ -38,6 +29,7 @@ const nextConfig: NextConfig = {
               "img-src 'self' data: blob: https://*.supabase.co https://daddybao.co.uk",
               "font-src 'self' https://use.typekit.net https://p.typekit.net https://fonts.gstatic.com",
               "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://*.sentry.io https://*.ingest.sentry.io https://www.onemap.gov.sg https://performance.typekit.net",
+              "media-src 'self' https://player.vimeo.com https://*.vimeocdn.com",
               "frame-ancestors 'none'",
             ].join("; "),
           },

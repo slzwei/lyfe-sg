@@ -21,6 +21,13 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-plus-jakarta);
   --font-display: var(--font-pacifico);
+  --font-mono: var(--font-pt-mono);
+
+  /* Daddy Bao responsive breakpoints */
+  --breakpoint-xs: 500px;
+  --breakpoint-3xl: 1440px;
+  --breakpoint-4xl: 1600px;
+  --breakpoint-5xl: 1920px;
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);

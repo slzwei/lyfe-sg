@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Plus_Jakarta_Sans, Pacifico, Geist, Geist_Mono } from "next/font/google";
+import { Plus_Jakarta_Sans, Pacifico, Geist, Geist_Mono, PT_Mono, Noto_Sans_TC } from "next/font/google";
 import "./globals.css";
 
 const plusJakarta = Plus_Jakarta_Sans({
@@ -20,6 +20,18 @@ const geistSans = Geist({
 
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
+  subsets: ["latin"],
+});
+
+const ptMono = PT_Mono({
+  variable: "--font-pt-mono",
+  weight: "400",
+  subsets: ["latin"],
+});
+
+const notoSansTC = Noto_Sans_TC({
+  variable: "--font-noto-sans-tc",
+  weight: ["400", "700"],
   subsets: ["latin"],
 });
 
@@ -53,7 +65,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${plusJakarta.variable} ${pacifico.variable} ${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${plusJakarta.variable} ${pacifico.variable} ${geistSans.variable} ${geistMono.variable} ${ptMono.variable} ${notoSansTC.variable} h-full antialiased`}
       suppressHydrationWarning
     >
       <body className="min-h-full flex flex-col font-sans">{children}</body>

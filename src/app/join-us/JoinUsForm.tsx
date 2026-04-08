@@ -184,7 +184,7 @@ export default function JoinUsForm() {
         </div>
 
         {/* Honeypot — hidden from real users */}
-        <div className="absolute -left-[9999px] opacity-0" aria-hidden="true">
+        <div className="hidden" aria-hidden="true">
           <input
             type="text"
             tabIndex={-1}

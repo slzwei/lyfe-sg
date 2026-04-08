@@ -183,8 +183,8 @@ export async function submitApplication(data: ApplicationData): Promise<{
       date_of_birth: dob,
       date_available: startDate,
       education: { highest_qualification: education },
-      completed: false,
-      onboarding_step: 1,
+      completed: true,
+      onboarding_step: 6,
     },
     { onConflict: "user_id" }
   );

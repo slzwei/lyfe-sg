@@ -1,0 +1,1314 @@
+{
+  "quiz_title": "CMFAS M9 Mock Exam 1",
+  "version": "M9 7th Edition V1.1 Mock Exam 1",
+  "prepared_for": "Prudential Assurance Company Singapore (Pte) Limited",
+  "date": "April 2026",
+  "total_questions": 100,
+  "format": "Multiple Choice",
+  "duration": "120 minutes",
+  "passing_grade": "70% (70/100)",
+  "questions": [
+    {
+      "question_number": 1,
+      "question": "Under the Nomination Framework, with regard to Muslim policy owners, which of the following is MOST true?",
+      "reference": "C17/6.3(b)",
+      "options": [
+        "They only make revocable nominations on their insurance policies.",
+        "They can make trust nominations for CPF-funded Policies.",
+        "They can make both trust and revocable nominations over their life insurance policies with death benefits, in accordance to Intestate Succession Act.",
+        "They can make both trust and revocable nominations over their life insurance policies with death benefits. However revocable nominations are subject to \"Faraid\"."
+      ],
+      "correct_answer_letter": "D",
+      "correct_answer": "They can make both trust and revocable nominations over their life insurance policies with death benefits. However revocable nominations are subject to \"Faraid\"."
+    },
+    {
+      "question_number": 2,
+      "question": "Under a Revocable Nomination, it can be executed on the following types of schemes or insurance policy except ___________.",
+      "reference": "C17/9.26",
+      "options": [
+        "Personal Accident Policies",
+        "Dependant Protection Scheme Policies",
+        "CPF Investment Scheme",
+        "Hospital and Surgical Policies"
+      ],
+      "correct_answer_letter": "D",
+      "correct_answer": "Hospital and Surgical Policies"
+    },
+    {
+      "question_number": 3,
+      "question": "A party made an offer to another party. This party then accepts the offer conditionally. This conditional offer is called __________.",
+      "reference": "C14/1.5",
+      "options": [
+        "legal offer",
+        "counter offer",
+        "invitation to treat",
+        "meeting of minds"
+      ],
+      "correct_answer_letter": "B",
+      "correct_answer": "counter offer"
+    },
+    {
+      "question_number": 4,
+      "question": "Mdm Tan has bought a policy few years ago under Section 73 of the Conveyancing and Law Of Property Act. Today, Mdm Tan is a bankrupt, what will happen to the policy?",
+      "reference": "C14/1.22",
+      "options": [
+        "Used to pay up the loan.",
+        "Taken from her by the assignee.",
+        "Protected from creditors.",
+        "Null and void."
+      ],
+      "correct_answer_letter": "C",
+      "correct_answer": "Protected from creditors."
+    },
+    {
+      "question_number": 5,
+      "question": "Maria bought a Whole Life Policy with some riders. As she was unable to pay her premium after a number of years, she chose the Reduced Paid-Up Insurance Option. What is likely to happen?",
+      "reference": "C5/1.4",
+      "options": [
+        "Her riders will all be terminated.",
+        "Sum assured remains unchanged.",
+        "She has to pay interest on the loan taken.",
+        "The term of the policy will depends on the cash value accumulated."
+      ],
+      "correct_answer_letter": "A",
+      "correct_answer": "Her riders will all be terminated."
+    },
+    {
+      "question_number": 6,
+      "question": "Which one of the following is not a Juvenile Rider?",
+      "reference": "C5/1.7",
+      "options": [
+        "Family Income Benefit Rider",
+        "Waiver of Premium Rider.",
+        "Payor Benefit Rider",
+        "Guaranteed Insurability Option Rider."
+      ],
+      "correct_answer_letter": "B",
+      "correct_answer": "Waiver of Premium Rider."
+    },
+    {
+      "question_number": 7,
+      "question": "Which one of the following is true of \"Web Aggregator\"?",
+      "reference": "C1/16.13, 16.14",
+      "options": [
+        "It is an internet portal to assist people in the purchase of a policy.",
+        "It is a distribution channel or a website of each life insurance companies.",
+        "It is a domain in the internet that are offered by all life insurance companies which cater to retail customers on their products.",
+        "All of the above."
+      ],
+      "correct_answer_letter": "A",
+      "correct_answer": "It is an internet portal to assist people in the purchase of a policy."
+    },
+    {
+      "question_number": 8,
+      "question": "A consumer who has a dispute that he has not been able to resolve with a financial institution has filed a complaint with Financial Industry Disputes Resolution Centre (FIDReC) on 1 August 2025. Which of the following is true on the jurisdiction of FIDReC for this case?",
+      "reference": "C1/17.10",
+      "options": [
+        "Up to S$75,000 per claim.",
+        "Up to S$100,000 per claim.",
+        "Up to S$150,000 per claim.",
+        "Up to S$200,000 per claim."
+      ],
+      "correct_answer_letter": "C",
+      "correct_answer": "Up to S$150,000 per claim."
+    },
+    {
+      "question_number": 9,
+      "question": "In an annuity, the period of time during which the income benefits are paid is called ____________.",
+      "reference": "C10/2.1",
+      "options": [
+        "accumulation period",
+        "payout period",
+        "free look period",
+        "liquidation period"
+      ],
+      "correct_answer_letter": "B",
+      "correct_answer": "payout period"
+    },
+    {
+      "question_number": 10,
+      "question": "For Immediate Annuity, where the purchaser has already paid for the entire contract through a lump sum upfront, when could the earliest pay out begins?",
+      "reference": "C10/3.2",
+      "options": [
+        "Immediately.",
+        "One month after purchase.",
+        "1 year after purchase.",
+        "2 years after purchase."
+      ],
+      "correct_answer_letter": "B",
+      "correct_answer": "One month after purchase."
+    },
+    {
+      "question_number": 11,
+      "question": "A common methodology to calculate the assets backing each product is through a formula that captures all key relevant cash flow of the product. Which of the following is/are considered as a component of this cash flow?",
+      "reference": "C6/3.11",
+      "options": [
+        "Commissions.",
+        "Tax.",
+        "Claims paid.",
+        "All of the above."
+      ],
+      "correct_answer_letter": "D",
+      "correct_answer": "All of the above."
+    },
+    {
+      "question_number": 12,
+      "question": "Board of Directors in an insurance company are discussing how much of the $10m surplus should go the policy owners as bonuses in the participating fund?",
+      "reference": "C6/3.28",
+      "options": [
+        "$10m.",
+        "$9m.",
+        "$5m.",
+        "$1m."
+      ],
+      "correct_answer_letter": "B",
+      "correct_answer": "$9m."
+    },
+    {
+      "question_number": 13,
+      "question": "Which investment-linked sub-fund fund consists of potentially multiple funds managed by one investment manager?",
+      "reference": "C8/4.14",
+      "options": [
+        "Managed Fund.",
+        "Managed Portfolios.",
+        "Balanced Fund.",
+        "Capital Guaranteed Fund."
+      ],
+      "correct_answer_letter": "B",
+      "correct_answer": "Managed Portfolios."
+    },
+    {
+      "question_number": 14,
+      "question": "\"The strategy of this fund is to maximize capital growth through equities as listed in the Singapore Stock Exchange. This fund is ___________.",
+      "reference": "C8/5.3",
+      "options": [
+        "Managed Fund",
+        "Equity Fund",
+        "Bond Fund",
+        "Property Fund"
+      ],
+      "correct_answer_letter": "B",
+      "correct_answer": "Equity Fund"
+    },
+    {
+      "question_number": 15,
+      "question": "Which of the following is/are the most important document(s) for an underwriter when considering an application?",
+      "reference": "C11/1.3",
+      "options": [
+        "Proposal form.",
+        "Medical history.",
+        "Attending Physician Statement.",
+        "All of the above."
+      ],
+      "correct_answer_letter": "A",
+      "correct_answer": "Proposal form."
+    },
+    {
+      "question_number": 16,
+      "question": "Insurers are required under the Insurance Act to display a warning statement prominently on the proposal form. Why?",
+      "reference": "C11/1.9",
+      "options": [
+        "To highlight the importance of disclosing accurately all facts.",
+        "To highlight that insurer will not pay for pre-existing conditions.",
+        "To measure insurable interest.",
+        "To prevent moral hazard."
+      ],
+      "correct_answer_letter": "A",
+      "correct_answer": "To highlight the importance of disclosing accurately all facts."
+    },
+    {
+      "question_number": 17,
+      "question": "For insurer to pay a death claim, the attendant physician's statement has to be completed by the physician who has attended to the life insured just before his death. Who has to pay the fees for this statement?",
+      "reference": "C13/2.5",
+      "options": [
+        "Insurer.",
+        "Insured.",
+        "Claimant.",
+        "Adviser."
+      ],
+      "correct_answer_letter": "C",
+      "correct_answer": "Claimant."
+    },
+    {
+      "question_number": 18,
+      "question": "Which one of the following documents is required where death is a result of accidental causes?",
+      "reference": "C13/2.14",
+      "options": [
+        "Statutory Presumption of Death.",
+        "Death of Service Personnel.",
+        "Unregistered Death.",
+        "Police Report."
+      ],
+      "correct_answer_letter": "D",
+      "correct_answer": "Police Report."
+    },
+    {
+      "question_number": 19,
+      "question": "Which one of the following best describes \"Apparent Authority\"?",
+      "reference": "C15/5.8",
+      "options": [
+        "Agent arranging to collect other than the first premium and insurer accepts it despite their prohibition.",
+        "Agent arranging for client to be examined by insurer's doctors.",
+        "Agent issuing of cover notes.",
+        "Agent fills up an application form and causes the insurer to issue a contract."
+      ],
+      "correct_answer_letter": "A",
+      "correct_answer": "Agent arranging to collect other than the first premium and insurer accepts it despite their prohibition."
+    },
+    {
+      "question_number": 20,
+      "question": "Any ratification by the insurer is considered effective on ____________.",
+      "reference": "C15/7.4",
+      "options": [
+        "the date of the agent's act and not the date of the insurer's ratification.",
+        "the date of the agent's act or insurer's ratification, whichever is later.",
+        "the date when the act has been committed by the agent.",
+        "the date when the act has been ratified by the insurer."
+      ],
+      "correct_answer_letter": "A",
+      "correct_answer": "the date of the agent's act and not the date of the insurer's ratification."
+    },
+    {
+      "question_number": 21,
+      "question": "Policies under Section 73 of the Conveyancing and Law of Property Act ______________",
+      "reference": "C17/1.1",
+      "options": [
+        "are the same as trust nominations under the new Nomination Framework.",
+        "are eligible for nominations under the new Nomination Framework.",
+        "are a statutory trust, created automatically in favour of his spouse and/or children as beneficiaries.",
+        "are protected from creditors like revocable nominations."
+      ],
+      "correct_answer_letter": "C",
+      "correct_answer": "are a statutory trust, created automatically in favour of his spouse and/or children as beneficiaries."
+    },
+    {
+      "question_number": 22,
+      "question": "A woman bought a policy in March 2003 and named her husband as her beneficiary. After 1 Sept 2009, with the launch of the new Framework for the Nomination of Beneficiaries, she was told that __________________.",
+      "reference": "C17/7.5(b)",
+      "options": [
+        "she can change her beneficiary.",
+        "her beneficiary remains the same.",
+        "she can now make a new trust or revocable nomination.",
+        "she can use the trust nomination to overwrite Section 73 of the CLPA."
+      ],
+      "correct_answer_letter": "B",
+      "correct_answer": "her beneficiary remains the same."
+    },
+    {
+      "question_number": 23,
+      "question": "Which one of the following examples BEST describes Moral Hazard?",
+      "reference": "C1/7.3",
+      "options": [
+        "A person with a history of heart attacks applying for insurance.",
+        "An overweight person applying for insurance.",
+        "Providing false information on the application for insurance.",
+        "Applying for a large sum assured."
+      ],
+      "correct_answer_letter": "C",
+      "correct_answer": "Providing false information on the application for insurance."
+    },
+    {
+      "question_number": 24,
+      "question": "A man who is not wealthy is the sole breadwinner of his family with 4 kids. He wanted to make sure his family has the protection should he dies prematurely. What is the first policy he should consider buying?",
+      "reference": "C1/10.2",
+      "options": [
+        "Term Insurance.",
+        "Endowment Insurance.",
+        "Ordinary Whole Life Insurance.",
+        "Limited Payment Life Insurance."
+      ],
+      "correct_answer_letter": "A",
+      "correct_answer": "Term Insurance."
+    },
+    {
+      "question_number": 25,
+      "question": "In setting life insurance premium, which one of the following factors is the most important?",
+      "reference": "C2/1.3",
+      "options": [
+        "Morbidity Rate.",
+        "Mortality Rate.",
+        "Expenses.",
+        "Age and Gender."
+      ],
+      "correct_answer_letter": "B",
+      "correct_answer": "Mortality Rate."
+    },
+    {
+      "question_number": 26,
+      "question": "Which one of the following is true?",
+      "reference": "C2/1.13(fig 2.2)",
+      "options": [
+        "Rate of Mortality/Morbidity + investment income + expenses = Gross Premium.",
+        "Rate of Mortality/Morbidity + investment income - expenses = Gross Premium.",
+        "Rate of Mortality/Morbidity - investment income + expenses = Gross Premium.",
+        "Rate of Mortality/Morbidity - investment income - expenses = Gross Premium."
+      ],
+      "correct_answer_letter": "C",
+      "correct_answer": "Rate of Mortality/Morbidity - investment income + expenses = Gross Premium."
+    },
+    {
+      "question_number": 27,
+      "question": "Mrs. Tan is concerned with the bonuses given out in a Participating Policy. What must the adviser say to her?",
+      "reference": "C6/2.3",
+      "options": [
+        "The bonuses are not guaranteed.",
+        "The bonuses depend on the value of the assets backing the policies.",
+        "The most important factor affecting the bonuses given out in a Participating Policy depends on investment performance.",
+        "All of the above."
+      ],
+      "correct_answer_letter": "D",
+      "correct_answer": "All of the above."
+    },
+    {
+      "question_number": 28,
+      "question": "Mr. Tan bought an Endowment Policy on his son of age 1 year. He noticed the policy pays bonus every year, in the form of an addition to the sum assured. What \"bonus\" is this?",
+      "reference": "C6/2.11",
+      "options": [
+        "Cash Bonus.",
+        "Terminal Bonus.",
+        "Reversionary Bonus.",
+        "Interim Bonuses."
+      ],
+      "correct_answer_letter": "C",
+      "correct_answer": "Reversionary Bonus."
+    },
+    {
+      "question_number": 29,
+      "question": "CPF Life monthly payouts are determined by an independent actuarial consultant. Which one of the following is false about these payouts?",
+      "reference": "C10/1.12",
+      "options": [
+        "They are not fixed.",
+        "They are affected by mortality experience.",
+        "They depend on CPF interest rates.",
+        "They are reviewed half yearly."
+      ],
+      "correct_answer_letter": "D",
+      "correct_answer": "They are reviewed half yearly."
+    },
+    {
+      "question_number": 30,
+      "question": "Mr. Sammy bought a Joint Life Annuity. The payment will end when ________.",
+      "reference": "C10/4.19",
+      "options": [
+        "Mr. Sammy dies",
+        "Mr. and Mrs. Sammy die",
+        "Neither dies",
+        "Mr. and Mrs. Sammy survive"
+      ],
+      "correct_answer_letter": "A",
+      "correct_answer": "Mr. Sammy dies"
+    },
+    {
+      "question_number": 31,
+      "question": "If a person dies without a Will, what should the proper claimants produce in order for the insurer to proceed with the death claim?",
+      "reference": "C13/2.20(v)",
+      "options": [
+        "Grant of Probate.",
+        "Letter of Administration.",
+        "Death Certificate.",
+        "Physician Statement."
+      ],
+      "correct_answer_letter": "B",
+      "correct_answer": "Letter of Administration."
+    },
+    {
+      "question_number": 32,
+      "question": "In the event of the death of an annuitant whose annuity is with a refund feature, who has to inform the insurer as soon as possible to settle the claim?",
+      "reference": "C13/2.32",
+      "options": [
+        "Executor.",
+        "Administrator.",
+        "Beneficiary.",
+        "Proper Claimants."
+      ],
+      "correct_answer_letter": "C",
+      "correct_answer": "Beneficiary."
+    },
+    {
+      "question_number": 33,
+      "question": "Mortgage Decreasing Term Policy, usually taken at the request of the bank as a collateral security for the housing loan which the bank has granted. It is usually issued as __________",
+      "reference": "C3/5.4",
+      "options": [
+        "First-to-die Life Insurance Policy",
+        "Second-to-die Life Insurance Policy",
+        "Last Survivor Life Insurance",
+        "Joint and Survivor Annuity"
+      ],
+      "correct_answer_letter": "A",
+      "correct_answer": "First-to-die Life Insurance Policy"
+    },
+    {
+      "question_number": 34,
+      "question": "Group Life Insurance on a whole is evaluated based on:",
+      "reference": "C3/6.3 (Table 3.2)",
+      "options": [
+        "Employees' health and financial status.",
+        "Employees' health and age.",
+        "Employees' gender and age.",
+        "Employees' financial status and gender."
+      ],
+      "correct_answer_letter": "C",
+      "correct_answer": "Employees' gender and age."
+    },
+    {
+      "question_number": 35,
+      "question": "Which one of the following riders waives all future premiums for the child until a specified age, if the father who is paying for the policy becomes total and permanent disable (TPD)?",
+      "reference": "C5/1.142",
+      "options": [
+        "Wavier Of Premium Rider upon TPD.",
+        "Payor Benefit Rider.",
+        "Family Income Benefit Rider.",
+        "Guaranteed Insurability Option Rider."
+      ],
+      "correct_answer_letter": "B",
+      "correct_answer": "Payor Benefit Rider."
+    },
+    {
+      "question_number": 36,
+      "question": "John bought 3 health insurance policies, one of the 3 covers hospitalisation bills up to $300 per day. John was hospitalised for 1 night and his bill is $500. How much will he receive in total?",
+      "reference": "C5/1.158",
+      "options": [
+        "$300.",
+        "$500.",
+        "$900.",
+        "$1500."
+      ],
+      "correct_answer_letter": "A",
+      "correct_answer": "$300."
+    },
+    {
+      "question_number": 37,
+      "question": "Under CPF Investment Scheme (CPFIS), policy owner can only pay the CPF-funded insurance policies using which premium mode?",
+      "reference": "C12/2.23",
+      "options": [
+        "Single Premium.",
+        "Regular Premium.",
+        "Single and Recurrent Single Premium.",
+        "All of the above."
+      ],
+      "correct_answer_letter": "C",
+      "correct_answer": "Single and Recurrent Single Premium."
+    },
+    {
+      "question_number": 38,
+      "question": "Mr. Lim assigned his policy to Ben who became a bankrupt 2 years later. What is going to happen that is true?",
+      "reference": "C12/9.22(iii)",
+      "options": [
+        "The policy form part of Ben's estate for his use.",
+        "Ben can re-assign back the policy to Mr. Lim.",
+        "The policy form part of Ben's bankruptcy estate to be distributed among his creditors.",
+        "The policy reverts back to Mr. Lim"
+      ],
+      "correct_answer_letter": "C",
+      "correct_answer": "The policy form part of Ben's bankruptcy estate to be distributed among his creditors."
+    },
+    {
+      "question_number": 39,
+      "question": "Under the Income Tax Act 1947, certain types of income are exempted from income tax. Which of the following is not taxable?",
+      "reference": "C16/2.2",
+      "options": [
+        "Gains from trade.",
+        "Rents, Royalties.",
+        "Legacies.",
+        "Pension."
+      ],
+      "correct_answer_letter": "C",
+      "correct_answer": "Legacies."
+    },
+    {
+      "question_number": 40,
+      "question": "Self-employed makes voluntary contribution of $4,000 to CPF account. How much can he claim in total for CPF reliefs, if he takes up an insurance policy with an annual premium of $4,000 for a sum assured of $80,000?",
+      "reference": "C16/4.22 (4th bullet pt)",
+      "options": [
+        "0",
+        "$5,000",
+        "$8,000",
+        "$1,000"
+      ],
+      "correct_answer_letter": "B",
+      "correct_answer": "$5,000"
+    },
+    {
+      "question_number": 41,
+      "question": "The proposed insured is supposed to provide information on his parents and siblings' state of health as well as the age at onset of the illness, current age and age at death (if applicable). These factors are especially important for which of the following insurance plan(s)?",
+      "reference": "C11/1.26",
+      "options": [
+        "Critical Illness Insurance.",
+        "Whole Life Insurance.",
+        "Hospital Cash (Income) Benefit Insurance.",
+        "All of the above."
+      ],
+      "correct_answer_letter": "A",
+      "correct_answer": "Critical Illness Insurance."
+    },
+    {
+      "question_number": 42,
+      "question": "Which one of the following medical tests gives information on the liver function, kidney function and lipid concentration?",
+      "reference": "C11/4.4(d)",
+      "options": [
+        "HIV Antibody Test.",
+        "Micro – urinalysis.",
+        "Electrocardiogram.",
+        "Blood Profile Analysis."
+      ],
+      "correct_answer_letter": "D",
+      "correct_answer": "Blood Profile Analysis."
+    },
+    {
+      "question_number": 43,
+      "question": "Which of the following description(s) on an Investment-Linked Policy (ILPs) is/are true?",
+      "reference": "C7/2.2, 2.3",
+      "options": [
+        "ILPs provide benefits calculated by reference to units, the value is related to the market value of the underlying assets.",
+        "ILPs do not provide guaranteed cash values.",
+        "The value of the policy will fluctuate.",
+        "All of the above."
+      ],
+      "correct_answer_letter": "D",
+      "correct_answer": "All of the above."
+    },
+    {
+      "question_number": 44,
+      "question": "What is the difference between product switch and fund switch?",
+      "reference": "C7/6.7, C8/6.4",
+      "options": [
+        "Product switch is to replace current policy with a new one, whereas fund switch applies to ILP Policies which allows policy owner to switch from one fund to another.",
+        "Product switch applies to change on type of policies, whereas fund switch applies to ILP Policies which allow policy owner to switch from one fund to another.",
+        "Product switch refers to switching from a current policy to another form of investment, whereas fund switch is to allow policy owner to switch from ILP Fund to Life Fund.",
+        "Product switch refers to lapsing one's policy to buy from another insurer and fundswitching means to switch from ILPs sub-fund to the Participating fund of the insurer."
+      ],
+      "correct_answer_letter": "A",
+      "correct_answer": "Product switch is to replace current policy with a new one, whereas fund switch applies to ILP Policies which allows policy owner to switch from one fund to another."
+    },
+    {
+      "question_number": 45,
+      "question": "For Anticipated Endowment Insurance Policy ___________.",
+      "reference": "C4/4.11",
+      "options": [
+        "bonus will be calculated based on cash payments.",
+        "death benefit is affected by cash payments.",
+        "cash payments will be the sum assured less bonus payments payout.",
+        "cash payments can be left with the insurer to accumulate interest."
+      ],
+      "correct_answer_letter": "D",
+      "correct_answer": "cash payments can be left with the insurer to accumulate interest."
+    },
+    {
+      "question_number": 46,
+      "question": "Mary has a limited budget for a policy. She would like the policy to offer life protection at the same time as comprehensive as possible. Which is the most suitable for her?",
+      "reference": "C4/3.1, C5/1.1",
+      "options": [
+        "Renewable Term Insurance Policy.",
+        "Whole Life Insurance Policy.",
+        "Investment Linked Insurance Policy with Riders.",
+        "Whole Life Insurance Policy with Riders."
+      ],
+      "correct_answer_letter": "D",
+      "correct_answer": "Whole Life Insurance Policy with Riders."
+    },
+    {
+      "question_number": 47,
+      "question": "Mr. Tan bought a joint and survivor annuity for himself and his wife. The payout will start when _______________.",
+      "reference": "C10/4.20",
+      "options": [
+        "both dies.",
+        "both survives after one annuity period.",
+        "both survives and continues until both dies.",
+        "both survives until one die."
+      ],
+      "correct_answer_letter": "C",
+      "correct_answer": "both survives and continues until both dies."
+    },
+    {
+      "question_number": 48,
+      "question": "Santa is concerned with receiving consistent retirement fund yearly that can hedge against inflation. What is the most suitable for Santa?",
+      "reference": "C10/4.23",
+      "options": [
+        "Participating Annuities.",
+        "Variable Annuity.",
+        "Increasing Rate Annuity.",
+        "Investment-linked Annuity Policy."
+      ],
+      "correct_answer_letter": "C",
+      "correct_answer": "Increasing Rate Annuity."
+    },
+    {
+      "question_number": 49,
+      "question": "As a contract is an agreement, there must be ______________ agreement between parties to the contract.",
+      "reference": "C14/1.4",
+      "options": [
+        "valid",
+        "mutual",
+        "legal",
+        "intentional"
+      ],
+      "correct_answer_letter": "B",
+      "correct_answer": "mutual"
+    },
+    {
+      "question_number": 50,
+      "question": "Which of the following clause would benefit the insured more than the insurer?",
+      "reference": "C14/8.22",
+      "options": [
+        "Principle of Utmost Good Faith.",
+        "Incontestability Clause.",
+        "Basis Clause.",
+        "Suicide Clause."
+      ],
+      "correct_answer_letter": "B",
+      "correct_answer": "Incontestability Clause."
+    },
+    {
+      "question_number": 51,
+      "question": "Reserves for future bonuses are ____________, to be allocated yearly in the future throughout the entire policy duration of in-force participating policies.",
+      "reference": "C6/3.31",
+      "options": [
+        "not allowed.",
+        "allowed for annual bonuses.",
+        "allowed for terminal bonuses.",
+        "allowed for both annual and terminal bonuses."
+      ],
+      "correct_answer_letter": "D",
+      "correct_answer": "allowed for both annual and terminal bonuses."
+    },
+    {
+      "question_number": 52,
+      "question": "At the Point-Of-Sale Disclosure, Product Summary is meant to help the consumer understand the practical aspects of the high-level concepts mentioned in the consumer guide. Which of the following is NOT an example of Company Specific Information found in the Product Summary?",
+      "reference": "C6/4.7",
+      "options": [
+        "Smoothing of bonuses.",
+        "Fees and charges.",
+        "Free Look Period.",
+        "None of the above."
+      ],
+      "correct_answer_letter": "D",
+      "correct_answer": "None of the above."
+    },
+    {
+      "question_number": 53,
+      "question": "Insurer must include in the Internal Governance Policy (IGB) the items as specified in Notice No: MAS 302, which is available from the MAS website. The insurer must ensure that the IGB is approved by its _______________.",
+      "reference": "C6/6.4",
+      "options": [
+        "Risk Officer.",
+        "Actuaries.",
+        "Chief Executive Officer.",
+        "Board of Directors."
+      ],
+      "correct_answer_letter": "D",
+      "correct_answer": "Board of Directors."
+    },
+    {
+      "question_number": 54,
+      "question": "If there is any ambiguity in the policy contract between the insured and the insurer, contra proferentem rule will resolve in favour of the ___________.",
+      "reference": "C14/4.5",
+      "options": [
+        "Insurer",
+        "Insured",
+        "Beneficiary",
+        "Proper Claimant"
+      ],
+      "correct_answer_letter": "B",
+      "correct_answer": "Insured"
+    },
+    {
+      "question_number": 55,
+      "question": "Which of the following is considered common law duties of an agent?",
+      "reference": "C15/3.2(d)",
+      "options": [
+        "Not to accept bribes.",
+        "Cannot delegate his authority.",
+        "Do not put himself where duties as agent conflict with his own interest.",
+        "Act with integrity and honesty."
+      ],
+      "correct_answer_letter": "D",
+      "correct_answer": "Act with integrity and honesty."
+    },
+    {
+      "question_number": 56,
+      "question": "Under which one of the scenarios, is the intermediary considered the agent of the insured?",
+      "reference": "C15/3.6",
+      "options": [
+        "Explaining the policy terms.",
+        "Passing on a claim payment.",
+        "Collecting premium.",
+        "Advising on the cover required."
+      ],
+      "correct_answer_letter": "D",
+      "correct_answer": "Advising on the cover required."
+    },
+    {
+      "question_number": 57,
+      "question": "What did Mr. Tan buy that the insurer agrees to waive all premiums payments due on the policy if he becomes disabled from accident or sickness?",
+      "reference": "C5/1.12",
+      "options": [
+        "Waiver Of Premium Rider.",
+        "Waiver of Premium upon Total and Permanent Disability (TPD).",
+        "Waiver of Premium upon diagnosis of Critical Illnesses.",
+        "All of the above."
+      ],
+      "correct_answer_letter": "B",
+      "correct_answer": "Waiver of Premium upon Total and Permanent Disability (TPD)."
+    },
+    {
+      "question_number": 58,
+      "question": "What is/are the features of the Multiple Pay Critical Illness (CI) Plans that is/are true?",
+      "reference": "C5/1.101 -1.103",
+      "options": [
+        "Waiting period and survival period are applicable.",
+        "Allow more than one CI claim on the policy.",
+        "Pay-out depends on the severity level of the CI.",
+        "All of the above."
+      ],
+      "correct_answer_letter": "D",
+      "correct_answer": "All of the above."
+    },
+    {
+      "question_number": 59,
+      "question": "Which one of the following reports is to help the insurer detects the presence of moral and physical hazards?",
+      "reference": "C11/4.5",
+      "options": [
+        "Adviser's Report.",
+        "Financial Questionnaire Report.",
+        "Life Style Questionnaire Report.",
+        "Specialist Medical Tests."
+      ],
+      "correct_answer_letter": "A",
+      "correct_answer": "Adviser's Report."
+    },
+    {
+      "question_number": 60,
+      "question": "Lifestyle questionnaire is used for the purpose of:",
+      "reference": "C11/4.11",
+      "options": [
+        "Determining how much sum assured a person can insure.",
+        "Assessing risk exposure, like diving and parachuting.",
+        "Assessing AIDS Risk.",
+        "Assessing life style risk like smoking and drinking."
+      ],
+      "correct_answer_letter": "C",
+      "correct_answer": "Assessing AIDS Risk."
+    },
+    {
+      "question_number": 61,
+      "question": "Toby dies in a car accident at the age of 65. He has bought a policy with the following details: Whole Life :$100,000 Rider : Accidental Death Benefit of $200,000 How much should the insurer pay?",
+      "reference": "C5/1.152",
+      "options": [
+        "$100,000.",
+        "$200,000.",
+        "$300,000.",
+        "$0."
+      ],
+      "correct_answer_letter": "A",
+      "correct_answer": "$100,000."
+    },
+    {
+      "question_number": 62,
+      "question": "Company XYZ is thinking of insuring their Key Person. What kind of insurance policy is most suitable?",
+      "reference": "C4/2.8",
+      "options": [
+        "Level Term Insurance.",
+        "Increasing Term Insurance.",
+        "Renewable Term Insurance.",
+        "Decreasing Term Insurance."
+      ],
+      "correct_answer_letter": "A",
+      "correct_answer": "Level Term Insurance."
+    },
+    {
+      "question_number": 63,
+      "question": "John bought a Convertible Option in his Term Policy. Which one of the following is NOT a common restriction that the adviser must advise John on his Convertible Option?",
+      "reference": "C4/2.31",
+      "options": [
+        "Conversion is only allowed before a specified age is reached.",
+        "Conversion is only allowed during the earlier years of the policy.",
+        "Conversion is only allowed if evidence of insurability is provided.",
+        "Conversion is only allowed for a sum assured less than equal to the original sum assured."
+      ],
+      "correct_answer_letter": "C",
+      "correct_answer": "Conversion is only allowed if evidence of insurability is provided."
+    },
+    {
+      "question_number": 64,
+      "question": "Mr. Tan, a banker believes in providing for his wife's retirement fund should he dies before her. What kind of plan is most suitable?",
+      "reference": "C10/4.20",
+      "options": [
+        "The Last Survivor Life Insurance.",
+        "First –To-Die Life Insurance Policy.",
+        "Joint Life Annuity.",
+        "Joint and Last Survivor Annuity."
+      ],
+      "correct_answer_letter": "D",
+      "correct_answer": "Joint and Last Survivor Annuity."
+    },
+    {
+      "question_number": 65,
+      "question": "Mary your client is looking to purchase an annuity; however, she is not sure how the product works. As her representative which one of the following is not true but important that you must you let her know?",
+      "reference": "C10/5.2",
+      "options": [
+        "Weak at mitigating the effect of inflation in the long term.",
+        "Cannot be used to provide for major illness.",
+        "No attaching benefit rider.",
+        "Should be purchased before provision for premature death is in place."
+      ],
+      "correct_answer_letter": "D",
+      "correct_answer": "Should be purchased before provision for premature death is in place."
+    },
+    {
+      "question_number": 66,
+      "question": "Which of the following is/are most true of the Doctrine of Waiver?",
+      "reference": "C14/5.2",
+      "options": [
+        "It is the intentional & voluntary relinquishment (giving up, forgoing) of a known right.",
+        "It can be based on an express waiver, such as written or oral statement that specifically relinquishes a right.",
+        "It can be based on an implied waiver, such as by misleading conduct.",
+        "All of the above."
+      ],
+      "correct_answer_letter": "D",
+      "correct_answer": "All of the above."
+    },
+    {
+      "question_number": 67,
+      "question": "What are attached to the policy to make up the Entire Contract?",
+      "reference": "C14/8.8",
+      "options": [
+        "Proposal form, policy contract, endorsements.",
+        "Proposal form, policy contract, general provisions.",
+        "Proposal form, policy contract, payment of premium.",
+        "Proposal form, policy contract, incontestability clause."
+      ],
+      "correct_answer_letter": "A",
+      "correct_answer": "Proposal form, policy contract, endorsements."
+    },
+    {
+      "question_number": 68,
+      "question": "A man bought a policy, payable monthly. After paying for 6 months, he died. How much should the insurer pay under this policy?",
+      "reference": "C14/8.13",
+      "options": [
+        "The sum assured.",
+        "The sum assured less unpaid premium payable for a full policy year.",
+        "The sum assured plus refund of premium paid for a full policy year.",
+        "Nothing."
+      ],
+      "correct_answer_letter": "B",
+      "correct_answer": "The sum assured less unpaid premium payable for a full policy year."
+    },
+    {
+      "question_number": 69,
+      "question": "It is compulsory for a Singapore Citizen or Permanent Resident, who is self-employed, and earns a yearly net trade income of more than ________ to make Medisave contributions.",
+      "reference": "C16/4.26",
+      "options": [
+        "S$5,000",
+        "S$6,000",
+        "S$8,000",
+        "S$10,000"
+      ],
+      "correct_answer_letter": "B",
+      "correct_answer": "S$6,000"
+    },
+    {
+      "question_number": 70,
+      "question": "The Matched Retirement Savings Scheme (MRSS) was launched in to help senior Singapore Citizens who have not reached the current Basic Retirement Sum, to build their retirement savings. From 2021 to 2025, the Government will match every dollar of cash top-up made to eligible members' Retirement Accounts, up to an annual cap of ______.",
+      "reference": "C16/4.46",
+      "options": [
+        "$500",
+        "$600",
+        "$700",
+        "$900"
+      ],
+      "correct_answer_letter": "B",
+      "correct_answer": "$600"
+    },
+    {
+      "question_number": 71,
+      "question": "Joseph has just lost his original policy bought with an insurer. He would like to apply for a duplicate policy. Which of the following is NOT true regarding issuing a duplicate policy?",
+      "reference": "C12/8.2",
+      "options": [
+        "A copy of the police report if the policy has been stolen.",
+        "A statutory declaration that the policy has not been assigned to any person.",
+        "To indemnify the insurer against any loss arising from the issuance of the duplicate policy.",
+        "Need not return the original policy if found, subsequent to the issue of the duplicate Policy."
+      ],
+      "correct_answer_letter": "D",
+      "correct_answer": "Need not return the original policy if found, subsequent to the issue of the duplicate Policy."
+    },
+    {
+      "question_number": 72,
+      "question": "Under Statutory Provisions on assignment of policy, can Mr. Tan assign his policy to a minor?",
+      "reference": "C12/9.14",
+      "options": [
+        "Yes.",
+        "No.",
+        "Yes, but minor cannot exercise his rights freely until age 18.",
+        "Yes, and minor can re-assign the policy."
+      ],
+      "correct_answer_letter": "C",
+      "correct_answer": "Yes, but minor cannot exercise his rights freely until age 18."
+    },
+    {
+      "question_number": 73,
+      "question": "Under the Supplementary Retirement Scheme (SRS), a foreigner (who is not a Singapore permanent resident) will receive tax concessions for withdrawals from their SRS accounts if the withdrawal is made by a foreigner who has maintained his SRS account for at least 10 years from the date of his first contribution, subject to a withholding tax at the prevailing non- resident tax rate of ______ at the point of withdrawal.",
+      "reference": "C16/7.1(4nd bullet pt)",
+      "options": [
+        "15%",
+        "20%",
+        "22%",
+        "25%"
+      ],
+      "correct_answer_letter": "C",
+      "correct_answer": "22%"
+    },
+    {
+      "question_number": 74,
+      "question": "Which is NOT true of a Trust Nomination under the new Nomination of Beneficiaries (NOB) Framework?",
+      "reference": "C17/8.15 & table 17.2",
+      "options": [
+        "Policy owner can name himself as trustee.",
+        "A Trustee must be at least age 18.",
+        "When a nominee dies before the policy owner, his share of the policy proceeds will go to the policy owner.",
+        "A Trust Nomination can be revoked and a new trust nomination or revocable nomination can be made over the policy."
+      ],
+      "correct_answer_letter": "C",
+      "correct_answer": "When a nominee dies before the policy owner, his share of the policy proceeds will go to the policy owner."
+    },
+    {
+      "question_number": 75,
+      "question": "Jenny's premium for her life policy was due on 1 Jan 2010. She did not receive any premium notices from the insurer. By the time she realized and paid the premium it was already 28 Feb 2010. What is likely to happen?",
+      "reference": "C.14/8.15(ii)",
+      "options": [
+        "She needs to pay interest on overdue premium calculated from premium due date.",
+        "She needs to pay interest on overdue premium calculated from end of grace period.",
+        "She needs not pay interest; only premium due as insurer did not send her any notification to pay.",
+        "She needs not pay any interest as it is still within the grace period."
+      ],
+      "correct_answer_letter": "A",
+      "correct_answer": "She needs to pay interest on overdue premium calculated from premium due date."
+    },
+    {
+      "question_number": 76,
+      "question": "Your client stated that he is 30 years old instead of 35 years old in the proposal form. What will the insurer do?",
+      "reference": "C14/8.17",
+      "options": [
+        "Ask client to pay more premium.",
+        "Refund excess premium paid without interest.",
+        "Reduce sum assured.",
+        "Increase sum assured."
+      ],
+      "correct_answer_letter": "C",
+      "correct_answer": "Reduce sum assured."
+    },
+    {
+      "question_number": 77,
+      "question": "For most Investment-Linked Life Insurance Policies, unit prices are computed based on forward pricing. What is forward pricing? It means number of units that are purchased from the underlying investment sub-funds shall be determined by reference to:",
+      "reference": "C7/13.3",
+      "options": [
+        "offer price established on the next valuation date.",
+        "offer price at the last valuation date.",
+        "offer price at the point of purchase.",
+        "offer price after taking into consideration the bid-offer spread."
+      ],
+      "correct_answer_letter": "A",
+      "correct_answer": "offer price established on the next valuation date."
+    },
+    {
+      "question_number": 78,
+      "question": "Which of the following fees and charges is a one-off charge imposed by the insurer for the sale of an investment–linked Life Insurance Policy?",
+      "reference": "C7/16.4",
+      "options": [
+        "Bid-offer spread.",
+        "Insurance charges.",
+        "Premium holiday charges.",
+        "Sub-fund management fees."
+      ],
+      "correct_answer_letter": "A",
+      "correct_answer": "Bid-offer spread."
+    },
+    {
+      "question_number": 79,
+      "question": "In Insurance Contracts, the Principle on Duty of Disclosure applies to ________________.",
+      "reference": "C1/13.2, &13.13",
+      "options": [
+        "Insured",
+        "Insurer",
+        "Insured and Insurer",
+        "Insured, Insurer and the agent"
+      ],
+      "correct_answer_letter": "C",
+      "correct_answer": "Insured and Insurer"
+    },
+    {
+      "question_number": 80,
+      "question": "Which of one the following statements on \"Insurable Interest\" is false?",
+      "reference": "C1/14.2, 14.3",
+      "options": [
+        "Certain family relationships are assumed by law to create insurable interest.",
+        "An insurable interest is not presumed when the policy owner is more distantly related to the life insured.",
+        "The policy owner must have an insurable interest in the life that is insured.",
+        "The policy owner is likely to benefit if the insured dies, as he suffers some financial loss."
+      ],
+      "correct_answer_letter": "D",
+      "correct_answer": "The policy owner is likely to benefit if the insured dies, as he suffers some financial loss."
+    },
+    {
+      "question_number": 81,
+      "question": "Which kind of policy, insurable interest needs to be proven at the time of loss?",
+      "reference": "C1/14.12",
+      "options": [
+        "Whole Life Policy.",
+        "Term Policy.",
+        "Key Person Insurance.",
+        "Travel Insurance."
+      ],
+      "correct_answer_letter": "D",
+      "correct_answer": "Travel Insurance."
+    },
+    {
+      "question_number": 82,
+      "question": "On 1 Sept 2009, the Insurance Act was revised to allow trustees and beneficiaries of a trust to purchase policies on the life of the settlor. Which of the conditions need to be met for it to be valid? The life insured must be the _______.",
+      "reference": "C1/14.20(1)",
+      "options": [
+        "Applicant",
+        "Settlor",
+        "Nominees",
+        "Trustees"
+      ],
+      "correct_answer_letter": "B",
+      "correct_answer": "Settlor"
+    },
+    {
+      "question_number": 83,
+      "question": "Under which situation is the contract void?",
+      "reference": "C1/14.21",
+      "options": [
+        "Husband bought a policy on wife's life.",
+        "Wife bought a policy on son's life.",
+        "Trustees of a trust to purchase policy on life of the settlor.",
+        "Debtor's on creditor's life."
+      ],
+      "correct_answer_letter": "D",
+      "correct_answer": "Debtor's on creditor's life."
+    },
+    {
+      "question_number": 84,
+      "question": "Which one of the following premium payment methods is the least common in Singapore?",
+      "reference": "C12/2.22",
+      "options": [
+        "Cheque.",
+        "Banker's order.",
+        "Giro deduction.",
+        "Salary or Payroll Scheme."
+      ],
+      "correct_answer_letter": "D",
+      "correct_answer": "Salary or Payroll Scheme."
+    },
+    {
+      "question_number": 85,
+      "question": "Under CPF Investment Scheme (CPFIS), if you want to buy a policy using your savings in the Ordinary Account, you need to first open an account with _____________.",
+      "reference": "C12/2.23",
+      "options": [
+        "Insurer approved agent banks",
+        "Insured's own bank",
+        "CPF approved agent banks",
+        "Any bank under MAS Act"
+      ],
+      "correct_answer_letter": "C",
+      "correct_answer": "CPF approved agent banks"
+    },
+    {
+      "question_number": 86,
+      "question": "As a rule of thumb, how much Critical Illness coverage should a person have to provide enough funds equivalent to at least _________ years of insured's income, after considering all debts and other liabilities.",
+      "reference": "C5/1.116 – 1.117",
+      "options": [
+        "3",
+        "4",
+        "5",
+        "6"
+      ],
+      "correct_answer_letter": "C",
+      "correct_answer": "5"
+    },
+    {
+      "question_number": 87,
+      "question": "Susan bought a $100,000 Whole Life Policy with a Hospital Cash (Income) Benefit rider of $200 per day. Six months later Susan was hospitalised for 4 days with actual charges amounting to $100 per day. How much can she claim from the Insurer?",
+      "reference": "C5/1.158",
+      "options": [
+        "$400.",
+        "$800.",
+        "$100,000.",
+        "$ 0."
+      ],
+      "correct_answer_letter": "B",
+      "correct_answer": "$800."
+    },
+    {
+      "question_number": 88,
+      "question": "What is the main advantage of a Group Insurance Policy issued as voluntary plan to the employer?",
+      "reference": "C3/6.5",
+      "options": [
+        "It gives the participating employees some control over the plan.",
+        "Employees obtain coverage at a lower premium rate as compared to that buying it individually.",
+        "Employer retains greater control in the benefit structures and coverage provisions.",
+        "Participating employees assume part of the costs of the benefits provided under the plan."
+      ],
+      "correct_answer_letter": "D",
+      "correct_answer": "Participating employees assume part of the costs of the benefits provided under the plan."
+    },
+    {
+      "question_number": 89,
+      "question": "Miss Tan bought a term insurance policy with a convertible option. This option gives Miss Tan the right to change her term insurance policy to:",
+      "reference": "C4/2.31",
+      "options": [
+        "Permanent Policy of the same amount.",
+        "Paid Up Policy.",
+        "Extended Term Policy.",
+        "Endowment Policy of any amount."
+      ],
+      "correct_answer_letter": "A",
+      "correct_answer": "Permanent Policy of the same amount."
+    },
+    {
+      "question_number": 90,
+      "question": "Under what situation(s) is/are Non-forfeiture Option not available to Mr. Tan your client?",
+      "reference": "C4/Appendix 4A (7)",
+      "options": [
+        "A Term Insurance Policy of 10 years.",
+        "An Endowment Insurance Policy bought a year ago.",
+        "A Whole Life Insurance Policy paid for 2 years already.",
+        "All of the above"
+      ],
+      "correct_answer_letter": "D",
+      "correct_answer": "All of the above"
+    },
+    {
+      "question_number": 91,
+      "question": "If all the nominees of a Revocable Nomination die, what will happen to the nomination?",
+      "reference": "C17/9.11",
+      "options": [
+        "Revoked.",
+        "Cannot be revoked.",
+        "The share of the policy proceeds will go to the deceased nominee's estate.",
+        "Deceased nominees' share will be added to the surviving nominees' share of the death benefits."
+      ],
+      "correct_answer_letter": "A",
+      "correct_answer": "Revoked."
+    },
+    {
+      "question_number": 92,
+      "question": "Which is Not True of the Intestate Succession Act?",
+      "reference": "C17/15.3 &15.4",
+      "options": [
+        "Provides for transfer of property.",
+        "It spells out the rules for distributing the deceased's property to his spouse, children and relatives.",
+        "The deceased could vary the proportion of the distribution to certain relatives.",
+        "It could delay the distribution of his estate to the beneficiary."
+      ],
+      "correct_answer_letter": "C",
+      "correct_answer": "The deceased could vary the proportion of the distribution to certain relatives."
+    },
+    {
+      "question_number": 93,
+      "question": "Johnathan died, leaving behind his wife, a child and 1 parent. How will his estate be distributed according to the Intestate Succession Act, in the order of wife _______; child ; and parent_______?",
+      "reference": "C17/15.5",
+      "options": [
+        "50%; 25%; 25%",
+        "50%,50%;0",
+        "50%; 25%; 0",
+        "25%; 25%; 25%"
+      ],
+      "correct_answer_letter": "B",
+      "correct_answer": "50%,50%;0"
+    },
+    {
+      "question_number": 94,
+      "question": "Mr. Tan bought a Whole Life Policy from an insurer and he was accepted at ordinary rate by the underwriter. What does that mean?",
+      "reference": "C11/5.1",
+      "options": [
+        "He needs to pay higher premiums due to his hazardous occupation.",
+        "He needs to pay premiums as stated by the insurer to be a standard risk.",
+        "He needs to pay higher premiums as his risk is sub-standard.",
+        "He needs to pay premiums as stated at ordinary rate subject to a lien."
+      ],
+      "correct_answer_letter": "B",
+      "correct_answer": "He needs to pay premiums as stated by the insurer to be a standard risk."
+    },
+    {
+      "question_number": 95,
+      "question": "Under what situations, will an underwriter accept a case at ordinary rate subject to a lien?",
+      "reference": "C11/5.3",
+      "options": [
+        "Applicant with a specific hazard like diving.",
+        "Applicant with impairment.",
+        "Usually common for juvenile policies.",
+        "Usually for some risks that are subject to an exclusion to the cover."
+      ],
+      "correct_answer_letter": "C",
+      "correct_answer": "Usually common for juvenile policies."
+    },
+    {
+      "question_number": 96,
+      "question": "For all calculation questions in this set, use the interest table from the textbook to compute the answer, where applicable.What would be the return on gross premium of the Single Premium ILP in 5 years' time? Single premium = $58,000 Offer price at the end of 5 years = $2.70 Bid-offer spread = 5% Number of units purchased at policy inception (after deduction of all charges and fees) = 26, 391 units",
+      "reference": "C9",
+      "options": [
+        "3%",
+        "4%",
+        "5%",
+        "6%"
+      ],
+      "correct_answer_letter": "A",
+      "correct_answer": "3%"
+    },
+    {
+      "question_number": 97,
+      "question": "Ethan owns a Regular Premium Investment-linked Policy. He wants to know the total number of units he has at the end of the 8th year. Regular premium = $2,500 at the beginning of each year Fund growth = 8% Offer price at inception= $1.80 Bid price at inception = $1.73 Sum assured = Value of units or $160,000 Allocation for 4th -9th yr= 100% Annual rate of life cover = $2.00/1000Annual policy fee = $50 Number of units at the end of the 7th year = 5,000 unitsAll charges are deducted after the regular premium has been invested into the account.",
+      "reference": "C9",
+      "options": [
+        "3,196.69 units",
+        "5,969.69 units",
+        "5,696.69 units",
+        "5,600 units"
+      ],
+      "correct_answer_letter": "C",
+      "correct_answer": "5,696.69 units"
+    },
+    {
+      "question_number": 98,
+      "question": "How many units can be purchased by the single premium?",
+      "reference": "C9",
+      "options": [
+        "33,396.55 units",
+        "33,772.41 units",
+        "32,686.21 units",
+        "32,582.76 units"
+      ],
+      "correct_answer_letter": "A",
+      "correct_answer": "33,396.55 units",
+      "shared_passage": "Information to be used for Q98 and 99 Single premium = $100,000 Offer price = $2.90 Bid price = $2.80 Bid-offer spread = remains the same throughout Policy Fee = $150 Admin and mortality charges = 3% of single premium Top up fee = $60 plus 2% of top-up premium Assume that the unit price grows at a constant rate of 9% per annum. Charges and fee are deducted before the single premium is used to purchase units."
+    },
+    {
+      "question_number": 99,
+      "question": "Assuming that there is no movement in prices, how much would the policy-owner lose if he wishes to cash in the policy?",
+      "reference": "C9",
+      "options": [
+        "$6,489.66",
+        "$5,437.25",
+        "$3,339.65",
+        "$3,150"
+      ],
+      "correct_answer_letter": "A",
+      "correct_answer": "$6,489.66",
+      "shared_passage": "Information to be used for Q98 and 99 Single premium = $100,000 Offer price = $2.90 Bid price = $2.80 Bid-offer spread = remains the same throughout Policy Fee = $150 Admin and mortality charges = 3% of single premium Top up fee = $60 plus 2% of top-up premium Assume that the unit price grows at a constant rate of 9% per annum. Charges and fee are deducted before the single premium is used to purchase units."
+    },
+    {
+      "question_number": 100,
+      "question": "Michael has regular premium ILP that's pays a death benefit, which is the higher value of units or $80,000. If the annual rate of cost of life cover is $1.00 per thousand. What is the monthly mortality cost if there are 2,000 units in the account? The Bid and Offer price at that time are $1.52 and $1.60 respectively.",
+      "reference": "",
+      "options": [
+        "$3.91/ month",
+        "$6.41/month",
+        "$6.66/month",
+        "$7/month"
+      ],
+      "correct_answer_letter": "B",
+      "correct_answer": "$6.41/month"
+    }
+  ]
+}

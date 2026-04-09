@@ -1,0 +1,507 @@
+{
+  "quiz_title": "CMFAS M9 Mock Exam 1",
+  "version": "M9 7th Edition V1.1 Mock Exam 1",
+  "total_questions": 100,
+  "answers": [
+    {
+      "question_number": 1,
+      "correct_option_letter": "D",
+      "correct_answer": "They can make both trust and revocable nominations over their life insurance policies with death benefits. However revocable nominations are subject to \"Faraid\"."
+    },
+    {
+      "question_number": 2,
+      "correct_option_letter": "D",
+      "correct_answer": "Hospital and Surgical Policies"
+    },
+    {
+      "question_number": 3,
+      "correct_option_letter": "B",
+      "correct_answer": "counter offer"
+    },
+    {
+      "question_number": 4,
+      "correct_option_letter": "C",
+      "correct_answer": "Protected from creditors."
+    },
+    {
+      "question_number": 5,
+      "correct_option_letter": "A",
+      "correct_answer": "Her riders will all be terminated."
+    },
+    {
+      "question_number": 6,
+      "correct_option_letter": "B",
+      "correct_answer": "Waiver of Premium Rider."
+    },
+    {
+      "question_number": 7,
+      "correct_option_letter": "A",
+      "correct_answer": "It is an internet portal to assist people in the purchase of a policy."
+    },
+    {
+      "question_number": 8,
+      "correct_option_letter": "C",
+      "correct_answer": "Up to S$150,000 per claim."
+    },
+    {
+      "question_number": 9,
+      "correct_option_letter": "B",
+      "correct_answer": "payout period"
+    },
+    {
+      "question_number": 10,
+      "correct_option_letter": "B",
+      "correct_answer": "One month after purchase."
+    },
+    {
+      "question_number": 11,
+      "correct_option_letter": "D",
+      "correct_answer": "All of the above."
+    },
+    {
+      "question_number": 12,
+      "correct_option_letter": "B",
+      "correct_answer": "$9m."
+    },
+    {
+      "question_number": 13,
+      "correct_option_letter": "B",
+      "correct_answer": "Managed Portfolios."
+    },
+    {
+      "question_number": 14,
+      "correct_option_letter": "B",
+      "correct_answer": "Equity Fund"
+    },
+    {
+      "question_number": 15,
+      "correct_option_letter": "A",
+      "correct_answer": "Proposal form."
+    },
+    {
+      "question_number": 16,
+      "correct_option_letter": "A",
+      "correct_answer": "To highlight the importance of disclosing accurately all facts."
+    },
+    {
+      "question_number": 17,
+      "correct_option_letter": "C",
+      "correct_answer": "Claimant."
+    },
+    {
+      "question_number": 18,
+      "correct_option_letter": "D",
+      "correct_answer": "Police Report."
+    },
+    {
+      "question_number": 19,
+      "correct_option_letter": "A",
+      "correct_answer": "Agent arranging to collect other than the first premium and insurer accepts it despite their prohibition."
+    },
+    {
+      "question_number": 20,
+      "correct_option_letter": "A",
+      "correct_answer": "the date of the agent's act and not the date of the insurer's ratification."
+    },
+    {
+      "question_number": 21,
+      "correct_option_letter": "C",
+      "correct_answer": "are a statutory trust, created automatically in favour of his spouse and/or children as beneficiaries."
+    },
+    {
+      "question_number": 22,
+      "correct_option_letter": "B",
+      "correct_answer": "her beneficiary remains the same."
+    },
+    {
+      "question_number": 23,
+      "correct_option_letter": "C",
+      "correct_answer": "Providing false information on the application for insurance."
+    },
+    {
+      "question_number": 24,
+      "correct_option_letter": "A",
+      "correct_answer": "Term Insurance."
+    },
+    {
+      "question_number": 25,
+      "correct_option_letter": "B",
+      "correct_answer": "Mortality Rate."
+    },
+    {
+      "question_number": 26,
+      "correct_option_letter": "C",
+      "correct_answer": "Rate of Mortality/Morbidity - investment income + expenses = Gross Premium."
+    },
+    {
+      "question_number": 27,
+      "correct_option_letter": "D",
+      "correct_answer": "All of the above."
+    },
+    {
+      "question_number": 28,
+      "correct_option_letter": "C",
+      "correct_answer": "Reversionary Bonus."
+    },
+    {
+      "question_number": 29,
+      "correct_option_letter": "D",
+      "correct_answer": "They are reviewed half yearly."
+    },
+    {
+      "question_number": 30,
+      "correct_option_letter": "A",
+      "correct_answer": "Mr. Sammy dies"
+    },
+    {
+      "question_number": 31,
+      "correct_option_letter": "B",
+      "correct_answer": "Letter of Administration."
+    },
+    {
+      "question_number": 32,
+      "correct_option_letter": "C",
+      "correct_answer": "Beneficiary."
+    },
+    {
+      "question_number": 33,
+      "correct_option_letter": "A",
+      "correct_answer": "First-to-die Life Insurance Policy"
+    },
+    {
+      "question_number": 34,
+      "correct_option_letter": "C",
+      "correct_answer": "Employees' gender and age."
+    },
+    {
+      "question_number": 35,
+      "correct_option_letter": "B",
+      "correct_answer": "Payor Benefit Rider."
+    },
+    {
+      "question_number": 36,
+      "correct_option_letter": "A",
+      "correct_answer": "$300."
+    },
+    {
+      "question_number": 37,
+      "correct_option_letter": "C",
+      "correct_answer": "Single and Recurrent Single Premium."
+    },
+    {
+      "question_number": 38,
+      "correct_option_letter": "C",
+      "correct_answer": "The policy form part of Ben's bankruptcy estate to be distributed among his creditors."
+    },
+    {
+      "question_number": 39,
+      "correct_option_letter": "C",
+      "correct_answer": "Legacies."
+    },
+    {
+      "question_number": 40,
+      "correct_option_letter": "B",
+      "correct_answer": "$5,000"
+    },
+    {
+      "question_number": 41,
+      "correct_option_letter": "A",
+      "correct_answer": "Critical Illness Insurance."
+    },
+    {
+      "question_number": 42,
+      "correct_option_letter": "D",
+      "correct_answer": "Blood Profile Analysis."
+    },
+    {
+      "question_number": 43,
+      "correct_option_letter": "D",
+      "correct_answer": "All of the above."
+    },
+    {
+      "question_number": 44,
+      "correct_option_letter": "A",
+      "correct_answer": "Product switch is to replace current policy with a new one, whereas fund switch applies to ILP Policies which allows policy owner to switch from one fund to another."
+    },
+    {
+      "question_number": 45,
+      "correct_option_letter": "D",
+      "correct_answer": "cash payments can be left with the insurer to accumulate interest."
+    },
+    {
+      "question_number": 46,
+      "correct_option_letter": "D",
+      "correct_answer": "Whole Life Insurance Policy with Riders."
+    },
+    {
+      "question_number": 47,
+      "correct_option_letter": "C",
+      "correct_answer": "both survives and continues until both dies."
+    },
+    {
+      "question_number": 48,
+      "correct_option_letter": "C",
+      "correct_answer": "Increasing Rate Annuity."
+    },
+    {
+      "question_number": 49,
+      "correct_option_letter": "B",
+      "correct_answer": "mutual"
+    },
+    {
+      "question_number": 50,
+      "correct_option_letter": "B",
+      "correct_answer": "Incontestability Clause."
+    },
+    {
+      "question_number": 51,
+      "correct_option_letter": "D",
+      "correct_answer": "allowed for both annual and terminal bonuses."
+    },
+    {
+      "question_number": 52,
+      "correct_option_letter": "D",
+      "correct_answer": "None of the above."
+    },
+    {
+      "question_number": 53,
+      "correct_option_letter": "D",
+      "correct_answer": "Board of Directors."
+    },
+    {
+      "question_number": 54,
+      "correct_option_letter": "B",
+      "correct_answer": "Insured"
+    },
+    {
+      "question_number": 55,
+      "correct_option_letter": "D",
+      "correct_answer": "Act with integrity and honesty."
+    },
+    {
+      "question_number": 56,
+      "correct_option_letter": "D",
+      "correct_answer": "Advising on the cover required."
+    },
+    {
+      "question_number": 57,
+      "correct_option_letter": "B",
+      "correct_answer": "Waiver of Premium upon Total and Permanent Disability (TPD)."
+    },
+    {
+      "question_number": 58,
+      "correct_option_letter": "D",
+      "correct_answer": "All of the above."
+    },
+    {
+      "question_number": 59,
+      "correct_option_letter": "A",
+      "correct_answer": "Adviser's Report."
+    },
+    {
+      "question_number": 60,
+      "correct_option_letter": "C",
+      "correct_answer": "Assessing AIDS Risk."
+    },
+    {
+      "question_number": 61,
+      "correct_option_letter": "A",
+      "correct_answer": "$100,000."
+    },
+    {
+      "question_number": 62,
+      "correct_option_letter": "A",
+      "correct_answer": "Level Term Insurance."
+    },
+    {
+      "question_number": 63,
+      "correct_option_letter": "C",
+      "correct_answer": "Conversion is only allowed if evidence of insurability is provided."
+    },
+    {
+      "question_number": 64,
+      "correct_option_letter": "D",
+      "correct_answer": "Joint and Last Survivor Annuity."
+    },
+    {
+      "question_number": 65,
+      "correct_option_letter": "D",
+      "correct_answer": "Should be purchased before provision for premature death is in place."
+    },
+    {
+      "question_number": 66,
+      "correct_option_letter": "D",
+      "correct_answer": "All of the above."
+    },
+    {
+      "question_number": 67,
+      "correct_option_letter": "A",
+      "correct_answer": "Proposal form, policy contract, endorsements."
+    },
+    {
+      "question_number": 68,
+      "correct_option_letter": "B",
+      "correct_answer": "The sum assured less unpaid premium payable for a full policy year."
+    },
+    {
+      "question_number": 69,
+      "correct_option_letter": "B",
+      "correct_answer": "S$6,000"
+    },
+    {
+      "question_number": 70,
+      "correct_option_letter": "B",
+      "correct_answer": "$600"
+    },
+    {
+      "question_number": 71,
+      "correct_option_letter": "D",
+      "correct_answer": "Need not return the original policy if found, subsequent to the issue of the duplicate Policy."
+    },
+    {
+      "question_number": 72,
+      "correct_option_letter": "C",
+      "correct_answer": "Yes, but minor cannot exercise his rights freely until age 18."
+    },
+    {
+      "question_number": 73,
+      "correct_option_letter": "C",
+      "correct_answer": "22%"
+    },
+    {
+      "question_number": 74,
+      "correct_option_letter": "C",
+      "correct_answer": "When a nominee dies before the policy owner, his share of the policy proceeds will go to the policy owner."
+    },
+    {
+      "question_number": 75,
+      "correct_option_letter": "A",
+      "correct_answer": "She needs to pay interest on overdue premium calculated from premium due date."
+    },
+    {
+      "question_number": 76,
+      "correct_option_letter": "C",
+      "correct_answer": "Reduce sum assured."
+    },
+    {
+      "question_number": 77,
+      "correct_option_letter": "A",
+      "correct_answer": "offer price established on the next valuation date."
+    },
+    {
+      "question_number": 78,
+      "correct_option_letter": "A",
+      "correct_answer": "Bid-offer spread."
+    },
+    {
+      "question_number": 79,
+      "correct_option_letter": "C",
+      "correct_answer": "Insured and Insurer"
+    },
+    {
+      "question_number": 80,
+      "correct_option_letter": "D",
+      "correct_answer": "The policy owner is likely to benefit if the insured dies, as he suffers some financial loss."
+    },
+    {
+      "question_number": 81,
+      "correct_option_letter": "D",
+      "correct_answer": "Travel Insurance."
+    },
+    {
+      "question_number": 82,
+      "correct_option_letter": "B",
+      "correct_answer": "Settlor"
+    },
+    {
+      "question_number": 83,
+      "correct_option_letter": "D",
+      "correct_answer": "Debtor's on creditor's life."
+    },
+    {
+      "question_number": 84,
+      "correct_option_letter": "D",
+      "correct_answer": "Salary or Payroll Scheme."
+    },
+    {
+      "question_number": 85,
+      "correct_option_letter": "C",
+      "correct_answer": "CPF approved agent banks"
+    },
+    {
+      "question_number": 86,
+      "correct_option_letter": "C",
+      "correct_answer": "5"
+    },
+    {
+      "question_number": 87,
+      "correct_option_letter": "B",
+      "correct_answer": "$800."
+    },
+    {
+      "question_number": 88,
+      "correct_option_letter": "D",
+      "correct_answer": "Participating employees assume part of the costs of the benefits provided under the plan."
+    },
+    {
+      "question_number": 89,
+      "correct_option_letter": "A",
+      "correct_answer": "Permanent Policy of the same amount."
+    },
+    {
+      "question_number": 90,
+      "correct_option_letter": "D",
+      "correct_answer": "All of the above"
+    },
+    {
+      "question_number": 91,
+      "correct_option_letter": "A",
+      "correct_answer": "Revoked."
+    },
+    {
+      "question_number": 92,
+      "correct_option_letter": "C",
+      "correct_answer": "The deceased could vary the proportion of the distribution to certain relatives."
+    },
+    {
+      "question_number": 93,
+      "correct_option_letter": "B",
+      "correct_answer": "50%,50%;0"
+    },
+    {
+      "question_number": 94,
+      "correct_option_letter": "B",
+      "correct_answer": "He needs to pay premiums as stated by the insurer to be a standard risk."
+    },
+    {
+      "question_number": 95,
+      "correct_option_letter": "C",
+      "correct_answer": "Usually common for juvenile policies."
+    },
+    {
+      "question_number": 96,
+      "correct_option_letter": "A",
+      "correct_answer": "3%"
+    },
+    {
+      "question_number": 97,
+      "correct_option_letter": "C",
+      "correct_answer": "5,696.69 units"
+    },
+    {
+      "question_number": 98,
+      "correct_option_letter": "A",
+      "correct_answer": "33,396.55 units"
+    },
+    {
+      "question_number": 99,
+      "correct_option_letter": "A",
+      "correct_answer": "$6,489.66"
+    },
+    {
+      "question_number": 100,
+      "correct_option_letter": "B",
+      "correct_answer": "$6.41/month"
+    }
+  ]
+}

@@ -12,11 +12,11 @@ const MODULES = [
     available: true,
   },
   {
-    code: "M5",
+    code: "RES5",
     title: "Rules & Regulations for Financial Advisory Services",
     description:
       "Financial advisory regulations, licensing requirements, and compliance guidelines.",
-    href: "/emock/m5",
+    href: "/emock/res5",
     available: false,
   },
   {

@@ -52,7 +52,7 @@ export default async function QuizLandingPage({
       </div>
 
       <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-8 text-sm text-amber-700">
-        Prepared for {quiz.prepared_for}. For internal training use only.
+        Prepared by Lyfe. For internal training use only.
       </div>
 
       <Link

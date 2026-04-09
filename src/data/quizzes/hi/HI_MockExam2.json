@@ -1,0 +1,677 @@
+{
+  "quiz_title": "HEALTH INSURANCE Mock Exam 2",
+  "version": "HI 8th Edition V1.2 Mock Exam 2",
+  "prepared_for": "Lyfe Financial Advisory",
+  "date": "April 2026",
+  "total_questions": 50,
+  "format": "Multiple Choice",
+  "duration": "75 minutes",
+  "passing_grade": "70% (35/50)",
+  "questions": [
+    {
+      "question_number": 1,
+      "question": "Singapore's Healthcare Philosophy manages the healthcare system based on 5 fundamental objectives through the Ministry of Health. Which of the following is true?",
+      "reference": "",
+      "options": [
+        "To promote personal responsibility for one's health and avoid over consumption of medical insurance.",
+        "To provide holistic medical services for all Singaporeans.",
+        "To rely on competition and market forces to improve service quality and raise efficiency.",
+        "To intervene directly in the health care sector, when necessary to maintain cost efficiency."
+      ],
+      "correct_answer_letter": "C",
+      "correct_answer": "To rely on competition and market forces to improve service quality and raise efficiency."
+    },
+    {
+      "question_number": 2,
+      "question": "Intermediate and Long Term Care Services (ILTC) are for those who need further care and treatment after being discharge from the hospital, who may need assistance with their activities of daily living. Which of the following type of ILTC services provided under the healthcare system in Singapore is/are not true?",
+      "reference": "",
+      "options": [
+        "Residential care services.",
+        "Centre-based services.",
+        "Palliative care services",
+        "None of the above."
+      ],
+      "correct_answer_letter": "D",
+      "correct_answer": "None of the above."
+    },
+    {
+      "question_number": 3,
+      "question": "Andrew is insured and covered by his company's Group Dental Care Insurance Policy. Should Andrew wish to claim under this policy, which of the following is TRUE?",
+      "reference": "",
+      "options": [
+        "Insured can only use insurer's panel of dentists.",
+        "Insured have to make payment first and file a claim with insurer for reimbursement if he uses his own dentists.",
+        "Insured has to make payment first whether or not he uses his own or insurer's panel of dentists.",
+        "The dental clinic will bill the insurer directly for bills incurred."
+      ],
+      "correct_answer_letter": "B",
+      "correct_answer": "Insured have to make payment first and file a claim with insurer for reimbursement if he uses his own dentists."
+    },
+    {
+      "question_number": 4,
+      "question": "Which types of Managed Healthcare Plans is the most restrictive?",
+      "reference": "",
+      "options": [
+        "Point of Service Plan.",
+        "Preferred Provider Organisation.",
+        "Health Maintenance Organisation.",
+        "Traditional Medical Expense Insurance."
+      ],
+      "correct_answer_letter": "C",
+      "correct_answer": "Health Maintenance Organisation."
+    },
+    {
+      "question_number": 5,
+      "question": "Which one of the following is not covered under Major Outpatient Treatment in a Medical Expense Insurance Policy?",
+      "reference": "",
+      "options": [
+        "Major Organ Transplant Approved Immunosuppressant Drugs.",
+        "Outpatient Radiosurgery for cancer.",
+        "Outpatient Kidney Dialysis.",
+        "None of the above."
+      ],
+      "correct_answer_letter": "D",
+      "correct_answer": "None of the above."
+    },
+    {
+      "question_number": 6,
+      "question": "Which of the following is/are true of underwriting requirements in a group insurance policy?",
+      "reference": "",
+      "options": [
+        "Proposal form from each employee.",
+        "Health Declaration Form.",
+        "Group Insurance Fact-Finding Form.",
+        "All of the above."
+      ],
+      "correct_answer_letter": "C",
+      "correct_answer": "Group Insurance Fact-Finding Form."
+    },
+    {
+      "question_number": 7,
+      "question": "If Mr. Tan is enquiring about buying a policy for himself, his wife and 2 sons. Premium is as follows:\nHimself = $500\nHis wife = $700\n1 son = $300\nAfter considering he would like to cover only himself and his wife. How much family discount did he enjoy?",
+      "reference": "",
+      "options": [
+        "$0.",
+        "$60.",
+        "$75.",
+        "$90."
+      ],
+      "correct_answer_letter": "B",
+      "correct_answer": "$60."
+    },
+    {
+      "question_number": 8,
+      "question": "Mr. Tan who is self-employed is looking to buy a Medical Expense Insurance Policy. Which of the following would be MOST suitable for him?",
+      "reference": "",
+      "options": [
+        "Policy with no deductible.",
+        "Policy with no co-insurance",
+        "Policy with no deductible and co-insurance.",
+        "Policy with both deductible and co-insurance."
+      ],
+      "correct_answer_letter": "C",
+      "correct_answer": "Policy with no deductible and co-insurance."
+    },
+    {
+      "question_number": 9,
+      "question": "Mr. Tan is currently 45 years old in the year 2020 and he was covered under Elder Shield plan. Which of the following is true that the adviser should inform him?",
+      "reference": "",
+      "options": [
+        "His current Elder Shield will not continue to protect him as it is no longer available.",
+        "He could choose to join Care Shield Life when the scheme was launched in 2021 regardless of health status.",
+        "He can enjoy participation incentives if he joins Care Shield by end 2023.",
+        "None of the above."
+      ],
+      "correct_answer_letter": "C",
+      "correct_answer": "He can enjoy participation incentives if he joins Care Shield by end 2023."
+    },
+    {
+      "question_number": 10,
+      "question": "The LIA Critical Illness Framework 2024 was the result of which one of the following to govern and comply with the provision of Critical Illness coverage by the insurers?",
+      "reference": "",
+      "options": [
+        "Monetary Authority of Singapore.",
+        "Life Insurance Association.",
+        "General Insurance Association.",
+        "All of the above."
+      ],
+      "correct_answer_letter": "D",
+      "correct_answer": "All of the above."
+    },
+    {
+      "question_number": 11,
+      "question": "Paul has purchased a Medical Expense Insurance from Lion Insurance Company with the following features:\nWaiting Period: 90 days\nMinimum Hospital Confinement Period: 72 hours\nWhich one of the following scenarios would enable him to make the claim?",
+      "reference": "",
+      "options": [
+        "His right eye was injured and was confined for 24 hours at the hospital.",
+        "He was hospitalized for high fever 15 days after inception of the policy.",
+        "He fractured his ankle 12 days after the policy inception and was hospitalised for five days subsequently.",
+        "He was diagnosed with cancer, two months after policy inception."
+      ],
+      "correct_answer_letter": "C",
+      "correct_answer": "He fractured his ankle 12 days after the policy inception and was hospitalised for five days subsequently."
+    },
+    {
+      "question_number": 12,
+      "question": "Group Insurance Policies have an \"actively-at-work\" clause, which one of the following is true in order to be eligible to be covered in the Group Insurance Policy?",
+      "reference": "",
+      "options": [
+        "An employee will be covered if he is on sick leave.",
+        "An employee will be covered if he is on annual leave.",
+        "An employee will be covered only if he is at work on the day that the insurance coverage takes effect.",
+        "All of the above."
+      ],
+      "correct_answer_letter": "C",
+      "correct_answer": "An employee will be covered only if he is at work on the day that the insurance coverage takes effect."
+    },
+    {
+      "question_number": 13,
+      "question": "Calculate the amount that Medi Shield Life will pay for a hospital bill of S$10,000, and there is no pro-ration factor involved. Given:\nDeductible is S$2,000\nCo- insurance applicable as follows:\nFirst S$5,000 -10%\nNext S$5,000 - 5%\nAbove S$10,000 - 3%",
+      "reference": "",
+      "options": [
+        "S$7,350.",
+        "S$7,450.",
+        "S$7,500.",
+        "S$7,600."
+      ],
+      "correct_answer_letter": "B",
+      "correct_answer": "S$7,450."
+    },
+    {
+      "question_number": 14,
+      "question": "What is the key difference between an Individual and Group Insurance that is most true?",
+      "reference": "",
+      "options": [
+        "Premium bought under Group Insurance is unit related.",
+        "Cost is lower because premium is age-related.",
+        "Members have a choice of plan to decide on the amount of coverage.",
+        "Individual members' health and history are evaluated."
+      ],
+      "correct_answer_letter": "A",
+      "correct_answer": "Premium bought under Group Insurance is unit related."
+    },
+    {
+      "question_number": 15,
+      "question": "Mr. Sim has requested for a Disability Income Policy with a short benefit period. Hence insurer will _____________________ .",
+      "reference": "",
+      "options": [
+        "Charge a lower premium",
+        "Charge a higher premium",
+        "Reduce the payouts",
+        "Increase the payouts"
+      ],
+      "correct_answer_letter": "A",
+      "correct_answer": "Charge a lower premium"
+    },
+    {
+      "question_number": 16,
+      "question": "The premiums will be ______, the lower the number of Activities of Daily Living, which the insured is required to be unable to perform to qualify for the benefits.",
+      "reference": "",
+      "options": [
+        "lower",
+        "higher",
+        "loaded",
+        "None of the above"
+      ],
+      "correct_answer_letter": "B",
+      "correct_answer": "higher"
+    },
+    {
+      "question_number": 17,
+      "question": "Mr. Tan is 65 years old in the year 2014, and is unable to pay his hospital bill. He can seek assistance from:",
+      "reference": "",
+      "options": [
+        "Interim Disability Programme for the Elderly (IDAPE).",
+        "Elder Shield.",
+        "Medifund.",
+        "Pioneer Generation Disability Assistance Scheme."
+      ],
+      "correct_answer_letter": "C",
+      "correct_answer": "Medifund."
+    },
+    {
+      "question_number": 18,
+      "question": "A type of Health Insurance contract that gives the insurer the right to refuse to renew on certain dates is a ______ policy.",
+      "reference": "",
+      "options": [
+        "Conditionally renewable",
+        "Annually renewable",
+        "Optionally renewable",
+        "Guaranteed renewable"
+      ],
+      "correct_answer_letter": "C",
+      "correct_answer": "Optionally renewable"
+    },
+    {
+      "question_number": 19,
+      "question": "If you know that your client has Long Term Care Insurance, you should also find out whether, ___________ .",
+      "reference": "",
+      "options": [
+        "he has other sources of disability income.",
+        "the deferred period is right for him.",
+        "the benefits payable is on a serviced-based basis.",
+        "the policy has deductible and co-insurance features."
+      ],
+      "correct_answer_letter": "C",
+      "correct_answer": "the benefits payable is on a serviced-based basis."
+    },
+    {
+      "question_number": 20,
+      "question": "The LIA issued a guidance paper on Pre-Authorization Process for Integrated Shield Plans (IPs). What is /are the benefits in having pre-authorization?",
+      "reference": "",
+      "options": [
+        "Insurers can access the medical necessity and cost of treatment.",
+        "Peace of mind to the patients.",
+        "Offers clarity to healthcare providers on types of procedures covered by insurance prior to the actual procedure.",
+        "All of the above."
+      ],
+      "correct_answer_letter": "D",
+      "correct_answer": "All of the above."
+    },
+    {
+      "question_number": 21,
+      "question": "Under the Change of Occupation provision, the insurer is permitted to change which one of the following when the insured changes to a less hazardous occupation?",
+      "reference": "",
+      "options": [
+        "Increase the maximum benefit amount.",
+        "Reduce the premium rate.",
+        "Decline the insurance coverage.",
+        "Cancel the policy."
+      ],
+      "correct_answer_letter": "B",
+      "correct_answer": "Reduce the premium rate."
+    },
+    {
+      "question_number": 22,
+      "question": "The following data is to be used for this question and Qn. 22,23,24.\nMary, a lecturer bought a Disability Income Insurance Policy, became disabled on 30/6/2018. Her details as follows:\nSalary: $8,000 per month;\nHer expenses: $3,000 per month;\nAnnual Escalation Benefit: 3%;\n6 Month Deferred Period chosen\nWhen will she received the first payment from the insurer and for how much?",
+      "reference": "",
+      "options": [
+        "1/1/2019 for $8,000.",
+        "1/1/2019 for $6,000.",
+        "31/12/2018 for $6,180.",
+        "31/12/2018 for $2,250."
+      ],
+      "correct_answer_letter": "B",
+      "correct_answer": "1/1/2019 for $6,000.",
+      "shared_passage": "The following data is to be used for this question and Qn. 22,23,24.\nMary, a lecturer bought a Disability Income Insurance Policy, became disabled on 30/6/2018. Her details as follows:\nSalary: $8,000 per month;\nHer expenses: $3,000 per month;\nAnnual Escalation Benefit: 3%;\n6 Month Deferred Period chosen\nWhen will she received the first payment from the insurer and for how much?"
+    },
+    {
+      "question_number": 23,
+      "question": "When will the escalation benefit kicked in and how much will she get?",
+      "reference": "",
+      "options": [
+        "30/6/2019 for $8,240.",
+        "31/12/2018 for $5,150.",
+        "1/2/2019 for $6,080.",
+        "1/1/2020 for $6,180."
+      ],
+      "correct_answer_letter": "D",
+      "correct_answer": "1/1/2020 for $6,180.",
+      "shared_passage": "The following data is to be used for this question and Qn. 22,23,24.\nMary, a lecturer bought a Disability Income Insurance Policy, became disabled on 30/6/2018. Her details as follows:\nSalary: $8,000 per month;\nHer expenses: $3,000 per month;\nAnnual Escalation Benefit: 3%;\n6 Month Deferred Period chosen\nWhen will she received the first payment from the insurer and for how much?"
+    },
+    {
+      "question_number": 24,
+      "question": "Mary subsequently on 1/2/2010 found a job as a tutor which pays her $2,000 a month. Calculate partial disability benefit payable on 1/2/2020.",
+      "reference": "",
+      "options": [
+        "$3,090.",
+        "$4,500.",
+        "$4,635.",
+        "$4,180. C6/4.2(h)"
+      ],
+      "correct_answer_letter": "C",
+      "correct_answer": "$4,635.",
+      "shared_passage": "The following data is to be used for this question and Qn. 22,23,24.\nMary, a lecturer bought a Disability Income Insurance Policy, became disabled on 30/6/2018. Her details as follows:\nSalary: $8,000 per month;\nHer expenses: $3,000 per month;\nAnnual Escalation Benefit: 3%;\n6 Month Deferred Period chosen\nWhen will she received the first payment from the insurer and for how much?"
+    },
+    {
+      "question_number": 25,
+      "question": "Under what situations will Critical Illness Insurance Cover Not be terminated?",
+      "reference": "",
+      "options": [
+        "Policy is converted into an Extended Term Policy.",
+        "A critical illness claim has been made.",
+        "Policy owner exercises Paid-Up Option under the non-forfeiture options.",
+        "Policy lapses due to non-payment of premium."
+      ],
+      "correct_answer_letter": "C",
+      "correct_answer": "Policy owner exercises Paid-Up Option under the non-forfeiture options."
+    },
+    {
+      "question_number": 26,
+      "question": "Mr. Tan and his family were injured while on holiday. They were covered under MEI, with a deductible of $3,000 and a co-insurance of 10%. Determine the total amount payable to Mr. Tan, given the details of the hospital bill as follows:\nMr. Tan - $15,000\nMrs. Tan - $20,000\nSon - $2,500\nDaughter – $3,200",
+      "reference": "",
+      "options": [
+        "$26,280.",
+        "$31,680.",
+        "$33,630.",
+        "$36,630."
+      ],
+      "correct_answer_letter": "A",
+      "correct_answer": "$26,280."
+    },
+    {
+      "question_number": 27,
+      "question": "100% Acceleration Dread Disease Policy is MOST suitable for clients who ____________",
+      "reference": "",
+      "options": [
+        "has dependents",
+        "has sufficient life insurance",
+        "disability income insurance",
+        "wishes to stay in A class or B1 class wards when hospitalized."
+      ],
+      "correct_answer_letter": "B",
+      "correct_answer": "has sufficient life insurance"
+    },
+    {
+      "question_number": 28,
+      "question": "Larry bought a Hospital Cash Insurance Policy on 1 Jan 2024, with a waiting period of 30 days. He was hospitalized on 28 Jan 2024. Upon the happening of which one of the following situations can he claim from the insurance company?",
+      "reference": "",
+      "options": [
+        "Kidney failure.",
+        "Miscarriage.",
+        "Hip fracture.",
+        "None of the above as he was unable to claim."
+      ],
+      "correct_answer_letter": "C",
+      "correct_answer": "Hip fracture."
+    },
+    {
+      "question_number": 29,
+      "question": "In many healthcare settings, what is used to target subsidies, so that needy patients can receive more help; lower-income patients receive more subsidies than higher-income patients?",
+      "reference": "",
+      "options": [
+        "Age",
+        "Means-test.",
+        "Income-test.",
+        "Residency-test."
+      ],
+      "correct_answer_letter": "B",
+      "correct_answer": "Means-test."
+    },
+    {
+      "question_number": 30,
+      "question": "Which one of the following is not a benefit of Managed Health Care Insurance?",
+      "reference": "",
+      "options": [
+        "Preventive Care.",
+        "Specialist Care.",
+        "Intensive Care.",
+        "Emergency Care."
+      ],
+      "correct_answer_letter": "C",
+      "correct_answer": "Intensive Care."
+    },
+    {
+      "question_number": 31,
+      "question": "Which one of the following BEST describes the Basic Healthcare Sum (BHS) of a CPF member?",
+      "reference": "",
+      "options": [
+        "The BHS is formerly known as the Medisave Minimum Sum.",
+        "Any amount above the BHS will always flow to the CPF member's Ordinary Account.",
+        "The yearly BHS adjustment will apply only to a CPF member who is below the age of 65 years.",
+        "The amount in the Medisave Account up to the BHS can be withdrawn as cash from the age of 55 years."
+      ],
+      "correct_answer_letter": "C",
+      "correct_answer": "The yearly BHS adjustment will apply only to a CPF member who is below the age of 65 years."
+    },
+    {
+      "question_number": 32,
+      "question": "If a prospective client refuses to accept an Accident and Health (A&H) product recommended by his insurance broker, but requests to buy another type of A&H product instead, the insurance broker should:",
+      "reference": "",
+      "options": [
+        "Get the client to sign a disclaimer form, before going ahead with his request.",
+        "Ignore the client's request and file a report with the insurer to whom the insurance broker is representing.",
+        "Go ahead with the client's request, but document his decision and inform him that he is responsible to ensure that the product selected is suitable.",
+        "Request the client to seek the advice of another insurance broker, to make sure that theproduct is most suitable for him."
+      ],
+      "correct_answer_letter": "C",
+      "correct_answer": "Go ahead with the client's request, but document his decision and inform him that he is responsible to ensure that the product selected is suitable."
+    },
+    {
+      "question_number": 33,
+      "question": "Which one of the following methods is fairer in determining the sum assured for group health insurance?",
+      "reference": "",
+      "options": [
+        "Employee's Salary X Performance Factor.",
+        "Employee's Salary X Standard Factor.",
+        "Employee's Salary X KPI (Key Performance Indicators) Factor.",
+        "Employee's Rank."
+      ],
+      "correct_answer_letter": "B",
+      "correct_answer": "Employee's Salary X Standard Factor."
+    },
+    {
+      "question_number": 34,
+      "question": "Melvin, a Singapore Citizen was hospitalised for an operation and he stayed in a Class A ward for 18 days, his total hospital bill amounted to $16,500. Calculate the total claimable amount under his Medi Shiled Life Policy? Given:\nPro-ration - 35%\nDeductible = $2,000\nCo-insurance applies on the following rates:\nFrom $0 - $5,000 - 10%\nFrom $5,001 to $10,000 - 5%\nMore than $10,000 - 3%",
+      "reference": "",
+      "options": [
+        "$5,775.",
+        "$5,075.",
+        "$4,776.",
+        "$4,765."
+      ],
+      "correct_answer_letter": "A",
+      "correct_answer": "$5,775."
+    },
+    {
+      "question_number": 35,
+      "question": "Which of the following best describes a Point of Service (POS) Plan?",
+      "reference": "",
+      "options": [
+        "A POS plan is the least restrictive of health Plan.",
+        "A POS plan is a combination of Health Maintenance Organization and Preferred Provider Organization.",
+        "A POS plan requires a policyholder to choose an in-network primary care physician to get referrals to see a specialist's services.",
+        "A POS plan requires a member to stay in the network each time a member needhealthcare services."
+      ],
+      "correct_answer_letter": "B",
+      "correct_answer": "A POS plan is a combination of Health Maintenance Organization and Preferred Provider Organization."
+    },
+    {
+      "question_number": 36,
+      "question": "Underwriters look particularly for applicant's earning and overall financial situation in underwriting:",
+      "reference": "",
+      "options": [
+        "Long Term Care Insurance.",
+        "Disability Income Insurance.",
+        "Critical Illness.",
+        "Managed Health Care."
+      ],
+      "correct_answer_letter": "B",
+      "correct_answer": "Disability Income Insurance."
+    },
+    {
+      "question_number": 37,
+      "question": "Employees classes have effects of over-representation. Over-representation by a class in which the employees earn low incomes can result in _______________.",
+      "reference": "",
+      "options": [
+        "Higher-than-desired rate of turnover.",
+        "Lower-than-average medical claims.",
+        "Higher-than-average medical claim.",
+        "Lower-than-desired rate of turnover."
+      ],
+      "correct_answer_letter": "A",
+      "correct_answer": "Higher-than-desired rate of turnover."
+    },
+    {
+      "question_number": 38,
+      "question": "Mr. and Mrs. Lim have been experiencing difficulty in conceiving their first baby and wish to explore the possibility of using their Medisave to pay for Assisted Conception Procedure (ACP) treatments. They consulted a specialist who will perform the procedure locally, and the expected cost of such ACP treatment is $25,000. Which of the following Medisave account usage on ACP is correct?",
+      "reference": "",
+      "options": [
+        "Only the patient is able to use Medisave account.",
+        "Both the patient's and the spouse's Medisave accounts may be used.",
+        "Only the inpatient treatment expenses can be used for Medisave account.",
+        "Only the outpatient treatment expenses can be used for Medisave account."
+      ],
+      "correct_answer_letter": "B",
+      "correct_answer": "Both the patient's and the spouse's Medisave accounts may be used."
+    },
+    {
+      "question_number": 39,
+      "question": "Which one of these following plans is/are true regarding using Medisave to pay fully for CPF members' own health insurance premiums?",
+      "reference": "",
+      "options": [
+        "Elder Shield.",
+        "Care Shield Life.",
+        "Medi Shield Life.",
+        "All of the above."
+      ],
+      "correct_answer_letter": "D",
+      "correct_answer": "All of the above."
+    },
+    {
+      "question_number": 40,
+      "question": "An endorsement attaching to an insurance policy, will ______________ .",
+      "reference": "",
+      "options": [
+        "not be binding as it is not part of the contract",
+        "modifies the policy provision.",
+        "be independent of the policy.",
+        "provides additional benefits at no extra cost."
+      ],
+      "correct_answer_letter": "B",
+      "correct_answer": "modifies the policy provision."
+    },
+    {
+      "question_number": 41,
+      "question": "When pricing Health Insurance products, insurers will charge females a ________ rate than males because _____________ .",
+      "reference": "",
+      "options": [
+        "lower; women statistically have a higher longevity rate than men.",
+        "lower; the medical costs for women are statistically lower than men.",
+        "higher; women statistically have a lower longevity rate than men.",
+        "higher; the medical costs for women are statistically higher than men."
+      ],
+      "correct_answer_letter": "D",
+      "correct_answer": "higher; the medical costs for women are statistically higher than men."
+    },
+    {
+      "question_number": 42,
+      "question": "Mr. Tan is covered under Medi Shield Life Scheme as well as an Integrated Shield Plan (IP) which he has bought. Mr. Tan has some concerns about both covers as he is suffering from some pre-existing conditions. Which one of the following statements is CORRECT?",
+      "reference": "",
+      "options": [
+        "IP covers all pre-existing conditions, while Medi Shield Life does not cover such conditions.",
+        "Medi Shield Life covers all pre-existing conditions, even if the condition is excluded from additional private insurance coverage by the IP insurer.",
+        "Both Medi Shield Life and IP cover all pre-existing conditions, but the premium for Medi Shield Life is higher.",
+        "Both Medi Shield Life and IP cover all pre-existing conditions, but there are sub-limits applicable in Medi Shield Life."
+      ],
+      "correct_answer_letter": "B",
+      "correct_answer": "Medi Shield Life covers all pre-existing conditions, even if the condition is excluded from additional private insurance coverage by the IP insurer."
+    },
+    {
+      "question_number": 43,
+      "question": "Calculation of how much Critical Illness Insurance the client needs is more of an art than a science as there are many uncertainties. Which of these factors would be most important?",
+      "reference": "",
+      "options": [
+        "Whether the client has the means to pay the premium.",
+        "Need to know the client's family medical history to determine which disease the client is most susceptible.",
+        "Obtain the latest attending physician statement as an indication of his current physical condition.",
+        "Occupational risk classification of the client."
+      ],
+      "correct_answer_letter": "B",
+      "correct_answer": "Need to know the client's family medical history to determine which disease the client is most susceptible."
+    },
+    {
+      "question_number": 44,
+      "question": "Bob is 50 years of age this year. He wishes to calculate the amount of premiums that he must pay by cash. Given that he has bought the following:\nMedi Shield Life: $450\nIntegrated Shield Plan: $150\nElder Shield 400: $100\nElder Shield Supplements: $750\nThe Additional Withdrawal Limit for IP premiums are as follows:\nMedi Shield Life: No limit\nIntegrated Shield Plan Age Next Birthday\n40 years and below: $300\n41 to 70 years: $600\n71 years and above: $900\nElder Shield 400: No limit\nElder Shield Supplements: $600\nHow much premiums must Bob pay by cash?",
+      "reference": "",
+      "options": [
+        "$150",
+        "$250",
+        "$450",
+        "$750"
+      ],
+      "correct_answer_letter": "A",
+      "correct_answer": "$150"
+    },
+    {
+      "question_number": 45,
+      "question": "Jon bought an Integrated Shield Plans (IP) on April 2018 with IP riders, what should the adviser tell him that is important?",
+      "reference": "",
+      "options": [
+        "A co-payment of 5% or more.",
+        "A co-payment cap for panel and non-panel pre-authorized treatment.",
+        "Co-payments are waived.",
+        "Co-payment riders can be paid in cash or Medisave."
+      ],
+      "correct_answer_letter": "A",
+      "correct_answer": "A co-payment of 5% or more."
+    },
+    {
+      "question_number": 46,
+      "question": "Health Insurance underwriting is concerned primarily with:",
+      "reference": "",
+      "options": [
+        "Mortality.",
+        "Morbidity.",
+        "Persistency.",
+        "Sub-standard risks."
+      ],
+      "correct_answer_letter": "B",
+      "correct_answer": "Morbidity."
+    },
+    {
+      "question_number": 47,
+      "question": "Medical Aspects of Underwriting requires the consideration of ___________ .",
+      "reference": "",
+      "options": [
+        "Financial Factors.",
+        "Current Physical Condition.",
+        "Occupational Factors.",
+        "Age Factors."
+      ],
+      "correct_answer_letter": "B",
+      "correct_answer": "Current Physical Condition."
+    },
+    {
+      "question_number": 48,
+      "question": "Why is the Agent's Statement important in the underwriting process?",
+      "reference": "",
+      "options": [
+        "Let underwriter knows why that product is recommended.",
+        "Indicate special circumstances of the application.",
+        "Clarify situation that is unquestionable.",
+        "Indicate information that is important to the applicant."
+      ],
+      "correct_answer_letter": "B",
+      "correct_answer": "Indicate special circumstances of the application."
+    },
+    {
+      "question_number": 49,
+      "question": "To get a better insight to insured's medical history, not available from medical examinations, underwriter will request for:",
+      "reference": "",
+      "options": [
+        "Agent's Statement.",
+        "Supplementary Questionnaires.",
+        "Medical Examination/Test.",
+        "Attending Physician Statement"
+      ],
+      "correct_answer_letter": "D",
+      "correct_answer": "Attending Physician Statement"
+    },
+    {
+      "question_number": 50,
+      "question": "Calculate Maintenance Cost given these assumptions:\nMonthly income needed = $1,500\nNo. of years income needed = 21\nRate of return = 5%\nInflation rate = 2%\nExisting Life Insurance = $150,000",
+      "reference": "",
+      "options": [
+        "$350,139.",
+        "$285,795.",
+        "$135,794.",
+        "$87,705."
+      ],
+      "correct_answer_letter": "C",
+      "correct_answer": "$135,794."
+    }
+  ],
+  "shared_passages": [
+    {
+      "description": "Disability Income Insurance scenario for Mary the lecturer",
+      "applies_to_questions": [
+        22,
+        23,
+        24
+      ],
+      "preamble": "The following data is to be used for this question and Qn. 22,23,24.\nMary, a lecturer bought a Disability Income Insurance Policy, became disabled on 30/6/2018. Her details as follows:\nSalary: $8,000 per month;\nHer expenses: $3,000 per month;\nAnnual Escalation Benefit: 3%;\n6 Month Deferred Period chosen\nWhen will she received the first payment from the insurer and for how much?",
+      "data": {}
+    }
+  ]
+}

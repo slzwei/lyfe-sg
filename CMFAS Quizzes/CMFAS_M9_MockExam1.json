@@ -1,12 +1,30 @@
 {
   "quiz_title": "CMFAS M9 Mock Exam 1",
   "version": "M9 7th Edition V1.1 Mock Exam 1",
-  "prepared_for": "Lyfe Financial Advisory",
+  "prepared_for": "Prudential Assurance Company Singapore (Pte) Limited",
   "date": "April 2026",
   "total_questions": 100,
   "format": "Multiple Choice",
   "duration": "120 minutes",
   "passing_grade": "70% (70/100)",
+  "shared_passages": [
+    {
+      "description": "Single Premium Investment-linked Policy data for Q98-99",
+      "applies_to_questions": [98, 99],
+      "preamble": "Information to be used for Q98 and 99",
+      "data": {
+        "Single premium": "$100,000",
+        "Offer price": "$2.90",
+        "Bid price": "$2.80",
+        "Bid-offer spread": "remains the same throughout",
+        "Policy Fee": "$150",
+        "Admin and mortality charges": "3% of single premium",
+        "Top up fee": "$60 plus 2% of top-up premium",
+        "Unit price growth": "constant rate of 9% per annum",
+        "Assumption": "Charges and fee are deducted before the single premium is used to purchase units."
+      }
+    }
+  ],
   "questions": [
     {
       "question_number": 1,

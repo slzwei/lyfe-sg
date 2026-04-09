@@ -1,0 +1,662 @@
+{
+  "quiz_title": "CMFAS Module 9A - Mock Exam Set B",
+  "version": "3rd Edition V1",
+  "prepared_for": "Prudential Assurance Company Singapore (Pte) Limited",
+  "date": "April 2026",
+  "total_questions": 50,
+  "format": "Multiple Choice",
+  "duration": "60 minutes",
+  "passing_grade": "70% (35/50)",
+  "questions": [
+    {
+      "question_number": 1,
+      "question": "Most derivatives/structured products come with an expiry date, which instrument below does not have an expiry date?",
+      "reference": "C3, S5.3",
+      "options": [
+        "Bonus certificates",
+        "Discount certificates",
+        "Swaps",
+        "Contract for differences"
+      ],
+      "correct_answer_letter": "D",
+      "correct_answer": "Contract for differences"
+    },
+    {
+      "question_number": 2,
+      "question": "David seeks returns that are higher than those from traditional fixed income products. He is willing to accept slightly higher risk for the higher returns. Which of the following should he invest in ?",
+      "reference": "C1, S3.13 to 3.14",
+      "options": [
+        "Yield enhancement products",
+        "Performance participation products",
+        "Capital guaranteed funds",
+        "Zero-coupon bonds"
+      ],
+      "correct_answer_letter": "A",
+      "correct_answer": "Yield enhancement products"
+    },
+    {
+      "question_number": 3,
+      "question": "The primary risk to the principal component is ____________?",
+      "reference": "C1, S2.4",
+      "options": [
+        "Counterparty risk",
+        "All derivatives have expiry dates",
+        "Market volatility",
+        "Credit worthiness of bond issuer"
+      ],
+      "correct_answer_letter": "D",
+      "correct_answer": "Credit worthiness of bond issuer"
+    },
+    {
+      "question_number": 4,
+      "question": "For discount certificates, at maturity the investor receives either a cash settlement or the underlying stock. Under which scenario below would the investor receive a cash settlement?",
+      "reference": "C1, S3.20",
+      "options": [
+        "Price of the underlying stock is equal to capped strike",
+        "Price of the underlying stock is below the capped strike",
+        "Price of the underlying stock is above the capped strike",
+        "None of the above"
+      ],
+      "correct_answer_letter": "C",
+      "correct_answer": "Price of the underlying stock is above the capped strike"
+    },
+    {
+      "question_number": 5,
+      "question": "The difference between the spot price and the exercise price is known as_________?",
+      "reference": "C2, Table 2.2",
+      "options": [
+        "Basis",
+        "Cost of carry",
+        "Intrinsic value",
+        "Contango"
+      ],
+      "correct_answer_letter": "C",
+      "correct_answer": "Intrinsic value"
+    },
+    {
+      "question_number": 6,
+      "question": "Only those ETFs that use derivatives are Structured Funds, they are also known as _______?",
+      "reference": "C1, S4.14",
+      "options": [
+        "Hybrid ETFs",
+        "Debt ETFs",
+        "Synthetic ETFs",
+        "All of the above"
+      ],
+      "correct_answer_letter": "C",
+      "correct_answer": "Synthetic ETFs"
+    },
+    {
+      "question_number": 7,
+      "question": "When explaining a structured product to clients, disclosure must be in plain language, avoid technical terms & presented in a format that is easy to understand. This is found under the ____________.",
+      "reference": "C1, S5.14",
+      "options": [
+        "Fair dealing guidelines",
+        "Prospectus",
+        "Policy document",
+        "Semi-annual report"
+      ],
+      "correct_answer_letter": "A",
+      "correct_answer": "Fair dealing guidelines"
+    },
+    {
+      "question_number": 8,
+      "question": "Laureen believes she can make money from the stock market, especially when volatility is high. She wants to be able to make money whether the stock goes up or goes down by a large amount. Which of the following would be the appropriate strategy for her?",
+      "reference": "C3, S3.41 to 3.42",
+      "options": [
+        "Covered call strategies",
+        "Bull straddles",
+        "Bear straddles",
+        "Protective put strategies"
+      ],
+      "correct_answer_letter": "B",
+      "correct_answer": "Bull straddles"
+    },
+    {
+      "question_number": 9,
+      "question": "Ronald is keen to start trading options on stocks after taking a course. He opened an account with an options broker to execute and clear his positions. The broker informed Ronald that there is one strategy that he is not permitted to execute/enter as it is risky and losses may be unlimited. What strategy is this?",
+      "reference": "C3, S3.38 to 3.39",
+      "options": [
+        "Long put",
+        "Short call",
+        "Protective puts",
+        "Selling naked puts"
+      ],
+      "correct_answer_letter": "B",
+      "correct_answer": "Short call"
+    },
+    {
+      "question_number": 10,
+      "question": "Donald wants to buy XYZ shares but feels that the current market price of $32 is too expensive. He wants to wait a month if necessary before deciding. What can Donald do such that he is able to still buy XYZ shares at a discount to the current market price, whether XYZ shares rises or falls?",
+      "reference": "C3, S3.31 to 3.33",
+      "options": [
+        "Long a call option",
+        "Bull straddle",
+        "Sell a put option",
+        "Enter into a covered call position"
+      ],
+      "correct_answer_letter": "C",
+      "correct_answer": "Sell a put option"
+    },
+    {
+      "question_number": 11,
+      "question": "Rebecca runs a health café selling fresh fruit juices. Since her business is doing quite well, Rebecca has entered into a contract with a fruit wholesaler to delivery fresh fruits every 2 weeks. On one such delivery Rebecca found that all the fruits delivered were either spoilt or rotten, and as a result she had to close her café for a week, which resulted in operating losses. What sort of risk did Rebecca suffer?",
+      "reference": "C2, S2.1 to 2.2",
+      "options": [
+        "Market risk",
+        "Collateral risk",
+        "Principal risk",
+        "Counterparty risk"
+      ],
+      "correct_answer_letter": "D",
+      "correct_answer": "Counterparty risk"
+    },
+    {
+      "question_number": 12,
+      "question": "An investor places S$50,000 in an AUD investment where SGD$0.90 = AUD$1.00. The investment subsequently depreciated by 6% but AUD strengthen where AUD$1 = SGD$1.10. Calculate the gain or loss in SGD.",
+      "reference": "C2/S4.3",
+      "options": [
+        "Gain of 15%",
+        "Loss of 15%",
+        "Gain of 7%",
+        "Loss of 7%"
+      ],
+      "correct_answer_letter": "A",
+      "correct_answer": "Gain of 15%"
+    },
+    {
+      "question_number": 13,
+      "question": "Which of the following fees & charges are applicable to Portfolio Bonds?",
+      "reference": "C5, A2",
+      "options": [
+        "Product charges",
+        "Surrender charges",
+        "Early withdrawal charge",
+        "All of the above"
+      ],
+      "correct_answer_letter": "D",
+      "correct_answer": "All of the above"
+    },
+    {
+      "question_number": 14,
+      "question": "Portfolio bonds can be used as a source to provide regular income, how is this achieved?",
+      "reference": "C5, S1.9",
+      "options": [
+        "It is derived from the coupon pay-out from investing in bonds",
+        "It is derived from dividend pay-out from stocks owned",
+        "It is obtained both from coupon & dividend pay-outs from both bonds & stocks",
+        "It is obtained from a redemption of units, i.e. sale of investments"
+      ],
+      "correct_answer_letter": "D",
+      "correct_answer": "It is obtained from a redemption of units, i.e. sale of investments"
+    },
+    {
+      "question_number": 15,
+      "question": "Jenny invested in an interest rate futures and needs to deposit S$4000 as initial margin with her broker. The maintenance margin for the futures contract is S$3500. The value of her contract drops by S$1,000. How much is her margin call?",
+      "reference": "C3/S2.26 to 2.29",
+      "options": [
+        "$500",
+        "$1000",
+        "$1500",
+        "$0"
+      ],
+      "correct_answer_letter": "B",
+      "correct_answer": "$1000"
+    },
+    {
+      "question_number": 16,
+      "question": "A structured ILP invests in AAA Fund which has an initial sales charge of 5% and an annual management fee of 2%. The net return of the fund is shown below:\n\nAfter 1 year:\nGross return: 2.00% Net return: -1.20% \n\nAfter 2 years:\nGross return: 1.30% Net return: -0.50% \n\nAfter 3 years:\nGross return: 2.50% Net return: -0.20% \n\nWhat can you deduce from the information above?",
+      "reference": "C6",
+      "options": [
+        "The fund manager has performed below par",
+        "The initial sales charge is irrelevant in determining net fund performance",
+        "Charges to the fund are necessary to ensure the fund delivers good results",
+        "The initial sales charge still drags down the performance of the fund after 3 years"
+      ],
+      "correct_answer_letter": "D",
+      "correct_answer": "The initial sales charge still drags down the performance of the fund after 3 years"
+    },
+    {
+      "question_number": 17,
+      "question": "Hui Fong has invested in a structured fund called Better Fund. The unit was sold at $1 at inception, and after 2 years its net asset value is $1.10. What does the change in net asset reflect?",
+      "reference": "C6, B3 & S2.16",
+      "options": [
+        "Better fund has sustained a loss of 10%",
+        "Better fund has enjoyed a gain of 10%",
+        "The nominal value is lower than the real value by 10%",
+        "None of the above"
+      ],
+      "correct_answer_letter": "B",
+      "correct_answer": "Better fund has enjoyed a gain of 10%"
+    },
+    {
+      "question_number": 18,
+      "question": "Redemption is ___________.",
+      "reference": "C4, S1.12",
+      "options": [
+        "The purchase of units in ILP sub-funds",
+        "The sale of units in ILP sub-funds",
+        "The return of units in ILP sub-funds",
+        "The spread between the bid & offer price"
+      ],
+      "correct_answer_letter": "C",
+      "correct_answer": "The return of units in ILP sub-funds"
+    },
+    {
+      "question_number": 19,
+      "question": "Lori is keen to subscribe to a corporate bond issue by First Capital that is AAA rated. However the minimum subscription amount is $250,000, Lori has on hand only $50,000. What can Lori do to still be able to subscribe to First Capital bond issue?",
+      "reference": "C4, S2.6",
+      "options": [
+        "Lori can ask her parents to subscribe on her behalf",
+        "Lori can use leverage via a Futures contract",
+        "Lori can subscribe via a convertible bond instead",
+        "Lori can subscribe via a Collective Investment Scheme"
+      ],
+      "correct_answer_letter": "D",
+      "correct_answer": "Lori can subscribe via a Collective Investment Scheme"
+    },
+    {
+      "question_number": 20,
+      "question": "If the spot price is $1300, and the cost of carry is a premium of $100, calculate the forward price.",
+      "reference": "C3, S2.5 or 2.7",
+      "options": [
+        "$1200",
+        "$1400",
+        "$1300",
+        "$0"
+      ],
+      "correct_answer_letter": "B",
+      "correct_answer": "$1400"
+    },
+    {
+      "question_number": 21,
+      "question": "Edward is an experienced futures trader and trades various regional stock indexes. He decides to sell the Hang Seng Index (HSI) at 19000 points. The HSI has a multiplier of HKD$50 per index point. A week later the Hang Seng Index rises to 19100 points, & Edward decides to close his position. Calculate his gain/loss on his futures position.",
+      "reference": "C3, S2.40",
+      "options": [
+        "Gain of HKD$5000",
+        "Loss of HKD$5000",
+        "Gain of HKD$500",
+        "Loss of HKD$500"
+      ],
+      "correct_answer_letter": "B",
+      "correct_answer": "Loss of HKD$5000"
+    },
+    {
+      "question_number": 22,
+      "question": "Options that permit the holder or writer to extend the maturity date by a specified period of time are known as__________?",
+      "reference": "C3, S3.13",
+      "options": [
+        "Lengthening options",
+        "Binary options",
+        "Chooser options",
+        "Extendible options"
+      ],
+      "correct_answer_letter": "D",
+      "correct_answer": "Extendible options"
+    },
+    {
+      "question_number": 23,
+      "question": "Annie purchased a Structured ILP, however 10 days later she changed her mind and decides to cancel it. She was already informed earlier that should she cancel before 14 days, she will receive a full refund of the premium paid adjusted for any downward change in the net asset value of the ILP during that period. What risk does Annie face?",
+      "reference": "C4, S6.9",
+      "options": [
+        "Counterparty risk",
+        "Principal risk",
+        "Market risk",
+        "All of the above"
+      ],
+      "correct_answer_letter": "C",
+      "correct_answer": "Market risk"
+    },
+    {
+      "question_number": 24,
+      "question": "The value of an ILP sub-fund is based on the NAV of the sub-fund. Which of the following fund is an exception to this?",
+      "reference": "C4, S7.1",
+      "options": [
+        "Capital guaranteed funds",
+        "Capital protected funds",
+        "Government funds",
+        "Sovereign funds"
+      ],
+      "correct_answer_letter": "A",
+      "correct_answer": "Capital guaranteed funds"
+    },
+    {
+      "question_number": 25,
+      "question": "What information must be disclosed in the Product Summary during the sales process?",
+      "reference": "C4, A1 S6.2",
+      "options": [
+        "Fees & charges",
+        "Fund performance",
+        "Risk information",
+        "All of the above"
+      ],
+      "correct_answer_letter": "D",
+      "correct_answer": "All of the above"
+    },
+    {
+      "question_number": 26,
+      "question": "Issuers of callable bonds have the right to \"call\" or redeem their bonds before the maturity dates. Under which scenario will they likely do so?",
+      "reference": "C1, S4.4 to 4.7",
+      "options": [
+        "When interest rates rise",
+        "When interest rates remain constant",
+        "When interest rates fall",
+        "None of the above"
+      ],
+      "correct_answer_letter": "C",
+      "correct_answer": "When interest rates fall"
+    },
+    {
+      "question_number": 27,
+      "question": "If a commodity trader has an expected basis of -US$0.40, and the current market is offering a basis of -US$0.80, this is known as a __________.",
+      "reference": "C3, S2.25",
+      "options": [
+        "Lengthen basis",
+        "Longer basis",
+        "Wide basis",
+        "Strong basis"
+      ],
+      "correct_answer_letter": "C",
+      "correct_answer": "Wide basis"
+    },
+    {
+      "question_number": 28,
+      "question": "Strengthen Insurance Pte Ltd has introduced an Investment-linked Policy that invests into a variety of funds, including a Structured Fund called MERCY Fund.\n\nThe table below is an extract from the prospectus of MERCY Fund:\nPast Performance of the Sub-Fund and Benchmark\nAnnualized Returns (Average Annual Compounded Returns)\n\nA client approached his financial advisor for advice. Based on the information above, which of the following statements made by the financial advisor is TRUE? Based on the fund's average annual compounded returns the MERCY Fund:",
+      "reference": "C6",
+      "options": [
+        "Had out-performed the benchmark since inception",
+        "Had out-performed the benchmark for the past 5 years",
+        "Had under-performed the benchmark for the past 10 years",
+        "Can almost guarantee investors an annualized return of at least 1%"
+      ],
+      "correct_answer_letter": "B",
+      "correct_answer": "Had out-performed the benchmark for the past 5 years"
+    },
+    {
+      "question_number": 29,
+      "question": "Jim decided to invest $10,000 into a Structured ILP, he was attracted to it as the investment component was channelled into a structured bond, that offered higher coupon pay-out than traditional bonds. The stated coupon pay-out over the investment period of 5 years is 15% and 100% capital return at maturity. At maturity Jim got back total coupon pay-out of 12% & 90% of his principal. His advisor mention that the\nunderlying assets did not perform to expectation due to challenging market conditions.\n\nCalculate Jim's return.",
+      "reference": "C4, S2.24 to 2.26",
+      "options": [
+        "Capital return of $10,000 & coupon of $1500",
+        "Capital return of $10,000 & coupon of $1200",
+        "Capital return of $9000 & coupon of $1200",
+        "Capital return of $9000 & coupon of $1080"
+      ],
+      "correct_answer_letter": "C",
+      "correct_answer": "Capital return of $9000 & coupon of $1200"
+    },
+    {
+      "question_number": 30,
+      "question": "What is the main difference between a Portfolio Bond and a Unit Trust?",
+      "reference": "C5, S1.16",
+      "options": [
+        "Fees",
+        "Charges",
+        "Dealing Account",
+        "Drip feeding"
+      ],
+      "correct_answer_letter": "C",
+      "correct_answer": "Dealing Account"
+    },
+    {
+      "question_number": 31,
+      "question": "For bonus certificates, if the price of the underlying asset does not fall below the barrier level, at maturity the investor receives a return no lower than the ____________.",
+      "reference": "C1, S3.29 to 3.32",
+      "options": [
+        "Issue price",
+        "Knock-out level",
+        "Bonus level",
+        "None of the above"
+      ],
+      "correct_answer_letter": "C",
+      "correct_answer": "Bonus level"
+    },
+    {
+      "question_number": 32,
+      "question": "Which of the following is true for Collateral risk?",
+      "reference": "C2, S5.11 to 5.13",
+      "options": [
+        "It is a structural risk",
+        "It is the same as counterparty risk",
+        "It is present whenever collateral is used as a guarantee in a loan agreement",
+        "All of the above"
+      ],
+      "correct_answer_letter": "C",
+      "correct_answer": "It is present whenever collateral is used as a guarantee in a loan agreement"
+    },
+    {
+      "question_number": 33,
+      "question": "Gary is an Australian and has invested AUD$150,000 into a US Fund. The fund is AAA rated and consist of stocks & fixed income products. What risk should Gary be most concerned with?",
+      "reference": "C2, 4.1 to 4.2",
+      "options": [
+        "Market risk",
+        "Foreign exchange rate risk",
+        "Credit risk",
+        "Taxation risk"
+      ],
+      "correct_answer_letter": "B",
+      "correct_answer": "Foreign exchange rate risk"
+    },
+    {
+      "question_number": 34,
+      "question": "If the manager of the ILP sub-fund believes that the transacted price is not representative or not available to the market, the NAV should then be based on \"fair value\" of the assets. What below correctly defines fair value?",
+      "reference": "C4, S7.4 to 7.6",
+      "options": [
+        "Fair value is the value obtained by selling in the market just before it closes",
+        "Fair value is the valuation price decided by the market maker",
+        "Fair value is the price obtained after selling in the market and deducting commission & other charges",
+        "Fair Value is the price that the fund can reasonably expect to receive upon the current sale of the asset, determined with due care & in good faith."
+      ],
+      "correct_answer_letter": "D",
+      "correct_answer": "Fair Value is the price that the fund can reasonably expect to receive upon the current sale of the asset, determined with due care & in good faith."
+    },
+    {
+      "question_number": 35,
+      "question": "Which statement is true for Benefit Illustration with regards to Structured ILP?",
+      "reference": "C4, S6.3 to 6.5",
+      "options": [
+        "Benefit Illustration should be furnished to investors of the Structured ILP at point-of-sale.",
+        "Two rates of returns should be included in the Benefit Illustration to demonstrate the certainty of potential return of the Structured ILP",
+        "MAS is responsible for issuing the guidelines on Benefit Illustration",
+        "All of the above"
+      ],
+      "correct_answer_letter": "A",
+      "correct_answer": "Benefit Illustration should be furnished to investors of the Structured ILP at point-of-sale."
+    },
+    {
+      "question_number": 36,
+      "question": "Investors are often attracted to structured products due to the high potential pay-outs, however a structured product delivers return to the investor only when_________?",
+      "reference": "C1, S3.6",
+      "options": [
+        "Market view has to be correct",
+        "Strategy to capture the market view need not be appropriate",
+        "Pricing on the structure is expensive",
+        "All of the above"
+      ],
+      "correct_answer_letter": "A",
+      "correct_answer": "Market view has to be correct"
+    },
+    {
+      "question_number": 37,
+      "question": "A Portfolio Bond is suitable for an investor with a __________ time frame?",
+      "reference": "C5/S4.2",
+      "options": [
+        "Short term",
+        "Medium term",
+        "Medium to Long term",
+        "Long term"
+      ],
+      "correct_answer_letter": "D",
+      "correct_answer": "Long term"
+    },
+    {
+      "question_number": 38,
+      "question": "In a policy statement that Rachel is reading, she notes an early redemption clause that says: \n\n\"After the third month, if the portfolio of benchmark stocks is equal to or above 110% of their initial stock prices, the single premium will be returned, together with the pro-rata annual pay-out. The policy terminates after the payment is made.\"\n\nWhat is the implication of this term for the policy owner?",
+      "reference": "C6",
+      "options": [
+        "When the condition is met, the policy owner faces counterparty risk.",
+        "When the condition is met, the policy owner enjoys the return from a rising stock market.",
+        "When the condition is met, the policy owner enjoys the privilege of getting back his money with no reinvestment risk.",
+        "When the condition is met, the policy owner receives the original single premium and prorated pay-out and faces the risk of reinvesting in a rising market."
+      ],
+      "correct_answer_letter": "D",
+      "correct_answer": "When the condition is met, the policy owner receives the original single premium and prorated pay-out and faces the risk of reinvesting in a rising market."
+    },
+    {
+      "question_number": 39,
+      "question": "George is a financial advisor, his friend Jim is interested in Structured ILPs, which of the following are possible reasons why Jim is not suitable?",
+      "reference": "C4, S4.1-4.2",
+      "options": [
+        "He has a short term time frame",
+        "He has a low risk threshold",
+        "He expects some guarantee in his investment performance",
+        "All of the above"
+      ],
+      "correct_answer_letter": "D",
+      "correct_answer": "All of the above"
+    },
+    {
+      "question_number": 40,
+      "question": "Drip feeding is fund switching implemented in small doses, which of the following is a likely reason for using drip feeding?",
+      "reference": "C5/S1.9",
+      "options": [
+        "Lower commission cost",
+        "Avoid potential market disruption",
+        "Less reports to prepare",
+        "All of the above"
+      ],
+      "correct_answer_letter": "B",
+      "correct_answer": "Avoid potential market disruption"
+    },
+    {
+      "question_number": 41,
+      "question": "Which statement below is Incorrect about a Bonus certificate?",
+      "reference": "C1, S3.29 to 3.32",
+      "options": [
+        "Bonus certificates are tracker certificates with limited downside protection",
+        "For bonus certificates once a \"knock-out\" occurs the downside protection no longer exists",
+        "Bonus certificates can only be \"knocked-out\" at maturity",
+        "Bonus certificates carry full upside potential with no downside protection once a knock-out occurs."
+      ],
+      "correct_answer_letter": "C",
+      "correct_answer": "Bonus certificates can only be \"knocked-out\" at maturity"
+    },
+    {
+      "question_number": 42,
+      "question": "George is a coffee farmer who can only sell his beans a year later. He anticipates the prices to be weaker then compared to now, how can he protect himself?",
+      "reference": "C3, S2.36",
+      "options": [
+        "Buy a call option",
+        "Buy a futures contract",
+        "Buy an equity swap",
+        "Buy a put option"
+      ],
+      "correct_answer_letter": "D",
+      "correct_answer": "Buy a put option"
+    },
+    {
+      "question_number": 43,
+      "question": "Which statement/document would contain the following information?\n\ni. number & value of units held at end of current statement period\nii. premium received during the statement period\niii. current death benefit at the end of the current statement period\niv. net cash surrender value at the end of the current statement period",
+      "reference": "C4, S6.17 to 6.18",
+      "options": [
+        "Statement to Policy Owners",
+        "Semi-Annual Report",
+        "Relevant Audit Report",
+        "Product Highlight Sheet"
+      ],
+      "correct_answer_letter": "A",
+      "correct_answer": "Statement to Policy Owners"
+    },
+    {
+      "question_number": 44,
+      "question": "The most common swap is an interest rate swap. All the following statements are correct about an interest rate swap except__________?",
+      "reference": "C3, S4.6 to 4.8",
+      "options": [
+        "An interest rate swap is between 2 parties, one party prefers to borrow on a fixed rate loan, while the other party prefers to borrow on a floating rate loan.",
+        "An interest rate swap is between 2 parties, whereby both parties either borrow at a fixed rate or both parties borrow on a floating rate.",
+        "The purpose of entering into an interest rate swap, is for both parties to lower their borrowing cost",
+        "Calculations for interest rate swaps are based on a \"notional\" principal amount"
+      ],
+      "correct_answer_letter": "B",
+      "correct_answer": "An interest rate swap is between 2 parties, whereby both parties either borrow at a fixed rate or both parties borrow on a floating rate."
+    },
+    {
+      "question_number": 45,
+      "question": "Jamie sold a Put option on XYZ shares. Her Put option has an exercise price of $25, and cost $1.50. Within the next 5 days, XYZ rose from $22 to $27. Calculate the percentage change in the intrinsic value of the option.",
+      "reference": "C2, S5.3 to 5.5",
+      "options": [
+        "– 33%",
+        "– 100%",
+        "– 150%",
+        "+ 33%"
+      ],
+      "correct_answer_letter": "B",
+      "correct_answer": "– 100%"
+    },
+    {
+      "question_number": 46,
+      "question": "Cory's family has recently moved to Singapore, and has set up a Single Family Office (SFO). His father has instructed him to setup a fund comprising of South Asia blue-chip shares. His father also mention that the fund must be diversified to withstand possible challenging market conditions. Understanding this requirement, Cory would proceed to select stocks with a correlation of _______?",
+      "reference": "C2, S6.3 to 6.7",
+      "options": [
+        "– 1",
+        "0",
+        "+ 1",
+        "– 1.2"
+      ],
+      "correct_answer_letter": "A",
+      "correct_answer": "– 1"
+    },
+    {
+      "question_number": 47,
+      "question": "Lauren enjoys staying up late to watch & trade the US stock index futures market. She is short term bullish on the Nasdaq, and decides to go Long the E-mini Nasdaq-100 futures contract at 15600 points. The multiplier for this contract is US$20 per index point. Two days later the index rose to 15680 and Lauren decided to close her futures position. \n\nCalculate Lauren's gain/loss.",
+      "reference": "C3, S 2.40",
+      "options": [
+        "Gain of US$800",
+        "Gain of US$1600",
+        "Loss of US$800",
+        "Loss of US$1600"
+      ],
+      "correct_answer_letter": "B",
+      "correct_answer": "Gain of US$1600"
+    },
+    {
+      "question_number": 48,
+      "question": "Richard is eagerly anticipating the release of the brand new iPhone 15 in September. He feels that this revolutionary release would be positive for Apple shares, and would like to take a position. He prefers to buy a call option on Apple shares instead of buying the stock. Which reason below would buying the stock be a better choice?",
+      "reference": "C3, S3.18 to 3.20",
+      "options": [
+        "He has a long term time frame",
+        "He has limited capital",
+        "He is looking for unlimited upside",
+        "He is looking for limited downside"
+      ],
+      "correct_answer_letter": "A",
+      "correct_answer": "He has a long term time frame"
+    },
+    {
+      "question_number": 49,
+      "question": "The cash price of Platinum is currently trading at US$980, while the September Futures contract for Platinum is trading at US$960. Joe your client rings you to check on the Platinum market, what is the correct way to describe the current market to Joe?",
+      "reference": "C3, S2.23",
+      "options": [
+        "Platinum is currently experiencing a contango market",
+        "Platinum is currently experiencing a backwardation market",
+        "Platinum is showing a strong basis",
+        "Platinum is showing a weak basis"
+      ],
+      "correct_answer_letter": "B",
+      "correct_answer": "Platinum is currently experiencing a backwardation market"
+    },
+    {
+      "question_number": 50,
+      "question": "What is the main advantage of exchange-traded structured products over other structured products?",
+      "reference": "C1, S4.17",
+      "options": [
+        "Lower cost",
+        "Safety of principal",
+        "Guaranteed profit",
+        "Liquidity"
+      ],
+      "correct_answer_letter": "D",
+      "correct_answer": "Liquidity"
+    }
+  ]
+}

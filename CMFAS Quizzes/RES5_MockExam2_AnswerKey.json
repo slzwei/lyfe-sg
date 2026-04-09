@@ -1,0 +1,757 @@
+{
+  "quiz_title": "RES 5 Mock Exam 2",
+  "version": "RES 5 (Set 2) 1st Edition V1.2",
+  "total_questions": 150,
+  "answers": [
+    {
+      "question_number": 1,
+      "correct_option_letter": "A",
+      "correct_answer": "Objectivity."
+    },
+    {
+      "question_number": 2,
+      "correct_option_letter": "C",
+      "correct_answer": "low to high risk"
+    },
+    {
+      "question_number": 3,
+      "correct_option_letter": "D",
+      "correct_answer": "financial protection in addition to that of the basic policy at a low cost"
+    },
+    {
+      "question_number": 4,
+      "correct_option_letter": "D",
+      "correct_answer": "the client can request the financial adviser to explain the product features."
+    },
+    {
+      "question_number": 5,
+      "correct_option_letter": "D",
+      "correct_answer": "The introducer has to disclose to all the clients whether or not he will be remunerated by\nthe financial adviser for carrying out introducing activities."
+    },
+    {
+      "question_number": 6,
+      "correct_option_letter": "D",
+      "correct_answer": "T+7 business days."
+    },
+    {
+      "question_number": 7,
+      "correct_option_letter": "C",
+      "correct_answer": "Reinsurance recoverables."
+    },
+    {
+      "question_number": 8,
+      "correct_option_letter": "D",
+      "correct_answer": "Misrepresentation."
+    },
+    {
+      "question_number": 9,
+      "correct_option_letter": "A",
+      "correct_answer": "2."
+    },
+    {
+      "question_number": 10,
+      "correct_option_letter": "C",
+      "correct_answer": "Financial adviser should ensure consistency in melting out disciplinary actions."
+    },
+    {
+      "question_number": 11,
+      "correct_option_letter": "A",
+      "correct_answer": "National savings plan."
+    },
+    {
+      "question_number": 12,
+      "correct_option_letter": "D",
+      "correct_answer": "All of the above"
+    },
+    {
+      "question_number": 13,
+      "correct_option_letter": "D",
+      "correct_answer": "New CPFIS investors are required to take the Customer Knowledge Assessment (CKA) on the CPF website before investing in specialised funds."
+    },
+    {
+      "question_number": 14,
+      "correct_option_letter": "C",
+      "correct_answer": "S$100,000."
+    },
+    {
+      "question_number": 15,
+      "correct_option_letter": "A",
+      "correct_answer": "To release manager from responsibility."
+    },
+    {
+      "question_number": 16,
+      "correct_option_letter": "D",
+      "correct_answer": "S$500,000."
+    },
+    {
+      "question_number": 17,
+      "correct_option_letter": "A",
+      "correct_answer": "Trustee"
+    },
+    {
+      "question_number": 18,
+      "correct_option_letter": "C",
+      "correct_answer": "Grade C."
+    },
+    {
+      "question_number": 19,
+      "correct_option_letter": "B",
+      "correct_answer": "$3,000."
+    },
+    {
+      "question_number": 20,
+      "correct_option_letter": "B",
+      "correct_answer": "20%"
+    },
+    {
+      "question_number": 21,
+      "correct_option_letter": "D",
+      "correct_answer": "Bank Tellers."
+    },
+    {
+      "question_number": 22,
+      "correct_option_letter": "C",
+      "correct_answer": "It will enable the client to consider the different types of designated products under the\nFAA."
+    },
+    {
+      "question_number": 23,
+      "correct_option_letter": "B",
+      "correct_answer": "Cash."
+    },
+    {
+      "question_number": 24,
+      "correct_option_letter": "D",
+      "correct_answer": "Shares."
+    },
+    {
+      "question_number": 25,
+      "correct_option_letter": "D",
+      "correct_answer": "Fulcrum."
+    },
+    {
+      "question_number": 26,
+      "correct_option_letter": "B",
+      "correct_answer": "maintain a register of complaints"
+    },
+    {
+      "question_number": 27,
+      "correct_option_letter": "D",
+      "correct_answer": "increased market volatility."
+    },
+    {
+      "question_number": 28,
+      "correct_option_letter": "C",
+      "correct_answer": "2 times the BRS."
+    },
+    {
+      "question_number": 29,
+      "correct_option_letter": "B",
+      "correct_answer": "Securities & Futures Act."
+    },
+    {
+      "question_number": 30,
+      "correct_option_letter": "D",
+      "correct_answer": "Stocks and bonds."
+    },
+    {
+      "question_number": 31,
+      "correct_option_letter": "A",
+      "correct_answer": "Sustain non-inflationary economic growth."
+    },
+    {
+      "question_number": 32,
+      "correct_option_letter": "B",
+      "correct_answer": "Treat the customer fairly and equitably."
+    },
+    {
+      "question_number": 33,
+      "correct_option_letter": "A",
+      "correct_answer": "Close associate."
+    },
+    {
+      "question_number": 34,
+      "correct_option_letter": "D",
+      "correct_answer": "Customer knowledge assessment."
+    },
+    {
+      "question_number": 35,
+      "correct_option_letter": "B",
+      "correct_answer": "retail investor."
+    },
+    {
+      "question_number": 36,
+      "correct_option_letter": "B",
+      "correct_answer": "Investment-linked life policies."
+    },
+    {
+      "question_number": 37,
+      "correct_option_letter": "B",
+      "correct_answer": "Mortgage reducing assurance plans."
+    },
+    {
+      "question_number": 38,
+      "correct_option_letter": "C",
+      "correct_answer": "Conduct a probity check on your customer."
+    },
+    {
+      "question_number": 39,
+      "correct_option_letter": "A",
+      "correct_answer": "Principal."
+    },
+    {
+      "question_number": 40,
+      "correct_option_letter": "A",
+      "correct_answer": "Grade A."
+    },
+    {
+      "question_number": 41,
+      "correct_option_letter": "C",
+      "correct_answer": "A notice of intent by the principal to appoint them as representatives."
+    },
+    {
+      "question_number": 42,
+      "correct_option_letter": "C",
+      "correct_answer": "A single reference point within the organization."
+    },
+    {
+      "question_number": 43,
+      "correct_option_letter": "C",
+      "correct_answer": "Obligations of appointed representatives and provisional representatives of licensed\nfinancial advisers and exempt financial advisers."
+    },
+    {
+      "question_number": 44,
+      "correct_option_letter": "D",
+      "correct_answer": "KPI 4."
+    },
+    {
+      "question_number": 45,
+      "correct_option_letter": "B",
+      "correct_answer": "14 days."
+    },
+    {
+      "question_number": 46,
+      "correct_option_letter": "C",
+      "correct_answer": "Providing financial advisory services to customers."
+    },
+    {
+      "question_number": 47,
+      "correct_option_letter": "B",
+      "correct_answer": "3 months."
+    },
+    {
+      "question_number": 48,
+      "correct_option_letter": "D",
+      "correct_answer": "Satisfactory."
+    },
+    {
+      "question_number": 49,
+      "correct_option_letter": "A",
+      "correct_answer": "Customer may consider a life policy as a savings account or deposit."
+    },
+    {
+      "question_number": 50,
+      "correct_option_letter": "C",
+      "correct_answer": "1."
+    },
+    {
+      "question_number": 51,
+      "correct_option_letter": "D",
+      "correct_answer": "Make a report to the Singapore Police Force."
+    },
+    {
+      "question_number": 52,
+      "correct_option_letter": "D",
+      "correct_answer": "Liquidity."
+    },
+    {
+      "question_number": 53,
+      "correct_option_letter": "B",
+      "correct_answer": "Offer Price"
+    },
+    {
+      "question_number": 54,
+      "correct_option_letter": "D",
+      "correct_answer": "Fair Dealing Outcome Four."
+    },
+    {
+      "question_number": 55,
+      "correct_option_letter": "C",
+      "correct_answer": "Language Proficiency/Educational Level."
+    },
+    {
+      "question_number": 56,
+      "correct_option_letter": "B",
+      "correct_answer": "Head of finance of the FA."
+    },
+    {
+      "question_number": 57,
+      "correct_option_letter": "B",
+      "correct_answer": "Securities and Futures Act."
+    },
+    {
+      "question_number": 58,
+      "correct_option_letter": "C",
+      "correct_answer": "Member working in Parliament."
+    },
+    {
+      "question_number": 59,
+      "correct_option_letter": "D",
+      "correct_answer": "The fees should be calculated and paid before consideration of all other payments."
+    },
+    {
+      "question_number": 60,
+      "correct_option_letter": "B",
+      "correct_answer": "Up to 3 rounds."
+    },
+    {
+      "question_number": 61,
+      "correct_option_letter": "A",
+      "correct_answer": "Financial adviser."
+    },
+    {
+      "question_number": 62,
+      "correct_option_letter": "D",
+      "correct_answer": "Enhanced due diligence."
+    },
+    {
+      "question_number": 63,
+      "correct_option_letter": "C",
+      "correct_answer": "25%."
+    },
+    {
+      "question_number": 64,
+      "correct_option_letter": "B",
+      "correct_answer": "12."
+    },
+    {
+      "question_number": 65,
+      "correct_option_letter": "B",
+      "correct_answer": "solely rely on the self-declarations by a proposed representative."
+    },
+    {
+      "question_number": 66,
+      "correct_option_letter": "B",
+      "correct_answer": "5 years working experience in the insurance business."
+    },
+    {
+      "question_number": 67,
+      "correct_option_letter": "C",
+      "correct_answer": "Integrity."
+    },
+    {
+      "question_number": 68,
+      "correct_option_letter": "C",
+      "correct_answer": "18 years old."
+    },
+    {
+      "question_number": 69,
+      "correct_option_letter": "D",
+      "correct_answer": "Within the past 10 years."
+    },
+    {
+      "question_number": 70,
+      "correct_option_letter": "D",
+      "correct_answer": "CDSA."
+    },
+    {
+      "question_number": 71,
+      "correct_option_letter": "A",
+      "correct_answer": "official closing price."
+    },
+    {
+      "question_number": 72,
+      "correct_option_letter": "C",
+      "correct_answer": "T+4 business days."
+    },
+    {
+      "question_number": 73,
+      "correct_option_letter": "C",
+      "correct_answer": "Percentage of shareholding in the FA."
+    },
+    {
+      "question_number": 74,
+      "correct_option_letter": "A",
+      "correct_answer": "Within 1 month."
+    },
+    {
+      "question_number": 75,
+      "correct_option_letter": "D",
+      "correct_answer": "2 methods."
+    },
+    {
+      "question_number": 76,
+      "correct_option_letter": "B",
+      "correct_answer": "Financial Action Task Force."
+    },
+    {
+      "question_number": 77,
+      "correct_option_letter": "D",
+      "correct_answer": "market for high worth investors."
+    },
+    {
+      "question_number": 78,
+      "correct_option_letter": "D",
+      "correct_answer": "Harassment of customers."
+    },
+    {
+      "question_number": 79,
+      "correct_option_letter": "C",
+      "correct_answer": "Conventional advisers."
+    },
+    {
+      "question_number": 80,
+      "correct_option_letter": "C",
+      "correct_answer": "not later than 3 months."
+    },
+    {
+      "question_number": 81,
+      "correct_option_letter": "D",
+      "correct_answer": "All of the above."
+    },
+    {
+      "question_number": 82,
+      "correct_option_letter": "B",
+      "correct_answer": "Increase another distribution channel for sale of ILP products."
+    },
+    {
+      "question_number": 83,
+      "correct_option_letter": "A",
+      "correct_answer": "3 business days"
+    },
+    {
+      "question_number": 84,
+      "correct_option_letter": "C",
+      "correct_answer": "impinges on the fitness and propriety of the representative."
+    },
+    {
+      "question_number": 85,
+      "correct_option_letter": "A",
+      "correct_answer": "4"
+    },
+    {
+      "question_number": 86,
+      "correct_option_letter": "D",
+      "correct_answer": "5 years."
+    },
+    {
+      "question_number": 87,
+      "correct_option_letter": "B",
+      "correct_answer": "Thailand."
+    },
+    {
+      "question_number": 88,
+      "correct_option_letter": "B",
+      "correct_answer": "5"
+    },
+    {
+      "question_number": 89,
+      "correct_option_letter": "B",
+      "correct_answer": "No discrete fee is charged."
+    },
+    {
+      "question_number": 90,
+      "correct_option_letter": "D",
+      "correct_answer": "Ensure switch benefits the customer."
+    },
+    {
+      "question_number": 91,
+      "correct_option_letter": "D",
+      "correct_answer": "Board of Directors."
+    },
+    {
+      "question_number": 92,
+      "correct_option_letter": "A",
+      "correct_answer": "Within the past 10 years."
+    },
+    {
+      "question_number": 93,
+      "correct_option_letter": "D",
+      "correct_answer": "None of the above."
+    },
+    {
+      "question_number": 94,
+      "correct_option_letter": "D",
+      "correct_answer": "Monetary Authority of Singapore."
+    },
+    {
+      "question_number": 95,
+      "correct_option_letter": "C",
+      "correct_answer": "Honesty, integrity, and reputation."
+    },
+    {
+      "question_number": 96,
+      "correct_option_letter": "C",
+      "correct_answer": "Grade E."
+    },
+    {
+      "question_number": 97,
+      "correct_option_letter": "C",
+      "correct_answer": "2"
+    },
+    {
+      "question_number": 98,
+      "correct_option_letter": "B",
+      "correct_answer": "S$4."
+    },
+    {
+      "question_number": 99,
+      "correct_option_letter": "C",
+      "correct_answer": "5 times."
+    },
+    {
+      "question_number": 100,
+      "correct_option_letter": "D",
+      "correct_answer": "Customer’s declaration that he has been advised by his representative to switch."
+    },
+    {
+      "question_number": 101,
+      "correct_option_letter": "A",
+      "correct_answer": "10%"
+    },
+    {
+      "question_number": 102,
+      "correct_option_letter": "D",
+      "correct_answer": "The policy is surrendered."
+    },
+    {
+      "question_number": 103,
+      "correct_option_letter": "B",
+      "correct_answer": "It has an investment element."
+    },
+    {
+      "question_number": 104,
+      "correct_option_letter": "C",
+      "correct_answer": "S$500 million."
+    },
+    {
+      "question_number": 105,
+      "correct_option_letter": "D",
+      "correct_answer": "Non-statutory."
+    },
+    {
+      "question_number": 106,
+      "correct_option_letter": "B",
+      "correct_answer": "Once in 12 months."
+    },
+    {
+      "question_number": 107,
+      "correct_option_letter": "A",
+      "correct_answer": "employment of manipulative and deceptive devices."
+    },
+    {
+      "question_number": 108,
+      "correct_option_letter": "A",
+      "correct_answer": "market manipulation."
+    },
+    {
+      "question_number": 109,
+      "correct_option_letter": "C",
+      "correct_answer": "CPF LIFE Income Plan."
+    },
+    {
+      "question_number": 110,
+      "correct_option_letter": "C",
+      "correct_answer": "Grade C."
+    },
+    {
+      "question_number": 111,
+      "correct_option_letter": "D",
+      "correct_answer": "All of the above."
+    },
+    {
+      "question_number": 112,
+      "correct_option_letter": "B",
+      "correct_answer": "Management of conflict of interest."
+    },
+    {
+      "question_number": 113,
+      "correct_option_letter": "D",
+      "correct_answer": "Do the right thing."
+    },
+    {
+      "question_number": 114,
+      "correct_option_letter": "C",
+      "correct_answer": "Duty of Care."
+    },
+    {
+      "question_number": 115,
+      "correct_option_letter": "C",
+      "correct_answer": "An act of omission."
+    },
+    {
+      "question_number": 116,
+      "correct_option_letter": "B",
+      "correct_answer": "improve efficiency and reducing cost."
+    },
+    {
+      "question_number": 117,
+      "correct_option_letter": "C",
+      "correct_answer": "S$188,000."
+    },
+    {
+      "question_number": 118,
+      "correct_option_letter": "C",
+      "correct_answer": "It is a snapshot of where John stands financially at a given point in time."
+    },
+    {
+      "question_number": 119,
+      "correct_option_letter": "B",
+      "correct_answer": "Savings and Investments divided by Total Income."
+    },
+    {
+      "question_number": 120,
+      "correct_option_letter": "C",
+      "correct_answer": "3"
+    },
+    {
+      "question_number": 121,
+      "correct_option_letter": "C",
+      "correct_answer": "John is saving enough."
+    },
+    {
+      "question_number": 122,
+      "correct_option_letter": "A",
+      "correct_answer": "Solvency ratio."
+    },
+    {
+      "question_number": 123,
+      "correct_option_letter": "B",
+      "correct_answer": "Balance Sheet"
+    },
+    {
+      "question_number": 124,
+      "correct_option_letter": "D",
+      "correct_answer": "All of the above."
+    },
+    {
+      "question_number": 125,
+      "correct_option_letter": "D",
+      "correct_answer": "All of the above."
+    },
+    {
+      "question_number": 126,
+      "correct_option_letter": "B",
+      "correct_answer": "15% ; 10%"
+    },
+    {
+      "question_number": 127,
+      "correct_option_letter": "D",
+      "correct_answer": "All of the above."
+    },
+    {
+      "question_number": 128,
+      "correct_option_letter": "B",
+      "correct_answer": "Apologise and persuasion."
+    },
+    {
+      "question_number": 129,
+      "correct_option_letter": "B",
+      "correct_answer": "Maximal Information Rule."
+    },
+    {
+      "question_number": 130,
+      "correct_option_letter": "B",
+      "correct_answer": "At least 3 to 6 months of monthly expenses."
+    },
+    {
+      "question_number": 131,
+      "correct_option_letter": "B",
+      "correct_answer": "Avoid using jargon"
+    },
+    {
+      "question_number": 132,
+      "correct_option_letter": "A",
+      "correct_answer": "Ethics is not compliance."
+    },
+    {
+      "question_number": 133,
+      "correct_option_letter": "C",
+      "correct_answer": "Expert Knowledge."
+    },
+    {
+      "question_number": 134,
+      "correct_option_letter": "C",
+      "correct_answer": "Principle of Confidentiality"
+    },
+    {
+      "question_number": 135,
+      "correct_option_letter": "C",
+      "correct_answer": "Insurable Interest."
+    },
+    {
+      "question_number": 136,
+      "correct_option_letter": "B",
+      "correct_answer": "churning."
+    },
+    {
+      "question_number": 137,
+      "correct_option_letter": "D",
+      "correct_answer": "excessive focus on sales target and profit."
+    },
+    {
+      "question_number": 138,
+      "correct_option_letter": "B",
+      "correct_answer": "Lack of competency."
+    },
+    {
+      "question_number": 139,
+      "correct_option_letter": "D",
+      "correct_answer": "Personal insurance."
+    },
+    {
+      "question_number": 140,
+      "correct_option_letter": "D",
+      "correct_answer": "non-compliance"
+    },
+    {
+      "question_number": 141,
+      "correct_option_letter": "C",
+      "correct_answer": "Churning"
+    },
+    {
+      "question_number": 142,
+      "correct_option_letter": "C",
+      "correct_answer": "using bogus designations."
+    },
+    {
+      "question_number": 143,
+      "correct_option_letter": "A",
+      "correct_answer": "The representation of fact was untrue."
+    },
+    {
+      "question_number": 144,
+      "correct_option_letter": "D",
+      "correct_answer": "Trusted individual."
+    },
+    {
+      "question_number": 145,
+      "correct_option_letter": "C",
+      "correct_answer": "Making rationalizations."
+    },
+    {
+      "question_number": 146,
+      "correct_option_letter": "D",
+      "correct_answer": "Sets out your client's wishes for future health and personal care."
+    },
+    {
+      "question_number": 147,
+      "correct_option_letter": "C",
+      "correct_answer": "Erodes the purchasing power of money over time."
+    },
+    {
+      "question_number": 148,
+      "correct_option_letter": "C",
+      "correct_answer": "A Lasting Power of Attorney."
+    },
+    {
+      "question_number": 149,
+      "correct_option_letter": "B",
+      "correct_answer": "Cancel the appointment and change to another day."
+    },
+    {
+      "question_number": 150,
+      "correct_option_letter": "B",
+      "correct_answer": "Richard Shapiro."
+    }
+  ]
+}

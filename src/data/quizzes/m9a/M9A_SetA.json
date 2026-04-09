@@ -1,0 +1,662 @@
+{
+  "quiz_title": "CMFAS Module 9A - Mock Exam Set A",
+  "version": "3rd Edition V1",
+  "prepared_for": "Lyfe Financial Advisory",
+  "date": "April 2026",
+  "total_questions": 50,
+  "format": "Multiple Choice",
+  "duration": "60 minutes",
+  "passing_grade": "70% (35/50)",
+  "questions": [
+    {
+      "question_number": 1,
+      "question": "Which statement correctly describes a Backwardation market?",
+      "reference": "C3, S2.23",
+      "options": [
+        "The spot price is higher than the futures price",
+        "The futures price is lower than the spot price",
+        "The futures price is equal to the spot price",
+        "The futures price is higher than the spot price"
+      ],
+      "correct_answer_letter": "B",
+      "correct_answer": "The futures price is lower than the spot price"
+    },
+    {
+      "question_number": 2,
+      "question": "To maintain the original level of risk exposure, a rebalancing is necessary by moving units from one fund to the other. This is known as _________.",
+      "reference": "C5, S1.9",
+      "options": [
+        "Portfolio rebalancing",
+        "Drip feeding",
+        "Beta rebalancing",
+        "Delta neutral"
+      ],
+      "correct_answer_letter": "A",
+      "correct_answer": "Portfolio rebalancing"
+    },
+    {
+      "question_number": 3,
+      "question": "Which of the following statement/s is true of Payment Netting?",
+      "reference": "C2, S2.7",
+      "options": [
+        "Maximises the need for funds & securities to change hands",
+        "Minimises the likelihood every party receives what it should get",
+        "Used to reduce counterparty risk",
+        "All of the above"
+      ],
+      "correct_answer_letter": "C",
+      "correct_answer": "Used to reduce counterparty risk"
+    },
+    {
+      "question_number": 4,
+      "question": "A structured product that allows issuers to transfer a specific credit risk to 3rd party investors is a _________instrument?",
+      "reference": "C1, S3.1",
+      "options": [
+        "Interest rate-linked",
+        "Equity-linked",
+        "Credit-linked",
+        "Hybrid-linked"
+      ],
+      "correct_answer_letter": "C",
+      "correct_answer": "Credit-linked"
+    },
+    {
+      "question_number": 5,
+      "question": "John went long a silver futures contract at $3200. Broker set maintenance margin lower at $3000. Under what market circumstance would the broker issue a margin call to John at the end of the day's trading?",
+      "reference": "C3, S2.26 to 2.29",
+      "options": [
+        "Silver rises by $200",
+        "Silver falls by $200",
+        "Silver rises by more than $200",
+        "Silver falls by more than $200"
+      ],
+      "correct_answer_letter": "D",
+      "correct_answer": "Silver falls by more than $200"
+    },
+    {
+      "question_number": 6,
+      "question": "In the event of liquidation, which category of bond holders would be the last to be repaid?",
+      "reference": "C1,S4.9 to S4.11",
+      "options": [
+        "Senior bonds",
+        "Subordinated bonds",
+        "Junior bond holders",
+        "Share holders"
+      ],
+      "correct_answer_letter": "C",
+      "correct_answer": "Junior bond holders"
+    },
+    {
+      "question_number": 7,
+      "question": "SGX requires ETFs to meet certain liquidity requirements, which of the following is correctly stated?",
+      "reference": "C1,S4.16",
+      "options": [
+        "Fund size must be at least S$20 million & at least 25% of funds total number of issued shares are held by at least 500 shareholders",
+        "Fund size must be at least S$20 million & at least 25% of funds total number of issued shares are held by at least 100 shareholders",
+        "Fund size must be at least S$750,000 & at least 80% of funds total number of issued shares are held by shareholders",
+        "None of the above"
+      ],
+      "correct_answer_letter": "A",
+      "correct_answer": "Fund size must be at least S$20 million & at least 25% of funds total number of issued shares are held by at least 500 shareholders"
+    },
+    {
+      "question_number": 8,
+      "question": "A structured product ______.",
+      "reference": "C1,S1.1 to 1.4",
+      "options": [
+        "Is simple to understand & carries lower risk",
+        "Is usually a combination of a Fixed-income instrument & Derivative",
+        "Is strictly a Fixed Income instrument",
+        "Is really an equity instrument that's pays a fixed dividend"
+      ],
+      "correct_answer_letter": "B",
+      "correct_answer": "Is usually a combination of a Fixed-income instrument & Derivative"
+    },
+    {
+      "question_number": 9,
+      "question": "In the world of finance, risk refers to",
+      "reference": "C2/S1.1",
+      "options": [
+        "Credit rating",
+        "Return of principal invested",
+        "Interest rate rising",
+        "Price of the underlying asset"
+      ],
+      "correct_answer_letter": "D",
+      "correct_answer": "Price of the underlying asset"
+    },
+    {
+      "question_number": 10,
+      "question": "Reverse convertible bonds are constructed by using a bond and ______.",
+      "reference": "C1,S3.16",
+      "options": [
+        "Written put option",
+        "A swap",
+        "A forward contract",
+        "Any of the above"
+      ],
+      "correct_answer_letter": "A",
+      "correct_answer": "Written put option"
+    },
+    {
+      "question_number": 11,
+      "question": "An investor may suffer a partial loss on his original investment amount, which risk/s may trigger that?",
+      "reference": "C2, S6.14 Table 2.3",
+      "options": [
+        "Default risk of the issuer",
+        "Derivative counterparty defaulting",
+        "Collateral Risk",
+        "All of the above"
+      ],
+      "correct_answer_letter": "D",
+      "correct_answer": "All of the above"
+    },
+    {
+      "question_number": 12,
+      "question": "Which one of the following futures contracts would be settled in cash instead of physical delivery?",
+      "reference": "C3, S2.20 Table 3.2",
+      "options": [
+        "Metals contracts",
+        "Cryptocurrencies",
+        "Agriculture products like gain, rice",
+        "Rubber contracts"
+      ],
+      "correct_answer_letter": "B",
+      "correct_answer": "Cryptocurrencies"
+    },
+    {
+      "question_number": 13,
+      "question": "The STI Double Long Fund (2x) seeks to deliver twice the daily percentage change in the level of the Straits Times Index (STI). If the STI registers a 10% gain at the end of the day what would be the change in the value of this fund?",
+      "reference": "C4, S2.27",
+      "options": [
+        "+10%",
+        "-10%",
+        "+20%",
+        "-20%"
+      ],
+      "correct_answer_letter": "C",
+      "correct_answer": "+20%"
+    },
+    {
+      "question_number": 14,
+      "question": "The number of times that a dollar of assets is reinvested in a given year. What is this ratio known as?",
+      "reference": "C4, S1.12",
+      "options": [
+        "Expense ratio",
+        "Turnover ratio",
+        "Liquidity ratio",
+        "Soft dollar"
+      ],
+      "correct_answer_letter": "B",
+      "correct_answer": "Turnover ratio"
+    },
+    {
+      "question_number": 15,
+      "question": "The January futures price for oil is US$120 per barrel, but the spot price is US$100 per barrel. Which of the following statements BEST describes this situation?",
+      "reference": "C3/S2.24",
+      "options": [
+        "Basis is $20 over January",
+        "Basis is $20 under January",
+        "Basis is $2 over January",
+        "Basis is $2 under January"
+      ],
+      "correct_answer_letter": "B",
+      "correct_answer": "Basis is $20 under January"
+    },
+    {
+      "question_number": 16,
+      "question": "Which of the following regulatory instrument(s) must an insurer marketing structured ILPs comply with?",
+      "reference": "C4, S5.1",
+      "options": [
+        "Hire Purchase Act",
+        "Finance Advisers Act 2001",
+        "Code of MAS",
+        "All of the above"
+      ],
+      "correct_answer_letter": "B",
+      "correct_answer": "Finance Advisers Act 2001"
+    },
+    {
+      "question_number": 17,
+      "question": "Under which report/document can you find the \"market value of exposure to derivatives\"?",
+      "reference": "C4, S6.20",
+      "options": [
+        "Derivative report",
+        "Policy document",
+        "Product highlight sheet",
+        "Semi-annual report"
+      ],
+      "correct_answer_letter": "D",
+      "correct_answer": "Semi-annual report"
+    },
+    {
+      "question_number": 18,
+      "question": "Portfolio Bonds are often called Lifestyle Policies, which statement below best explains it?",
+      "reference": "C5, S2.1",
+      "options": [
+        "To satisfy an individual's changing investment objectives during his lifetime.",
+        "His investment portfolio remains the same, but the fund manager changes",
+        "The portfolio includes an insurance element, which implies lifetime.",
+        "It means the returns to the portfolio are fixed for the entire lifetime."
+      ],
+      "correct_answer_letter": "A",
+      "correct_answer": "To satisfy an individual's changing investment objectives during his lifetime."
+    },
+    {
+      "question_number": 19,
+      "question": "There are several fees & charges incurred under a Portfolio Bond, which statement below is FALSE?",
+      "reference": "C5, S1.10 to S1.17",
+      "options": [
+        "Mortality charges can be attached to Portfolio Bonds",
+        "Dealing Account can have a negative balance",
+        "A hard copy of the yearly statement is provided free of charge",
+        "Early withdrawal charge will be imposed by the fund manager for early withdrawals"
+      ],
+      "correct_answer_letter": "C",
+      "correct_answer": "A hard copy of the yearly statement is provided free of charge"
+    },
+    {
+      "question_number": 20,
+      "question": "Which of the following could affect the share price of a company, which in turn could affect the company's profits?",
+      "reference": "C2, S1.5",
+      "options": [
+        "Interest rates",
+        "Commodity prices",
+        "An increase in the Consumer Price Index",
+        "All of the above"
+      ],
+      "correct_answer_letter": "D",
+      "correct_answer": "All of the above"
+    },
+    {
+      "question_number": 21,
+      "question": "What is the typical annual fund management fee, for a manager of an equity portfolio?",
+      "reference": "C4, B1 S2.9",
+      "options": [
+        "0.5% to 1%",
+        "0.5% to 1.5%",
+        "1% to 2%",
+        "1% to 3%"
+      ],
+      "correct_answer_letter": "C",
+      "correct_answer": "1% to 2%"
+    },
+    {
+      "question_number": 22,
+      "question": "Which of the following statements is Incorrect about A Portfolio of Investments with an insurance element?",
+      "reference": "C5, S1.1 to S1.5",
+      "options": [
+        "They allow policy owners to appoint managers of their portfolios within the insurer's platform",
+        "They offer a wide range of investment choices",
+        "They carry more risk when compared to conventional bonds",
+        "Provides a high amount of death benefit"
+      ],
+      "correct_answer_letter": "D",
+      "correct_answer": "Provides a high amount of death benefit"
+    },
+    {
+      "question_number": 23,
+      "question": "Jerry runs a garment factory producing cotton t-shirts for many well-known brands. He has been monitoring the price of raw cotton and notice it has been on an upward trend. Since he typically buys cotton from the farmers every 6 months, how can Jerry protect himself from a price increase?",
+      "reference": "C3, S2.31 to S2.36",
+      "options": [
+        "Buy a cotton futures contract",
+        "Sell a cotton futures contract",
+        "Buy a put option on cotton",
+        "Sell a commodity swap"
+      ],
+      "correct_answer_letter": "A",
+      "correct_answer": "Buy a cotton futures contract"
+    },
+    {
+      "question_number": 24,
+      "question": "Structured deposits are one of four common wrappers, all the following are TRUE except______?",
+      "reference": "C1, S1.10(a",
+      "options": [
+        "Only banks can issue structured deposits",
+        "Bank usually guarantees a return of capital",
+        "They are included in the Deposit Insurance Scheme",
+        "Structured deposits incur lower administrative costs"
+      ],
+      "correct_answer_letter": "C",
+      "correct_answer": "They are included in the Deposit Insurance Scheme"
+    },
+    {
+      "question_number": 25,
+      "question": "Which one of the following scenarios best describes liquidity risk from an institution perspective?",
+      "reference": "C2, S3.1",
+      "options": [
+        "Pays a high dividend to its shareholders annually",
+        "Facing a potential bankruptcy situation",
+        "Share price of the institution has been slowly & steadily rising over the last 5 years",
+        "None of the above"
+      ],
+      "correct_answer_letter": "B",
+      "correct_answer": "Facing a potential bankruptcy situation"
+    },
+    {
+      "question_number": 26,
+      "question": "A retail CIS is subject to concentration limits, for Single Entity Limit exposure is capped at",
+      "reference": "C4, S5.9",
+      "options": [
+        "5% of the fund's NAV",
+        "10% of the fund's NAV",
+        "15% of the funds NAV",
+        "20% of the funds NAV"
+      ],
+      "correct_answer_letter": "B",
+      "correct_answer": "10% of the fund's NAV"
+    },
+    {
+      "question_number": 27,
+      "question": "A structured product manager issues an equity-linked note with a par-value of $1000. Out of that 60% is channelled into a zero-coupon bond, while the remaining 40% is used as premium for call options. The structured product aims to provide a return of the capital portion to investors at maturity.\n\nAssuming the zero-coupon bond matures at the same time as the structured product, what must the maturity value of the zero-coupon be in order to return the principal to the investor?",
+      "reference": "C1, S1.6 to S1.7, including the Illustration",
+      "options": [
+        "$600",
+        "$400",
+        "$1000",
+        "$1400"
+      ],
+      "correct_answer_letter": "C",
+      "correct_answer": "$1000"
+    },
+    {
+      "question_number": 28,
+      "question": "An investor looking for greater downside protection, in the event of a knock-out occurring would be best advised to invest in a __________.",
+      "reference": "C1, S3.33 to S3.36",
+      "options": [
+        "Tracker certificate",
+        "Airbag certificate",
+        "Discount certificate",
+        "Bonus certificate"
+      ],
+      "correct_answer_letter": "B",
+      "correct_answer": "Airbag certificate"
+    },
+    {
+      "question_number": 29,
+      "question": "Products designed to protect capital are designed for risk-adverse investors, which of the following is an example of this type of product?",
+      "reference": "C1, S3.9",
+      "options": [
+        "Capital guaranteed funds",
+        "Tracker certificates",
+        "Structured ETFs",
+        "Synthetic zero-coupon bonds"
+      ],
+      "correct_answer_letter": "A",
+      "correct_answer": "Capital guaranteed funds"
+    },
+    {
+      "question_number": 30,
+      "question": "Assets of a Structured ILP are held under the investment-linked sub-fund. Who owns the assets in this sub-fund?",
+      "reference": "C4, S5.3",
+      "options": [
+        "The fund manager",
+        "The trustee",
+        "The insurer",
+        "The policy holders"
+      ],
+      "correct_answer_letter": "C",
+      "correct_answer": "The insurer"
+    },
+    {
+      "question_number": 31,
+      "question": "James owns 100 shares of BRZ stock at $15, shortly after he went long on 100 BRZ puts for some downside protection. The BRZ puts has a strike price of $15 and James paid $1.50 premium for each put. Calculate gain/loss if BRZ stock were to fall to $7.",
+      "reference": "C3, S3.26 to S3.30",
+      "options": [
+        "Gain of $150",
+        "Loss of $150",
+        "Gain of $800",
+        "Loss of $800"
+      ],
+      "correct_answer_letter": "B",
+      "correct_answer": "Loss of $150"
+    },
+    {
+      "question_number": 32,
+      "question": "An investment-linked insurance life policy indicates the investment holdings as follows:\n\nTotal market value is $7,500,00. If the fund is faced with a high demand of withdrawals, what is the \nimpact the fund will face?",
+      "reference": "C6, B5 & D3 S2.18",
+      "options": [
+        "Fund size is rather small, hence it is easy to liquidate to meet any withdrawal demands",
+        "The fund manager should recommend investors switch to other funds to minimize the withdrawals",
+        "It takes time for the fund to liquidate its investment holdings to meet the high demand of withdrawals, as such the policy holder may only get part of the cash he needs",
+        "Since the fund invests in OTC bonds, they are more liquid when compared to exchange traded bonds."
+      ],
+      "correct_answer_letter": "C",
+      "correct_answer": "It takes time for the fund to liquidate its investment holdings to meet the high demand of withdrawals, as such the policy holder may only get part of the cash he needs"
+    },
+    {
+      "question_number": 33,
+      "question": "A fund manager manages a portfolio of Singapore stocks worth $3,000,000. It has a beta of 1.2 to the STI Index. He is expecting near term declines over the next 2 months and wants to hedge his portfolio. The STI is currently at 3000, & the March contract is priced at 3100. With a multiplier of $10 per index point, calculate the number of futures contracts that the fund manager must sell to hedge the value of his stock portfolio.",
+      "reference": "C3, S2.42 to S2.45 including example\na",
+      "options": [
+        "110",
+        "116",
+        "120",
+        "125"
+      ],
+      "correct_answer_letter": "B",
+      "correct_answer": "116"
+    },
+    {
+      "question_number": 34,
+      "question": "An investor invests US$100,000 at an exchange rate of US$1.00 to SGD$1.20 in March. Three months later the exchange rate drops to US$1.00 to SGD$1.10. However the investment in US$ terms makes a gain of 20%. What is the investor gain/losses in SGD % terms?",
+      "reference": "C2, S4.3",
+      "options": [
+        "Loss of 10%",
+        "Loss of 20%",
+        "Gain of 10%",
+        "Gain of 20%"
+      ],
+      "correct_answer_letter": "C",
+      "correct_answer": "Gain of 10%"
+    },
+    {
+      "question_number": 35,
+      "question": "XYZ Insurance Pte Limited had introduced an Investment-linked policy that invests in a variety of funds, including a structured fund called Nest Fund.\n\nBelow is an extract from the Product Highlights Sheet of Nest Fund:\nWHAT ARE THE FEES AND CHARGES OF THIS INVESTMENT?\nPayable directly by you\n\nYou must pay the following fees and charges to the Fund agent based on the full market value of your investment:\n- If you subsequently wish to switch your investment to another fund by the same fund management company, a switching fee of 0.5% is payable.\n\nA client had invested in Nest Fund and wishes to switch to another fund by the same fund management company. The current market value of the investment is S$50,000. Calculate the client's switching fee.",
+      "reference": "C6, Page 116",
+      "options": [
+        "$150",
+        "$250",
+        "$500",
+        "$5000"
+      ],
+      "correct_answer_letter": "B",
+      "correct_answer": "$250"
+    },
+    {
+      "question_number": 36,
+      "question": "Person A purchase a structured product from company XYZ. Below are the past year returns. Which of the following statement is true?",
+      "reference": "C6, B4",
+      "options": [
+        "Capital is guaranteed",
+        "There is a guaranteed return of at least 20%",
+        "Performance of XYZ is higher than the benchmark for the past 3 years",
+        "Performance of XYZ is lower than the benchmark since inception"
+      ],
+      "correct_answer_letter": "C",
+      "correct_answer": "Performance of XYZ is higher than the benchmark for the past 3 years"
+    },
+    {
+      "question_number": 37,
+      "question": "How often should a structured ILP sub-fund be valued?",
+      "reference": "C4, S7.7",
+      "options": [
+        "Once a week",
+        "Once a month",
+        "Once every quarter",
+        "Once a year"
+      ],
+      "correct_answer_letter": "B",
+      "correct_answer": "Once a month"
+    },
+    {
+      "question_number": 38,
+      "question": "When preparing semi-annual reports for each ILP sub-fund, the report should contain the performance of the ILP sub-fund and a comparison versus the benchmark covering the periods of :-",
+      "reference": "C4, S7.9b",
+      "options": [
+        "One year, three years & ten years",
+        "6 months, one year & five years",
+        "Three months, six months, one year, three years, five years, ten years & since inception",
+        "Three months, six months, one year & since inception"
+      ],
+      "correct_answer_letter": "C",
+      "correct_answer": "Three months, six months, one year, three years, five years, ten years & since inception"
+    },
+    {
+      "question_number": 39,
+      "question": "Which document is prepared in a question & answer format, and contains the following questions?\n\nWho is the sub-fund suitable for?\nWhat are the key risks of this investment?\nWhat are the fees & charges of this investment?\nHow often are valuations available?",
+      "reference": "C4, S6.7",
+      "options": [
+        "Product summary",
+        "Statement to policy holders",
+        "Semi-annual report",
+        "Product highlights sheet"
+      ],
+      "correct_answer_letter": "D",
+      "correct_answer": "Product highlights sheet"
+    },
+    {
+      "question_number": 40,
+      "question": "What is the primary risk to the upside potential component of a structured product?",
+      "reference": "C1, S2.5",
+      "options": [
+        "Credit worthiness of the bond issuer",
+        "Market volatility",
+        "Expiration dates",
+        "Credit risk of the counterparty"
+      ],
+      "correct_answer_letter": "B",
+      "correct_answer": "Market volatility"
+    },
+    {
+      "question_number": 41,
+      "question": "When a market is closed to foreign investors, structured products may be the only way to replicate the performance of the product , without directly investing in securities of the market. What is one such example?",
+      "reference": "C1, S3.27",
+      "options": [
+        "Equity-linked note",
+        "Tracker certificate",
+        "Discount certificate",
+        "Airbag certificate"
+      ],
+      "correct_answer_letter": "B",
+      "correct_answer": "Tracker certificate"
+    },
+    {
+      "question_number": 42,
+      "question": "Joan is bearish on stock XYZ, she normally would sell the stock at the open & buy back before the market closes. Which strategy below would be a safer alternative for Joan?",
+      "reference": "C3, S3.35 to 3.37",
+      "options": [
+        "Shorting the stock",
+        "Selling a call option",
+        "Buying a put option",
+        "Protective puts"
+      ],
+      "correct_answer_letter": "C",
+      "correct_answer": "Buying a put option"
+    },
+    {
+      "question_number": 43,
+      "question": "When investors of structured products suffer a kick-in or a knock-out, what are these investors exposed to?",
+      "reference": "C2, S5.6",
+      "options": [
+        "Potential unlimited downside risk",
+        "Potential limited downside risk",
+        "Potential limited upside return",
+        "Potential neutral returns"
+      ],
+      "correct_answer_letter": "A",
+      "correct_answer": "Potential unlimited downside risk"
+    },
+    {
+      "question_number": 44,
+      "question": "Jamie decided to buy a call option on XYZ stock & paid a premium $2. The call exercise price is $20. Within a week, XYZ share price decreased from $25 to $22. What is the percentage change in the intrinsic value of the call option?",
+      "reference": "C2, Table 2.2 page 34",
+      "options": [
+        "+60%",
+        "-60%",
+        "-100%",
+        "-150%"
+      ],
+      "correct_answer_letter": "B",
+      "correct_answer": "-60%"
+    },
+    {
+      "question_number": 45,
+      "question": "An option that can only be exercised on pre-determined dates is known as _________?",
+      "reference": "C3, S3.13",
+      "options": [
+        "American exercise option",
+        "Asian option",
+        "European exercise option",
+        "Bermuda option"
+      ],
+      "correct_answer_letter": "D",
+      "correct_answer": "Bermuda option"
+    },
+    {
+      "question_number": 46,
+      "question": "Mr Tan is thinking of investing $100,000 into a structured ILP with the following features:\nIssuer = XYZ Insurance Company \nTenure = 5 years\nMaturity Value = initial capital amount\n\nAnnual pay-out = \n(a) Guaranteed payment of 1% of the single premium, OR\n(b) 5% of the initial capital of every year if the price of all 5 stocks are equal or above 85% of their initial stock prices\n\nMr Tan mention to his financial advisor he likes the guaranteed payment, which statement below is correct advice from his financial advisor?",
+      "reference": "C6",
+      "options": [
+        "XYZ insurance company has to observed the Code on CIS since it applies to ILP funds as well, hence the guarantee is safe.",
+        "Mr Tan can obtain additional secondary guarantee from MAS, if he has any doubts.",
+        "Since stocks have a good chance of appreciating over a five year term, Mr Tan has nothing to fear",
+        "Guarantees are only as good as the financial strength of the guarantors, therefore Mr Tan should monitor the credit standing of the party providing the guarantee over these 5 years."
+      ],
+      "correct_answer_letter": "D",
+      "correct_answer": "Guarantees are only as good as the financial strength of the guarantors, therefore Mr Tan should monitor the credit standing of the party providing the guarantee over these 5 years."
+    },
+    {
+      "question_number": 47,
+      "question": "The most common swap whereby cash flows occurring on the same dates are netted is known as a ____________?",
+      "reference": "C3, S4.6",
+      "options": [
+        "Equity swap",
+        "Interest rate swap",
+        "Currency swap",
+        "Commodity swap"
+      ],
+      "correct_answer_letter": "B",
+      "correct_answer": "Interest rate swap"
+    },
+    {
+      "question_number": 48,
+      "question": "If two stocks move independently of one another, meaning the movements are completely random, they have a correlation of _____.",
+      "reference": "C2, S6.5",
+      "options": [
+        "0",
+        "+1",
+        "–1",
+        "+0.5"
+      ],
+      "correct_answer_letter": "A",
+      "correct_answer": "0"
+    },
+    {
+      "question_number": 49,
+      "question": "Portfolio bonds provide investors with flexibility & a wide range of investment choices, however they may not be suitable for which category of investors?",
+      "reference": "C5, S4.3",
+      "options": [
+        "Investors who have a long term time frame",
+        "Investors who are in the high income tax brackets",
+        "Investors who prioritize investment return over protection",
+        "Investors who are happy to invest in one or two funds and don't need additional features."
+      ],
+      "correct_answer_letter": "D",
+      "correct_answer": "Investors who are happy to invest in one or two funds and don't need additional features."
+    },
+    {
+      "question_number": 50,
+      "question": "The share price of Microsoft is currently trading at US$250. Jason is bearish on Microsoft and decides to initiate a short CFD position. His broker quotes him $248 bid & $252 offer. Subsequently the market rises to US$270. Jason then scrambles to close his position immediately, and broker quotes him US$268 bid & US$272 offer. Assuming financing & commission charges are $3, calculate Jason gain/loss when he closes his position.",
+      "reference": "C3, S5.5",
+      "options": [
+        "Loss of US$27",
+        "Gain of US$27",
+        "Loss of US$24",
+        "Gain of US$24"
+      ],
+      "correct_answer_letter": "A",
+      "correct_answer": "Loss of US$27"
+    }
+  ]
+}

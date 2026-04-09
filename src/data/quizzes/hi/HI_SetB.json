@@ -1,0 +1,663 @@
+{
+  "quiz_title": "HEALTH INSURANCE SET B",
+  "version": "HI 8th Edition V1.2 Set B",
+  "prepared_for": "Lyfe Financial Advisory",
+  "date": "April 2026",
+  "total_questions": 50,
+  "format": "Multiple Choice",
+  "duration": "75 minutes",
+  "passing_grade": "70% (35/50)",
+  "questions": [
+    {
+      "question_number": 1,
+      "question": "In the year 2016, to ensure a sustainable healthcare system, MOH embarked on the \"3 Beyonds\" which of the following at is/are considered false?",
+      "reference": "",
+      "options": [
+        "Beyond Healthcare to Health.",
+        "Beyond Hospital to Community.",
+        "Beyond Quality to Affordability.",
+        "None of the above."
+      ],
+      "correct_answer_letter": "C",
+      "correct_answer": "Beyond Quality to Affordability."
+    },
+    {
+      "question_number": 2,
+      "question": "Interim Disability Assistance Program For The Elderly was launched by the Government to take care of needy Singaporeans who were not eligible to join Elder Shield Scheme because of reasons of ____________ .",
+      "reference": "",
+      "options": [
+        "their age",
+        "health",
+        "age and pre-existing disability",
+        "All of the above."
+      ],
+      "correct_answer_letter": "C",
+      "correct_answer": "age and pre-existing disability"
+    },
+    {
+      "question_number": 3,
+      "question": "The Policy Schedule in a Health Insurance Policy gives the specific details of the policy contract. Which one of the following details is found in the Policy Schedule?",
+      "reference": "",
+      "options": [
+        "Name of insurance plan.",
+        "Name of Insurer.",
+        "Name of beneficiary.",
+        "All of the above."
+      ],
+      "correct_answer_letter": "A",
+      "correct_answer": "Name of insurance plan."
+    },
+    {
+      "question_number": 4,
+      "question": "Primary healthcare involves the provision of basic medical treatment, preventive healthcare and health education, how are the primary healthcare services in Singapore provided? It is provided:",
+      "reference": "",
+      "options": [
+        "by professionals usually general practitioners in polyclinics and the private medical clinics within the community.",
+        "by the public hospitals, known as restructured hospitals and community hospitals.",
+        "by Community Healthcare Assist Scheme (CHAS) where eligible Singapore citizen, Merdeka and Pioneer Generation to receive subsidies for medical and/or dental care at participating general practitioners and dental clinics.",
+        "through an island-wide network of outpatient polyclinics and clinics run by private GPs."
+      ],
+      "correct_answer_letter": "D",
+      "correct_answer": "through an island-wide network of outpatient polyclinics and clinics run by private GPs."
+    },
+    {
+      "question_number": 5,
+      "question": "Medical Expense Insurance is also known as ______ Insurance.",
+      "reference": "",
+      "options": [
+        "Critical Illness",
+        "Disability Income",
+        "Hospital and Surgical",
+        "Hospital Cash (Income)"
+      ],
+      "correct_answer_letter": "C",
+      "correct_answer": "Hospital and Surgical"
+    },
+    {
+      "question_number": 6,
+      "question": "Which of the following regarding Medisave and Medi Shield Life is/are true?",
+      "reference": "",
+      "options": [
+        "Medisave is a savings scheme and Medi Shield Life is a basic health insurance scheme that covers all Singaporeans Citizens and Singapore PRs for life.",
+        "Both schemes are opt-out scheme.",
+        "Both are low-cost basic healthcare medical insurance schemes.",
+        "Both have deductibles."
+      ],
+      "correct_answer_letter": "A",
+      "correct_answer": "Medisave is a savings scheme and Medi Shield Life is a basic health insurance scheme that covers all Singaporeans Citizens and Singapore PRs for life."
+    },
+    {
+      "question_number": 7,
+      "question": "Which of the following methods used by Managed Healthcare Organization, places caps or limits on the dollar amounts for covered medical procedures and services?",
+      "reference": "",
+      "options": [
+        "Capitation.",
+        "Discounted-Fee-For-Service.",
+        "Salary.",
+        "Fee Schedule."
+      ],
+      "correct_answer_letter": "D",
+      "correct_answer": "Fee Schedule."
+    },
+    {
+      "question_number": 8,
+      "question": "Mr. Roy Lim bought a Medical Expense Insurance Policy with the following details: Plan entitlement: Restructured hospital – any standard B1 ward, as charged basis. Hospitalization : Private hospital in Singapore Pro-ration factor: 35% Annual Deductibles: $3,500 Co-insurance: 10% Ward of discharge: Standard single bed\nTotal expenses incurred• Daily room and board and medical related services : $4,000 • Surgical benefits : $20,000 Total Bill: $24,000\nHow much will the insurer pays under this policy?",
+      "reference": "",
+      "options": [
+        "$15,000",
+        "$11,610",
+        "$8,400",
+        "$4,410"
+      ],
+      "correct_answer_letter": "D",
+      "correct_answer": "$4,410"
+    },
+    {
+      "question_number": 9,
+      "question": "The costs of immunosuppressant drugs used as part of necessary medical treatment, after a major organ transplant to reduce the rate of rejection episodes must be approved by whom?",
+      "reference": "",
+      "options": [
+        "Health Science Authority.",
+        "Ministry of Health.",
+        "Singapore Medical Council.",
+        "Singapore Pharmacy Council."
+      ],
+      "correct_answer_letter": "A",
+      "correct_answer": "Health Science Authority."
+    },
+    {
+      "question_number": 10,
+      "question": "Singapore Citizens, Permanent Residents, age 30 and above who are assessed by MOH- accredited assessor to be unable to perform 3 or more of the activities of daily will be able to make monthly cash withdrawal from their own and/or their spouse Medisave for their long-term care needs. Which scheme is this?",
+      "reference": "",
+      "options": [
+        "Elder Fund.",
+        "Care Shield.",
+        "Medi Fund.",
+        "Medisave Care."
+      ],
+      "correct_answer_letter": "D",
+      "correct_answer": "Medisave Care."
+    },
+    {
+      "question_number": 11,
+      "question": "Most Group Insurance policies state that an employee must work full-time, in order to be eligible for coverage. In addition, they often have an “actively-at-work” clause. In order to be eligible for the cover, this clause requires:",
+      "reference": "",
+      "options": [
+        "The employees to be under a compulsory scheme.",
+        "The employees to be full time employed on the day the insurance coverage takes effect.",
+        "The employees to be at work on the day the insurance coverage takes effect.",
+        "The employees to obtain official Medical Certificate if he is unwell on the day the insurance coverage takes effect. C7/5.6(g)"
+      ],
+      "correct_answer_letter": "C",
+      "correct_answer": "The employees to be at work on the day the insurance coverage takes effect."
+    },
+    {
+      "question_number": 12,
+      "question": "Mr. Tan is covered under his company’s Group Dental Insurance. Which of the following benefits, Mr. Tan cannot claim from this policy?",
+      "reference": "",
+      "options": [
+        "Scaling and polishing of teeth.",
+        "Wisdom tooth extraction.",
+        "Pre-existing dental conditions.",
+        "Replacement of broken dentures."
+      ],
+      "correct_answer_letter": "D",
+      "correct_answer": "Replacement of broken dentures."
+    },
+    {
+      "question_number": 13,
+      "question": "Primary Care Physician in Managed Healthcare Plans is NOT known as _____________",
+      "reference": "",
+      "options": [
+        "Backbone of Managed Healthcare plans",
+        "Gatekeepers",
+        "Personal Physician",
+        "Specialist"
+      ],
+      "correct_answer_letter": "D",
+      "correct_answer": "Specialist"
+    },
+    {
+      "question_number": 14,
+      "question": "Which one of the following factors is important and must be disclosed to the participants for Group Voluntary A & H Policies?",
+      "reference": "",
+      "options": [
+        "Premium is fully paid by the employer.",
+        "They have a say in the type of coverage that they want.",
+        "Generates interest and appreciation from the employees.",
+        "Duration of coverage is until age 62."
+      ],
+      "correct_answer_letter": "B",
+      "correct_answer": "They have a say in the type of coverage that they want."
+    },
+    {
+      "question_number": 15,
+      "question": "Which one of the following are examples of endorsements found in a Health Insurance Policy Contract?",
+      "reference": "",
+      "options": [
+        "Promises to pay by insurer.",
+        "Restrict the scope of coverage.",
+        "Mediation.",
+        "Legal Action Provisions."
+      ],
+      "correct_answer_letter": "B",
+      "correct_answer": "Restrict the scope of coverage."
+    },
+    {
+      "question_number": 16,
+      "question": "Under a typical Disability Income policy, where Total Disability is defined as “the insured’s inability to perform any gainful occupation or a similar occupation for which the insured is reasonably suited by reason of education, experience or training”, this refers to ______ disability.",
+      "reference": "",
+      "options": [
+        "Severity",
+        "Any occupation",
+        "Own occupation",
+        "Modified own occupation"
+      ],
+      "correct_answer_letter": "D",
+      "correct_answer": "Modified own occupation"
+    },
+    {
+      "question_number": 17,
+      "question": "Mr Tan, who is an accountant, used to earn $4,000 per month before he was disabled. After partial recovery from his disability, he found a suitable job as a clerk, which pays him $1,500 per month. What would Mr. Tan’s disability income benefit be?",
+      "reference": "",
+      "options": [
+        "$3,000 per month.",
+        "$2,500 per month.",
+        "$1,875 per month.",
+        "$4,000 per month."
+      ],
+      "correct_answer_letter": "C",
+      "correct_answer": "$1,875 per month."
+    },
+    {
+      "question_number": 18,
+      "question": "An insured is covered under Disability Income Insurance. 3 years later, he decides to change to a riskier occupation and informs the insurance company. The underwriter is likely to:",
+      "reference": "",
+      "options": [
+        "Exclude all disabilities as a result of the new application.",
+        "Reduce the monthly benefit payments without increasing the premiums.",
+        "Not change any of the policy terms as it is for more than 2 years old and is guaranteed renewable.",
+        "Repudiate any claim."
+      ],
+      "correct_answer_letter": "B",
+      "correct_answer": "Reduce the monthly benefit payments without increasing the premiums."
+    },
+    {
+      "question_number": 19,
+      "question": "The size and stability of the proposer’s earnings will be an important factor for the underwriting of ______ Insurance.",
+      "reference": "",
+      "options": [
+        "Long-Term Care",
+        "Hospital Income",
+        "Medical Expense",
+        "Disability Income"
+      ],
+      "correct_answer_letter": "D",
+      "correct_answer": "Disability Income"
+    },
+    {
+      "question_number": 20,
+      "question": "The deferred period for Disability Income is an important factor to the underwriters, as it allows them to ____________.",
+      "reference": "",
+      "options": [
+        "assess any moral hazard involved",
+        "assess any medical requirements",
+        "assess any physical hazard involved",
+        "determine the occupational risk of the insured"
+      ],
+      "correct_answer_letter": "A",
+      "correct_answer": "assess any moral hazard involved"
+    },
+    {
+      "question_number": 21,
+      "question": "Which one of the following statements regarding Elder Shield is NOT true up until 2019?",
+      "reference": "",
+      "options": [
+        "All Singapore Citizens and Permanent Residents with Medisave Accounts were enrolled in Elder Shield at age 40 unless they opted out.",
+        "The Government has taken over the administration of Elder Shield from the private insurers.",
+        "The three private insurers that were given the right to administer Elder Shield are Aviva, Great Eastern Life and NTUC.",
+        "Elder Shield is a Long Term Care Insurance Scheme targeted at severe disability especially during old age and premiums are payable until age 65, with coverage for life."
+      ],
+      "correct_answer_letter": "B",
+      "correct_answer": "The Government has taken over the administration of Elder Shield from the private insurers."
+    },
+    {
+      "question_number": 22,
+      "question": "Which one of the following describes a type of Long-Term Care Insurance that pays a benefit when the insured is assessed to be suffering significant limitations in activities of daily livings?",
+      "reference": "",
+      "options": [
+        "Fee-based policy.",
+        "Service-based policy.",
+        "Benefit-based policy.",
+        "Disability-based policy."
+      ],
+      "correct_answer_letter": "D",
+      "correct_answer": "Disability-based policy."
+    },
+    {
+      "question_number": 23,
+      "question": "One of the eligible criteria for payment of critical illness benefit under Critical Illness Insurance is that that the illness must meet the definition of critical illness as defined by the policy for insurer to consider the claim. Which of the following is not true of the term defined as Major Cancer?",
+      "reference": "",
+      "options": [
+        "Carcinoma-in-situ.",
+        "Leukemia.",
+        "Sarcoma.",
+        "Lymphoma."
+      ],
+      "correct_answer_letter": "A",
+      "correct_answer": "Carcinoma-in-situ."
+    },
+    {
+      "question_number": 24,
+      "question": "Which of the following types of Critical Illness Insurance Policy, you may not need to attached a Critical Illness Waiver of Premium Rider? PRUDENTIAL",
+      "reference": "",
+      "options": [
+        "Acceleration Type.",
+        "Additional Type.",
+        "Both types.",
+        "None of the types. C1/4.12 – 4.14"
+      ],
+      "correct_answer_letter": "A",
+      "correct_answer": "Acceleration Type."
+    },
+    {
+      "question_number": 25,
+      "question": "Under Singapore Healthcare System, which of the following constitutes “Other Healthcare Service”?",
+      "reference": "",
+      "options": [
+        "Dental Services.",
+        "Traditional and Complementary Medicine.",
+        "Support Services.",
+        "All of the above."
+      ],
+      "correct_answer_letter": "D",
+      "correct_answer": "All of the above."
+    },
+    {
+      "question_number": 26,
+      "question": "Which one of the following events will cause the policy owner’s Critical Illness cover to be terminated under a Critical Illness Insurance Policy?",
+      "reference": "",
+      "options": [
+        "When the policyowner exercise paid up option under Non forfeiture option.",
+        "When the policy is converted into an Extended Term Insurance Policy.",
+        "When the insured is diagnosed with a critical illness.",
+        "When an invalid critical illness claim has been made."
+      ],
+      "correct_answer_letter": "B",
+      "correct_answer": "When the policy is converted into an Extended Term Insurance Policy."
+    },
+    {
+      "question_number": 27,
+      "question": "Alex bought a Hospital Cash Income Insurance Policy, with these policy details: Daily Benefit : $100 Max of 180 days per hospitalization Lifetime Limit : 1,000 days\nHe was hospitalized for a total 185 days for a car accident injury. Calculate the total maximum amount Alex can claim from this policy.",
+      "reference": "",
+      "options": [
+        "$100,000.",
+        "$18,500.",
+        "$18,000.",
+        "$180,000."
+      ],
+      "correct_answer_letter": "A",
+      "correct_answer": "$100,000."
+    },
+    {
+      "question_number": 28,
+      "question": "Which one of the following is Most true of Managed Healthcare Insurance (MHC) in Singapore?",
+      "reference": "",
+      "options": [
+        "MHC arrangements are not common in Singapore.",
+        "The general practitioners do not act as a gatekeeper.",
+        "Employees enjoy cashless facilities for selected panel & non-panel clinics.",
+        "For an employee under MHC, the cost is partially covered subject to co-payments and/or benefit limits."
+      ],
+      "correct_answer_letter": "A",
+      "correct_answer": "MHC arrangements are not common in Singapore."
+    },
+    {
+      "question_number": 29,
+      "question": "The color of CHAS Card indicates the _____________ .",
+      "reference": "",
+      "options": [
+        "subsidy tier that cardholders are entitled.",
+        "class of hospital wards that cardholders are entitled to stay in.",
+        "number of times the card can be used.",
+        "the respective health conditions of the cardholders."
+      ],
+      "correct_answer_letter": "A",
+      "correct_answer": "subsidy tier that cardholders are entitled."
+    },
+    {
+      "question_number": 30,
+      "question": "Insurer may not give full reimbursements of medical expenses because of:",
+      "reference": "",
+      "options": [
+        "Underwriting limitations.",
+        "Deductible & Co-insurance.",
+        "Co- Ordination of Benefit Clause.",
+        "No expense participation."
+      ],
+      "correct_answer_letter": "B",
+      "correct_answer": "Deductible & Co-insurance."
+    },
+    {
+      "question_number": 31,
+      "question": "When the insured person is admitted to a hospital and/or ward higher than what he is entitled to under his existing insured plan, a percentage is applied on the actual charges incurred, resulting in a reduced in benefits payable. This is due to __________ .",
+      "reference": "",
+      "options": [
+        "deductibles",
+        "co-insurance",
+        "pro-ration factor",
+        "All of the above"
+      ],
+      "correct_answer_letter": "C",
+      "correct_answer": "pro-ration factor"
+    },
+    {
+      "question_number": 32,
+      "question": "Simon wishes to claim under his Medisave account for the following inpatient psychiatric Treatment costs incurred as follows: 21 Jan 2020: $100 13 Feb 2020: $140 11 March 2020: $210 16 April 2020: $260\nHow much can he recover from his Medisave account?",
+      "reference": "",
+      "options": [
+        "$540.",
+        "$640.",
+        "$700.",
+        "$710"
+      ],
+      "correct_answer_letter": "A",
+      "correct_answer": "$540."
+    },
+    {
+      "question_number": 33,
+      "question": "Under Notice No: MAS 120, Part I of the Mandatory Requirements states that no direct insurer shall use the word “Shield” in the name, description or title of any accident and health policy issued by the insurer, unless the policy is a ______ policy.",
+      "reference": "",
+      "options": [
+        "Medisave-approved",
+        "Medifund-approved",
+        "Medi Shield-approved",
+        "Medi Shield Life-approved"
+      ],
+      "correct_answer_letter": "A",
+      "correct_answer": "Medisave-approved"
+    },
+    {
+      "question_number": 34,
+      "question": "Which one of the following is a key factor affecting the premium rate charged by an actuary for a Group Health Insurance Plans?",
+      "reference": "",
+      "options": [
+        "Occupation.",
+        "Persistency.",
+        "Claims Experience.",
+        "Group Participation Level."
+      ],
+      "correct_answer_letter": "C",
+      "correct_answer": "Claims Experience."
+    },
+    {
+      "question_number": 35,
+      "question": "Miss Tan, a Singaporean was hospitalised in a government hospital for 10 days in a Class C Ward. Calculate how much will Medi Shield Life pays, given the following details: Total hospital bills = $5,850 Deductible = $1,500 Co-insurance applies on the following rates: From $0- $5000 - 10% From $5,001 to $10,000 - 5% More than $10,000 - 3%",
+      "reference": "",
+      "options": [
+        "$3,958.",
+        "$3,915.",
+        "$4,350.",
+        "$4,133."
+      ],
+      "correct_answer_letter": "A",
+      "correct_answer": "$3,958."
+    },
+    {
+      "question_number": 36,
+      "question": "The government has worked with Integrated Shield Plans (IP) insurers to develop the Standard IP. Which one of the following is true of the Standard IP?",
+      "reference": "",
+      "options": [
+        "It is a \"no-frills\" product targeted at covering B2 ward hospital bills and selected outpatient treatments.",
+        "From 1 May 2016, all insurers are required to sell the Standard IP.",
+        "The benefits and premiums are identical across all IP insurers.",
+        "It has co-insurance and deductible components."
+      ],
+      "correct_answer_letter": "D",
+      "correct_answer": "It has co-insurance and deductible components."
+    },
+    {
+      "question_number": 37,
+      "question": "The reinstatement of Elder Shield policy is allowed within ______ days from the expiry of the grace period, subject to evidence of insurability at the insured’s expense and payment of the overdue premiums with interest.",
+      "reference": "",
+      "options": [
+        "60",
+        "75",
+        "90",
+        "180"
+      ],
+      "correct_answer_letter": "D",
+      "correct_answer": "180"
+    },
+    {
+      "question_number": 38,
+      "question": "This clause states that, the insurer will begin providing benefits as set out in the policy on the policy start date upon receiving the first premium. What is the name of this clause?",
+      "reference": "",
+      "options": [
+        "Policy Schedule.",
+        "Insuring Clause.",
+        "Entire Contract Clause.",
+        "Premium Clause."
+      ],
+      "correct_answer_letter": "C",
+      "correct_answer": "Entire Contract Clause."
+    },
+    {
+      "question_number": 39,
+      "question": "Deductible is a flat dollar amount of medical expenses that a policy owner must pay out of his own pocket, before insurer will make any payment. Which one of the following statements is most TRUE?",
+      "reference": "",
+      "options": [
+        "per disability/per year deductible is more restrictive as compared to per disability/per claim deductible.",
+        "the same sickness or injury within the same policy year applies to “per disability/per claim deductible”.",
+        "per annum deductible includes a variety of covered sickness or injuries within a policy year.",
+        "under per disability/per year deductible, the insured will have to bear the deductible each time he makes a claim regardless of the number claims made within the same year."
+      ],
+      "correct_answer_letter": "C",
+      "correct_answer": "per annum deductible includes a variety of covered sickness or injuries within a policy year."
+    },
+    {
+      "question_number": 40,
+      "question": "Which one of the following will likely decrease premium for a Health Insurance Policy?",
+      "reference": "",
+      "options": [
+        "Decrease in investment income.",
+        "Increase in persistency.",
+        "Increase in morbidity.",
+        "Increase in benefits covered."
+      ],
+      "correct_answer_letter": "B",
+      "correct_answer": "Increase in persistency."
+    },
+    {
+      "question_number": 41,
+      "question": "In underwriting most types of Health Insurance policies, the proposer’s ______ is most important in underwriting Disability Income Insurance.",
+      "reference": "",
+      "options": [
+        "age",
+        "avocation",
+        "occupation",
+        "financial situation",
+        "Group Participation Level"
+      ],
+      "correct_answer_letter": "E",
+      "correct_answer": "Group Participation Level"
+    },
+    {
+      "question_number": 42,
+      "question": "Which one of the following types of underwriting, adopted by Health Insurance Underwriters is the premium the least expensive?",
+      "reference": "",
+      "options": [
+        "Moratorium Underwriting.",
+        "Simplified Issuance offer.",
+        "Guaranteed Issuance offer.",
+        "Full Medical Underwriting."
+      ],
+      "correct_answer_letter": "D",
+      "correct_answer": "Full Medical Underwriting."
+    },
+    {
+      "question_number": 43,
+      "question": "The Government provides various premium subsidies and support measures to help SCs and PRs with their Medi Shield Life premiums. Which of the following is not one of such subsidies?",
+      "reference": "",
+      "options": [
+        "Additional Premium Support.",
+        "Merdeka Generations Premium Subsidies.",
+        "Lower-to-middle income subsidies.",
+        "None of the above."
+      ],
+      "correct_answer_letter": "D",
+      "correct_answer": "None of the above."
+    },
+    {
+      "question_number": 44,
+      "question": "An insurance representative is marketing a Health Insurance product to her friend, John. Which one of the following best illustrates needs selling by the representative?",
+      "reference": "",
+      "options": [
+        "Representative offers a rebate of 50% on the commission earned if John buys the product.",
+        "Representative explains how this product addresses the concern of John as stated from his fact-find form.",
+        "Representative focuses on the features of the product, explaining clearly to John, if he should be hospitalized and details on how to claim.",
+        "Representative discloses for John’s benefit that the discount for the product will end in a week’s time."
+      ],
+      "correct_answer_letter": "B",
+      "correct_answer": "Representative explains how this product addresses the concern of John as stated from his fact-find form."
+    },
+    {
+      "question_number": 45,
+      "question": "Mr. Lim was hospitalized, how much can he withdraw from his Medisave to pay for inpatient psychiatric episodes? A maximum of ____________ per year.",
+      "reference": "",
+      "options": [
+        "S$5,000",
+        "S$6,000",
+        "S$7,000",
+        "S$8,000"
+      ],
+      "correct_answer_letter": "A",
+      "correct_answer": "S$5,000"
+    },
+    {
+      "question_number": 46,
+      "question": "John, a proposed insured declared in the proposal form that he is going for a surgery. The underwriters will likely _________________ .",
+      "reference": "",
+      "options": [
+        "decline the proposal",
+        "postpone the proposal",
+        "charge more premium",
+        "apply specific exclusions"
+      ],
+      "correct_answer_letter": "B",
+      "correct_answer": "postpone the proposal"
+    },
+    {
+      "question_number": 47,
+      "question": "For the purpose of Notice No: MAS 120, the definition of an accident and health insurance intermediary includes a:",
+      "reference": "",
+      "options": [
+        "Captive Insurer.",
+        "Direct Reinsurer.",
+        "Direct Insurance Broker.",
+        "Direct Reinsurance Broker."
+      ],
+      "correct_answer_letter": "C",
+      "correct_answer": "Direct Insurance Broker."
+    },
+    {
+      "question_number": 48,
+      "question": "Mr. Tan is aged 30. He has income and expenditure of $5,500 and $2,500 respectively. He wants to maintain his income to age 60 should he be disabled. Assuming that the interest rate is 4% and inflation is 2%, what is the maintenance cost?",
+      "reference": "",
+      "options": [
+        "$1,507,732.",
+        "$822,399.",
+        "$685,332.",
+        "$529,135."
+      ],
+      "correct_answer_letter": "C",
+      "correct_answer": "$685,332."
+    },
+    {
+      "question_number": 49,
+      "question": "During need analysis, when recommending a Critical Illness Insurance, what must an advisor advise a client?",
+      "reference": "",
+      "options": [
+        "Claims procedures.",
+        "Underwriting considerations.",
+        "Mode of Payment.",
+        "Coverage."
+      ],
+      "correct_answer_letter": "D",
+      "correct_answer": "Coverage."
+    },
+    {
+      "question_number": 50,
+      "question": "Mrs. Tang is a housewife. Which of the following policy is MOST suitable for meeting the maintenance costs for Mrs. Tang?",
+      "reference": "",
+      "options": [
+        "Personal Accident Insurance Policy.",
+        "Critical Illness Insurance.",
+        "Long Term Care Insurance.",
+        "Disability Income Insurance."
+      ],
+      "correct_answer_letter": "A",
+      "correct_answer": "Personal Accident Insurance Policy."
+    }
+  ]
+}

@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import Link from "next/link";
 import { gradeQuiz } from "./actions";
-import type { ClientQuiz, QuizResult, QuestionResult } from "@/lib/m9-quiz";
+import type { ClientQuiz, QuizResult, QuestionResult } from "@/lib/quiz";
 
 const LETTERS = ["A", "B", "C", "D"] as const;
 
@@ -28,15 +28,13 @@ function formatDuration(seconds: number): string {
 }
 
 // ────────────────────────────────────────────────────────────────
-// Main component
-// ────────────────────────────────────────────────────────────────
 
 export default function QuizClient({ quiz }: { quiz: ClientQuiz }) {
   const [phase, setPhase] = useState<"taking" | "submitting" | "results">(
     "taking"
   );
   const [answers, setAnswers] = useState<Record<string, string>>({});
-  const [timeLeft, setTimeLeft] = useState(7200); // 120 min
+  const [timeLeft, setTimeLeft] = useState(quiz.duration * 60);
   const [results, setResults] = useState<QuizResult | null>(null);
   const [showConfirm, setShowConfirm] = useState(false);
   const [showNav, setShowNav] = useState(false);
@@ -54,8 +52,6 @@ export default function QuizClient({ quiz }: { quiz: ClientQuiz }) {
     answersRef.current = answers;
   }, [answers]);
 
-  // ── Submit handler ──
-
   const doSubmit = useCallback(
     async (auto = false) => {
       if (submittedRef.current) return;
@@ -68,6 +64,7 @@ export default function QuizClient({ quiz }: { quiz: ClientQuiz }) {
           (Date.now() - startTimeRef.current) / 1000
         );
         const result = await gradeQuiz(
+          quiz.moduleId,
           quiz.quizId,
           answersRef.current,
           elapsed
@@ -81,15 +78,13 @@ export default function QuizClient({ quiz }: { quiz: ClientQuiz }) {
         setPhase("taking");
       }
     },
-    [quiz.quizId]
+    [quiz.moduleId, quiz.quizId]
   );
 
   const doSubmitRef = useRef(doSubmit);
   useEffect(() => {
     doSubmitRef.current = doSubmit;
   }, [doSubmit]);
-
-  // ── Timer ──
 
   useEffect(() => {
     if (phase !== "taking") return;
@@ -106,16 +101,12 @@ export default function QuizClient({ quiz }: { quiz: ClientQuiz }) {
     return () => clearInterval(id);
   }, [phase]);
 
-  // ── Warn on navigate away ──
-
   useEffect(() => {
     if (phase !== "taking") return;
     const handler = (e: BeforeUnloadEvent) => e.preventDefault();
     window.addEventListener("beforeunload", handler);
     return () => window.removeEventListener("beforeunload", handler);
   }, [phase]);
-
-  // ── Helpers ──
 
   const handleSelect = (qNum: number, letter: string) => {
     if (phase !== "taking") return;
@@ -133,10 +124,9 @@ export default function QuizClient({ quiz }: { quiz: ClientQuiz }) {
 
   const answeredCount = Object.keys(answers).length;
   const unansweredCount = quiz.total_questions - answeredCount;
+  const backHref = `/emock/${quiz.moduleId}`;
 
-  // ════════════════════════════════════════════════════════════════
-  // RESULTS VIEW
-  // ════════════════════════════════════════════════════════════════
+  // ════════════════════════ RESULTS ════════════════════════
 
   if (phase === "results" && results) {
     const incorrectCount = results.questions.filter(
@@ -145,7 +135,6 @@ export default function QuizClient({ quiz }: { quiz: ClientQuiz }) {
     const unansweredResultCount = results.questions.filter(
       (q) => q.selected_letter === null
     ).length;
-
     const filtered = results.questions.filter((q) => {
       if (resultFilter === "incorrect")
         return !q.is_correct && q.selected_letter !== null;
@@ -156,7 +145,7 @@ export default function QuizClient({ quiz }: { quiz: ClientQuiz }) {
     return (
       <>
         <Link
-          href="/emock/m9"
+          href={backHref}
           className="text-sm text-orange-600 hover:text-orange-700 mb-6 inline-block"
         >
           &larr; Back to quizzes
@@ -178,15 +167,53 @@ export default function QuizClient({ quiz }: { quiz: ClientQuiz }) {
           >
             {results.score}/{results.total}
           </div>
-          <div
-            className={`inline-block px-4 py-1.5 rounded-full text-sm font-semibold mb-4 ${
-              results.passed
-                ? "bg-green-100 text-green-700"
-                : "bg-red-100 text-red-600"
-            }`}
-          >
-            {results.passed ? "PASSED" : "FAILED"} &mdash; 70% required
-          </div>
+
+          {results.parts ? (
+            <>
+              <div className="grid grid-cols-2 gap-3 mb-4 max-w-xs mx-auto">
+                {results.parts.map((part) => (
+                  <div
+                    key={part.name}
+                    className={`rounded-lg p-3 ${part.passed ? "bg-green-50" : "bg-red-50"}`}
+                  >
+                    <div className="text-xs font-semibold text-stone-500 mb-1">
+                      {part.name}
+                    </div>
+                    <div
+                      className={`text-xl font-bold ${part.passed ? "text-green-600" : "text-red-500"}`}
+                    >
+                      {part.score}/{part.total}
+                    </div>
+                    <div className="text-xs text-stone-400">
+                      {part.passPercent}% req ({part.passRequired})
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <div
+                className={`inline-block px-4 py-1.5 rounded-full text-sm font-semibold mb-4 ${
+                  results.passed
+                    ? "bg-green-100 text-green-700"
+                    : "bg-red-100 text-red-600"
+                }`}
+              >
+                {results.passed ? "PASSED" : "FAILED"} &mdash; both parts
+                required
+              </div>
+            </>
+          ) : (
+            <div
+              className={`inline-block px-4 py-1.5 rounded-full text-sm font-semibold mb-4 ${
+                results.passed
+                  ? "bg-green-100 text-green-700"
+                  : "bg-red-100 text-red-600"
+              }`}
+            >
+              {results.passed ? "PASSED" : "FAILED"} &mdash;{" "}
+              {quiz.passingGrade}
+            </div>
+          )}
+
           <div className="text-stone-400 text-sm">
             Time taken: {formatDuration(results.time_taken_seconds)}
           </div>
@@ -221,7 +248,6 @@ export default function QuizClient({ quiz }: { quiz: ClientQuiz }) {
           ))}
         </div>
 
-        {/* Question results */}
         <div className="space-y-4">
           {filtered.length === 0 ? (
             <p className="text-stone-400 text-center py-8">
@@ -254,7 +280,7 @@ export default function QuizClient({ quiz }: { quiz: ClientQuiz }) {
 
         <div className="mt-8 text-center pb-4">
           <Link
-            href="/emock/m9"
+            href={backHref}
             className="inline-block bg-orange-500 text-white font-semibold px-6 py-3 rounded-lg hover:bg-orange-600 transition-colors"
           >
             Back to Quizzes
@@ -264,9 +290,7 @@ export default function QuizClient({ quiz }: { quiz: ClientQuiz }) {
     );
   }
 
-  // ════════════════════════════════════════════════════════════════
-  // SUBMITTING VIEW
-  // ════════════════════════════════════════════════════════════════
+  // ════════════════════════ SUBMITTING ════════════════════════
 
   if (phase === "submitting") {
     return (
@@ -279,9 +303,7 @@ export default function QuizClient({ quiz }: { quiz: ClientQuiz }) {
     );
   }
 
-  // ════════════════════════════════════════════════════════════════
-  // QUIZ-TAKING VIEW
-  // ════════════════════════════════════════════════════════════════
+  // ════════════════════════ TAKING ════════════════════════
 
   return (
     <div className="-mx-4 -mt-8">
@@ -320,7 +342,6 @@ export default function QuizClient({ quiz }: { quiz: ClientQuiz }) {
           </div>
         </div>
 
-        {/* Question navigator grid */}
         {showNav && (
           <div className="border-t border-stone-100 px-4 py-3">
             <div className="flex flex-wrap gap-1">
@@ -342,7 +363,6 @@ export default function QuizClient({ quiz }: { quiz: ClientQuiz }) {
         )}
       </div>
 
-      {/* Questions */}
       <div className="px-4 pt-6">
         <QuestionList
           questions={quiz.questions}
@@ -351,7 +371,6 @@ export default function QuizClient({ quiz }: { quiz: ClientQuiz }) {
           questionRefs={questionRefs}
         />
 
-        {/* Submit section */}
         <div className="mt-8 mb-8 bg-white rounded-xl border border-stone-200 p-6 text-center">
           {unansweredCount > 0 && (
             <p className="text-amber-600 text-sm mb-4">
@@ -368,7 +387,6 @@ export default function QuizClient({ quiz }: { quiz: ClientQuiz }) {
         </div>
       </div>
 
-      {/* Confirm dialog */}
       {showConfirm && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4">
           <div className="bg-white rounded-xl p-6 max-w-sm w-full shadow-xl">
@@ -401,9 +419,7 @@ export default function QuizClient({ quiz }: { quiz: ClientQuiz }) {
   );
 }
 
-// ────────────────────────────────────────────────────────────────
-// Question list — handles shared-passage grouping
-// ────────────────────────────────────────────────────────────────
+// ──────────────────────── Question list ────────────────────────
 
 function QuestionList({
   questions,
@@ -418,7 +434,6 @@ function QuestionList({
 }) {
   const elements: React.ReactNode[] = [];
   let i = 0;
-
   while (i < questions.length) {
     const q = questions[i];
     if (q.shared_passage) {
@@ -435,7 +450,8 @@ function QuestionList({
         <div key={`passage-${group[0].question_number}`} className="mb-2">
           <div className="bg-blue-50 border border-blue-200 rounded-xl p-5 mb-4">
             <p className="text-sm font-semibold text-blue-700 mb-2">
-              Shared Passage &mdash; Questions {group[0].question_number}&ndash;
+              Shared Passage &mdash; Questions {group[0].question_number}
+              &ndash;
               {group[group.length - 1].question_number}
             </p>
             <p className="text-stone-800 text-sm whitespace-pre-line">
@@ -470,13 +486,10 @@ function QuestionList({
       i++;
     }
   }
-
   return <>{elements}</>;
 }
 
-// ────────────────────────────────────────────────────────────────
-// Question card (quiz-taking)
-// ────────────────────────────────────────────────────────────────
+// ──────────────────────── Question card ────────────────────────
 
 function QuestionCard({
   question,
@@ -539,9 +552,7 @@ function QuestionCard({
   );
 }
 
-// ────────────────────────────────────────────────────────────────
-// Result card (post-submission)
-// ────────────────────────────────────────────────────────────────
+// ──────────────────────── Result card ────────────────────────
 
 function ResultCard({ question }: { question: QuestionResult }) {
   return (
@@ -575,11 +586,9 @@ function ResultCard({ question }: { question: QuestionResult }) {
           const isCorrect = letter === question.correct_answer_letter;
           const isWrongChoice =
             letter === question.selected_letter && !isCorrect;
-
           let cls = "border-transparent";
           if (isCorrect) cls = "bg-green-50 border-green-200";
           else if (isWrongChoice) cls = "bg-red-50 border-red-200";
-
           return (
             <div
               key={letter}

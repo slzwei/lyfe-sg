@@ -1,0 +1,1962 @@
+{
+  "quiz_title": "RES 5 Mock Exam 1",
+  "version": "RES 5 (Set 1) 1st Edition V1.2",
+  "prepared_for": "Lyfe Financial Advisory",
+  "date": "April 2026",
+  "total_questions": 150,
+  "format": "Multiple Choice",
+  "duration": "180 minutes",
+  "passing_grade": "Part I: 75% (83/110), Part II: 80% (32/40)",
+  "questions": [
+    {
+      "question_number": 1,
+      "question": "In an asset rich, cash poor society, which of the following is a monetisation option recommended for retirees?",
+      "reference": "C13/3.54",
+      "options": [
+        "Lease Buyback Scheme.",
+        "Silver Housing Bonus.",
+        "Renting out your house.",
+        "Sell their house and live with children."
+      ],
+      "correct_answer_letter": "A",
+      "correct_answer": "Lease Buyback Scheme."
+    },
+    {
+      "question_number": 2,
+      "question": "One of the basic principles you should be aware of when recommending products to your client is, you should only recommend the most _______products given his circumstances.",
+      "reference": "C24/2.1",
+      "options": [
+        "premium",
+        "suitable",
+        "basic",
+        "speciality"
+      ],
+      "correct_answer_letter": "B",
+      "correct_answer": "suitable"
+    },
+    {
+      "question_number": 3,
+      "question": "Buying and selling any capital markets product without a change in beneficial ownership in order to maintain, change or cause fluctuations in the market price of the capital markets product in the market is an example of:",
+      "reference": "C12/2.2 (2nd point)",
+      "options": [
+        "False Trading.",
+        "Securities Hawking.",
+        "Short Selling.",
+        "Insider Trading."
+      ],
+      "correct_answer_letter": "A",
+      "correct_answer": "False Trading."
+    },
+    {
+      "question_number": 4,
+      "question": "Which one of the following is an example of prohibited market conduct that describes and prevent people who is in the know from taking advantage of benefiting from the resultant market movement? This is really a blackout rule to prevent undesirable practices.",
+      "reference": "C12/7.1",
+      "options": [
+        "Employment of manipulative and deceptive devices.",
+        "Dissemination of information about illegal transactions.",
+        "False or misleading statements and information.",
+        "Fraudulently inducing persons to deal in capital market products."
+      ],
+      "correct_answer_letter": "B",
+      "correct_answer": "Dissemination of information about illegal transactions."
+    },
+    {
+      "question_number": 5,
+      "question": "Under Section 321 of the Securities and Futures Act, which ONE of the following statements concerning the Revised Code on Collective Investment Schemes (the Code) is FALSE?",
+      "reference": "C11/1.2",
+      "options": [
+        "The Code is to enhance safeguards for retail investors.",
+        "The Code will render an offender liable to criminal proceedings if he fails to comply with any requirement.",
+        "A breach of the Code may be taken into account by the Monetary Authority of Singapore, in determining whether to revoke or suspend the Collective Investment Scheme.",
+        "The Code sets out the best practices on management, operation and the marketing of Collective Investment Schemes."
+      ],
+      "correct_answer_letter": "B",
+      "correct_answer": "The Code will render an offender liable to criminal proceedings if he fails to comply with any requirement."
+    },
+    {
+      "question_number": 6,
+      "question": "Under Guideline FSG-G04 on delivering fair dealing outcomes to customers, the Board and Senior Management should review the financial institution's policies, systems and process and that includes having:",
+      "reference": "C9C/3.4",
+      "options": [
+        "procedures for whistle blowers.",
+        "procedures to ensure a wide range of product and services for its customers.",
+        "procedures to monitor its staff members and representatives.",
+        "procedures to identify, mitigate, and disclose conflicts of interest."
+      ],
+      "correct_answer_letter": "D",
+      "correct_answer": "procedures to identify, mitigate, and disclose conflicts of interest."
+    },
+    {
+      "question_number": 7,
+      "question": "How are the interest rates for Special and Medisave Accounts determined?",
+      "reference": "C13/2.21",
+      "options": [
+        "12-month average yield of 10-year Singapore Government Securities plus 1%, subject to the current floor interest rate of 4% per annum.",
+        "12-month average yield of 30-year Singapore Government Securities plus 1%, subject to the current floor interest rate of 4% per annum.",
+        "3-month average of major local banks' interest rates, subject to legislated minimum of interest 2.5% per annum.",
+        "6-month average of major local banks' interest rates, subject to legislated minimum ofinterest 2.5% per annum."
+      ],
+      "correct_answer_letter": "A",
+      "correct_answer": "12-month average yield of 10-year Singapore Government Securities plus 1%, subject to the current floor interest rate of 4% per annum."
+    },
+    {
+      "question_number": 8,
+      "question": "Where more than 10% of the ILP sub-fund's assets are in Collective Investment Schemes, which are constituted in a foreign jurisdiction, insurer together with its related corporations should be managing at least ________ of discretionary funds.",
+      "reference": "C7/87",
+      "options": [
+        "S$500,000",
+        "S$500 million",
+        "S$5 million",
+        "$10 million"
+      ],
+      "correct_answer_letter": "B",
+      "correct_answer": "S$500 million"
+    },
+    {
+      "question_number": 9,
+      "question": "An investment-linked policy sub-fund (ILP sub-fund) should not engage in which of the following activity/activities?",
+      "reference": "C7/89",
+      "options": [
+        "Direct lending of monies.",
+        "Granting of guarantees.",
+        "Underwriting.",
+        "All of the above."
+      ],
+      "correct_answer_letter": "D",
+      "correct_answer": "All of the above."
+    },
+    {
+      "question_number": 10,
+      "question": "Which of the following is false about Insider Trading?",
+      "reference": "C12/8.4,8.5",
+      "options": [
+        "Insider trading is to trade on privilege and confidential information.",
+        "Trading on such information serves to provide an advantage over other investors resulting in an unfair market.",
+        "Persons with inside information on a corporation or its securities can enter into transactions in such capital market products, provided the person did not have an intention to use the inside information.",
+        "It is irrelevant that the persons did not have an intention to use the inside information."
+      ],
+      "correct_answer_letter": "C",
+      "correct_answer": "Persons with inside information on a corporation or its securities can enter into transactions in such capital market products, provided the person did not have an intention to use the inside information."
+    },
+    {
+      "question_number": 11,
+      "question": "Financial Advisers Regulation (FAR) is considered __________ . It is prescribed by the MAS to give effects to the provisions of the FAA and sets out the rules on the application of the FAA.",
+      "reference": "C1/2.1",
+      "options": [
+        "Subsidiary Legislation",
+        "Notifications",
+        "Acts",
+        "Directions"
+      ],
+      "correct_answer_letter": "A",
+      "correct_answer": "Subsidiary Legislation"
+    },
+    {
+      "question_number": 12,
+      "question": "Under the Notice on Appointment & Use of Introducers By Financial Advisers (Notice No: FAA-N02), which one of the following will not apply to a financial adviser where the introducing activities are carried out by its employees or representatives on its own behalf.?",
+      "reference": "C4A/1.16",
+      "options": [
+        "Disclosure By Introducer.",
+        "Written Agreement.",
+        "Provision Of Script.",
+        "Prohibition Of Handling Client's Money."
+      ],
+      "correct_answer_letter": "B",
+      "correct_answer": "Written Agreement."
+    },
+    {
+      "question_number": 13,
+      "question": "The ACMF Framework refers to the ________________ .",
+      "reference": "C10C/4",
+      "options": [
+        "ASIAN Capital Market Professional Mobility Framework.",
+        "ASEAN Capital Market Professional Mobility Framework.",
+        "ASIAN Credit & Marketing Professional Mobility Framework.",
+        "ASEAN Credit & Marketing Professional Mobility Framework."
+      ],
+      "correct_answer_letter": "B",
+      "correct_answer": "ASEAN Capital Market Professional Mobility Framework."
+    },
+    {
+      "question_number": 14,
+      "question": "Which ONE of the following statements relating to the introducing activity in MAS Notice No: FAA-N02 is CORRECT?",
+      "reference": "C4A/1.5 (b)(ii)",
+      "options": [
+        "The introducer is not permitted to disclose their remuneration.",
+        "The introducer is permitted to share client's data to introducee.",
+        "The introducer is permitted to provide factual information on investment products.",
+        "All of the above."
+      ],
+      "correct_answer_letter": "C",
+      "correct_answer": "The introducer is permitted to provide factual information on investment products."
+    },
+    {
+      "question_number": 15,
+      "question": "How many days' notices to the Authority are required before insurers were to launch an investment linked sub-fund?",
+      "reference": "C7/7(a)",
+      "options": [
+        "7.",
+        "14.",
+        "21.",
+        "30."
+      ],
+      "correct_answer_letter": "C",
+      "correct_answer": "21."
+    },
+    {
+      "question_number": 16,
+      "question": "Under the First Schedule of the FAA, the following persons are defined as excluded financial advisers except ______________ .",
+      "reference": "C1/4.8",
+      "options": [
+        "The Public Trustee in exercising its powers under the Public Trustee Act.",
+        "The Official Assignee in exercising its powers under the Bankruptcy Act.",
+        "A public accountant in exercising its powers in relation to a company under the Accountants Act and whose providing of any financial advisory service is solely incidental to the accounting practice, as the case maybe.",
+        "The person in exercising its power in relation to a company as its Chief Executive Officer under the Companies Act."
+      ],
+      "correct_answer_letter": "D",
+      "correct_answer": "The person in exercising its power in relation to a company as its Chief Executive Officer under the Companies Act."
+    },
+    {
+      "question_number": 17,
+      "question": "The concept of __________ must apply to processes for the same product. That means for the same product, such as life insurance, advisers from different channels, would subject to the same rules and standards.",
+      "reference": "C1/3.5",
+      "options": [
+        "Consistency",
+        "Accountability",
+        "Customer's Interest",
+        "Fairness"
+      ],
+      "correct_answer_letter": "A",
+      "correct_answer": "Consistency"
+    },
+    {
+      "question_number": 18,
+      "question": "Which of the following the key change(s) on the revised Code on Collective Investment Schemes which came into effect on 1 October 2011 that is/are False?",
+      "reference": "C11/2.2(c)(iii)",
+      "options": [
+        "Introduction of enhanced requirements for funds investing in structured instruments.",
+        "Introduction of simulated past performance data for disclosure of performance figures.",
+        "Introducing the concept of weighted portfolio maturities for money market funds.",
+        "All of the above."
+      ],
+      "correct_answer_letter": "B",
+      "correct_answer": "Introduction of simulated past performance data for disclosure of performance figures."
+    },
+    {
+      "question_number": 19,
+      "question": "Which of the following statements in connection with online direct channel under the Notice on the Distribution of Direct Purchase Insurance Products is true? It is distributed by __________ .",
+      "reference": "C6C/5",
+      "options": [
+        "Telephone",
+        "Internet",
+        "Facsimile",
+        "All of the above"
+      ],
+      "correct_answer_letter": "B",
+      "correct_answer": "Internet"
+    },
+    {
+      "question_number": 20,
+      "question": "MAS Notice No:307 on Investment-Linked Policies is issued pursuant to the _________ Act.",
+      "reference": "C7/1",
+      "options": [
+        "Insurance",
+        "Financial Advisers",
+        "Monetary Authority",
+        "Securities & Futures"
+      ],
+      "correct_answer_letter": "A",
+      "correct_answer": "Insurance"
+    },
+    {
+      "question_number": 21,
+      "question": "Upon the discovery of a system malfunction, which has a severe impact on the licensee's operations that impacted the customers, the licensee should give notice of the disruption to the Monetary Authority of Singapore ________ from the discovery of the incident.",
+      "reference": "C6B/7",
+      "options": [
+        "immediately",
+        "1hour",
+        "2 hours",
+        "3 hours"
+      ],
+      "correct_answer_letter": "B",
+      "correct_answer": "1hour"
+    },
+    {
+      "question_number": 22,
+      "question": "Under MAS Notice No: 307 on Investment-linked Policies, which of the following is/are not considered as soft dollars in the management of the ILP sub-fund?",
+      "reference": "C7/45(b)",
+      "options": [
+        "Travel.",
+        "Accommodation.",
+        "Entertainment.",
+        "All of the above."
+      ],
+      "correct_answer_letter": "D",
+      "correct_answer": "All of the above."
+    },
+    {
+      "question_number": 23,
+      "question": "In Singapore how many class/classes of representatives are there under Financial Advisers Act?",
+      "reference": "C1/10.8",
+      "options": [
+        "4",
+        "3",
+        "2",
+        "1"
+      ],
+      "correct_answer_letter": "C",
+      "correct_answer": "2"
+    },
+    {
+      "question_number": 24,
+      "question": "The appointment of a provisional representative is valid for a period of up to _________ after his name is entered into the Public Register as a provisional representative.",
+      "reference": "C1/13.3",
+      "options": [
+        "1 month",
+        "3 months",
+        "6 months",
+        "12 months"
+      ],
+      "correct_answer_letter": "B",
+      "correct_answer": "3 months"
+    },
+    {
+      "question_number": 25,
+      "question": "Section 32(1) of the FAA provides that if a principal or individual makes a statement or lodge any document to the MAS which is false and misleading, it shall be guilty of an offence and shall be liable on conviction to a ____________ .",
+      "reference": "C1/17.1",
+      "options": [
+        "Fine not exceeding S$25,000",
+        "Fine not exceeding S$50,000",
+        "Fine not exceeding S$75,000",
+        "Fine not exceeding S$100,000"
+      ],
+      "correct_answer_letter": "B",
+      "correct_answer": "Fine not exceeding S$50,000"
+    },
+    {
+      "question_number": 26,
+      "question": "Section 33 of the FAA states that any person who is aggrieved by the refusal of the MAS under Section 23J(1) of the FAA to enter his name in the public register, may, within _______ days after he is notified of the decision of MAS to appeal.",
+      "reference": "C1/18.1",
+      "options": [
+        "21",
+        "30",
+        "60",
+        "90"
+      ],
+      "correct_answer_letter": "B",
+      "correct_answer": "30"
+    },
+    {
+      "question_number": 27,
+      "question": "Making a misleading statement includes a reference to omitting to disclose any matter that is material to the statement. Hence omitting to disclose to the insurer any material matter results in the financial adviser making a ___________ statement.",
+      "reference": "C2/2.1(a)",
+      "options": [
+        "false",
+        "deceptive",
+        "decisive",
+        "material"
+      ],
+      "correct_answer_letter": "A",
+      "correct_answer": "false"
+    },
+    {
+      "question_number": 28,
+      "question": "Which one of the following criteria is TRUE of an Appointed Representative (AP) and a Provisional Representative (PR)?",
+      "reference": "C1/11.1(c),13.3",
+      "options": [
+        "Both can provide financial advisory services during the grace period of 3 months.",
+        "Both must satisfy exam requirements before their names can be entered in the Public Register.",
+        "Both should be at least 18 years old.",
+        "Both whose names are entered in the Public Register of representatives and status has not been revoked or suspended by MAS from providing that type of financial advisory services."
+      ],
+      "correct_answer_letter": "D",
+      "correct_answer": "Both whose names are entered in the Public Register of representatives and status has not been revoked or suspended by MAS from providing that type of financial advisory services."
+    },
+    {
+      "question_number": 29,
+      "question": "FAA states that a lien or claim on client's money or property in any account, which may be required to be established by any licensed financial adviser under the regulations, shall be void, unless the moneys in the account are for ______ due and owing to the licensed financial adviser.",
+      "reference": "C2/4.4",
+      "options": [
+        "fees",
+        "loan",
+        "donations",
+        "expenses"
+      ],
+      "correct_answer_letter": "A",
+      "correct_answer": "fees"
+    },
+    {
+      "question_number": 30,
+      "question": "The objective(s) of prohibition orders under the Financial Advisers Act is/are to:",
+      "reference": "C2/14.2",
+      "options": [
+        "allow the person, subject to any condition specified in the order to do specified acts.",
+        "prohibit the person from engaging in any or all of the financial advisory services regulated under the FAA.",
+        "prohibit the taking part in the management of, acting as a director or becoming a substantial shareholder of a licensed or exempt adviser.",
+        "All of the above."
+      ],
+      "correct_answer_letter": "D",
+      "correct_answer": "All of the above."
+    },
+    {
+      "question_number": 31,
+      "question": "Section 113(1) of the FAA states that any officer, employee or agent of a licensed financial adviser or exempt financial adviser who willfully made a false entry in any book or report of that financial adviser shall be guilty of an offence and liable to:",
+      "reference": "C2/18.1(a)",
+      "options": [
+        "Fine not exceeding S$50,000.",
+        "Fine not exceeding S$50,000; imprisonment for a term not exceeding 12 months or both.",
+        "Fine not exceeding S$100,000.",
+        "Fine not exceeding S$100,000; imprisonment for a term not exceeding 2 years or both."
+      ],
+      "correct_answer_letter": "D",
+      "correct_answer": "Fine not exceeding S$100,000; imprisonment for a term not exceeding 2 years or both."
+    },
+    {
+      "question_number": 32,
+      "question": "Direct purchase of a life policy via online direct channel, financial adviser should alert the client via a pop-up prompt. Which of the following is not included in the pop-up prompt?",
+      "reference": "C10B/10(c)",
+      "options": [
+        "The client can request the financial adviser to explain the product features.",
+        "A life policy is not a savings account or deposit.",
+        "Some benefits of a life policy are not guaranteed.",
+        "The client should take the product based on the suitability of information provided."
+      ],
+      "correct_answer_letter": "D",
+      "correct_answer": "The client should take the product based on the suitability of information provided."
+    },
+    {
+      "question_number": 33,
+      "question": "If a client who is assessed as not possessing knowledge or experience in derivatives pursuant to Customer Account Review (CAR), but still chooses to transact in Listed Specified Investment Product, which is not recommended by the financial adviser (FA), the FA shall ________ . Choose the most correct answer.",
+      "reference": "C3A/E3/27N & 27O",
+      "options": [
+        "Shall proceed with the relevant trade and inform the client in writing of the result of the CAR.",
+        "Shall proceed with the relevant trade and inform the client that it is the client responsibility to ensure suitability of the product.",
+        "Shall not proceed with the relevant trade.",
+        "Shall not proceed with the relevant trade unless it's Senior Management, who is not involved in that relevant trade and is not a connected person to the client has given approval for the FA to proceed."
+      ],
+      "correct_answer_letter": "D",
+      "correct_answer": "Shall not proceed with the relevant trade unless it's Senior Management, who is not involved in that relevant trade and is not a connected person to the client has given approval for the FA to proceed."
+    },
+    {
+      "question_number": 34,
+      "question": "A representative when advising a client on switching, which one of the following is NOT his consideration?",
+      "reference": "C3A/I/42",
+      "options": [
+        "Replacement policy suitability.",
+        "Same level of benefits at a higher cost.",
+        "Penalty for termination.",
+        "Same level of benefits at a lower cost."
+      ],
+      "correct_answer_letter": "D",
+      "correct_answer": "Same level of benefits at a lower cost."
+    },
+    {
+      "question_number": 35,
+      "question": "Section 63(1) of the FAA provides that licensed financial advisers are not required to seek the approval of MAS via Form 11 for which appointment?",
+      "reference": "C2/11.1",
+      "options": [
+        "Director.",
+        "Executor Director.",
+        "Chief Executive Officer.",
+        "Appointment Representatives."
+      ],
+      "correct_answer_letter": "D",
+      "correct_answer": "Appointment Representatives."
+    },
+    {
+      "question_number": 36,
+      "question": "Under what situation(s) should the financial adviser disclose to the client the amount of commission and other benefits it has received?",
+      "reference": "C3B/5/19",
+      "options": [
+        "Soft commission.",
+        "Trailer commission.",
+        "Commission from product provider.",
+        "All of the above."
+      ],
+      "correct_answer_letter": "D",
+      "correct_answer": "All of the above."
+    },
+    {
+      "question_number": 37,
+      "question": "A financial advisor is required to inquire if there exists any beneficial owner in relation to a customer, under which one of the following situations?",
+      "reference": "C5/6.13(a)(i)",
+      "options": [
+        "A financial institution incorporated or established outside of Singapore that is subject to the AML/CFT requirements consistent with the standards set by FATF.",
+        "An entity listed on a stock exchange outside of Singapore that is subject to regulatory disclosure requirements.",
+        "An entity listed on the Singapore exchange.",
+        "A natural person."
+      ],
+      "correct_answer_letter": "D",
+      "correct_answer": "A natural person."
+    },
+    {
+      "question_number": 38,
+      "question": "Jenny inherits an estate from her sister which makes her wealthy. She can choose to defer her CPF Life payouts, up to _______ age.",
+      "reference": "C13/3.7",
+      "options": [
+        "55",
+        "65",
+        "70",
+        "80"
+      ],
+      "correct_answer_letter": "C",
+      "correct_answer": "70"
+    },
+    {
+      "question_number": 39,
+      "question": "For the purpose of complying with the Notice No. FAA-N06, a financial adviser may whether directly or through a third party, collect, use and disclose personal data of an individual customer, an individual appointed to act on behalf of a customer, __________________ .",
+      "reference": "C5/11.4",
+      "options": [
+        "with the respective individual's consent.",
+        "without respective individual's consent.",
+        "and the right to correct an error or omission of the personal data that it is in possession of the financial adviser.",
+        "none of the above."
+      ],
+      "correct_answer_letter": "B",
+      "correct_answer": "without respective individual's consent."
+    },
+    {
+      "question_number": 40,
+      "question": "If the customer is reluctant, unable or unwilling to provide any information requested by the financial adviser, decides to withdraw a pending application to establish business relations or to terminate existing business relations, what report should be filed and documented?",
+      "reference": "C5/12.3",
+      "options": [
+        "Police Report.",
+        "Fraud Report.",
+        "Suspicious Transaction Report.",
+        "Suspicious Activities Report."
+      ],
+      "correct_answer_letter": "C",
+      "correct_answer": "Suspicious Transaction Report."
+    },
+    {
+      "question_number": 41,
+      "question": "No Financial adviser or its representatives shall, label a dual currency investment that maybe misleading to its investors. Which one of the following statement(s) is/are considered misleading?",
+      "reference": "C3C/A1/6",
+      "options": [
+        "It is a deposit.",
+        "It is a structured deposit.",
+        "The principal is guaranteed in terms of the base currency.",
+        "All of the above."
+      ],
+      "correct_answer_letter": "D",
+      "correct_answer": "All of the above."
+    },
+    {
+      "question_number": 42,
+      "question": "Under Notice No: FAA-N10, an exempt person and its representatives shall not represent itself, nor cause to be represented, as being ____________ by MAS, whether verbally or in writing.",
+      "reference": "C4B/1.6",
+      "options": [
+        "licensed",
+        "regulated",
+        "registered",
+        "all of the above"
+      ],
+      "correct_answer_letter": "D",
+      "correct_answer": "all of the above"
+    },
+    {
+      "question_number": 43,
+      "question": "The purpose of Guideline No: FAA-G05 (the guidelines) is to give guidance to the financial advisers on the circumstances that they may use the term independent in respect of providing financial advisory services to customers. Which of the following approach is adopted by the guidelines?",
+      "reference": "C8E/1.5",
+      "options": [
+        "Prescriptive-based.",
+        "Facilitative-based.",
+        "Holistic- based.",
+        "Principle-based."
+      ],
+      "correct_answer_letter": "D",
+      "correct_answer": "Principle-based."
+    },
+    {
+      "question_number": 44,
+      "question": "Jane is a Provisional Representative. She wants to find out which of the following is NOT a minimum entry requirement?",
+      "reference": "C4C/1.6(b)",
+      "options": [
+        "Holds at least a Bachelor's degree.",
+        "Already relocated to Singapore.",
+        "At least 5 years of relevant working experience.",
+        "Fulfill CMFAS examination requirements."
+      ],
+      "correct_answer_letter": "C",
+      "correct_answer": "At least 5 years of relevant working experience."
+    },
+    {
+      "question_number": 45,
+      "question": "A Financial Adviser must submit to MAS a Misconduct Report not later than ____days from the date of discovery of misconduct committed by its representatives.",
+      "reference": "C4D/1.6",
+      "options": [
+        "14 days",
+        "15 days",
+        "21 days",
+        "30 days"
+      ],
+      "correct_answer_letter": "A",
+      "correct_answer": "14 days"
+    },
+    {
+      "question_number": 46,
+      "question": "MAS Notice No: FAA-N06 - Prevention Of Money Laundering And Countering The Financing Of Terrorism, adopted which one of the following approaches with regard to money laundering and financing of terrorism?",
+      "reference": "C5/4",
+      "options": [
+        "Risk-based approach.",
+        "Principle-based approach.",
+        "Balancing-based approach.",
+        "Facilitative-based approach."
+      ],
+      "correct_answer_letter": "A",
+      "correct_answer": "Risk-based approach."
+    },
+    {
+      "question_number": 47,
+      "question": "In assessing an application for a financial adviser's licence, MAS will consider whether the Chief Executive Officer and all Executive Directors of the Applicant have a minimum of relevant working experience in respect of the financial advisory services. ________",
+      "reference": "C8A/7(ii)",
+      "options": [
+        "3 years",
+        "4 years",
+        "5 years",
+        "6 years"
+      ],
+      "correct_answer_letter": "C",
+      "correct_answer": "5 years"
+    },
+    {
+      "question_number": 48,
+      "question": "Under the Regulation 20(3) of the Financial Advisers Regulations, it is stated that no financial adviser shall withdraw monies from a bank account maintained by it, unless under certain circumstances. Which one of the following statements regarding the circumstances for withdrawal of monies is false? The financial adviser shall withdraw the monies _________ .",
+      "reference": "C2/6.3",
+      "options": [
+        "for any repayment of moneys that was incurred for the processing of the policies.",
+        "for any investment by way of deposits placed with any bank licensed under the Banking Act (Cap.19).",
+        "if it relates to any payment to or for an insurer in respect of amounts due to the insurer under or in relation to a contract of insurance.",
+        "for any payment to or for a person entitled to receive payment of the moneys, includingitself in so far as it is entitled to receive payment for itself."
+      ],
+      "correct_answer_letter": "A",
+      "correct_answer": "for any repayment of moneys that was incurred for the processing of the policies."
+    },
+    {
+      "question_number": 49,
+      "question": "The minimum paid-up capital for a financial adviser to carry out financial advisory services for arranging of contracts of insurance in respect of life policies, other than contracts of reinsurance is _____________ .",
+      "reference": "C8A/8.1(b)(iv)",
+      "options": [
+        "S$100,000.",
+        "S$150,000.",
+        "S$300,000.",
+        "S$500,000."
+      ],
+      "correct_answer_letter": "B",
+      "correct_answer": "S$150,000."
+    },
+    {
+      "question_number": 50,
+      "question": "Which one of the following does Not require Enhanced Customer Due Diligence measures?",
+      "reference": "C5/8.1",
+      "options": [
+        "Immediate family of Politically Exposed Persons.",
+        "Senior Management Director.",
+        "Government Minister.",
+        "Close associate of a head of state."
+      ],
+      "correct_answer_letter": "B",
+      "correct_answer": "Senior Management Director."
+    },
+    {
+      "question_number": 51,
+      "question": "When making recommendations on structured deposits, a financial adviser is required to convey a warning message to a customer. Which ONE of the following messages is INCORRECT? A structured deposit ____________ .",
+      "reference": "C9A/1.4,1.10",
+      "options": [
+        "is like a fixed deposit",
+        "has a fixed rate of return",
+        "is a complex product without early redemption",
+        "all of the above"
+      ],
+      "correct_answer_letter": "D",
+      "correct_answer": "all of the above"
+    },
+    {
+      "question_number": 52,
+      "question": "The Monetary Authority of Singapore imposes a condition that all licensed financial advisers and its representatives who provide financial advisory service in respect of Listed Specified Products to maintain a register and enter in the register, within _______ days after the date he acquires any interest in Listed Specified Products.",
+      "reference": "C2/9.7",
+      "options": [
+        "1",
+        "7",
+        "14",
+        "21"
+      ],
+      "correct_answer_letter": "B",
+      "correct_answer": "7"
+    },
+    {
+      "question_number": 53,
+      "question": "Which Guidelines on Structured Deposits is NOT true?",
+      "reference": "C9A/1.22",
+      "options": [
+        "Clients who need to withdraw from this investment will be penalised for early withdrawal.",
+        "Banks have to seek prior approval from MAS for Structured Deposits received from a road show location.",
+        "Dual currency is not structured deposits covered under these guidelines.",
+        "Bank tellers are involved in the marketing or recommendation of structured deposits."
+      ],
+      "correct_answer_letter": "D",
+      "correct_answer": "Bank tellers are involved in the marketing or recommendation of structured deposits."
+    },
+    {
+      "question_number": 54,
+      "question": "A CPF member has in her Ordinary Account an amount of $50,000. How much can she invest under CPF Investment Scheme (CPFIS)?",
+      "reference": "C13/2.25(a)(iii)",
+      "options": [
+        "$50,000.",
+        "$30,000.",
+        "$20,000.",
+        "$10,000."
+      ],
+      "correct_answer_letter": "B",
+      "correct_answer": "$30,000."
+    },
+    {
+      "question_number": 55,
+      "question": "The financial adviser should explain and disclose that the price to sell units for policy holder is called _________ .",
+      "reference": "C3B/7/24(h)(i)",
+      "options": [
+        "Bid Price",
+        "Offer Price",
+        "Redemption price",
+        "Purchase price"
+      ],
+      "correct_answer_letter": "A",
+      "correct_answer": "Bid Price"
+    },
+    {
+      "question_number": 56,
+      "question": "Under the Notice on Requirements For the Remuneration Framework for Representatives and Supervisors (Balanced Scorecard Framework) and Independent Sales Audit Unit, what is disregarded as infraction?",
+      "reference": "C4E/4.5.5.1",
+      "options": [
+        "Representative recommends a client to switch from one product to another without any real benefit to the client.",
+        "Representative fails to execute the client's instruction without valid cause.",
+        "Representative fails to fill in the name of the dependants during a fact-find exercise conducted on a client.",
+        "All of the above."
+      ],
+      "correct_answer_letter": "C",
+      "correct_answer": "Representative fails to fill in the name of the dependants during a fact-find exercise conducted on a client."
+    },
+    {
+      "question_number": 57,
+      "question": "A licensed financial adviser shall lodge a ___________ for incidents of frauds and submit to the Authority a copy of the report.",
+      "reference": "C6A/3",
+      "options": [
+        "Anti-Money Laundering Report",
+        "Suspicious Transaction Report",
+        "Police Report",
+        "Fraud Report"
+      ],
+      "correct_answer_letter": "C",
+      "correct_answer": "Police Report"
+    },
+    {
+      "question_number": 58,
+      "question": "The Semi-Annual Report and the Relevant Audit Report shall be sent to all policyholders within how many months from the last date of the period to which the report relates?",
+      "reference": "C7/36",
+      "options": [
+        "Within 2 months and 3 months respectively.",
+        "Within 3 months and 2 months respectively.",
+        "Within 30 days and 2 months respectively.",
+        "Within 3 months and 1 month respectively."
+      ],
+      "correct_answer_letter": "A",
+      "correct_answer": "Within 2 months and 3 months respectively."
+    },
+    {
+      "question_number": 59,
+      "question": "The purpose of Guideline No:FAA-G05 is to give guidance to financial advisers on the circumstances that they may use the term Independent. The MAS considers that a financial adviser can use the word Independent if _____________________ .",
+      "reference": "C8E/1.8(c)(ii)",
+      "options": [
+        "it does not receive any commission",
+        "it is associated with a product provider",
+        "if the financial adviser itself is a product provider",
+        "it operates free from any direct or indirect product restriction"
+      ],
+      "correct_answer_letter": "D",
+      "correct_answer": "it operates free from any direct or indirect product restriction"
+    },
+    {
+      "question_number": 60,
+      "question": "XYZ, a financial adviser, entered into a contractual agreement with a life insurance company to only distribute that insurer's life policies. Which of the following statements is most true?",
+      "reference": "C8E/1.22",
+      "options": [
+        "XYZ is an exempt financial adviser.",
+        "XYZ is an independent financial adviser.",
+        "The contractual agreement is a form of direct product restriction.",
+        "The contractual agreement is a form of indirect product restriction."
+      ],
+      "correct_answer_letter": "C",
+      "correct_answer": "The contractual agreement is a form of direct product restriction."
+    },
+    {
+      "question_number": 61,
+      "question": "Which one of the following is a front-end procedure to facilitate the monitoring of switching of designated investment products under the FAA?",
+      "reference": "C9B/1.11",
+      "options": [
+        "Tracking the volume of switching transactions.",
+        "Identifying any unusual trends in switching transactions.",
+        "Having the client declare in writing that he/she has been advised of switching transactions.",
+        "Implementing a procedure to ensure that each switching transaction is reviewed for appropriateness."
+      ],
+      "correct_answer_letter": "C",
+      "correct_answer": "Having the client declare in writing that he/she has been advised of switching transactions."
+    },
+    {
+      "question_number": 62,
+      "question": "Which of following sentence is TRUE of Pre-transaction Checks?",
+      "reference": "C9D/I27",
+      "options": [
+        "When a representative has made a recommendation to any selected client, a supervisor need not conduct client call-back.",
+        "When a representative has made a recommendation to any client, a supervisor should conduct client call-back.",
+        "When a representative is a selected representative, a supervisor should conduct client call-back with every client whom the representative made any recommendation.",
+        "Only when a selected representative has made recommendation to a selected client, a supervisor should conduct client call-back."
+      ],
+      "correct_answer_letter": "C",
+      "correct_answer": "When a representative is a selected representative, a supervisor should conduct client call-back with every client whom the representative made any recommendation."
+    },
+    {
+      "question_number": 63,
+      "question": "Financial institutions today have various marketing and distribution arrangements such as roadshows and tie-ups with retailers to market their products and services to customers. Which one of the following has the responsibility to set the right tone in conducting such marketing cum distribution arrangements and activities in public places in a responsible and professional manner?",
+      "reference": "C10E/ 1.1",
+      "options": [
+        "Sales and marketing.",
+        "Distribution and tie-ups.",
+        "Board and senior management.",
+        "Internal control and compliance."
+      ],
+      "correct_answer_letter": "C",
+      "correct_answer": "Board and senior management."
+    },
+    {
+      "question_number": 64,
+      "question": "Under the Guidelines on Criteria For The Grant Of A Financial Adviser's Licence (Guideline No:FAA-G01), to whom will a financial adviser's licence be granted?",
+      "reference": "C8A/7",
+      "options": [
+        "Financial Advisers.",
+        "Corporation.",
+        "Representatives.",
+        "All of the above."
+      ],
+      "correct_answer_letter": "B",
+      "correct_answer": "Corporation."
+    },
+    {
+      "question_number": 65,
+      "question": "Which is NOT True of the revised Code on Collective Investment Schemes (Code)?",
+      "reference": "C11/1.1",
+      "options": [
+        "Sets out the best practices on management, operation and marketing of capital markets products.",
+        "A breach of this Code will result in MAS revoking or suspending the recognition of the Scheme.",
+        "A breach of this Code by a trustee may result in MAS prohibiting the trustee from acting as a trustee for any new scheme.",
+        "The Code is non-statutory in nature."
+      ],
+      "correct_answer_letter": "A",
+      "correct_answer": "Sets out the best practices on management, operation and marketing of capital markets products."
+    },
+    {
+      "question_number": 66,
+      "question": "The Board and Senior Management should ensure that a financial institution establishes a management information framework to measure and monitor the achievement of fair dealing outcomes. Which of the following is not a fair dealing strategy under Guideline No : FSG-G04?",
+      "reference": "C9C/3.8",
+      "options": [
+        "Monitoring complaints and misconduct trends.",
+        "Surveying customers.",
+        "Conducting mystery shopping exercises.",
+        "Having a performance evaluation system to incentivise fair dealing."
+      ],
+      "correct_answer_letter": "D",
+      "correct_answer": "Having a performance evaluation system to incentivise fair dealing."
+    },
+    {
+      "question_number": 67,
+      "question": "Circulars on Due Diligence and Documentation For Appointment of Representatives (Circular No: CMI 01/2011) expects the financial institutions to establish that their representatives are fit and proper and perform Due Diligence Checks on their representatives in the following areas except:",
+      "reference": "C8C/Annex 2/2,4 & 8",
+      "options": [
+        "Representative's identity.",
+        "Representative's financial status.",
+        "Representative's educational status.",
+        "Representative's past records."
+      ],
+      "correct_answer_letter": "C",
+      "correct_answer": "Representative's educational status."
+    },
+    {
+      "question_number": 68,
+      "question": "Information is material and non-public only if its disclosure has the potential to impact the price of a security and has not yet been disseminated to the general marketplace. Which of the following is/are examples of such information?",
+      "reference": "C12/10.2",
+      "options": [
+        "Earnings.",
+        "Change in credit ratings.",
+        "Bankruptcies.",
+        "All of above."
+      ],
+      "correct_answer_letter": "D",
+      "correct_answer": "All of above."
+    },
+    {
+      "question_number": 69,
+      "question": "Under the Revised Code on Collective Investment Scheme, which of the following does not constitute a significant change?",
+      "reference": "C11/4/B(d)",
+      "options": [
+        "Increase in the remuneration payable to the manager.",
+        "Change in investment objective of the scheme.",
+        "Amendments to the trust deed.",
+        "Replacement, removal or appointment of a legal counsel."
+      ],
+      "correct_answer_letter": "D",
+      "correct_answer": "Replacement, removal or appointment of a legal counsel."
+    },
+    {
+      "question_number": 70,
+      "question": "Under the new requirements on sale of Specified Investment Products (SIPs), an intermediary must conduct a ___________________ to assess whether a customer has the relevant knowledge or experience to understand the risks and features of an unlisted SIP.",
+      "reference": "C3A/1.4",
+      "options": [
+        "Customer Knowledge Assessment",
+        "Customer Account Review",
+        "Customer Experience Assessment",
+        "Full Fact Find form"
+      ],
+      "correct_answer_letter": "A",
+      "correct_answer": "Customer Knowledge Assessment"
+    },
+    {
+      "question_number": 71,
+      "question": "Board and Senior Management set the culture for their financial institutions, determine risk appetites, and put in place governance structures, policies and processes. The Guidelines on Fair Dealing (Guideline FSG-G04) articulate the Monetary Authority of Singapore's (MAS) expectations on the role of Boards and Senior Management in this regard. Which of these outcomes is not true?",
+      "reference": "C9C/1.3",
+      "options": [
+        "Customer's confidence in dealing with financial institutions.",
+        "Customers receive clear and timely information to make financial decisions.",
+        "Financial Institutions should offer a broad range of products and services for all their customers, regardless of segments.",
+        "Financial Advisers regardless of segments should handle customer complaints in a prompt manner."
+      ],
+      "correct_answer_letter": "C",
+      "correct_answer": "Financial Institutions should offer a broad range of products and services for all their customers, regardless of segments."
+    },
+    {
+      "question_number": 72,
+      "question": "Under the Notice on Recommendations On Investment Products (Notice No: FAA-N16), an intermediary must conduct a _________________ to assess whether a customer has the relevant knowledge or experience to understand the risks and features of a listed Specified Investment Product (SIP).",
+      "reference": "C3A/1.4",
+      "options": [
+        "Customer Knowledge Assessment.",
+        "Self-Awareness Questionnaire.",
+        "Customer Account Review.",
+        "Risk Tolerance Questionnaire."
+      ],
+      "correct_answer_letter": "C",
+      "correct_answer": "Customer Account Review."
+    },
+    {
+      "question_number": 73,
+      "question": "Your client is 55 years old and looking for ways to meet his retirement needs. Which one of the following is not one options that your client may explore to monetise the property?",
+      "reference": "C24/2.6",
+      "options": [
+        "Silver Housing Bonus.",
+        "Renting out the flat",
+        "Lease Buyback Scheme",
+        "Sell house and live with parents"
+      ],
+      "correct_answer_letter": "D",
+      "correct_answer": "Sell house and live with parents"
+    },
+    {
+      "question_number": 74,
+      "question": "When a financial adviser forms a suspicion of money laundering or terrorism financing, and reasonably believes that performing any of the measures required, will tip-off the customer, the financial adviser should file ________ Report.",
+      "reference": "C5/12.4",
+      "options": [
+        "Enhanced Customer Due Diligence",
+        "Police",
+        "Anti-Money Laundering",
+        "Suspicious Transaction"
+      ],
+      "correct_answer_letter": "D",
+      "correct_answer": "Suspicious Transaction"
+    },
+    {
+      "question_number": 75,
+      "question": "A licensee shall ensure that the maximum unscheduled downtime for each critical system that affects the licensee's operation or service to its customers does not exceed a total of ___ within any period of 12 months.",
+      "reference": "C6B/5",
+      "options": [
+        "1 hour",
+        "2hours",
+        "3 hours",
+        "4 hours"
+      ],
+      "correct_answer_letter": "D",
+      "correct_answer": "4 hours"
+    },
+    {
+      "question_number": 76,
+      "question": "In making a recommendation on a collective investment scheme, a financial adviser will need to provide which of the following documents to the clients?",
+      "reference": "C3A/E5/37(a)",
+      "options": [
+        "Policy Illustration.",
+        "Commission Schedule.",
+        "Product Highlights Sheet.",
+        "All of the above."
+      ],
+      "correct_answer_letter": "C",
+      "correct_answer": "Product Highlights Sheet."
+    },
+    {
+      "question_number": 77,
+      "question": "Under Outcome 4 of Guideline No: FSG-G04, when serving customers with limited knowledge or understanding of financial products and/or non-English speaking customers, a financial institution should put in place additional safeguards in its sales process. Which of these safeguard(s) is/are true?",
+      "reference": "C9C/3.58",
+      "options": [
+        "Representatives to document additional steps to ensure customer understands.",
+        "An English-speaking relative to be present during advisory process.",
+        "Supervisor to be present at the sales process.",
+        "All of the above."
+      ],
+      "correct_answer_letter": "D",
+      "correct_answer": "All of the above."
+    },
+    {
+      "question_number": 78,
+      "question": "The insurer shall not cause or permit to be paid out of the assets of an ILP sub-fund, the following except for:",
+      "reference": "C7/45(a)(iii)",
+      "options": [
+        "Marketing or promotion expenses.",
+        "Cash rebates and soft dollars.",
+        "CPF failed trades.",
+        "If the manager does not enter unnecessary trades in order to achieve a sufficient volume of transactions to qualify for soft dollars."
+      ],
+      "correct_answer_letter": "D",
+      "correct_answer": "If the manager does not enter unnecessary trades in order to achieve a sufficient volume of transactions to qualify for soft dollars."
+    },
+    {
+      "question_number": 79,
+      "question": "No individual will be allowed to act as a representative or hold himself to be a representative of a financial adviser unless he meets MAS requirements. Contravention will lead to a fine of ________ for the person and _______ for the company that permits such person to provide financial advisory services.",
+      "reference": "C1/10.16 &10.18",
+      "options": [
+        "S$25,000 ; S$50,000.",
+        "S$25,000 ; S$75,000.",
+        "S$50,000 ; S$100,000.",
+        "S$50,000 ; S$150,000"
+      ],
+      "correct_answer_letter": "A",
+      "correct_answer": "S$25,000 ; S$50,000."
+    },
+    {
+      "question_number": 80,
+      "question": "The financial adviser (FA) is required to furnish to MAS the particulars of their representatives who has ceased to be a representative. Which of the following is true of the deadline for the FA to furnish the representative particulars to MAS?",
+      "reference": "C1/11.6(a)",
+      "options": [
+        "On the day of cessation.",
+        "Within 3 calendar days from the date of cessation.",
+        "Within 5 calendar days from the date of cessation.",
+        "Within the next business day after the day of cessation."
+      ],
+      "correct_answer_letter": "D",
+      "correct_answer": "Within the next business day after the day of cessation."
+    },
+    {
+      "question_number": 81,
+      "question": "Under Notice No: FAA-N10, exempt persons are exempted from the requirement to hold a Financial Adviser's licence in acting as a financial adviser in giving advice in Singapore concerning any investment product (other than life policies) for accredited investors on any occasion, up to a number of ______accredited investors.",
+      "reference": "C4B/1.4",
+      "options": [
+        "30",
+        "40",
+        "50",
+        "60"
+      ],
+      "correct_answer_letter": "A",
+      "correct_answer": "30"
+    },
+    {
+      "question_number": 82,
+      "question": "During the cooling-off period, financial institutions are expected to implement Safeguard 1 (the Safeguard) regarding call-backs or surveys for all customers prospected at public places to ensure customers have understood their purchases at such locations. Which one of the following products is/are excluded from the Safeguard?",
+      "reference": "C10E/2 Safeguard 1, Annex 1",
+      "options": [
+        "Accident and health policies.",
+        "Mortgage reducing term assurance plans.",
+        "Collective Investment Schemes.",
+        "All of the above."
+      ],
+      "correct_answer_letter": "B",
+      "correct_answer": "Mortgage reducing term assurance plans."
+    },
+    {
+      "question_number": 83,
+      "question": "Section 68(2) of the FAA provides that MAS has the power to issue Prohibition Orders. Which of the following is untrue of Prohibition Orders?",
+      "reference": "C2/14.2",
+      "options": [
+        "It can permanently prevent a person from providing financial advisory services.",
+        "It can prohibit a person form becoming a substantial shareholder of a licensed financial adviser.",
+        "It can be revoked.",
+        "It would be issued for any non-compliance of FAA."
+      ],
+      "correct_answer_letter": "D",
+      "correct_answer": "It would be issued for any non-compliance of FAA."
+    },
+    {
+      "question_number": 84,
+      "question": "Under Guideline No: FAA-G10, which of the following activities is considered Back End Monitoring Procedures with regard to monitoring of switching of designated investment products?",
+      "reference": "C9B/1.14(b)",
+      "options": [
+        "Tracking the volume of switches.",
+        "Whether client suffers any penalty for terminating the original product.",
+        "Client's decision to make switches.",
+        "Representative asks client to switch."
+      ],
+      "correct_answer_letter": "A",
+      "correct_answer": "Tracking the volume of switches."
+    },
+    {
+      "question_number": 85,
+      "question": "What is the aim of the revised Code on Collective Investment Schemes?",
+      "reference": "C11/2.1",
+      "options": [
+        "Aims to enhance safeguards for retail investors.",
+        "Aims to enhance safeguards for managers in managing client's fund.",
+        "To protect investors from losing all their money.",
+        "To provide better opportunity for retail investors to invest."
+      ],
+      "correct_answer_letter": "A",
+      "correct_answer": "Aims to enhance safeguards for retail investors."
+    },
+    {
+      "question_number": 86,
+      "question": "In compliance with Regulation 21 of the FAR, on the term Independent, who is allowed to promote its services as being Independent?",
+      "reference": "C8E/1.26",
+      "options": [
+        "Bank.",
+        "Fund Management Company.",
+        "Life Insurance Company.",
+        "Licensed Financial Adviser."
+      ],
+      "correct_answer_letter": "D",
+      "correct_answer": "Licensed Financial Adviser."
+    },
+    {
+      "question_number": 87,
+      "question": "An Update Report has to be submitted by the financial advisers to MAS ___________",
+      "reference": "C4D/1.8",
+      "options": [
+        "when there is nothing to report for any calendar year.",
+        "when investigation has not been concluded.",
+        "for acts involving fraud.",
+        "for non-compliance of FAA. ."
+      ],
+      "correct_answer_letter": "B",
+      "correct_answer": "when investigation has not been concluded."
+    },
+    {
+      "question_number": 88,
+      "question": "The use of artificial means or methods to influence the price of any securities, or to cause volatility without real basis in the market instead of letting natural market forces take place. Example: Using a wash trade to create a false market is known as:",
+      "reference": "C12/2.1,2.3",
+      "options": [
+        "Insider Trading.",
+        "Securities Hawking.",
+        "Securities Market Manipulation.",
+        "Market Rigging Transaction."
+      ],
+      "correct_answer_letter": "D",
+      "correct_answer": "Market Rigging Transaction."
+    },
+    {
+      "question_number": 89,
+      "question": "The Sharpe ratio is defined as the annual return in excess of the risk-free return divided by annualised standard deviation and is calculated on what basis?",
+      "reference": "C11/Appendix 3, 7.11(b)",
+      "options": [
+        "Monthly.",
+        "Quarterly.",
+        "Half - Yearly.",
+        "Annually."
+      ],
+      "correct_answer_letter": "D",
+      "correct_answer": "Annually."
+    },
+    {
+      "question_number": 90,
+      "question": "The manager should ensure that the global exposure of a Collective Investment Scheme to financial derivatives should NOT exceed _________ per cent of the scheme's Net Asset Value at all times.",
+      "reference": "C11/9B/3.1",
+      "options": [
+        "10%",
+        "25%",
+        "75%",
+        "None of above"
+      ],
+      "correct_answer_letter": "D",
+      "correct_answer": "None of above"
+    },
+    {
+      "question_number": 91,
+      "question": "Upon discovery of any suspicious activities and incidents of fraud, the financial adviser shall lodge a report and extend a copy to ___________ for information.",
+      "reference": "C5/12.2",
+      "options": [
+        "Ministry of Finance",
+        "Financial Action Task Force",
+        "Monetary Authority of Singapore",
+        "Suspicious Transactions Reporting Office"
+      ],
+      "correct_answer_letter": "C",
+      "correct_answer": "Monetary Authority of Singapore"
+    },
+    {
+      "question_number": 92,
+      "question": "Under the (Notice No: FAA N18A) Notice on Technology Risk Management, how often should the Recovery Time Objective be validated and documented? The licensee shall validate at least once every ________ .",
+      "reference": "C6B/6",
+      "options": [
+        "Monthly",
+        "Quarterly",
+        "12 months",
+        "2 years"
+      ],
+      "correct_answer_letter": "C",
+      "correct_answer": "12 months"
+    },
+    {
+      "question_number": 93,
+      "question": "When a valuation error represents ________ or more of the ILP sub-fund's NAV per unit, the insurer should compensate policyholders.",
+      "reference": "C7/79",
+      "options": [
+        "0.05%",
+        "0.25%",
+        "0.10%",
+        "0.50%"
+      ],
+      "correct_answer_letter": "D",
+      "correct_answer": "0.50%"
+    },
+    {
+      "question_number": 94,
+      "question": "What is the purpose of Financial Advisers Regulation (FAR)? It provides __________ .",
+      "reference": "C1/2.1",
+      "options": [
+        "exemptions from requirements relating to licensing",
+        "approval or registration requirements relating to licensing",
+        "revocation or variation of any condition or restriction under FAA",
+        "All of the above"
+      ],
+      "correct_answer_letter": "D",
+      "correct_answer": "All of the above"
+    },
+    {
+      "question_number": 95,
+      "question": "The provision of financial advice must be conducted in a fair, professional and ethical manner. This statement is in accordance with the principle of ________ under the Financial Advisers Act.",
+      "reference": "C1/3.3",
+      "options": [
+        "Consistency",
+        "Accountability",
+        "Independence",
+        "Customer's Interest"
+      ],
+      "correct_answer_letter": "D",
+      "correct_answer": "Customer's Interest"
+    },
+    {
+      "question_number": 96,
+      "question": "Jeff visits a bank to enquire about obtaining a credit card. When he is waiting for his credit card application to be processed, a bank employee approaches him to sell a capital markets product to him, which Jeff did not enquire about. This is an example of:",
+      "reference": "C12/9.2",
+      "options": [
+        "Insider Trading.",
+        "Securities Hawking.",
+        "Employment of Manipulative Devices.",
+        "Market Rigging."
+      ],
+      "correct_answer_letter": "B",
+      "correct_answer": "Securities Hawking."
+    },
+    {
+      "question_number": 97,
+      "question": "Besides the provision of financial advisory services, some digital advisers also offer a platform for the execution of _____________ beyond the passing of such orders to brokerage firms for execution.",
+      "reference": "C10D/13",
+      "options": [
+        "investment-linked policies",
+        "deposit taking",
+        "general insurance",
+        "capital markets products"
+      ],
+      "correct_answer_letter": "D",
+      "correct_answer": "capital markets products"
+    },
+    {
+      "question_number": 98,
+      "question": "The dissemination of information or statements that are false or misleading and likely induce the sale or purchase of investment products by other persons. Which of the following is an example of such disseminations that is not true?",
+      "reference": "C12/4.1",
+      "options": [
+        "Electronic means.",
+        "Research papers.",
+        "Word of mouth.",
+        "None of above."
+      ],
+      "correct_answer_letter": "D",
+      "correct_answer": "None of above."
+    },
+    {
+      "question_number": 99,
+      "question": "What will be considered Inside Information?",
+      "reference": "C12/8.1,8.2",
+      "options": [
+        "Information is not generally available.",
+        "Information is not readily observable matter.",
+        "It would likely have a material effect if the information is likely to influence persons or a class of persons who commonly invest in such capital market products.",
+        "All of the above."
+      ],
+      "correct_answer_letter": "D",
+      "correct_answer": "All of the above."
+    },
+    {
+      "question_number": 100,
+      "question": "Under the FAA, financial advisory services regulated under FAA does not include which one of the following?",
+      "reference": "C1/4.9(b)",
+      "options": [
+        "Advising others by issuing and promulgating research analyses or research reports, whether in electronic print or other forms concerning any investment products.",
+        "Marketing of any capital product products under the Section 2(1) of the FAA.",
+        "Arranging a contract of insurance in respect of life policies.",
+        "Advising others, either directly or through publications or writings, whether in electronic print or other form concerning any investment products."
+      ],
+      "correct_answer_letter": "A",
+      "correct_answer": "Advising others by issuing and promulgating research analyses or research reports, whether in electronic print or other forms concerning any investment products."
+    },
+    {
+      "question_number": 101,
+      "question": "Where a change occurs in any particulars of the appointed representatives or provisional representatives in any document required to be furnished to the MAS, the principal shall, no later than ______ days, after occurrence of such change, furnish particulars of such change to the MAS in the prescribed ____________ .",
+      "reference": "C1/14.7",
+      "options": [
+        "7 days; Form 11",
+        "14 days; Form 18",
+        "15 days; Form 3B",
+        "30 days, Form 12"
+      ],
+      "correct_answer_letter": "B",
+      "correct_answer": "14 days; Form 18"
+    },
+    {
+      "question_number": 102,
+      "question": "To whom should a person appeal if he is aggrieved by the refusal of the Monetary Authority of Singapore (MAS) to enter his name in the Public Register of the representatives?",
+      "reference": "C1/18.1",
+      "options": [
+        "MAS.",
+        "Senior Management.",
+        "Minister.",
+        "Chief Executive Officer."
+      ],
+      "correct_answer_letter": "C",
+      "correct_answer": "Minister."
+    },
+    {
+      "question_number": 103,
+      "question": "Section 36(3) of the FAA provides that where a licensed financial adviser (FA) does not have a reasonable basis for making a recommendation, the licensed FA:",
+      "reference": "C2/3.3",
+      "options": [
+        "is liable to have his name revoked under the Public Register.",
+        "is liable to a fine.",
+        "is liable to pay damages to that person.",
+        "is liable to demotion, suspension as a breach of FA's internal policy."
+      ],
+      "correct_answer_letter": "C",
+      "correct_answer": "is liable to pay damages to that person."
+    },
+    {
+      "question_number": 104,
+      "question": "In the case of a Collective Investment Scheme, where the units are held on behalf of the client under a nominee company's name the financial adviser shall disclose and explain to the client that his rights ____________________ .",
+      "reference": "C3B/7/24(c)",
+      "options": [
+        "may be enforced by the client himself.",
+        "may be enforced through the financial adviser.",
+        "may be enforced through the nominee company.",
+        "may be enforced through the issuer of the scheme."
+      ],
+      "correct_answer_letter": "C",
+      "correct_answer": "may be enforced through the nominee company."
+    },
+    {
+      "question_number": 105,
+      "question": "Under the Financial Advisers Act, every licensed financial adviser which receives any insurance moneys shall establish and maintain a separate account with a ________ for its life insurance broking premiums.",
+      "reference": "C2/6.1",
+      "options": [
+        "bank",
+        "life broker",
+        "separate insurer",
+        "government entity"
+      ],
+      "correct_answer_letter": "A",
+      "correct_answer": "bank"
+    },
+    {
+      "question_number": 106,
+      "question": "What must financial adviser do if the amount of money received for investment is less than the amount of money taken from the Insurance Broking Premium Account to invest?",
+      "reference": "C2/6.4",
+      "options": [
+        "Pay into the account the amount taken for investment.",
+        "Pledge extra collateral.",
+        "Offset against future profit.",
+        "Pay an amount equal to the difference between the amount invested and the amount realised."
+      ],
+      "correct_answer_letter": "D",
+      "correct_answer": "Pay an amount equal to the difference between the amount invested and the amount realised."
+    },
+    {
+      "question_number": 107,
+      "question": "Which one of the following effects of a Prohibition Order (PO) issued by MAS under Section 69(2) of the FAA is not true?",
+      "reference": "C2/14.2(a)",
+      "options": [
+        "Prohibit a person from providing financial advisory services.",
+        "Prohibit a person from becoming a substantial shareholder of a licensed financial adviser.",
+        "Prohibit a person to become a director of an exempt financial adviser.",
+        "Prohibit a person to provide a certain type of financial advisory services."
+      ],
+      "correct_answer_letter": "D",
+      "correct_answer": "Prohibit a person to provide a certain type of financial advisory services."
+    },
+    {
+      "question_number": 108,
+      "question": "When a client does not want to accept recommendations of the financial adviser (FA) and chooses to proceed with the transaction in another investment product which is not recommended by the FA, the FA ____________ .",
+      "reference": "C3A/E4/32",
+      "options": [
+        "may proceed with client's request, but shall document the decision of the client, highlight to the client that it is the client responsibility to ensure suitability.",
+        "may proceed with the client's request provided the client declare in writing that the FA has drawn his attention to possible disadvantages of his decision.",
+        "may not proceed with client's request, as it is the FA's responsibility to ensure suitability of product selected.",
+        "may not proceed with the client's request as it does not meet reasonable basis of recommendation."
+      ],
+      "correct_answer_letter": "A",
+      "correct_answer": "may proceed with client's request, but shall document the decision of the client, highlight to the client that it is the client responsibility to ensure suitability."
+    },
+    {
+      "question_number": 109,
+      "question": "Digital advisers operating as fund managers that seek to offer their services to retails client must observe a minimum asset under management (AUM) requirement of how much?",
+      "reference": "C10D/23",
+      "options": [
+        "S$500,000.",
+        "S$1 billion.",
+        "S$2 billion.",
+        "S$3 billion."
+      ],
+      "correct_answer_letter": "B",
+      "correct_answer": "S$1 billion."
+    },
+    {
+      "question_number": 110,
+      "question": "Which one of the following on the Criteria For The Assessment Of A Customer Account Review under the Notice No: FAA-N16 On Recommendations On Investment Products, regarding the assessment of a customer as possessing the knowledge and experience to invest in derivatives is true?",
+      "reference": "C3A/Annex 3 (1a)",
+      "options": [
+        "Customer holds a doctorate degree in engineering.",
+        "Customer holds a diploma in business administration.",
+        "Customer has transacted in derivatives 3 times in the preceding 3 years.",
+        "Customer has worked for 2 consecutive years in the past 5 years as a trainer in investment products."
+      ],
+      "correct_answer_letter": "B",
+      "correct_answer": "Customer holds a diploma in business administration."
+    },
+    {
+      "question_number": 111,
+      "question": "Which one of the following is most true of Ethics?",
+      "reference": "C14/2.4",
+      "options": [
+        "Ethics reflect the Spirit or intention of the law.",
+        "Ethics refers to Letter of the law.",
+        "The motivation of ethics is to avoid sanctions, warnings, reprimands and revocation of licence.",
+        "Ethics is the action of meeting or satisfying a given set of laws, rules and regulations."
+      ],
+      "correct_answer_letter": "A",
+      "correct_answer": "Ethics reflect the Spirit or intention of the law."
+    },
+    {
+      "question_number": 112,
+      "question": "John is compelled to purchase credit insurance in order to secure a mortgage or a consumer loan from a financial institution. This is an example of:",
+      "reference": "C18/5.4",
+      "options": [
+        "Involuntary cross-selling.",
+        "Excessive trading.",
+        "Churning.",
+        "Twisting."
+      ],
+      "correct_answer_letter": "A",
+      "correct_answer": "Involuntary cross-selling."
+    },
+    {
+      "question_number": 113,
+      "question": "Which one of the following constitutes the most basic characteristics of a professional who is a competent person that is engaged in a specific activity?",
+      "reference": "C15/1.2",
+      "options": [
+        "Reliability.",
+        "Spirit of loyalty to clients and financial adviser.",
+        "Evidence of mastery of subject matter.",
+        "Management of self-interest."
+      ],
+      "correct_answer_letter": "C",
+      "correct_answer": "Evidence of mastery of subject matter."
+    },
+    {
+      "question_number": 114,
+      "question": "It is important to put professional ethics in the right context by understanding the role of a professional financial adviser representative. The role of the financial adviser representative is a privilege. Which of the following is most correct?",
+      "reference": "C14/1.4",
+      "options": [
+        "The financial adviser representative is in a unique position to sell the best products to the clients.",
+        "The conduct of financial adviser representative is solely to make the sale in the shortest time possible.",
+        "The financial adviser representative is in a unique position to analyse the clients and recommend suitable products.",
+        "The financial adviser representative is in a unique position to gather sensitive information from a client, analyse and recommend financial products that will put a client in a better position than before."
+      ],
+      "correct_answer_letter": "D",
+      "correct_answer": "The financial adviser representative is in a unique position to gather sensitive information from a client, analyse and recommend financial products that will put a client in a better position than before."
+    },
+    {
+      "question_number": 115,
+      "question": "The misalignment of interest among the parties in an exchange or transaction within the financial services industry has been exploited by financial institutions, service providers, advisors and representatives. Which one of the following is the most frequent manifestations of misaligned interest?",
+      "reference": "C18/4.1",
+      "options": [
+        "Failure to execute.",
+        "Involuntary cross-selling.",
+        "Insufficient disclosure.",
+        "Biased advice."
+      ],
+      "correct_answer_letter": "D",
+      "correct_answer": "Biased advice."
+    },
+    {
+      "question_number": 116,
+      "question": "Singapore adopts a __________ in its regulatory framework that does not tolerate financial crimes and offences and yet at the same time does not overregulate and control the industry as a deterrent to business risk taking, in order to encourage banks and financial institutions to take on innovative businesses and provide better financial services to clients.",
+      "reference": "C14/3.16",
+      "options": [
+        "risk-based approach",
+        "balanced regulatory approach",
+        "facilitative based approach",
+        "robust regulatory approach"
+      ],
+      "correct_answer_letter": "B",
+      "correct_answer": "balanced regulatory approach"
+    },
+    {
+      "question_number": 117,
+      "question": "A fiduciary is a person that acts on behalf of another person (a client) putting the client's interest ahead of his own interest, with a duty to act in good faith and trust. Which of the following does not constitutes the general duties of a fiduciary standard?",
+      "reference": "C18/11.3",
+      "options": [
+        "Duty of Good Faith.",
+        "Duty of Moral Obligations.",
+        "Duty of Obedience.",
+        "Duty of Loyalty."
+      ],
+      "correct_answer_letter": "B",
+      "correct_answer": "Duty of Moral Obligations."
+    },
+    {
+      "question_number": 118,
+      "question": "Unethical behaviour in the financial services industry arises when the financial institutions place excess focus on sales target and profit. Which of the following is true to constitute to such behaviour?",
+      "reference": "C17/2.1(h)",
+      "options": [
+        "Financial adviser representatives focus on meeting sales target.",
+        "Amendments made to replacement of contracts with disclosures to clients.",
+        "Using jargon in their sales presentations.",
+        "Switching of product to another designated investment product where the replacement product confers a higher benefit at the same cost."
+      ],
+      "correct_answer_letter": "C",
+      "correct_answer": "Using jargon in their sales presentations."
+    },
+    {
+      "question_number": 119,
+      "question": "The best solution is for a financial services professional to really know his client and use the __________ plus strategy by which the professional is required to have a sufficient amount of knowledge, competence and expertise to help the client make the best possible choice within the options available to him.",
+      "reference": "C20/4.15",
+      "options": [
+        "Mutual Benefit Rule",
+        "Maximal Information Rule",
+        "Fairness Rule",
+        "Modified Minimal Information Rule"
+      ],
+      "correct_answer_letter": "A",
+      "correct_answer": "Mutual Benefit Rule"
+    },
+    {
+      "question_number": 120,
+      "question": "Which of the following is true of the differences between marketing and selling?",
+      "reference": "C20/7.1,7.2",
+      "options": [
+        "Selling is associated with market research, product planning, pricing, advertising, promotion and distribution of the product or service.",
+        "The emphasis of selling is to satisfy the needs and wants of clients.",
+        "Marketing is an action of converting the product or service into cash.",
+        "The emphasis of marketing is on client satisfaction."
+      ],
+      "correct_answer_letter": "D",
+      "correct_answer": "The emphasis of marketing is on client satisfaction."
+    },
+    {
+      "question_number": 121,
+      "question": "Misrepresentation is defined as an untrue statement, whether unintentional or deliberate. Which of the following is true of the components of misrepresentations?",
+      "reference": "C20/3.1",
+      "options": [
+        "Misrepresentation is an intentional act of deception.",
+        "The victim is relying on the competency of the speaker.",
+        "The speaker must know that the victim is relying on his statements.",
+        "The misrepresentation resulted in a loss for the both parties."
+      ],
+      "correct_answer_letter": "C",
+      "correct_answer": "The speaker must know that the victim is relying on his statements."
+    },
+    {
+      "question_number": 122,
+      "question": "A seller is responsible for giving the buyer any information needed to make a reasonable judgment about whether to purchase the product which the buyer could not reasonably be expected to know about unless informed by the seller. What disclosure strategy rule is this?",
+      "reference": "C20/4.3(c)",
+      "options": [
+        "Modified Minimal Information Rule.",
+        "Fairness Rule.",
+        "Mutual Benefit Rule.",
+        "Minimal Information Rule."
+      ],
+      "correct_answer_letter": "B",
+      "correct_answer": "Fairness Rule."
+    },
+    {
+      "question_number": 123,
+      "question": "Which of the following sentences is not considered client servicing?",
+      "reference": "C21/1.1 - 1.3",
+      "options": [
+        "Client service is the service that is provided to the client during the process of purchasing, and in using the product and service.",
+        "Client service creates an opportunity to create a new relationship with a person and convert them into a loyal client.",
+        "A client defines good client service as how she perceives that an organisation has delighted her, by exceeding to meet her needs.",
+        "None of the above."
+      ],
+      "correct_answer_letter": "A",
+      "correct_answer": "Client service is the service that is provided to the client during the process of purchasing, and in using the product and service."
+    },
+    {
+      "question_number": 124,
+      "question": "Policyholders often becomes angry or upset, owing to unmet expectations. They may be disappointed with a product, or because they have received poor or slow service. Which of the following is recommended for dealing with such situations?",
+      "reference": "C21/6.3",
+      "options": [
+        "Share your problems to show you empathized with the clients.",
+        "Explain the company's problems and offer an apology.",
+        "Empathise and apologise.",
+        "Tailor your explanation to the client."
+      ],
+      "correct_answer_letter": "C",
+      "correct_answer": "Empathise and apologise."
+    },
+    {
+      "question_number": 125,
+      "question": "Under certain situations, it is recommended for your client to be accompanied by a Trusted Individual to be present during the advisory process. Which of the following is not true of this sentence? When the client has the following profile:",
+      "reference": "C22/5.16(a)",
+      "options": [
+        "Age 65 or older.",
+        "Not proficient in spoken or written English.",
+        "Have secondary education.",
+        "None of the above."
+      ],
+      "correct_answer_letter": "A",
+      "correct_answer": "Age 65 or older."
+    },
+    {
+      "question_number": 126,
+      "question": "What serves as a starting or reference point for any further insurance recommendations for your client?",
+      "reference": "C22/10.2",
+      "options": [
+        "Through Know-Your-Client Need analysis.",
+        "The client's cash flow and budget.",
+        "The client's pay increase and promotions.",
+        "The client's existing insurance portfolio."
+      ],
+      "correct_answer_letter": "D",
+      "correct_answer": "The client's existing insurance portfolio."
+    },
+    {
+      "question_number": 127,
+      "question": "Which one of the following sentences regarding analyzing and evaluating a client's financial status is true?",
+      "reference": "C23/2.1",
+      "options": [
+        "Balance sheet tells us about his current assets and expenditure at a specific point in time.",
+        "The income statement shows us his income and liabilities over a period of usually one year.",
+        "A balance sheet is also call a Statement of Net Worth.",
+        "Net worth is the positive amount after the total cash outflows have been subtracted from the inflows."
+      ],
+      "correct_answer_letter": "C",
+      "correct_answer": "A balance sheet is also call a Statement of Net Worth."
+    },
+    {
+      "question_number": 128,
+      "question": "Which of the following in a balance sheet that can also be considered an investment asset?",
+      "reference": "C23/2.2, A2",
+      "options": [
+        "Money market instruments.",
+        "Emergency funds.",
+        "Your car.",
+        "CPF savings."
+      ],
+      "correct_answer_letter": "D",
+      "correct_answer": "CPF savings."
+    },
+    {
+      "question_number": 129,
+      "question": "Among the policies given, which policy is the most cost effective to ensure protection at the lowest premium, assuming all things equal?",
+      "reference": "C24/Table 4.2",
+      "options": [
+        "Whole Life Insurance.",
+        "Long Term Care Insurance.",
+        "Guaranteed Insurability Option Rider.",
+        "Term Insurance Policies."
+      ],
+      "correct_answer_letter": "D",
+      "correct_answer": "Term Insurance Policies."
+    },
+    {
+      "question_number": 130,
+      "question": "When the client cannot afford the premiums, he will allow his policy to lapsed. Who will not be affected?",
+      "reference": "C24/2.11",
+      "options": [
+        "The Client.",
+        "Financial Adviser Representative.",
+        "The Insurer.",
+        "None of the above."
+      ],
+      "correct_answer_letter": "D",
+      "correct_answer": "None of the above."
+    },
+    {
+      "question_number": 131,
+      "question": "The professional performs what he says and keep his promises even if bad news has to be delivered to a client. For example, the financial adviser informed the client that his investment is not doing well or the insurance company is increasing the premiums. Which one of the characteristics is the financial adviser exhibiting?",
+      "reference": "C15/1.3",
+      "options": [
+        "Loyalty to client.",
+        "Management of self-interest.",
+        "Evidence of mastery of subject matter.",
+        "Reliability."
+      ],
+      "correct_answer_letter": "D",
+      "correct_answer": "Reliability."
+    },
+    {
+      "question_number": 132,
+      "question": "The Basic Financial Planning Guide outlines a few rules of thumb for individuals to start taking proactive steps to address savings, insurance and investment needs. For emergency funds, the rule of thumb is set at least ________ worth of expenses.",
+      "reference": "C27/1.2,2",
+      "options": [
+        "3 months",
+        "4 months",
+        "3 to 6 months",
+        "3 to 9 months"
+      ],
+      "correct_answer_letter": "C",
+      "correct_answer": "3 to 6 months"
+    },
+    {
+      "question_number": 133,
+      "question": "The Basic Financial Planning Guide outlines as a rule of thumb to obtain insurance protection of:______ times annual income for death and total and permanent disability;______ times annual income for critical illness.",
+      "reference": "C27/1.2",
+      "options": [
+        "6; 2",
+        "7; 3",
+        "9; 4",
+        "10; 5"
+      ],
+      "correct_answer_letter": "C",
+      "correct_answer": "9; 4"
+    },
+    {
+      "question_number": 134,
+      "question": "James bought a policy from Company X. Subsequently he was persuaded by another agent from Company Y to drain his current policy with Company X in order to purchase a new life policy with him. This is an example of:",
+      "reference": "C18/6.8",
+      "options": [
+        "Churning.",
+        "Twisting.",
+        "Excessive Trading.",
+        "Biased advice."
+      ],
+      "correct_answer_letter": "B",
+      "correct_answer": "Twisting."
+    },
+    {
+      "question_number": 135,
+      "question": "Almost every code that governs professional associations within the financial services industry requires its members to act with integrity. Which one of the following is not true of the principle of integrity?",
+      "reference": "C16/2.2 to 2.7",
+      "options": [
+        "Most relationships suffer because of a lack of integrity. For example, a person makes a commitment to others and breaks that commitment by making excuses and not taking responsibility.",
+        "An example of standards on how one treats a client should be the same as how one treats a service personnel such as receptionist and counter staff.",
+        "It is wrong for people to believe that their personal morality is different and unrelated to business morality.",
+        "The principle of integrity in ethical behaviour demands the state of being honest and unblemished."
+      ],
+      "correct_answer_letter": "D",
+      "correct_answer": "The principle of integrity in ethical behaviour demands the state of being honest and unblemished."
+    },
+    {
+      "question_number": 136,
+      "question": "The information provided by the client to his financial adviser's representative is personal data under Personal Data Protection Act 2012 (PDPA). Which of the following does not describes the Principle of Confidentiality?",
+      "reference": "C16/6.7",
+      "options": [
+        "A breach of the PDPA provisions will result in reputational damage to the financial adviser representative concerned and/or to the financial institution, which he represents.",
+        "A breach of client information would also attract civil or criminal sanctions under the relevant law.",
+        "Personal data under the PDPA refers to data, whether true or not, about an individual who can be identified from that data to which the organisation is likely to have access.",
+        "Individuals found guilty of an offence in breach of the PDPA provisions are liable to a fine of up to S$25,000 and/or attract an imprisonment or both."
+      ],
+      "correct_answer_letter": "D",
+      "correct_answer": "Individuals found guilty of an offence in breach of the PDPA provisions are liable to a fine of up to S$25,000 and/or attract an imprisonment or both."
+    },
+    {
+      "question_number": 137,
+      "question": "There are good ethical reasons for acting right. As the saying goes, good ethics is good business. Which of the benefits of ethical behaviour that is/are true?",
+      "reference": "C16/9.8, 9.9,10.1",
+      "options": [
+        "Client loyalty.",
+        "It is less costly to serve existing clients in term of advertising, marketing or other sales related to your clients as compared to the prospecting for new clients.",
+        "Walk away from temptations in an ethical dilemma situation when the representative is under sales pressure, even if it means losing a sale.",
+        "All of the above."
+      ],
+      "correct_answer_letter": "D",
+      "correct_answer": "All of the above."
+    },
+    {
+      "question_number": 138,
+      "question": "Under normal circumstances, replacement insurance policies should be discouraged as replacement of an insurance policy would mean voiding the existing legal contract's terms and conditions and embarking on a new one. Which of the following conditions will be re-set under the new policies?",
+      "reference": "C26/5.6",
+      "options": [
+        "Incontestability Clause.",
+        "Waiting Period Clause.",
+        "Suicide Clause.",
+        "All of the above."
+      ],
+      "correct_answer_letter": "D",
+      "correct_answer": "All of the above."
+    },
+    {
+      "question_number": 139,
+      "question": "Which one of the following does not represent the core values of the Life Association of Singapore (LIA)?",
+      "reference": "C16/1.2",
+      "options": [
+        "Professional in the way they conduct themselves.",
+        "Strive to provide the fair outcomes to their policyowners.",
+        "Unified in their resolve to deliver innovation solutions.",
+        "Open and honest to build an environment of trust and transparency."
+      ],
+      "correct_answer_letter": "B",
+      "correct_answer": "Strive to provide the fair outcomes to their policyowners."
+    },
+    {
+      "question_number": 140,
+      "question": "One of the principles of Fair Dealing is transparency. Transparency refers to disclosure that is readable and understandable to clients. Which of the following key areas for standards of transparency is not true?",
+      "reference": "C19/4.4,4.5",
+      "options": [
+        "Features of the product and services.",
+        "Fees and Charges.",
+        "Any special feature.",
+        "Past and future projections."
+      ],
+      "correct_answer_letter": "D",
+      "correct_answer": "Past and future projections."
+    },
+    {
+      "question_number": 141,
+      "question": "An obstacle is something that gets in the way and slows down or stops the making of the best ethical option in any given situation. What constitutes the obstacles to ethical decision making?",
+      "reference": "C17/3.4",
+      "options": [
+        "Rationalization.",
+        "Succumb to temptations.",
+        "Lack of moral perception.",
+        "All of the above"
+      ],
+      "correct_answer_letter": "D",
+      "correct_answer": "All of the above"
+    },
+    {
+      "question_number": 142,
+      "question": "As a representative of a licensed financial adviser, Jack often fails to do what is reasonable in the circumstances in advising his customers. Which of the following is Jack guilty of?",
+      "reference": "C20/3.6",
+      "options": [
+        "Fraud.",
+        "Deliberation.",
+        "Omission.",
+        "Negligence."
+      ],
+      "correct_answer_letter": "D",
+      "correct_answer": "Negligence."
+    },
+    {
+      "question_number": 143,
+      "question": "Which of the following is/are true of the Principle Of Diligence?",
+      "reference": "C16/8.2 to 8.9",
+      "options": [
+        "Diligence requires providing services in a reasonably prompt and thorough manner.",
+        "Professionals provide services with due care in a painstaking manner.",
+        "Simply put, do not over promise, and under deliver.",
+        "All of the above."
+      ],
+      "correct_answer_letter": "D",
+      "correct_answer": "All of the above."
+    },
+    {
+      "question_number": 144,
+      "question": "A financial adviser representative was found selling fake policies to her high-net worth clients, where she pocketed S$4M of premiums. What is likely her motivations that best address this issue?",
+      "reference": "C14/4.11",
+      "options": [
+        "Rationalisation.",
+        "Peer Pressure.",
+        "Self-interest.",
+        "Corrupted character."
+      ],
+      "correct_answer_letter": "A",
+      "correct_answer": "Rationalisation."
+    },
+    {
+      "question_number": 145,
+      "question": "A professional is a competent person who is engaged in a specific activity. Which one of the following does not describe the characteristics of a professional?",
+      "reference": "C15/1.2 - 1.5",
+      "options": [
+        "Reliability.",
+        "Spirit of loyalty to fellow financial adviser representatives.",
+        "Evidence of competency and accomplishments.",
+        "Management of Self-interest."
+      ],
+      "correct_answer_letter": "C",
+      "correct_answer": "Evidence of competency and accomplishments."
+    },
+    {
+      "question_number": 146,
+      "question": "Which type of manifestations of conflict of interest operates below the consciousness or awareness that is possible the representatives are influenced by the incentives and compensation structures and yet not be fully aware of the influence?",
+      "reference": "C18/4.5",
+      "options": [
+        "Churning.",
+        "Biased advice",
+        "Twisting",
+        "Involuntary cross-selling"
+      ],
+      "correct_answer_letter": "B",
+      "correct_answer": "Biased advice"
+    },
+    {
+      "question_number": 147,
+      "question": "The financial adviser representative exercise a duty of care to their clients. The good state of conduct is generally the result of which motivations in play?",
+      "reference": "C14/4",
+      "options": [
+        "Trust, Reliability, Intimacy.",
+        "Credibility, Moral, Reliability.",
+        "Self-interest, Affection, Moral.",
+        "Self- interest, Trust, Reliability."
+      ],
+      "correct_answer_letter": "C",
+      "correct_answer": "Self-interest, Affection, Moral."
+    },
+    {
+      "question_number": 148,
+      "question": "Mary your client was told that a certain investment-linked life policy (the ILPs) has the potential to make 10% return per annum. She approaches you as his financial adviser to buy the ILP. Which of the following would you offer to Mary?",
+      "reference": "C22/1.10",
+      "options": [
+        "A full fact-find exercise.",
+        "A customer knowledge assessment.",
+        "A customer review assessment.",
+        "A range of investment products that has the potential of 10% return per annum."
+      ],
+      "correct_answer_letter": "A",
+      "correct_answer": "A full fact-find exercise."
+    },
+    {
+      "question_number": 149,
+      "question": "John is a representative of an exempt financial adviser. He provides advisory services to several types of customers. Which of the following customers would John find it necessary to review their financial positions at the end of each year?",
+      "reference": "C26/2.11",
+      "options": [
+        "Customers who are civil servants.",
+        "Customers who have tenure with their employers.",
+        "Customers who are in blue collar occupations.",
+        "Customers who are self-employed and entrepreneurs."
+      ],
+      "correct_answer_letter": "D",
+      "correct_answer": "Customers who are self-employed and entrepreneurs."
+    },
+    {
+      "question_number": 150,
+      "question": "Your client worked as a secretary with a small enterprise in Singapore. She has a GCE O level education, and currently 70 years old. She is considered as a vulnerable customer and which of the following products would likely meet her savings needs?",
+      "reference": "C24/2.6, Table 4.1",
+      "options": [
+        "Options and futures.",
+        "Treasury bills.",
+        "Real estate.",
+        "Preferred shares and ordinary shares."
+      ],
+      "correct_answer_letter": "B",
+      "correct_answer": "Treasury bills."
+    }
+  ]
+}

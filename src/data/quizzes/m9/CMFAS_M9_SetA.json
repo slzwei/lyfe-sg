@@ -7,6 +7,22 @@
   "format": "Multiple Choice",
   "duration": "120 minutes",
   "passing_grade": "70% (70/100)",
+  "shared_passages": [
+    {
+      "description": "Single Premium Investment-linked Plan data for Q96-98",
+      "applies_to_questions": [96, 97, 98],
+      "preamble": "For all calculation questions in this set, use the interest table from the textbook to compute the answers, where applicable. Consider the following information relating to a Single Premium Investment linked plan, for questions 96 - 98:",
+      "data": {
+        "Single Premium": "$25,000",
+        "Offer price": "$1.40",
+        "Bid-offer spread": "5% throughout",
+        "Policy fee": "$100",
+        "Administrative fee & Mortality charge": "3% of single premium",
+        "Plan growth": "7% pa throughout",
+        "Assumption": "All fees and charges are deducted by the cancellation of units at the inception of the policy."
+      }
+    }
+  ],
   "questions": [
     {
       "question_number": 1,

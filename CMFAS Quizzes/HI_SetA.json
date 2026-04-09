@@ -1,0 +1,662 @@
+{
+  "quiz_title": "HEALTH INSURANCE Set A",
+  "version": "HI 8th Edition V1.2 Set A",
+  "prepared_for": "Prudential Assurance Company Singapore (Pte) Limited",
+  "date": "April 2026",
+  "total_questions": 50,
+  "format": "Multiple Choice",
+  "duration": "75 minutes",
+  "passing_grade": "",
+  "questions": [
+    {
+      "question_number": 1,
+      "question": "From mid-2023, MOH launched Healthier SG — a multi-year strategy to promote proactive preventive care and empower individuals to chart their own journey towards better health. What constitutes Healthier SG?",
+      "reference": "",
+      "options": [
+        "Mobilise family doctors to deliver preventive care for residents.",
+        "Develop health plans that include lifestyle adjustments.",
+        "Establish necessary enablers such as IT, manpower development, and financing policy.",
+        "All of the above."
+      ],
+      "correct_answer_letter": "D",
+      "correct_answer": "All of the above."
+    },
+    {
+      "question_number": 2,
+      "question": "Which one of the following does not constitute as a main type of healthcare services under the Healthcare System in Singapore?",
+      "reference": "",
+      "options": [
+        "Intermediate Long Term Care Services.",
+        "Hospital services.",
+        "Palliative Care services.",
+        "Primary Healthcare services."
+      ],
+      "correct_answer_letter": "C",
+      "correct_answer": "Palliative Care services."
+    },
+    {
+      "question_number": 3,
+      "question": "Jane bought an Elder Shield 400 policy from one of the approved insurers. She subsequently needed long-term care, but recovered after 75 months. How much can Jane received from her Elder Shield 400 policy?",
+      "reference": "",
+      "options": [
+        "$3,200.",
+        "$4,800.",
+        "$28,800.",
+        "$30,000."
+      ],
+      "correct_answer_letter": "C",
+      "correct_answer": "$28,800."
+    },
+    {
+      "question_number": 4,
+      "question": "From 1 July 2023, this insurance coverage has been enhanced for all new and existing Work Permit holders. What must the employers observe?",
+      "reference": "",
+      "options": [
+        "A higher annual claim limit of at least S$75,000 per year.",
+        "For claims above S$15,000, employer must make a co-payment 75%.",
+        "Co- payment arrangement with Work Permit holder does not exceed 10% of the employee's monthly salary.",
+        "The duration of the co-payment with the Work Permit holder cannot exceed 1 year."
+      ],
+      "correct_answer_letter": "C",
+      "correct_answer": "Co- payment arrangement with Work Permit holder does not exceed 10% of the employee's monthly salary."
+    },
+    {
+      "question_number": 5,
+      "question": "Under the Community Health Assist Scheme (CHAS), eligible Singapore citizens can receive ________________ treatments at participating General Practitioners (GPs) and dental clinics without the need to travel to the polyclinics.",
+      "reference": "",
+      "options": [
+        "free",
+        "subsidised",
+        "basic",
+        "limited"
+      ],
+      "correct_answer_letter": "B",
+      "correct_answer": "subsidised"
+    },
+    {
+      "question_number": 6,
+      "question": "Which one of the following types of underwriting is often used where the products are sold via direct or online channel for product such as Hospital Income Plans and the applicants are covered regardless of their health?",
+      "reference": "",
+      "options": [
+        "Moratorium underwriting.",
+        "Simplified Issuance offer.",
+        "Guaranteed Issuance offer.",
+        "Full Medical underwriting."
+      ],
+      "correct_answer_letter": "C",
+      "correct_answer": "Guaranteed Issuance offer."
+    },
+    {
+      "question_number": 7,
+      "question": "Which one of the following is Most TRUE? MAS Notice No: MAS 120 comprises both mandatory requirements and best practice standards on the disclosure of information and provision of advice to policy owners for:",
+      "reference": "",
+      "options": [
+        "Life Policies.",
+        "Accident and Health (A&H) Policies.",
+        "A&H Policies and Life Policies that provides A&H benefits.",
+        "A&H Policies, Investment- Linked policies and Universal Life policies."
+      ],
+      "correct_answer_letter": "C",
+      "correct_answer": "A&H Policies and Life Policies that provides A&H benefits."
+    },
+    {
+      "question_number": 8,
+      "question": "Medical Expense Insurance covers charges incurred when the patient is confined in a high dependency ward. This is covered under ______________.",
+      "reference": "",
+      "options": [
+        "Short-stay ward",
+        "Intensive Care Unit",
+        "Inpatient Congenital Anomalies",
+        "Radiosurgery"
+      ],
+      "correct_answer_letter": "B",
+      "correct_answer": "Intensive Care Unit"
+    },
+    {
+      "question_number": 9,
+      "question": "If Mr. Tan states in his Critical Illness Insurance proposal form that he is receiving treatment for high blood pressure, the underwriter will most likely require a/an:",
+      "reference": "",
+      "options": [
+        "Financial report.",
+        "Blood profile analysis.",
+        "Attending physician's statement.",
+        "Supplementary lifestyle questionnaire."
+      ],
+      "correct_answer_letter": "C",
+      "correct_answer": "Attending physician's statement."
+    },
+    {
+      "question_number": 10,
+      "question": "As a Financial Adviser Representative (FA Rep), which one of the following situations will be considered as needs selling?",
+      "reference": "",
+      "options": [
+        "The FA Rep's relationship with the prospective client depends on how well the client likes his product.",
+        "The FA Rep helps the prospective client to uncover his needs and recommend suitable solutions for him.",
+        "The FA Rep creates the pressure to buy, as the prospective client's needs are already present.",
+        "The FA Rep assumes that the prospective client needs his product, and as such, he makes a detailed recommendation to the prospective client."
+      ],
+      "correct_answer_letter": "B",
+      "correct_answer": "The FA Rep helps the prospective client to uncover his needs and recommend suitable solutions for him."
+    },
+    {
+      "question_number": 11,
+      "question": "_________ refers to the charges incurred by the insured person who went for treatment like diagnostic and laboratory tests as prescribed by the doctor that is covered by his Medical Expense Insurance Policy.",
+      "reference": "",
+      "options": [
+        "Pre-hospital treatment",
+        "Post-hospital treatment",
+        "Daily room and board services",
+        "None of the above"
+      ],
+      "correct_answer_letter": "D",
+      "correct_answer": "None of the above"
+    },
+    {
+      "question_number": 12,
+      "question": "Which one of the following exclusions and limitations under Medical Expense Insurance is FALSE?",
+      "reference": "",
+      "options": [
+        "To avoid the insurer selecting against the policyowner (i.e anti-selection)",
+        "To make premium more affordable.",
+        "To avoid policyowner receiving reimbursement twice and making a profit.",
+        "To define more clearly the necessary medical care and treatment."
+      ],
+      "correct_answer_letter": "A",
+      "correct_answer": "To avoid the insurer selecting against the policyowner (i.e anti-selection)"
+    },
+    {
+      "question_number": 13,
+      "question": "Which one of the following characteristics of group insurance is important to the underwriter in determining the \"feel\" of future claim experience?",
+      "reference": "",
+      "options": [
+        "Minimal Underwriting Requirements",
+        "Experience-rating",
+        "Cost effectiveness",
+        "Plan continuation"
+      ],
+      "correct_answer_letter": "B",
+      "correct_answer": "Experience-rating"
+    },
+    {
+      "question_number": 14,
+      "question": "Elder Shield has a deferment period of _______ days starting from the claim date, i.e. the date that the claim form is certified by one of the insurer's appointed assessors.",
+      "reference": "",
+      "options": [
+        "30",
+        "60",
+        "75",
+        "90"
+      ],
+      "correct_answer_letter": "D",
+      "correct_answer": "90"
+    },
+    {
+      "question_number": 15,
+      "question": "Andrew, an engineer became disabled and unable to go to work. Compute his total Disability Income Benefit. Given the following details: Escalation Benefit: 3% Monthly Income: $5,000 Monthly Expense: $3,000 No of year: 30 years",
+      "reference": "",
+      "options": [
+        "$1,141,809",
+        "$1,712,714",
+        "$2,140,893",
+        "$2,854,524"
+      ],
+      "correct_answer_letter": "C",
+      "correct_answer": "$2,140,893"
+    },
+    {
+      "question_number": 16,
+      "question": "What is true of the difference between \"Rehabilitation Benefit\" and \"Rehabilitation Expense Benefit\"?",
+      "reference": "",
+      "options": [
+        "Rehabilitation Benefit is for payment if the insured is unable to go to work.",
+        "Rehabilitation Benefit is for reimbursement of medical aids eg. Wheelchair.",
+        "Rehabilitation Expense Benefit is also known as \"Partial Disability Benefit\" and it provides for a reduced benefit to the insured if he is able to return to work.",
+        "Rehabilitation Expense Benefit is reimbursements that includes workplace modifications."
+      ],
+      "correct_answer_letter": "D",
+      "correct_answer": "Rehabilitation Expense Benefit is reimbursements that includes workplace modifications."
+    },
+    {
+      "question_number": 17,
+      "question": "Underwriters may use which one of the following factors to determine the terms of acceptance for Disability Income Insurance Policy?",
+      "reference": "",
+      "options": [
+        "Occupation.",
+        "Benefit Amount.",
+        "Benefit Period.",
+        "Deferred Period."
+      ],
+      "correct_answer_letter": "C",
+      "correct_answer": "Benefit Period."
+    },
+    {
+      "question_number": 18,
+      "question": "Under Long Term Care Insurance Policy, \"Service Based\" policy pays a benefit for the covered amount when an insured needs to use the services, regardless of the actual cost incurred for the services. Which type is it describing?",
+      "reference": "",
+      "options": [
+        "Pre-agreed amount Method.",
+        "Expense Incurred Method.",
+        "Indemnity Method.",
+        "Reimbursement Method."
+      ],
+      "correct_answer_letter": "A",
+      "correct_answer": "Pre-agreed amount Method."
+    },
+    {
+      "question_number": 19,
+      "question": "Miss X's monthly income and expenses are $4,000 and $3,000 respectively. She is 32 years old, single and would like to provide for herself till retirement (55 years old) in the event of disability. She has an existing $100,000 Whole Life Insurance. Given an inflation rate of 2% and interest rate of 4%, calculate the maintenance cost needed.",
+      "reference": "",
+      "options": [
+        "$795,586",
+        "$571,688",
+        "$671,688",
+        "$445,530"
+      ],
+      "correct_answer_letter": "B",
+      "correct_answer": "$571,688"
+    },
+    {
+      "question_number": 20,
+      "question": "The detection of any early cognitive impairment is essential when underwriting which product?",
+      "reference": "",
+      "options": [
+        "Dread Disease Insurance.",
+        "Disability Income Insurance.",
+        "Long Term Care Insurance.",
+        "Managed Healthcare Insurance"
+      ],
+      "correct_answer_letter": "C",
+      "correct_answer": "Long Term Care Insurance."
+    },
+    {
+      "question_number": 21,
+      "question": "What is/are the key factor(s) of buying Long Term Care Insurance while the clients are still young?",
+      "reference": "",
+      "options": [
+        "Cost will rise considerably.",
+        "Risk of rejection is high.",
+        "Pays in addition to other insurance policies.",
+        "All of the above."
+      ],
+      "correct_answer_letter": "C",
+      "correct_answer": "Pays in addition to other insurance policies."
+    },
+    {
+      "question_number": 22,
+      "question": "Which of the following is not a benefit under a Long-Term Care plan?",
+      "reference": "",
+      "options": [
+        "Dependent Care Benefit.",
+        "Extended Care Benefit.",
+        "Rehabilitation Benefit.",
+        "None of the above."
+      ],
+      "correct_answer_letter": "D",
+      "correct_answer": "None of the above."
+    },
+    {
+      "question_number": 23,
+      "question": "In a Critical Illness Insurance Product (CI Plan), major cancer is covered. Which of the following term(s) is/are considered \"meeting the definition\"?",
+      "reference": "",
+      "options": [
+        "Sarcoma.",
+        "Leukemia.",
+        "Lymphoma.",
+        "All of the above."
+      ],
+      "correct_answer_letter": "D",
+      "correct_answer": "All of the above."
+    },
+    {
+      "question_number": 24,
+      "question": "Which one of the following circumstances will allow the policy owner of a Travel Insurance policy, to claim for medical expense benefits while she is overseas?",
+      "reference": "",
+      "options": [
+        "Aesthetic surgery performed in Seoul.",
+        "Routine health check-up performed in New York.",
+        "Miscarriage expenses in America.",
+        "Death resulting from civil commotion in Bangkok."
+      ],
+      "correct_answer_letter": "C",
+      "correct_answer": "Miscarriage expenses in America."
+    },
+    {
+      "question_number": 25,
+      "question": "Which is/are the common exclusion(s) of Maternity Insurance?",
+      "reference": "",
+      "options": [
+        "The insured mother carrying four or more babies in a single pregnancy.",
+        "Specific types of pregnancy complications and congenital illnesses.",
+        "Benefit payment excludes payments from other Health Insurance policies.",
+        "All of the above"
+      ],
+      "correct_answer_letter": "A",
+      "correct_answer": "The insured mother carrying four or more babies in a single pregnancy."
+    },
+    {
+      "question_number": 26,
+      "question": "Which component of managed healthcare is not used to contain and control healthcare expenditure?",
+      "reference": "",
+      "options": [
+        "Accessibility.",
+        "Cost.",
+        "Quality of Care.",
+        "None of the above."
+      ],
+      "correct_answer_letter": "D",
+      "correct_answer": "None of the above."
+    },
+    {
+      "question_number": 27,
+      "question": "Which one of the following methods, does Managed Healthcare Organization pre-pays the providers a fixed amount for each member's medical care usually on a monthly basis?",
+      "reference": "",
+      "options": [
+        "Capitation.",
+        "Discounted-fee-for-service.",
+        "Salary.",
+        "Fee schedule."
+      ],
+      "correct_answer_letter": "A",
+      "correct_answer": "Capitation."
+    },
+    {
+      "question_number": 28,
+      "question": "For a fixed annual premium, insurer offer Managed Healthcare Plans which provides their policyowners with some benefits. Which of the following is Not a benefit under this Plan?",
+      "reference": "",
+      "options": [
+        "Primary Care.",
+        "Preventive Care.",
+        "Emergency Care.",
+        "Inpatient Care"
+      ],
+      "correct_answer_letter": "D",
+      "correct_answer": "Inpatient Care"
+    },
+    {
+      "question_number": 29,
+      "question": "Johnson, 55 years old, wishes to use his CPF Medisave to finance his Integrated Shield plan with an annual premium of $2,500; Elder Shield with an annual premium of $300; and Elder Shield Supplements with an annual premium of $1,000.\nAssuming the applicable withdrawal limits (per person per year) for the following Medisave Approved Medical Insurance plans are: Medi Shield Life: No limit Integrated Shield Plan: $600 (age 41 to 70 years old) Elder Shield: No limit Elder Shield Supplements: $600\nCalculate the total amount Johnson will have to pay in cash after withdrawing the maximum amount from his Medisave?",
+      "reference": "",
+      "options": [
+        "$0",
+        "$1,200",
+        "$2,300",
+        "$2,900"
+      ],
+      "correct_answer_letter": "C",
+      "correct_answer": "$2,300"
+    },
+    {
+      "question_number": 30,
+      "question": "Jenny is a CPF member. She can use her Medisave for mammogram screenings at approved medical centres if her age is over ____________ .",
+      "reference": "",
+      "options": [
+        "40",
+        "45",
+        "50",
+        "55"
+      ],
+      "correct_answer_letter": "C",
+      "correct_answer": "50"
+    },
+    {
+      "question_number": 31,
+      "question": "Under the Medical Expense Insurance, prosthesis charges refer to the costs of _________________ .",
+      "reference": "",
+      "options": [
+        "surgical implant of an artificial device used to replace a missing part of a body.",
+        "charges for stem cell transplant.",
+        "charges for Gamma Knife by a surgeon in a hospital.",
+        "treatment of any congenital anomalies."
+      ],
+      "correct_answer_letter": "A",
+      "correct_answer": "surgical implant of an artificial device used to replace a missing part of a body."
+    },
+    {
+      "question_number": 32,
+      "question": "If the patient had not authorised the use of his Medi Save before his demise, who can help the patient to do so for the last inpatient medical bill?",
+      "reference": "",
+      "options": [
+        "Caregiver.",
+        "His children.",
+        "Donee.",
+        "All of the above."
+      ],
+      "correct_answer_letter": "C",
+      "correct_answer": "Donee."
+    },
+    {
+      "question_number": 33,
+      "question": "A Singaporean will qualify and receive from Interim Disability Programme for the Elderly if he has no household income and is living in a residence with Annual Value of ______ for _____ .",
+      "reference": "",
+      "options": [
+        "$13,000 for $250 per month",
+        "$14,000 for $150 per month",
+        "$15,000 for $150 per month",
+        "Nothing, as it is based on household monthly income of S$2,800 or lower."
+      ],
+      "correct_answer_letter": "A",
+      "correct_answer": "$13,000 for $250 per month"
+    },
+    {
+      "question_number": 34,
+      "question": "Launched in 2012, the \"Healthcare 2020\" Masterplan aimed to improve healthcare for Singaporeans, which one of the following is not true under \"Healthcare 2020\"?",
+      "reference": "",
+      "options": [
+        "Improved Efficiency.",
+        "Improved Accessibility.",
+        "Improved Affordability.",
+        "Improved Quality."
+      ],
+      "correct_answer_letter": "A",
+      "correct_answer": "Improved Efficiency."
+    },
+    {
+      "question_number": 35,
+      "question": "Danny is severely disabled, how does he qualify under Interim Disability Assistance Programme for the Elderly (IDAPE)?",
+      "reference": "",
+      "options": [
+        "He must be born on 30 Sept 1932 or earlier.",
+        "Had pre-existing disability as of Sept 2002.",
+        "Unable to join Elder Shield.",
+        "All of the above."
+      ],
+      "correct_answer_letter": "D",
+      "correct_answer": "All of the above."
+    },
+    {
+      "question_number": 36,
+      "question": "Which one of the following regarding the LIA Critical Illness Framework 2024 (\"The CI Framework') is true?",
+      "reference": "",
+      "options": [
+        "Seeks to improve the interests of the consumers in the claim of critical illnesses.",
+        "Seeks for easier product comparison by insurers.",
+        "Seeks for consistent outcomes for underwriters in accepting proposals.",
+        "Seeks to reduce ambiguity of the same CI claim being paid by one insurer but rejected by another."
+      ],
+      "correct_answer_letter": "D",
+      "correct_answer": "Seeks to reduce ambiguity of the same CI claim being paid by one insurer but rejected by another."
+    },
+    {
+      "question_number": 37,
+      "question": "Under the Healthcare System in Singapore, \"Other Healthcare Services\" consists of which of the following?",
+      "reference": "",
+      "options": [
+        "Intermediate and Long-Term Care Services.",
+        "Primary Healthcare Services.",
+        "Hospital Services.",
+        "Traditional and Complementary Medicine."
+      ],
+      "correct_answer_letter": "D",
+      "correct_answer": "Traditional and Complementary Medicine."
+    },
+    {
+      "question_number": 38,
+      "question": "To make a claim under a Care Shield Life Policy, the insured needs to submit a claim application to the ________________ .",
+      "reference": "",
+      "options": [
+        "Ministry of Health Holdings",
+        "Agency of Integrated Care (AIC)",
+        "Pioneer Generation Department",
+        "Monetary Authority of Singapore"
+      ],
+      "correct_answer_letter": "B",
+      "correct_answer": "Agency of Integrated Care (AIC)"
+    },
+    {
+      "question_number": 39,
+      "question": "Amy bought an Additional Benefit Critical Illness Rider of $150,000 on a Whole Life Insurance Policy of $200,000. Which of the following statements is TRUE?",
+      "reference": "",
+      "options": [
+        "Upon accidental death, insurer will pay $350,000.",
+        "In the event of an accident that caused her to be total permanently disabled, insurer will pay $350,000.",
+        "She was diagnosed with skin cancer and subsequently died 4 months later. Insurer will pay a total sum of $350,000.",
+        "In the event she was diagnosed with one of Critical Illness, insurer with pay a sum assured of $350,000."
+      ],
+      "correct_answer_letter": "C",
+      "correct_answer": "She was diagnosed with skin cancer and subsequently died 4 months later. Insurer will pay a total sum of $350,000."
+    },
+    {
+      "question_number": 40,
+      "question": "Many individual Health Insurance policies contains a provision that is intended to prevent the insured person from profiting from a claim. This is called ____________ provision.",
+      "reference": "",
+      "options": [
+        "Co-ordination of Benefit",
+        "Over-insurance",
+        "Contribution",
+        "All of above"
+      ],
+      "correct_answer_letter": "D",
+      "correct_answer": "All of above"
+    },
+    {
+      "question_number": 41,
+      "question": "Which one of the following key factors is NOT used in computing premium for Health Insurance Products?",
+      "reference": "",
+      "options": [
+        "Investment Income.",
+        "Mode of Premium.",
+        "Extent of underwriting.",
+        "Occupation."
+      ],
+      "correct_answer_letter": "D",
+      "correct_answer": "Occupation."
+    },
+    {
+      "question_number": 42,
+      "question": "Which one of the following statements about parameters in pricing of Health Insurance is true?",
+      "reference": "",
+      "options": [
+        "Increase in proportion of females in a group will reduce the premiums.",
+        "Increase in morbidity experience will reduce premiums.",
+        "Increase in persistency will decrease premiums.",
+        "Increase in participation rate will increase premiums."
+      ],
+      "correct_answer_letter": "C",
+      "correct_answer": "Increase in persistency will decrease premiums."
+    },
+    {
+      "question_number": 43,
+      "question": "Underwriters help the insurer assess the risk and determine whether or not to accept an application, and if so, on what terms it will offer. Hence the role of underwriters is to ______________.",
+      "reference": "",
+      "options": [
+        "help to protect the insurer against anti-selection and in the preservation of the insurer's reserves.",
+        "ensure that the premium charged corresponds with the risk involved.",
+        "ensure the re-insurance limits will not be exceeded.",
+        "ensure that the premium charge is fair."
+      ],
+      "correct_answer_letter": "B",
+      "correct_answer": "ensure that the premium charged corresponds with the risk involved."
+    },
+    {
+      "question_number": 44,
+      "question": "Mr. Lim is buying a policy for himself and his wife and 2 children of the same premium each. What is the premium payable given the following? Mr. Ang's premium $182.31 Mrs. Ang's premium $227.89 1 child's premium $102.50",
+      "reference": "",
+      "options": [
+        "$512.70",
+        "$584.44",
+        "$615.20",
+        "$487"
+      ],
+      "correct_answer_letter": "B",
+      "correct_answer": "$584.44"
+    },
+    {
+      "question_number": 45,
+      "question": "John bought a Conditionally Renewable Health Insurance Policy. Shortly after that, he was diagnosed with cancer. The insurer __________________ .",
+      "reference": "",
+      "options": [
+        "can refuse to renew his policy as his health conditions change",
+        "can refuse to renew his policy as it is considered pre-exisiting conditions.",
+        "should renew his policy.",
+        "should renew his policy and charge a higher premium."
+      ],
+      "correct_answer_letter": "C",
+      "correct_answer": "should renew his policy."
+    },
+    {
+      "question_number": 46,
+      "question": "Mr. Tan is a 65-year-old Singaporean concerned about paying his medical expenses in the event of suffering from any severe disability. However, he was not eligible to join the Elder Shield Scheme when it was launched in September 2002 because he had pre-existing disability. If Mr. Tan suffers a severe disability and assuming that his per capita household income is S$2,000, he will qualify to receive a payout of ______ under the Interim disability Assistance Programme for the Elderly.",
+      "reference": "",
+      "options": [
+        "S$150 per month for up to 72 months",
+        "S$150 per month for up to 60 months",
+        "S$250 per month for up to 72 months",
+        "S$250 per month for up to 60 months"
+      ],
+      "correct_answer_letter": "C",
+      "correct_answer": "S$250 per month for up to 72 months"
+    },
+    {
+      "question_number": 47,
+      "question": "An A&H insurance intermediary should institute controls, process and procedures to effectively monitor and track switching of long-term accident and health plans. Which is true of such process?",
+      "reference": "",
+      "options": [
+        "Track the volume of switches so as to identify any A&H insurance reps with an unusually high volume of switching transactions.",
+        "Ensure supervisor reviewed each switch recommended.",
+        "Identify any unusual trends in switching transactions.",
+        "All of the above."
+      ],
+      "correct_answer_letter": "D",
+      "correct_answer": "All of the above."
+    },
+    {
+      "question_number": 48,
+      "question": "The coverage for an insured person will terminate under Medical Expense Insurance when ____________ .",
+      "reference": "",
+      "options": [
+        "the total amount of claims has reached the annual limit.",
+        "when the insured attains the maximum age of entry.",
+        "when the insured enters full time military service.",
+        "when the insured enters National Service Reservist Training."
+      ],
+      "correct_answer_letter": "C",
+      "correct_answer": "when the insured enters full time military service."
+    },
+    {
+      "question_number": 49,
+      "question": "The Renewal Provision in a Health Insurance Contract describes:",
+      "reference": "",
+      "options": [
+        "Insurer's right to increase premium on policy.",
+        "Insurer's right to change the terms of the contract.",
+        "Insured's right to renew his policy under certain conditions.",
+        "Insured's right to refuse renewals and for a refund of premiums."
+      ],
+      "correct_answer_letter": "A",
+      "correct_answer": "Insurer's right to increase premium on policy."
+    },
+    {
+      "question_number": 50,
+      "question": "Mrs. Tan is keen to purchase Medical Insurance Product. She knows the product well and the coverage needed. In this case, she comes under _________of the Fact-Find Document.",
+      "reference": "",
+      "options": [
+        "Application Type 1",
+        "Application Type 2",
+        "Application Type 3",
+        "Application Type 4"
+      ],
+      "correct_answer_letter": "C",
+      "correct_answer": "Application Type 3"
+    }
+  ]
+}

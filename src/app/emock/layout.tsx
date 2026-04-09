@@ -18,7 +18,12 @@ export default function EmockLayout({
           <Link href="/" className="font-display text-2xl text-orange-500">
             Lyfe
           </Link>
-          <span className="text-sm font-medium text-stone-400">eMock</span>
+          <Link
+            href="/emock"
+            className="text-sm font-medium text-stone-400 hover:text-orange-500 transition-colors"
+          >
+            eMock
+          </Link>
         </div>
       </header>
       <main className="mx-auto max-w-3xl px-4 py-8">{children}</main>

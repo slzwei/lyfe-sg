@@ -5,7 +5,7 @@ import Link from "next/link";
 import { gradeQuiz } from "./actions";
 import type { ClientQuiz, QuizResult, QuestionResult } from "@/lib/quiz";
 
-const LETTERS = ["A", "B", "C", "D"] as const;
+const LETTERS = ["A", "B", "C", "D", "E"] as const;
 
 function formatTime(seconds: number): string {
   const h = Math.floor(seconds / 3600);

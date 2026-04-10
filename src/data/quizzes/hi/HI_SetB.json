@@ -536,11 +536,10 @@
         "age",
         "avocation",
         "occupation",
-        "financial situation",
-        "Group Participation Level"
+        "financial situation"
       ],
-      "correct_answer_letter": "E",
-      "correct_answer": "Group Participation Level"
+      "correct_answer_letter": "C",
+      "correct_answer": "occupation"
     },
     {
       "question_number": 42,

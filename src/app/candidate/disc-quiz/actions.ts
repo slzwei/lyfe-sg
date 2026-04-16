@@ -20,10 +20,10 @@ export async function submitDiscQuiz(responses: Record<string, number>, resultsE
     return { error: "Not authenticated." };
   }
 
-  // Verify all 38 questions answered
+  // Verify all 39 questions answered
   const answeredCount = Object.keys(responses).length;
-  if (answeredCount < 38) {
-    return { error: `Please answer all questions (${answeredCount}/38).` };
+  if (answeredCount < 39) {
+    return { error: `Please answer all questions (${answeredCount}/39).` };
   }
 
   // Save raw responses

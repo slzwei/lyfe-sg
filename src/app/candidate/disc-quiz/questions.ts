@@ -29,14 +29,14 @@ export type Question = FormatAQuestion | FormatBQuestion | FormatCQuestion;
 
 // Step 1 — Format A: Word Pairs (8 questions)
 const step1: FormatAQuestion[] = [
-  { id: 1, format: "A", left: "Open", right: "Discerning", leftType: "I", rightType: "C" },
+  { id: 1, format: "A", left: "Thorough", right: "Easygoing", leftType: "C", rightType: "S" },
   { id: 2, format: "A", left: "Spontaneous", right: "Methodical", leftType: "I", rightType: "C" },
   { id: 3, format: "A", left: "Reserved", right: "Dynamic", leftType: "C", rightType: "D" },
   { id: 4, format: "A", left: "Energetic", right: "Calm", leftType: "I", rightType: "S" },
   { id: 5, format: "A", left: "Generous", right: "Strict", leftType: "S", rightType: "C" },
   { id: 6, format: "A", left: "Focused", right: "Cheerful", leftType: "D", rightType: "I" },
   { id: 7, format: "A", left: "Vibrant", right: "Steady", leftType: "I", rightType: "S" },
-  { id: 8, format: "A", left: "Reliable", right: "Confident", leftType: "S", rightType: "D" },
+  { id: 8, format: "A", left: "Commanding", right: "Lively", leftType: "D", rightType: "I" },
 ];
 
 // Step 2 — Format A: Word Pairs (8 questions)
@@ -48,7 +48,7 @@ const step2: FormatAQuestion[] = [
   { id: 13, format: "A", left: "Upbeat", right: "Grounded", leftType: "I", rightType: "S" },
   { id: 14, format: "A", left: "Independent", right: "Engaging", leftType: "D", rightType: "I" },
   { id: 15, format: "A", left: "Purposeful", right: "Charming", leftType: "D", rightType: "I" },
-  { id: 16, format: "A", left: "Even-Tempered", right: "Driven", leftType: "S", rightType: "D" },
+  { id: 16, format: "A", left: "Talkative", right: "Composed", leftType: "I", rightType: "S" },
   { id: 39, format: "A", left: "Warm", right: "Logical", leftType: "S", rightType: "C" },
 ];
 
@@ -56,7 +56,7 @@ const step2: FormatAQuestion[] = [
 const step3: FormatAQuestion[] = [
   { id: 17, format: "A", left: "Accepting", right: "Matter-of-Fact", leftType: "S", rightType: "C" },
   { id: 18, format: "A", left: "Persuasive", right: "Meticulous", leftType: "I", rightType: "C" },
-  { id: 19, format: "A", left: "Reflective", right: "Expressive", leftType: "C", rightType: "I" },
+  { id: 19, format: "A", left: "Careful", right: "Bold", leftType: "C", rightType: "D" },
   { id: 20, format: "A", left: "Cooperative", right: "Assertive", leftType: "S", rightType: "D" },
   { id: 21, format: "A", left: "Outgoing", right: "Measured", leftType: "I", rightType: "C" },
   { id: 22, format: "A", left: "Animated", right: "Precise", leftType: "I", rightType: "C" },
@@ -109,16 +109,16 @@ const step5: FormatCQuestion[] = [
   {
     id: 37,
     format: "C",
-    stem: "I am most attracted to…",
-    optionA: { text: "Work I can do alone", axis: "e" },
-    optionB: { text: "Work that requires lots of interaction with others", axis: "w" },
+    stem: "When starting something new, I prefer to…",
+    optionA: { text: "Dive in and figure it out as I go", axis: "n" },
+    optionB: { text: "Plan carefully before taking the first step", axis: "s" },
   },
   {
     id: 38,
     format: "C",
-    stem: "When someone presents a plan, I'm more likely to…",
-    optionA: { text: "Evaluate the plan's risks and gaps", axis: "e" },
-    optionB: { text: "Think about how to support the plan's success", axis: "w" },
+    stem: "In a fast-moving situation, I am more likely to…",
+    optionA: { text: "Step up and make a call", axis: "n" },
+    optionB: { text: "Slow down and make sure everyone is aligned", axis: "s" },
   },
 ];
 

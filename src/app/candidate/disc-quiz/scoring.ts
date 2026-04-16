@@ -124,7 +124,7 @@ export function computeDerivedFields(
   const magnitude = Math.sqrt(vScore ** 2 + hScore ** 2);
   const strengthPct = Math.min(100, Math.round((magnitude / 100) * 100));
   const profileStrength: ProfileStrength =
-    strengthPct < 15 ? "balanced" : strengthPct < 45 ? "moderate" : "strong";
+    strengthPct < 8 ? "balanced" : strengthPct < 45 ? "moderate" : "strong";
   const priorities = computePriorities(angle);
   return { profile_strength: profileStrength, strength_pct: strengthPct, priorities };
 }

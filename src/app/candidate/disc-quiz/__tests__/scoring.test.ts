@@ -126,10 +126,10 @@ describe("calculateDiscScores", () => {
 
 describe("computeDerivedFields", () => {
   // ─── Test 3: Profile strength thresholds ───────────────────────────────────
-  it('returns "balanced" when strength_pct < 15', () => {
+  it('returns "balanced" when strength_pct < 8', () => {
     // All raw scores equal → vScore = 0, hScore = 0 → magnitude = 0 → strengthPct = 0
     const result = computeDerivedFields(0, 0, 0, 0, 0);
-    expect(result.strength_pct).toBeLessThan(15);
+    expect(result.strength_pct).toBeLessThan(8);
     expect(result.profile_strength).toBe("balanced");
   });
 

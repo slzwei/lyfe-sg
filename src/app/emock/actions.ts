@@ -27,7 +27,15 @@ export async function emockSendOtp(phone: string) {
   const supabase = await createClient();
   const { error } = await supabase.auth.signInWithOtp({ phone: cleaned });
 
-  if (error) return { success: false, error: error.message };
+  if (error) {
+    if (error.message.toLowerCase().includes("invalid payload sent to hook")) {
+      return {
+        success: false,
+        error: "This number is not registered. Please contact your manager for an invitation.",
+      };
+    }
+    return { success: false, error: error.message };
+  }
   return { success: true };
 }
 

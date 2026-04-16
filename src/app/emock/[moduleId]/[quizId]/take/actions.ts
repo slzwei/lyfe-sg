@@ -1,11 +1,8 @@
 "use server";
 
-import {
-  isValidModuleId,
-  isValidQuizId,
-  gradeQuizAnswers,
-  type QuizResult,
-} from "@/lib/quiz";
+// Quiz grading moved to @/app/emock/actions — this file kept for backwards compatibility
+import { gradeQuiz as _gradeQuiz } from "@/app/emock/actions";
+import type { QuizResult } from "@/lib/quiz";
 
 export async function gradeQuiz(
   moduleId: string,
@@ -13,8 +10,5 @@ export async function gradeQuiz(
   answers: Record<string, string>,
   timeTakenSeconds: number
 ): Promise<QuizResult> {
-  if (!isValidModuleId(moduleId) || !isValidQuizId(moduleId, quizId)) {
-    throw new Error("Invalid module or quiz ID");
-  }
-  return gradeQuizAnswers(moduleId, quizId, answers, timeTakenSeconds);
+  return _gradeQuiz(moduleId, quizId, answers, timeTakenSeconds);
 }

@@ -76,6 +76,28 @@ export async function updateSession(request: NextRequest) {
     return NextResponse.redirect(url);
   }
 
+  // eMock login/verify — redirect to /emock if already authenticated
+  if (path.startsWith("/emock/login") || path.startsWith("/emock/verify")) {
+    const { data: { user: emockUser } } = await supabase.auth.getUser();
+    if (emockUser) {
+      const url = request.nextUrl.clone();
+      url.pathname = "/emock";
+      return NextResponse.redirect(url);
+    }
+    return supabaseResponse;
+  }
+
+  // eMock protected routes — require any authenticated user
+  if (path.startsWith("/emock")) {
+    const { data: { user: emockUser } } = await supabase.auth.getUser();
+    if (!emockUser) {
+      const url = request.nextUrl.clone();
+      url.pathname = "/emock/login";
+      return NextResponse.redirect(url);
+    }
+    return supabaseResponse;
+  }
+
   const {
     data: { user },
   } = await supabase.auth.getUser();

@@ -1,31 +1,25 @@
 import type { Metadata } from "next";
-import Link from "next/link";
+import { createClient } from "@/lib/supabase/server";
+import EmockHeader from "./EmockHeader";
 
 export const metadata: Metadata = {
   title: "eMock — Lyfe",
   description: "Practice quizzes for insurance exam preparation.",
 };
 
-export default function EmockLayout({
+export default async function EmockLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
   return (
     <div className="min-h-screen bg-stone-50">
-      <header className="border-b border-stone-200 bg-white">
-        <div className="mx-auto flex max-w-3xl items-center justify-between px-4 py-4">
-          <Link href="/" className="font-display text-2xl text-orange-500">
-            Lyfe
-          </Link>
-          <Link
-            href="/emock"
-            className="text-sm font-medium text-stone-400 hover:text-orange-500 transition-colors"
-          >
-            eMock
-          </Link>
-        </div>
-      </header>
+      <EmockHeader phone={user?.phone ?? null} />
       <main className="mx-auto max-w-3xl px-4 py-8">{children}</main>
     </div>
   );

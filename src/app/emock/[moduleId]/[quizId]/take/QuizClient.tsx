@@ -43,14 +43,48 @@ export default function QuizClient({ quiz }: { quiz: ClientQuiz }) {
   >("all");
   const [timedOut, setTimedOut] = useState(false);
 
+  const storageKey = `emock_progress_${quiz.moduleId}_${quiz.quizId}`;
   const startTimeRef = useRef(Date.now());
   const answersRef = useRef(answers);
   const submittedRef = useRef(false);
   const questionRefs = useRef<Map<number, HTMLDivElement>>(new Map());
+  const restoredRef = useRef(false);
 
   useEffect(() => {
     answersRef.current = answers;
   }, [answers]);
+
+  // Restore saved progress on mount
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem(storageKey);
+      if (!saved) return;
+      const progress = JSON.parse(saved);
+      const elapsed = Math.floor((Date.now() - progress.startedAt) / 1000);
+      const remaining = quiz.duration * 60 - elapsed;
+      if (remaining > 0) {
+        setAnswers(progress.answers);
+        setTimeLeft(remaining);
+        startTimeRef.current = progress.startedAt;
+        restoredRef.current = true;
+      } else {
+        localStorage.removeItem(storageKey);
+      }
+    } catch {
+      localStorage.removeItem(storageKey);
+    }
+  }, [storageKey, quiz.duration]);
+
+  // Auto-save progress on every answer change
+  useEffect(() => {
+    if (phase !== "taking" || Object.keys(answers).length === 0) return;
+    try {
+      localStorage.setItem(
+        storageKey,
+        JSON.stringify({ answers, startedAt: startTimeRef.current })
+      );
+    } catch {}
+  }, [answers, phase, storageKey]);
 
   const doSubmit = useCallback(
     async (auto = false) => {
@@ -71,6 +105,7 @@ export default function QuizClient({ quiz }: { quiz: ClientQuiz }) {
         );
         setResults(result);
         setPhase("results");
+        try { localStorage.removeItem(storageKey); } catch {}
         window.scrollTo(0, 0);
       } catch {
         submittedRef.current = false;

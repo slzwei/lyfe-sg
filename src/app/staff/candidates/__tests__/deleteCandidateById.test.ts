@@ -38,60 +38,75 @@ const mockAdminUpdate = vi.fn().mockReturnValue({ eq: vi.fn().mockResolvedValue(
 const mockAdminSelect = vi.fn();
 
 function makeChain(data: unknown = null, error: unknown = null) {
+  const result = { data, error };
+  const eqTerminal = {
+    maybeSingle: vi.fn().mockResolvedValue(result),
+    single: vi.fn().mockResolvedValue(result),
+    select: vi.fn().mockResolvedValue(result),
+  };
   return {
     select: vi.fn().mockReturnValue({
       eq: vi.fn().mockReturnValue({
-        maybeSingle: vi.fn().mockResolvedValue({ data, error }),
-        single: vi.fn().mockResolvedValue({ data, error }),
+        ...eqTerminal,
+        head: true,
       }),
     }),
     delete: vi.fn().mockReturnValue({
-      eq: vi.fn().mockResolvedValue({ data: null, error }),
+      eq: vi.fn().mockReturnValue({
+        ...eqTerminal,
+        then: (resolve: (v: unknown) => void) => Promise.resolve(result).then(resolve),
+      }),
     }),
     update: vi.fn().mockReturnValue({
-      eq: vi.fn().mockResolvedValue({ data: null, error }),
+      eq: vi.fn().mockReturnValue({
+        ...eqTerminal,
+        then: (resolve: (v: unknown) => void) => Promise.resolve(result).then(resolve),
+      }),
     }),
   };
 }
 
-const candidateProfilesChain = makeChain({ user_id: "user-abc" });
+const candidateProfilesChain = makeChain({ user_id: "user-abc", candidate_id: "cand-1" });
 const discResultsChain = makeChain();
 const discResponsesChain = makeChain();
 const invitationsChain = makeChain();
-const candidatesChain = makeChain();
+const candidatesChain = makeChain([{ id: "cand-1" }]);
+
+const mockAdminAuth = {
+  admin: { deleteUser: vi.fn().mockResolvedValue({}) },
+};
+
+function makeAdminClient(includeUsers = true) {
+  return {
+    from: vi.fn((table: string) => {
+      const map: Record<string, unknown> = {
+        ...(includeUsers
+          ? {
+              users: makeChain({
+                id: "user-123",
+                full_name: "Admin User",
+                email: "admin@test.com",
+                role: "admin",
+                is_active: true,
+              }),
+            }
+          : {}),
+        candidate_profiles: candidateProfilesChain,
+        disc_results: discResultsChain,
+        disc_responses: discResponsesChain,
+        invitations: invitationsChain,
+        candidates: candidatesChain,
+      };
+      return map[table] || makeChain();
+    }),
+    auth: mockAdminAuth,
+    rpc: vi.fn().mockResolvedValue({ error: null }),
+  };
+}
 
 vi.mock("@/lib/supabase/admin", () => ({
-  getAdminClient: vi.fn(() => ({
-    from: vi.fn((table: string) => {
-      const map: Record<string, unknown> = {
-        users: makeChain({
-          id: "user-123",
-          full_name: "Admin User",
-          email: "admin@test.com",
-          role: "admin",
-          is_active: true,
-        }),
-        candidate_profiles: candidateProfilesChain,
-        disc_results: discResultsChain,
-        disc_responses: discResponsesChain,
-        invitations: invitationsChain,
-        candidates: candidatesChain,
-      };
-      return map[table] || makeChain();
-    }),
-  })),
-  getAdminClientAs: vi.fn(() => ({
-    from: vi.fn((table: string) => {
-      const map: Record<string, unknown> = {
-        candidate_profiles: candidateProfilesChain,
-        disc_results: discResultsChain,
-        disc_responses: discResponsesChain,
-        invitations: invitationsChain,
-        candidates: candidatesChain,
-      };
-      return map[table] || makeChain();
-    }),
-  })),
+  getAdminClient: vi.fn(() => makeAdminClient(true)),
+  getAdminClientAs: vi.fn(() => makeAdminClient(false)),
 }));
 
 // Mock email (not under test)
@@ -123,7 +138,7 @@ describe("deleteCandidateById", () => {
     vi.clearAllMocks();
   });
 
-  it("requires admin role — rejects unauthenticated users", async () => {
+  it("rejects unauthenticated users", async () => {
     mockGetUser.mockResolvedValue({ data: { user: null } });
 
     const { deleteCandidateById } = await import("../actions");
@@ -131,57 +146,47 @@ describe("deleteCandidateById", () => {
 
     expect(result).toEqual({
       success: false,
-      error: "Not authorized. Admin role required.",
+      error: "Not authorized.",
     });
   });
 
-  it("rejects pa role (below admin)", async () => {
+  it("allows pa role (minimum required)", async () => {
     mockAuthUser("pa");
 
     const { deleteCandidateById } = await import("../actions");
     const result = await deleteCandidateById("cand-1");
 
-    expect(result).toEqual({
-      success: false,
-      error: "Not authorized. Admin role required.",
-    });
+    expect(result).toEqual({ success: true });
   });
 
-  it("rejects manager role (below admin)", async () => {
+  it("allows manager role", async () => {
     mockAuthUser("manager");
 
     const { deleteCandidateById } = await import("../actions");
     const result = await deleteCandidateById("cand-1");
 
-    expect(result).toEqual({
-      success: false,
-      error: "Not authorized. Admin role required.",
-    });
+    expect(result).toEqual({ success: true });
   });
 
-  it("rejects director role (below admin)", async () => {
+  it("allows director role", async () => {
     mockAuthUser("director");
 
     const { deleteCandidateById } = await import("../actions");
     const result = await deleteCandidateById("cand-1");
 
-    expect(result).toEqual({
-      success: false,
-      error: "Not authorized. Admin role required.",
-    });
+    expect(result).toEqual({ success: true });
   });
 
-  it("allows admin role to proceed", async () => {
+  it("allows admin role", async () => {
     mockAuthUser("admin");
 
     const { deleteCandidateById } = await import("../actions");
     const result = await deleteCandidateById("cand-1");
 
-    // Admin should be allowed — the mock chain resolves without error
     expect(result).toEqual({ success: true });
   });
 
-  it("rejects candidate role (not staff at all)", async () => {
+  it("rejects candidate role (not staff)", async () => {
     mockAuthUser("candidate");
 
     const { deleteCandidateById } = await import("../actions");
@@ -189,7 +194,7 @@ describe("deleteCandidateById", () => {
 
     expect(result).toEqual({
       success: false,
-      error: "Not authorized. Admin role required.",
+      error: "Not authorized.",
     });
   });
 });

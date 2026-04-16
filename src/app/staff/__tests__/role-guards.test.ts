@@ -412,11 +412,16 @@ describe("Guarded destructive actions", () => {
   });
 
   describe("archiveInvitation", () => {
-    it("requires manager role", async () => {
-      mockAuthUser("pa");
+    it("blocks unauthenticated users", async () => {
+      mockNoAuthUser();
       const result = await archiveInvitation("inv-1");
       expect(result.success).toBe(false);
-      expect(result.error).toContain("Manager");
+    });
+
+    it("succeeds for PA (minimum role)", async () => {
+      mockAuthUser("pa");
+      const result = await archiveInvitation("inv-1");
+      expect(result.success).toBe(true);
     });
 
     it("succeeds for manager", async () => {
@@ -427,17 +432,22 @@ describe("Guarded destructive actions", () => {
   });
 
   describe("deleteCandidate", () => {
-    it("requires admin role", async () => {
-      mockAuthUser("manager");
+    it("blocks unauthenticated users", async () => {
+      mockNoAuthUser();
       const result = await deleteCandidate("inv-1");
       expect(result.success).toBe(false);
-      expect(result.error).toContain("Admin");
+      expect(result.error).toContain("Not authorized");
     });
 
-    it("requires admin — blocks PA", async () => {
+    it("succeeds for PA with pending invitation", async () => {
       mockAuthUser("pa");
+      mockAdminRpc.mockResolvedValue({ error: null });
+      setupAdminFrom({
+        users: { data: { id: "user-123", full_name: "PA User", email: "pa@a.com", role: "pa" } },
+        invitations: { data: { user_id: "user-to-delete", status: "pending" } },
+      });
       const result = await deleteCandidate("inv-1");
-      expect(result.success).toBe(false);
+      expect(result.success).toBe(true);
     });
 
     it("succeeds for admin", async () => {

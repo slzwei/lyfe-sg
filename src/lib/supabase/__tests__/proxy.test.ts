@@ -135,6 +135,68 @@ describe("Candidate route protection", () => {
   });
 });
 
+describe("eMock route protection", () => {
+  it("redirects unauthenticated users from /emock to login", async () => {
+    mockGetUser.mockResolvedValue({ data: { user: null } });
+    const response = await updateSession(makeRequest("/emock"));
+    expect(response.status).toBe(307);
+    expect(response.headers.get("location")).toContain("/emock/login");
+  });
+
+  it("redirects unauthenticated users from /emock/m9 to login", async () => {
+    mockGetUser.mockResolvedValue({ data: { user: null } });
+    const response = await updateSession(makeRequest("/emock/m9"));
+    expect(response.status).toBe(307);
+    expect(response.headers.get("location")).toContain("/emock/login");
+  });
+
+  it("allows unauthenticated access to /emock/login", async () => {
+    mockGetUser.mockResolvedValue({ data: { user: null } });
+    const response = await updateSession(makeRequest("/emock/login"));
+    expect(response.status).not.toBe(307);
+  });
+
+  it("allows unauthenticated access to /emock/verify", async () => {
+    mockGetUser.mockResolvedValue({ data: { user: null } });
+    const response = await updateSession(makeRequest("/emock/verify"));
+    expect(response.status).not.toBe(307);
+  });
+
+  it("allows any authenticated user to access /emock", async () => {
+    mockGetUser.mockResolvedValue({
+      data: { user: { app_metadata: { role: "candidate" } } },
+    });
+    const response = await updateSession(makeRequest("/emock"));
+    expect(response.status).not.toBe(307);
+  });
+
+  it("allows staff to access /emock", async () => {
+    mockGetUser.mockResolvedValue({
+      data: { user: { app_metadata: { role: "manager" } } },
+    });
+    const response = await updateSession(makeRequest("/emock/m9/set-a/take"));
+    expect(response.status).not.toBe(307);
+  });
+
+  it("redirects authenticated users away from /emock/login", async () => {
+    mockGetUser.mockResolvedValue({
+      data: { user: { app_metadata: { role: "candidate" } } },
+    });
+    const response = await updateSession(makeRequest("/emock/login"));
+    expect(response.status).toBe(307);
+    expect(response.headers.get("location")).toContain("/emock");
+  });
+
+  it("redirects authenticated users away from /emock/verify", async () => {
+    mockGetUser.mockResolvedValue({
+      data: { user: { app_metadata: { role: "agent" } } },
+    });
+    const response = await updateSession(makeRequest("/emock/verify"));
+    expect(response.status).toBe(307);
+    expect(response.headers.get("location")).toContain("/emock");
+  });
+});
+
 describe("Public routes", () => {
   it("allows access to non-protected routes without auth", async () => {
     mockGetUser.mockResolvedValue({ data: { user: null } });

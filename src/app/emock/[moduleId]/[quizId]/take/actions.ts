@@ -1,14 +1,24 @@
 "use server";
 
-// Quiz grading moved to @/app/emock/actions — this file kept for backwards compatibility
-import { gradeQuiz as _gradeQuiz } from "@/app/emock/actions";
+import {
+  gradeQuiz as _gradeQuiz,
+  saveQuizProgress as _saveQuizProgress,
+} from "@/app/emock/actions";
 import type { QuizResult } from "@/lib/quiz";
 
 export async function gradeQuiz(
+  attemptId: string,
   moduleId: string,
   quizId: string,
   answers: Record<string, string>,
   timeTakenSeconds: number
 ): Promise<QuizResult> {
-  return _gradeQuiz(moduleId, quizId, answers, timeTakenSeconds);
+  return _gradeQuiz(attemptId, moduleId, quizId, answers, timeTakenSeconds);
+}
+
+export async function saveQuizProgress(
+  attemptId: string,
+  answers: Record<string, string>
+): Promise<void> {
+  return _saveQuizProgress(attemptId, answers);
 }

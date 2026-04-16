@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { isValidModuleId, getModuleDef, getQuizList } from "@/lib/quiz";
-import { getAttempts } from "../actions";
+import { getAttempts, getInProgressQuizIds } from "../actions";
 
 function formatDuration(seconds: number): string {
   const m = Math.floor(seconds / 60);
@@ -30,7 +30,10 @@ export default async function ModuleQuizPage({
 
   const mod = getModuleDef(moduleId);
   const quizzes = getQuizList(moduleId);
-  const attempts = await getAttempts(moduleId);
+  const [attempts, inProgressIds] = await Promise.all([
+    getAttempts(moduleId),
+    getInProgressQuizIds(moduleId),
+  ]);
 
   const attemptsByQuiz = new Map<string, typeof attempts>();
   for (const a of attempts) {
@@ -62,6 +65,7 @@ export default async function ModuleQuizPage({
           const best = quizAttempts.length
             ? quizAttempts.reduce((a, b) => (a.score > b.score ? a : b))
             : null;
+          const isInProgress = inProgressIds.includes(q.id);
 
           return (
             <div
@@ -79,6 +83,11 @@ export default async function ModuleQuizPage({
                   <p className="text-sm text-stone-400 mt-0.5">{q.version}</p>
                 </div>
                 <div className="flex items-center gap-3">
+                  {isInProgress && (
+                    <span className="text-sm font-medium px-2.5 py-0.5 rounded-full bg-orange-100 text-orange-700">
+                      In progress
+                    </span>
+                  )}
                   {best && (
                     <span
                       className={`text-sm font-medium px-2.5 py-0.5 rounded-full ${
@@ -91,7 +100,7 @@ export default async function ModuleQuizPage({
                     </span>
                   )}
                   <span className="text-sm text-stone-400 group-hover:text-orange-500 transition-colors">
-                    Start &rarr;
+                    {isInProgress ? "Resume" : "Start"} &rarr;
                   </span>
                 </div>
               </Link>

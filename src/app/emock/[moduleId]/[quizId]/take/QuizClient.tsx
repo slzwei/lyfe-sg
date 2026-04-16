@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback, useRef } from "react";
 import Link from "next/link";
-import { gradeQuiz } from "./actions";
+import { gradeQuiz, saveQuizProgress } from "./actions";
 import type { ClientQuiz, QuizResult, QuestionResult } from "@/lib/quiz";
 
 const LETTERS = ["A", "B", "C", "D", "E"] as const;
@@ -29,11 +29,21 @@ function formatDuration(seconds: number): string {
 
 // ────────────────────────────────────────────────────────────────
 
-export default function QuizClient({ quiz }: { quiz: ClientQuiz }) {
+export default function QuizClient({
+  quiz,
+  attemptId,
+  savedAnswers,
+  startedAt,
+}: {
+  quiz: ClientQuiz;
+  attemptId: string;
+  savedAnswers: Record<string, string>;
+  startedAt: string;
+}) {
   const [phase, setPhase] = useState<"taking" | "submitting" | "results">(
     "taking"
   );
-  const [answers, setAnswers] = useState<Record<string, string>>({});
+  const [answers, setAnswers] = useState<Record<string, string>>(savedAnswers);
   const [timeLeft, setTimeLeft] = useState(quiz.duration * 60);
   const [results, setResults] = useState<QuizResult | null>(null);
   const [showConfirm, setShowConfirm] = useState(false);
@@ -43,48 +53,36 @@ export default function QuizClient({ quiz }: { quiz: ClientQuiz }) {
   >("all");
   const [timedOut, setTimedOut] = useState(false);
 
-  const storageKey = `emock_progress_${quiz.moduleId}_${quiz.quizId}`;
-  const startTimeRef = useRef(Date.now());
+  const startTimeMs = useRef(new Date(startedAt).getTime());
   const answersRef = useRef(answers);
   const submittedRef = useRef(false);
   const questionRefs = useRef<Map<number, HTMLDivElement>>(new Map());
-  const restoredRef = useRef(false);
+  const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     answersRef.current = answers;
   }, [answers]);
 
-  // Restore saved progress on mount
+  // Calculate remaining time from DB started_at
   useEffect(() => {
-    try {
-      const saved = localStorage.getItem(storageKey);
-      if (!saved) return;
-      const progress = JSON.parse(saved);
-      const elapsed = Math.floor((Date.now() - progress.startedAt) / 1000);
-      const remaining = quiz.duration * 60 - elapsed;
-      if (remaining > 0) {
-        setAnswers(progress.answers);
-        setTimeLeft(remaining);
-        startTimeRef.current = progress.startedAt;
-        restoredRef.current = true;
-      } else {
-        localStorage.removeItem(storageKey);
-      }
-    } catch {
-      localStorage.removeItem(storageKey);
-    }
-  }, [storageKey, quiz.duration]);
+    const elapsed = Math.floor((Date.now() - startTimeMs.current) / 1000);
+    const remaining = Math.max(0, quiz.duration * 60 - elapsed);
+    setTimeLeft(remaining);
+  }, [quiz.duration]);
 
-  // Auto-save progress on every answer change
+  // Debounced auto-save to DB (2s after last answer change)
   useEffect(() => {
     if (phase !== "taking" || Object.keys(answers).length === 0) return;
-    try {
-      localStorage.setItem(
-        storageKey,
-        JSON.stringify({ answers, startedAt: startTimeRef.current })
-      );
-    } catch {}
-  }, [answers, phase, storageKey]);
+
+    if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
+    saveTimerRef.current = setTimeout(() => {
+      saveQuizProgress(attemptId, answers).catch(() => {});
+    }, 2000);
+
+    return () => {
+      if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
+    };
+  }, [answers, phase, attemptId]);
 
   const doSubmit = useCallback(
     async (auto = false) => {
@@ -94,10 +92,12 @@ export default function QuizClient({ quiz }: { quiz: ClientQuiz }) {
       setPhase("submitting");
       setShowConfirm(false);
       try {
+        if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
         const elapsed = Math.floor(
-          (Date.now() - startTimeRef.current) / 1000
+          (Date.now() - startTimeMs.current) / 1000
         );
         const result = await gradeQuiz(
+          attemptId,
           quiz.moduleId,
           quiz.quizId,
           answersRef.current,
@@ -105,7 +105,6 @@ export default function QuizClient({ quiz }: { quiz: ClientQuiz }) {
         );
         setResults(result);
         setPhase("results");
-        try { localStorage.removeItem(storageKey); } catch {}
         window.scrollTo(0, 0);
       } catch {
         submittedRef.current = false;
@@ -113,7 +112,7 @@ export default function QuizClient({ quiz }: { quiz: ClientQuiz }) {
         setPhase("taking");
       }
     },
-    [quiz.moduleId, quiz.quizId]
+    [attemptId, quiz.moduleId, quiz.quizId]
   );
 
   const doSubmitRef = useRef(doSubmit);
@@ -134,13 +133,6 @@ export default function QuizClient({ quiz }: { quiz: ClientQuiz }) {
       });
     }, 1000);
     return () => clearInterval(id);
-  }, [phase]);
-
-  useEffect(() => {
-    if (phase !== "taking") return;
-    const handler = (e: BeforeUnloadEvent) => e.preventDefault();
-    window.addEventListener("beforeunload", handler);
-    return () => window.removeEventListener("beforeunload", handler);
   }, [phase]);
 
   const handleSelect = (qNum: number, letter: string) => {

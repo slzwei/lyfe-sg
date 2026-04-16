@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import { isValidModuleId, isValidQuizId, getClientQuiz } from "@/lib/quiz";
+import { startQuiz } from "@/app/emock/actions";
 import QuizClient from "./QuizClient";
 
 export default async function QuizTakePage({
@@ -12,5 +13,15 @@ export default async function QuizTakePage({
     notFound();
   const quiz = getClientQuiz(moduleId, quizId);
   if (!quiz) notFound();
-  return <QuizClient quiz={quiz} />;
+
+  const attempt = await startQuiz(moduleId, quizId);
+
+  return (
+    <QuizClient
+      quiz={quiz}
+      attemptId={attempt.id}
+      savedAnswers={attempt.answers}
+      startedAt={attempt.started_at}
+    />
+  );
 }

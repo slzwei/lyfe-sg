@@ -47,7 +47,7 @@ function resolveRequirement(
 // ─── Milestone + prep course display order ────────────────────────────────────
 
 const MILESTONE_DISPLAY: { code: string; label: string; hint?: string }[] = [
-  { code: "bdm", label: "BDM Interview", hint: "Principal formality" },
+  { code: "bdm", label: "BDM Interview" },
   { code: "bes_induction", label: "BES Induction" },
   { code: "soar", label: "SOAR", hint: "Optional" },
   { code: "rnf", label: "RNF" },

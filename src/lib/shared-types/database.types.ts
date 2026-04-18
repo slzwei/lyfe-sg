@@ -2455,6 +2455,13 @@ export type Database = {
         Args: { p_invitation_id: string }
         Returns: undefined
       }
+      fn_activate_agent: {
+        Args: { p_activated_by_user_id: string; p_candidate_id: string }
+        Returns: {
+          candidate_id: string
+          user_id: string
+        }[]
+      }
       fn_all_papers_passed: { Args: { c: string }; Returns: boolean }
       get_enneagram_sampler_questions: {
         Args: never

@@ -1,5 +1,5 @@
 import { Cormorant_Garamond, JetBrains_Mono } from "next/font/google";
-import { getAdminClient } from "@/lib/supabase/admin";
+import { createClient } from "@/lib/supabase/server";
 import EnneagramQuiz from "./EnneagramQuiz";
 import type { QuizQuestion, EnneagramType } from "./scoring";
 
@@ -25,42 +25,31 @@ export const metadata = {
 
 export const dynamic = "force-dynamic";
 
+type RpcRow = {
+  question_number: number;
+  options: { A?: string; B?: string } | null;
+  explanation: string | null;
+};
+
 export default async function EnneagramQuizPage() {
-  const supabase = getAdminClient();
+  const supabase = await createClient();
 
-  const { data: paper, error: paperErr } = await supabase
-    .from("exam_papers")
-    .select("id")
-    .eq("code", "ENNEAGRAM_SAMPLER")
-    .single();
+  const { data: rows, error } = await supabase.rpc("get_enneagram_sampler_questions");
 
-  if (paperErr || !paper) {
+  if (error || !rows || rows.length === 0) {
     return (
-      <div className={`${cormorant.variable} ${jetbrains.variable} min-h-screen bg-[#F5EFE2] px-6 py-16 text-center`}>
+      <div
+        className={`${cormorant.variable} ${jetbrains.variable} min-h-screen bg-[#F5EFE2] px-6 py-16 text-center`}
+      >
         <h1 className="text-2xl font-bold text-stone-800">Quiz unavailable</h1>
         <p className="mt-2 text-stone-500">The Enneagram reading could not be loaded.</p>
       </div>
     );
   }
 
-  const { data: rows, error: questionsErr } = await supabase
-    .from("exam_questions")
-    .select("question_number, options, explanation")
-    .eq("paper_id", paper.id)
-    .order("question_number");
-
-  if (questionsErr || !rows || rows.length === 0) {
-    return (
-      <div className={`${cormorant.variable} ${jetbrains.variable} min-h-screen bg-[#F5EFE2] px-6 py-16 text-center`}>
-        <h1 className="text-2xl font-bold text-stone-800">Quiz unavailable</h1>
-        <p className="mt-2 text-stone-500">No questions found.</p>
-      </div>
-    );
-  }
-
-  const questions: QuizQuestion[] = rows
+  const questions: QuizQuestion[] = (rows as RpcRow[])
     .map((row) => {
-      const opts = row.options as { A?: string; B?: string } | null;
+      const opts = row.options;
       let typeA: EnneagramType = 1;
       let typeB: EnneagramType = 1;
       try {

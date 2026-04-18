@@ -132,6 +132,66 @@ export type Database = {
           },
         ]
       }
+      candidate_milestones: {
+        Row: {
+          candidate_id: string
+          completed_date: string | null
+          created_at: string
+          id: string
+          milestone_code: string
+          note: string | null
+          reference_number: string | null
+          scheduled_date: string | null
+          scheduled_end_date: string | null
+          status: string
+          updated_at: string
+          verified_by_user_id: string | null
+        }
+        Insert: {
+          candidate_id: string
+          completed_date?: string | null
+          created_at?: string
+          id?: string
+          milestone_code: string
+          note?: string | null
+          reference_number?: string | null
+          scheduled_date?: string | null
+          scheduled_end_date?: string | null
+          status?: string
+          updated_at?: string
+          verified_by_user_id?: string | null
+        }
+        Update: {
+          candidate_id?: string
+          completed_date?: string | null
+          created_at?: string
+          id?: string
+          milestone_code?: string
+          note?: string | null
+          reference_number?: string | null
+          scheduled_date?: string | null
+          scheduled_end_date?: string | null
+          status?: string
+          updated_at?: string
+          verified_by_user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "candidate_milestones_candidate_id_fkey"
+            columns: ["candidate_id"]
+            isOneToOne: false
+            referencedRelation: "candidates"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "candidate_milestones_verified_by_user_id_fkey"
+            columns: ["verified_by_user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       candidate_module_item_progress: {
         Row: {
           attempt_count: number
@@ -253,6 +313,111 @@ export type Database = {
             columns: ["module_id"]
             isOneToOne: false
             referencedRelation: "roadmap_modules"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      candidate_paper_attempts: {
+        Row: {
+          candidate_id: string
+          cost: number | null
+          created_at: string
+          exam_at: string | null
+          id: string
+          logged_by_user_id: string | null
+          paper_code: string
+          result: string | null
+          updated_at: string
+        }
+        Insert: {
+          candidate_id: string
+          cost?: number | null
+          created_at?: string
+          exam_at?: string | null
+          id?: string
+          logged_by_user_id?: string | null
+          paper_code: string
+          result?: string | null
+          updated_at?: string
+        }
+        Update: {
+          candidate_id?: string
+          cost?: number | null
+          created_at?: string
+          exam_at?: string | null
+          id?: string
+          logged_by_user_id?: string | null
+          paper_code?: string
+          result?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "candidate_paper_attempts_candidate_id_fkey"
+            columns: ["candidate_id"]
+            isOneToOne: false
+            referencedRelation: "candidates"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "candidate_paper_attempts_logged_by_user_id_fkey"
+            columns: ["logged_by_user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      candidate_prep_course_bookings: {
+        Row: {
+          attended: boolean
+          booked_by_user_id: string | null
+          booked_date: string | null
+          booked_end_date: string | null
+          candidate_id: string
+          course_code: string
+          created_at: string
+          id: string
+          note: string | null
+          updated_at: string
+        }
+        Insert: {
+          attended?: boolean
+          booked_by_user_id?: string | null
+          booked_date?: string | null
+          booked_end_date?: string | null
+          candidate_id: string
+          course_code: string
+          created_at?: string
+          id?: string
+          note?: string | null
+          updated_at?: string
+        }
+        Update: {
+          attended?: boolean
+          booked_by_user_id?: string | null
+          booked_date?: string | null
+          booked_end_date?: string | null
+          candidate_id?: string
+          course_code?: string
+          created_at?: string
+          id?: string
+          note?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "candidate_prep_course_bookings_booked_by_user_id_fkey"
+            columns: ["booked_by_user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "candidate_prep_course_bookings_candidate_id_fkey"
+            columns: ["candidate_id"]
+            isOneToOne: false
+            referencedRelation: "candidates"
             referencedColumns: ["id"]
           },
         ]
@@ -510,6 +675,7 @@ export type Database = {
       candidates: {
         Row: {
           assigned_manager_id: string
+          converted_to_agent_at: string | null
           created_at: string | null
           created_by_id: string
           current_stage_id: string | null
@@ -520,13 +686,20 @@ export type Database = {
           name: string
           notes: string | null
           phone: string | null
+          rejected_at: string | null
+          rejected_by_user_id: string | null
+          rejected_reason: string | null
           resume_url: string | null
+          stage_before_hold:
+            | Database["public"]["Enums"]["candidate_status"]
+            | null
           stage_entered_at: string | null
           status: Database["public"]["Enums"]["candidate_status"]
           updated_at: string | null
         }
         Insert: {
           assigned_manager_id: string
+          converted_to_agent_at?: string | null
           created_at?: string | null
           created_by_id: string
           current_stage_id?: string | null
@@ -537,13 +710,20 @@ export type Database = {
           name: string
           notes?: string | null
           phone?: string | null
+          rejected_at?: string | null
+          rejected_by_user_id?: string | null
+          rejected_reason?: string | null
           resume_url?: string | null
+          stage_before_hold?:
+            | Database["public"]["Enums"]["candidate_status"]
+            | null
           stage_entered_at?: string | null
           status?: Database["public"]["Enums"]["candidate_status"]
           updated_at?: string | null
         }
         Update: {
           assigned_manager_id?: string
+          converted_to_agent_at?: string | null
           created_at?: string | null
           created_by_id?: string
           current_stage_id?: string | null
@@ -554,7 +734,13 @@ export type Database = {
           name?: string
           notes?: string | null
           phone?: string | null
+          rejected_at?: string | null
+          rejected_by_user_id?: string | null
+          rejected_reason?: string | null
           resume_url?: string | null
+          stage_before_hold?:
+            | Database["public"]["Enums"]["candidate_status"]
+            | null
           stage_entered_at?: string | null
           status?: Database["public"]["Enums"]["candidate_status"]
           updated_at?: string | null
@@ -586,6 +772,13 @@ export type Database = {
             columns: ["job_id"]
             isOneToOne: false
             referencedRelation: "jobs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "candidates_rejected_by_user_id_fkey"
+            columns: ["rejected_by_user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
             referencedColumns: ["id"]
           },
         ]
@@ -695,6 +888,54 @@ export type Database = {
         }
         Relationships: []
       }
+      emock_attempts: {
+        Row: {
+          answers: Json
+          completed_at: string | null
+          id: string
+          module_id: string
+          parts: Json | null
+          passed: boolean | null
+          quiz_id: string
+          score: number | null
+          started_at: string
+          status: string
+          time_taken_seconds: number | null
+          total: number | null
+          user_id: string
+        }
+        Insert: {
+          answers?: Json
+          completed_at?: string | null
+          id?: string
+          module_id: string
+          parts?: Json | null
+          passed?: boolean | null
+          quiz_id: string
+          score?: number | null
+          started_at?: string
+          status?: string
+          time_taken_seconds?: number | null
+          total?: number | null
+          user_id: string
+        }
+        Update: {
+          answers?: Json
+          completed_at?: string | null
+          id?: string
+          module_id?: string
+          parts?: Json | null
+          passed?: boolean | null
+          quiz_id?: string
+          score?: number | null
+          started_at?: string
+          status?: string
+          time_taken_seconds?: number | null
+          total?: number | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       event_attendees: {
         Row: {
           attendee_role: string
@@ -744,7 +985,10 @@ export type Database = {
           event_type: Database["public"]["Enums"]["event_type"]
           external_attendees: Json
           id: string
+          latitude: number | null
           location: string | null
+          location_radius_meters: number
+          longitude: number | null
           start_time: string
           title: string
           updated_at: string | null
@@ -758,7 +1002,10 @@ export type Database = {
           event_type?: Database["public"]["Enums"]["event_type"]
           external_attendees?: Json
           id?: string
+          latitude?: number | null
           location?: string | null
+          location_radius_meters?: number
+          longitude?: number | null
           start_time: string
           title: string
           updated_at?: string | null
@@ -772,7 +1019,10 @@ export type Database = {
           event_type?: Database["public"]["Enums"]["event_type"]
           external_attendees?: Json
           id?: string
+          latitude?: number | null
           location?: string | null
+          location_radius_meters?: number
+          longitude?: number | null
           start_time?: string
           title?: string
           updated_at?: string | null
@@ -2066,10 +2316,12 @@ export type Database = {
           email: string | null
           email_verified: boolean | null
           external_id: string | null
+          face_registered_at: string | null
           full_name: string
           id: string
           is_active: boolean | null
           last_login_at: string | null
+          last_seen_at: string | null
           lifecycle_stage: Database["public"]["Enums"]["lifecycle_stage"] | null
           notification_preferences: Json | null
           onboarding_complete: boolean | null
@@ -2086,10 +2338,12 @@ export type Database = {
           email?: string | null
           email_verified?: boolean | null
           external_id?: string | null
+          face_registered_at?: string | null
           full_name: string
           id: string
           is_active?: boolean | null
           last_login_at?: string | null
+          last_seen_at?: string | null
           lifecycle_stage?:
             | Database["public"]["Enums"]["lifecycle_stage"]
             | null
@@ -2108,10 +2362,12 @@ export type Database = {
           email?: string | null
           email_verified?: boolean | null
           external_id?: string | null
+          face_registered_at?: string | null
           full_name?: string
           id?: string
           is_active?: boolean | null
           last_login_at?: string | null
+          last_seen_at?: string | null
           lifecycle_stage?:
             | Database["public"]["Enums"]["lifecycle_stage"]
             | null
@@ -2198,6 +2454,15 @@ export type Database = {
       delete_candidate: {
         Args: { p_invitation_id: string }
         Returns: undefined
+      }
+      fn_all_papers_passed: { Args: { c: string }; Returns: boolean }
+      get_enneagram_sampler_questions: {
+        Args: never
+        Returns: {
+          explanation: string
+          options: Json
+          question_number: number
+        }[]
       }
       get_exam_questions: {
         Args: { p_paper_id: string }
@@ -2295,10 +2560,13 @@ export type Database = {
         | "applied"
         | "interview_scheduled"
         | "interviewed"
+        | "eapp_done"
         | "approved"
         | "exam_prep"
         | "licensed"
         | "active_agent"
+        | "on_hold"
+        | "rejected"
       event_type:
         | "team_meeting"
         | "training"
@@ -2338,10 +2606,13 @@ export type Database = {
         | "applied"
         | "interview_scheduled"
         | "interviewed"
+        | "eapp_done"
         | "approved"
         | "exam_prep"
         | "licensed"
         | "active_agent"
+        | "on_hold"
+        | "rejected"
       module_item_type: "material" | "pre_quiz" | "quiz" | "exam" | "attendance"
       product_interest: "life" | "health" | "ilp" | "general"
       roadshow_activity_type:
@@ -2490,10 +2761,13 @@ export const Constants = {
         "applied",
         "interview_scheduled",
         "interviewed",
+        "eapp_done",
         "approved",
         "exam_prep",
         "licensed",
         "active_agent",
+        "on_hold",
+        "rejected",
       ],
       event_type: [
         "team_meeting",
@@ -2531,10 +2805,13 @@ export const Constants = {
         "applied",
         "interview_scheduled",
         "interviewed",
+        "eapp_done",
         "approved",
         "exam_prep",
         "licensed",
         "active_agent",
+        "on_hold",
+        "rejected",
       ],
       module_item_type: ["material", "pre_quiz", "quiz", "exam", "attendance"],
       product_interest: ["life", "health", "ilp", "general"],

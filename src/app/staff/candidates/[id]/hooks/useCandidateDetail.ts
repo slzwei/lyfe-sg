@@ -4,12 +4,16 @@ import { useState, useEffect, useCallback } from "react";
 import { createClient } from "@/lib/supabase/client";
 import {
   getCandidate,
+  getCandidateProgression,
   getInterviews,
   type CandidateDetail,
   type CandidateProfile,
   type Activity,
   type CandidateDocument,
   type InterviewRecord,
+  type MilestoneRow,
+  type PaperAttemptRow,
+  type PrepCourseRow,
 } from "../../actions";
 
 
@@ -19,6 +23,9 @@ export function useCandidateDetail(candidateId: string) {
   const [documents, setDocuments] = useState<CandidateDocument[]>([]);
   const [profile, setProfile] = useState<CandidateProfile | null>(null);
   const [interviews, setInterviews] = useState<InterviewRecord[]>([]);
+  const [paperAttempts, setPaperAttempts] = useState<PaperAttemptRow[]>([]);
+  const [milestones, setMilestones] = useState<MilestoneRow[]>([]);
+  const [prepCourses, setPrepCourses] = useState<PrepCourseRow[]>([]);
   const [staffRole, setStaffRole] = useState<string>("");
   const [staffId, setStaffId] = useState<string>("");
   const [loading, setLoading] = useState(true);
@@ -29,9 +36,10 @@ export function useCandidateDetail(candidateId: string) {
   const canSchedule = staffRole && ["pa", "manager", "director", "admin"].includes(staffRole);
 
   const fetchData = useCallback(async () => {
-    const [candidateResult, interviewsResult] = await Promise.all([
+    const [candidateResult, interviewsResult, progressionResult] = await Promise.all([
       getCandidate(candidateId),
       getInterviews(candidateId),
+      getCandidateProgression(candidateId),
     ]);
     if (candidateResult.success && candidateResult.candidate) {
       setCandidate(candidateResult.candidate);
@@ -51,6 +59,11 @@ export function useCandidateDetail(candidateId: string) {
     }
     if (interviewsResult.success) {
       setInterviews(interviewsResult.interviews || []);
+    }
+    if (progressionResult.success) {
+      setPaperAttempts(progressionResult.attempts || []);
+      setMilestones(progressionResult.milestones || []);
+      setPrepCourses(progressionResult.prepCourses || []);
     }
     setLoading(false);
   }, [candidateId]);
@@ -79,6 +92,9 @@ export function useCandidateDetail(candidateId: string) {
     setDocuments,
     profile,
     interviews,
+    paperAttempts,
+    milestones,
+    prepCourses,
     staffRole,
     staffId,
     loading,

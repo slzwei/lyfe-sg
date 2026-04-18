@@ -16,6 +16,7 @@ import ActivityTimeline from "./components/ActivityTimeline";
 import DocumentsSidebar from "./components/DocumentsSidebar";
 import InterviewsSection from "./components/InterviewsSection";
 import ProfileDetails from "./components/ProfileDetails";
+import ProgressionSections from "./components/ProgressionSections";
 
 export default function CandidateDetailClient({ candidateId }: { candidateId: string }) {
   const {
@@ -25,6 +26,9 @@ export default function CandidateDetailClient({ candidateId }: { candidateId: st
     setDocuments,
     profile,
     interviews,
+    paperAttempts,
+    milestones,
+    prepCourses,
     staffRole,
     staffId,
     loading,
@@ -224,6 +228,14 @@ export default function CandidateDetailClient({ candidateId }: { candidateId: st
 
       {/* Profile details */}
       {profile && <ProfileDetails profile={profile} />}
+
+      {/* Progression: papers, milestones, prep courses (read-only on sg; writes
+          happen on mobile). Phase H. */}
+      <ProgressionSections
+        attempts={paperAttempts}
+        milestones={milestones}
+        prepCourses={prepCourses}
+      />
 
       {/* Interviews section */}
       <InterviewsSection

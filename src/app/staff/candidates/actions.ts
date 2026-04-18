@@ -1152,3 +1152,93 @@ export async function reassignCandidate(
 
   return { success: true };
 }
+
+// ─── Progression (Phase C / E / H) ────────────────────────────────────────────
+
+export type PaperAttemptRow = {
+  id: string;
+  candidate_id: string;
+  paper_code: string;
+  exam_at: string | null;
+  cost: number | null;
+  result: "passed" | "failed" | null;
+  logged_by_user_id: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
+export type MilestoneRow = {
+  id: string;
+  candidate_id: string;
+  milestone_code: string;
+  status: string;
+  scheduled_date: string | null;
+  scheduled_end_date: string | null;
+  completed_date: string | null;
+  reference_number: string | null;
+  verified_by_user_id: string | null;
+  note: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
+export type PrepCourseRow = {
+  id: string;
+  candidate_id: string;
+  course_code: string;
+  booked_by_user_id: string | null;
+  booked_date: string | null;
+  booked_end_date: string | null;
+  attended: boolean;
+  note: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
+/**
+ * Fetch all progression data for a candidate: paper attempts, post-exam
+ * milestones (BDM / BES / SOAR / RNF / Sales Authority), and prep-course
+ * bookings. Auth-gated to staff with team-scoped access. Read-only surface —
+ * writes remain on mobile / admin. Phase H brings this read view to lyfe-sg.
+ */
+export async function getCandidateProgression(candidateId: string): Promise<{
+  success: boolean;
+  attempts?: PaperAttemptRow[];
+  milestones?: MilestoneRow[];
+  prepCourses?: PrepCourseRow[];
+  error?: string;
+}> {
+  const staff = await getStaffUser();
+  if (!staff) return { success: false, error: "Not authenticated." };
+
+  const hasAccess = await verifyCandidateAccess(candidateId, staff);
+  if (!hasAccess) return { success: false, error: "Candidate not found." };
+
+  const admin = getAdminClient();
+  const [attemptsRes, milestonesRes, prepCoursesRes] = await Promise.all([
+    admin
+      .from("candidate_paper_attempts")
+      .select("*")
+      .eq("candidate_id", candidateId)
+      .order("created_at", { ascending: false }),
+    admin
+      .from("candidate_milestones")
+      .select("*")
+      .eq("candidate_id", candidateId),
+    admin
+      .from("candidate_prep_course_bookings")
+      .select("*")
+      .eq("candidate_id", candidateId),
+  ]);
+
+  if (attemptsRes.error) return { success: false, error: attemptsRes.error.message };
+  if (milestonesRes.error) return { success: false, error: milestonesRes.error.message };
+  if (prepCoursesRes.error) return { success: false, error: prepCoursesRes.error.message };
+
+  return {
+    success: true,
+    attempts: (attemptsRes.data as PaperAttemptRow[]) ?? [],
+    milestones: (milestonesRes.data as MilestoneRow[]) ?? [],
+    prepCourses: (prepCoursesRes.data as PrepCourseRow[]) ?? [],
+  };
+}

@@ -12,7 +12,7 @@ interface HeaderProps {
 }
 
 export default function Header({ isScrolled, isNavOpen, isMuted, onToggleNav, onToggleMute }: HeaderProps) {
-  const [orderOpen, setOrderOpen] = useState(false);
+  const [servicesOpen, setServicesOpen] = useState(false);
 
   return (
     <header
@@ -42,16 +42,6 @@ export default function Header({ isScrolled, isNavOpen, isMuted, onToggleNav, on
             <span className={`hamburger-line absolute left-0 w-full h-[2px] bg-white block ${isNavOpen ? "hamburger-bot" : ""}`} style={{ bottom: 0 }} />
           </button>
 
-          {/* Instagram */}
-          <a href="https://www.instagram.com/daddybao/" target="_blank" rel="noopener noreferrer">
-            <InstagramIcon className="w-[22px] h-[22px] max-sm:w-[18px] max-sm:h-[18px] text-white" />
-          </a>
-
-          {/* Location */}
-          <a href="https://goo.gl/maps/vEbrzBwqzriaZpLU7" target="_blank" rel="noopener noreferrer">
-            <LocationPinIcon className="w-[15px] h-[22px] max-sm:w-[12px] max-sm:h-[18px] text-white" />
-          </a>
-
           {/* Mute */}
           <button
             onClick={onToggleMute}
@@ -64,60 +54,68 @@ export default function Header({ isScrolled, isNavOpen, isMuted, onToggleNav, on
 
         {/* Center: logo */}
         <div className="flex-1 flex justify-center relative h-[22px]">
-          {/* Main logo (round stamp) */}
+          {/* Main logo (round) */}
           <a href="#" className="absolute left-1/2 -translate-x-1/2 -top-[5px] transition-opacity duration-500" style={{ opacity: isScrolled ? 0 : 1 }}>
             <img
-              src="/upcoming/site-content/uploads/2022/08/Daddy_Bao_Main_Logo.png"
-              alt="Daddy Bao"
-              className="h-[130px] max-sm:h-[65px] w-auto max-w-none"
+              src="/lyfe-logo-orange-bg.png"
+              alt="Lyfe"
+              className="h-[80px] max-sm:h-[50px] w-auto max-w-none rounded-full"
             />
           </a>
-          {/* Scroll logo (text) — overlays on top */}
+          {/* Scroll logo (compact) */}
           <img
-            src="/upcoming/site-content/uploads/2022/08/Daddy_Bao_Secondary_Logo.png"
-            alt="Daddy Bao"
-            className="absolute left-1/2 transition-opacity duration-500 pointer-events-none"
+            src="/lyfe-logo-square.png"
+            alt="Lyfe"
+            className="absolute left-1/2 transition-opacity duration-500 pointer-events-none rounded-full"
             style={{ height: "35px", width: "auto", top: "50%", transform: "translate(-50%, -50%)", opacity: isScrolled ? 1 : 0 }}
           />
         </div>
 
         {/* Right: CTA buttons */}
         <div className="flex-1 flex justify-end items-center gap-[10px] max-sm:flex-col max-sm:items-end max-sm:gap-[8px] max-sm:mt-[6px]">
-          {/* Order dropdown */}
+          {/* Services dropdown */}
           <div
             className="relative max-sm:order-2"
-            onMouseEnter={() => setOrderOpen(true)}
-            onMouseLeave={() => setOrderOpen(false)}
+            onMouseEnter={() => setServicesOpen(true)}
+            onMouseLeave={() => setServicesOpen(false)}
           >
             <button className="cta-btn uppercase text-white border border-white text-[15px] max-xl:text-[13px] tracking-[0.06em] px-[14px] py-[5px] bg-transparent cursor-pointer transition-colors duration-300 hover:bg-white hover:text-black">
-              Order
+              Services
             </button>
             <ul
-              className={`absolute top-full right-0 bg-white border border-black min-w-[160px] transition-opacity duration-200 z-10 ${
-                orderOpen ? "opacity-100 visible" : "opacity-0 invisible"
+              className={`absolute top-full right-0 bg-white border border-black min-w-[180px] transition-opacity duration-200 z-10 ${
+                servicesOpen ? "opacity-100 visible" : "opacity-0 invisible"
               }`}
             >
               <li className="border-b border-black">
-                <a href="https://daddy-bao.square.site" target="_blank" rel="noopener noreferrer" className="block px-[15px] py-[10px] text-black text-[13px] uppercase hover:bg-black hover:text-white transition-colors">
-                  Collection
+                <a href="#services" className="block px-[15px] py-[10px] text-black text-[13px] uppercase hover:bg-black hover:text-white transition-colors">
+                  Life Protection
+                </a>
+              </li>
+              <li className="border-b border-black">
+                <a href="#services" className="block px-[15px] py-[10px] text-black text-[13px] uppercase hover:bg-black hover:text-white transition-colors">
+                  Savings Plans
+                </a>
+              </li>
+              <li className="border-b border-black">
+                <a href="#services" className="block px-[15px] py-[10px] text-black text-[13px] uppercase hover:bg-black hover:text-white transition-colors">
+                  Retirement
                 </a>
               </li>
               <li>
-                <a href="https://deliveroo.co.uk/menu/London/tooting/daddy-bao?geohash=gcpus98zzk23" target="_blank" rel="noopener noreferrer" className="block px-[15px] py-[10px] text-black text-[13px] uppercase hover:bg-black hover:text-white transition-colors">
-                  Delivery
+                <a href="#services" className="block px-[15px] py-[10px] text-black text-[13px] uppercase hover:bg-black hover:text-white transition-colors">
+                  Critical Illness
                 </a>
               </li>
             </ul>
           </div>
 
-          {/* Book */}
+          {/* Apply */}
           <a
-            href="https://www.exploretock.com/daddy-bao-london"
-            target="_blank"
-            rel="noopener noreferrer"
+            href="/candidate/login"
             className="cta-btn uppercase text-white border border-white text-[15px] max-xl:text-[13px] tracking-[0.06em] px-[14px] py-[5px] max-sm:order-1 transition-colors duration-300 hover:bg-white hover:text-black"
           >
-            Book
+            Apply
           </a>
         </div>
       </div>

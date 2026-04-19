@@ -11,8 +11,6 @@ interface HeroSectionProps {
 export default function HeroSection({ isMuted }: HeroSectionProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
 
-  // Force muted attribute via ref (React JSX bug: muted prop doesn't set HTML attribute)
-  // Then trigger play — browsers block autoplay unless muted is set via DOM
   useEffect(() => {
     const v = videoRef.current;
     if (!v) return;
@@ -38,35 +36,36 @@ export default function HeroSection({ isMuted }: HeroSectionProps) {
 
   return (
     <section className="relative h-screen min-h-[696px] max-lg:min-h-[550px] max-sm:min-h-[400px] flex items-end justify-center overflow-hidden">
-      {/* Video background */}
+      {/* Video background — replace src with Lyfe video when available */}
       <video
         ref={videoRef}
         autoPlay
         loop
         muted
         playsInline
-        poster="/upcoming/site-content/uploads/2022/08/booking-opening-times.jpg"
+        poster="/lyfe-logo-orange-bg.png"
         className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 min-w-full min-h-full z-[1] object-cover"
       >
-        <source
-          src="https://player.vimeo.com/progressive_redirect/playback/740822515/rendition/1080p/file.mp4?loc=external&signature=b23d49d5d87c1b037146da6a7ee92650acfba00835595dfcb13af5ed9ec524b9"
-          type="video/mp4"
-        />
+        {/* TODO: Replace with Lyfe hero video */}
       </video>
 
-      {/* Tint overlay */}
-      <div className="absolute inset-0 bg-black z-[2] pointer-events-none" style={{ opacity: 0.11 }} />
+      {/* Gradient overlay for readability */}
+      <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/30 to-black/70 z-[2] pointer-events-none" />
 
       {/* Hero content */}
       <div
         className="relative z-[3] w-[40%] 5xl:w-[40%] max-5xl:w-[50%] max-3xl:w-[60%] max-xl:w-[75%] max-lg:w-full mx-auto pb-[95px] max-5xl:pb-[75px] max-xl:pb-[65px] max-sm:pb-[60px] text-center px-[25px] max-xs:px-[15px]"
         style={{ fontFamily: "var(--font-pt-mono), monospace" }}
       >
-        <h1 className="text-[#fde6d4] text-center uppercase text-[44px] max-5xl:text-[40px] max-3xl:text-[38px] max-xl:text-[36px] max-lg:text-[34px] max-md:text-[30px] max-sm:text-[22px] max-xs:text-[18px] leading-[1.05] font-normal mb-[0.5em]">
-          {"Tooting's Neighbourhood"}<br />
-          Taiwanese Restaurant{" "}
-          <span style={{ fontFamily: "var(--font-noto-sans-tc), sans-serif" }}>爹爹飽</span>
+        <h1 className="text-white text-center uppercase text-[44px] max-5xl:text-[40px] max-3xl:text-[38px] max-xl:text-[36px] max-lg:text-[34px] max-md:text-[30px] max-sm:text-[22px] max-xs:text-[18px] leading-[1.05] font-normal mb-[0.5em]">
+          Build Your Future<br />
+          In Financial Advisory
         </h1>
+
+        <p className="text-white/70 text-[16px] max-sm:text-[14px] max-xs:text-[12px] mb-[1.5em] leading-[1.6]">
+          We&apos;re a team of trusted financial representatives helping
+          Singaporeans protect what matters most.
+        </p>
 
         <button
           onClick={scrollDown}

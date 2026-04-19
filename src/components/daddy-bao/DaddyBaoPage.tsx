@@ -29,7 +29,7 @@ export default function DaddyBaoPage() {
 
   return (
     <div
-      className="daddy-bao bg-[#fde6d4] text-black min-h-screen"
+      className="daddy-bao bg-[#1a1a1a] text-white min-h-screen"
       style={{
         "--main-logo-size": "130px",
         "--scroll-logo-size": "130px",

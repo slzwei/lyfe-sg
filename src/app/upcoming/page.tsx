@@ -3,9 +3,9 @@ import DaddyBaoPage from "@/components/daddy-bao/DaddyBaoPage";
 import "../daddy-bao.css";
 
 export const metadata: Metadata = {
-  title: "Daddy Bao | Taiwanese Restaurant Tooting",
+  title: "Lyfe | Insurance Careers Singapore",
   description:
-    "Enjoy bold Taiwanese flavours at Daddy Bao, a family-run restaurant in Tooting, serving up fluffy bao, street food inspired dishes, weekly specials and cocktails.",
+    "Join Lyfe, a team of trusted financial representatives in Singapore. We offer mentorship, training, and a clear career path in insurance and financial advisory.",
 };
 
 export default function UpcomingPage() {

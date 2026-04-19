@@ -386,26 +386,6 @@ export async function deleteCandidate(id: string) {
     .eq("id", id)
     .single();
 
-  // PAs can delete pending or in-progress invitations; not completed applications
-  const isManagerPlus = ["manager", "director", "admin"].includes(staff.role);
-  if (!isManagerPlus) {
-    if (invitation?.status === "pending") {
-      // Allow — candidate hasn't accepted yet
-    } else if (invitation?.status === "accepted" && invitation.user_id) {
-      // Block if application is fully completed (profile + personality quiz done)
-      const [{ data: enneagramResult }, { data: discResult }, { data: profile }] = await Promise.all([
-        adminClient.from("enneagram_results").select("id").eq("user_id", invitation.user_id).maybeSingle(),
-        adminClient.from("disc_results").select("id").eq("user_id", invitation.user_id).maybeSingle(),
-        adminClient.from("candidate_profiles").select("completed").eq("user_id", invitation.user_id).maybeSingle(),
-      ]);
-      if (profile?.completed && (enneagramResult || discResult)) {
-        return { success: false, error: "Cannot delete completed applications. Contact a manager." };
-      }
-    } else {
-      return { success: false, error: "Not authorized to delete this invitation." };
-    }
-  }
-
   const userId = invitation?.user_id ?? null;
   const candidateRecordId = invitation?.candidate_record_id ?? null;
 

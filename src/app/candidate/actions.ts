@@ -83,7 +83,7 @@ export async function acceptInvite(token: string): Promise<{
     : `candidate-${invitation.id}@lyfe.internal`;
 
   // ── Step 2: Create or find auth user ──────────────────────────────────
-  let authUserId: string;
+  let authUserId: string | undefined;
 
   if (invitation.status === "accepted" && invitation.user_id) {
     // Returning candidate — user already exists
@@ -99,35 +99,8 @@ export async function acceptInvite(token: string): Promise<{
       });
 
     if (createError) {
-      // Handle "User already registered" — FM-3
       if (createError.message?.includes("already been registered")) {
-        // Look up existing user by email
-        const { data: listData } = await admin.auth.admin.listUsers({
-          page: 1,
-          perPage: 1,
-        });
-        const existingUser = listData?.users?.find(
-          (u) => u.email === authEmail
-        );
-
-        if (!existingUser) {
-          // Can't find the user — try by invitation.user_id
-          if (invitation.user_id) {
-            authUserId = invitation.user_id;
-          } else {
-            return { success: false, error: "Account setup failed. Please contact us." };
-          }
-        } else {
-          // FM-24: Check if existing user is staff
-          const existingRole = existingUser.app_metadata?.role as string | undefined;
-          if (existingRole && existingRole !== "candidate") {
-            return {
-              success: false,
-              error: "This email is already registered as a staff account. Please contact your administrator.",
-            };
-          }
-          authUserId = existingUser.id;
-        }
+        // User exists — authUserId will be resolved from session after Step 3
       } else {
         console.error("[token-auth] createUser failed:", createError.message);
         return { success: false, error: "Account setup failed. Please try again." };
@@ -159,6 +132,21 @@ export async function acceptInvite(token: string): Promise<{
   if (verifyError || !verifyData.session) {
     console.error("[token-auth] verifyOtp failed:", verifyError?.message);
     return { success: false, error: "Session setup failed. Please try again." };
+  }
+
+  // Resolve authUserId from session if user already existed (Step 2 deferred)
+  if (!authUserId) {
+    authUserId = verifyData.session.user.id;
+
+    // FM-24: Check if existing user is staff
+    const existingRole = verifyData.session.user.app_metadata?.role as string | undefined;
+    if (existingRole && existingRole !== "candidate") {
+      await serverClient.auth.signOut();
+      return {
+        success: false,
+        error: "This email is already registered as a staff account. Please contact your administrator.",
+      };
+    }
   }
 
   // ── Step 4: Handle returning candidate (existing profile) ─────────────

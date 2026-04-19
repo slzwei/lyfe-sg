@@ -987,11 +987,11 @@ export async function listAssignableManagers(): Promise<{
     return { success: true, managers: (managers || []) as AssignableManager[] };
   }
 
-  // Manager/director/admin: all active managers, directors, and admins
+  // Manager/director/admin: all active managers and directors (admin cannot hold agents/candidates)
   const { data: managers } = await admin
     .from("users")
     .select("id, full_name, role")
-    .in("role", ["manager", "director", "admin"])
+    .in("role", ["manager", "director"])
     .eq("is_active", true)
     .order("full_name");
 
@@ -1128,8 +1128,8 @@ export async function reassignCandidate(
     return { success: false, error: "Target manager not found or inactive." };
   }
 
-  if (!["manager", "director", "admin"].includes(targetUser.role)) {
-    return { success: false, error: "Target user is not a manager/director/admin." };
+  if (!["manager", "director"].includes(targetUser.role)) {
+    return { success: false, error: "Target user is not a manager or director." };
   }
 
   // Get current candidate for old manager name

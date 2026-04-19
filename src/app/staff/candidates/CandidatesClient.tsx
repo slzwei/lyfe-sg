@@ -87,6 +87,7 @@ export default function CandidatesClient({ staffRole }: { staffRole?: string }) 
                 quiz_answered: result.progress!.quiz_answered,
                 quiz_completed: result.progress!.quiz_completed,
                 disc_type: result.progress!.disc_type || c.disc_type,
+                enneagram_type: result.progress!.enneagram_type || c.enneagram_type,
               }
             : c
         )
@@ -134,6 +135,7 @@ export default function CandidatesClient({ staffRole }: { staffRole?: string }) 
     candidate_record_id: c.id,
     profile_pdf_path: c.profile_pdf_path,
     disc_pdf_path: c.disc_pdf_path,
+    enneagram_pdf_path: c.enneagram_pdf_path,
     attached_files: null,
     progress: {
       profile_completed: c.profile_completed,
@@ -141,6 +143,7 @@ export default function CandidatesClient({ staffRole }: { staffRole?: string }) 
       quiz_answered: c.quiz_answered,
       quiz_completed: c.quiz_completed,
       disc_type: c.disc_type || undefined,
+      enneagram_type: c.enneagram_type || undefined,
     },
     _synthetic: true,
     notes: c.notes,

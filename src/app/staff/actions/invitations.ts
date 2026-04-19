@@ -13,8 +13,13 @@ import { requireStaff } from "./auth";
 export interface InvitationProgress {
   profile_completed: boolean;
   onboarding_step: number;
+  /** Count of answered enneagram questions (0–36). Falls back to DISC count for legacy candidates. */
   quiz_answered: number;
+  /** True when an enneagram_results row (or, for legacy, disc_results row) exists. */
   quiz_completed: boolean;
+  /** Formatted as "Type 3w2" or "Type 5" when the candidate has completed the Enneagram. */
+  enneagram_type?: string;
+  /** Legacy — set only for candidates who completed the old DISC flow. */
   disc_type?: string;
 }
 
@@ -40,6 +45,7 @@ export interface Invitation {
   candidate_record_id: string | null;
   profile_pdf_path: string | null;
   disc_pdf_path: string | null;
+  enneagram_pdf_path: string | null;
   attached_files: AttachedFile[] | null;
   progress: InvitationProgress | null;
   _synthetic?: boolean;
@@ -145,55 +151,82 @@ export async function listInvitations(): Promise<{
     .map((inv) => inv.user_id!);
 
   const profileMap = new Map<string, { completed: boolean; onboarding_step: number }>();
-  const quizProgressMap = new Map<string, number>();
-  const resultsMap = new Map<string, string>();
+  const enneagramAnsweredMap = new Map<string, number>();
+  const discAnsweredMap = new Map<string, number>();
+  const enneagramResultsMap = new Map<string, string>();
+  const discResultsMap = new Map<string, string>();
 
   if (userIds.length > 0) {
     const { data: profiles } = await adminClient.from("candidate_profiles")
       .select("user_id, completed, onboarding_step")
       .in("user_id", userIds);
-
     if (profiles) {
       for (const p of profiles) {
         profileMap.set(p.user_id, { completed: p.completed, onboarding_step: p.onboarding_step });
       }
     }
 
-    const { data: responses } = await adminClient.from("disc_responses")
+    const { data: enneResponses } = await adminClient.from("enneagram_responses")
       .select("user_id, responses")
       .in("user_id", userIds);
-
-    if (responses) {
-      for (const r of responses) {
-        const count = r.responses ? Object.keys(r.responses).length : 0;
-        quizProgressMap.set(r.user_id, count);
+    if (enneResponses) {
+      for (const r of enneResponses) {
+        const count = r.responses ? Object.keys(r.responses as Record<string, unknown>).length : 0;
+        enneagramAnsweredMap.set(r.user_id, count);
       }
     }
 
-    const { data: results } = await adminClient.from("disc_results")
+    const { data: discResponses } = await adminClient.from("disc_responses")
+      .select("user_id, responses")
+      .in("user_id", userIds);
+    if (discResponses) {
+      for (const r of discResponses) {
+        const count = r.responses ? Object.keys(r.responses as Record<string, unknown>).length : 0;
+        discAnsweredMap.set(r.user_id, count);
+      }
+    }
+
+    const { data: enneResults } = await adminClient.from("enneagram_results")
+      .select("user_id, primary_type, wing_type")
+      .in("user_id", userIds);
+    if (enneResults) {
+      for (const r of enneResults) {
+        const label = `Type ${r.primary_type}${r.wing_type ? `w${r.wing_type}` : ""}`;
+        enneagramResultsMap.set(r.user_id, label);
+      }
+    }
+
+    const { data: discResults } = await adminClient.from("disc_results")
       .select("user_id, disc_type")
       .in("user_id", userIds);
-
-    if (results) {
-      for (const r of results) {
-        resultsMap.set(r.user_id, r.disc_type);
+    if (discResults) {
+      for (const r of discResults) {
+        discResultsMap.set(r.user_id, r.disc_type);
       }
     }
   }
 
   const enriched: Invitation[] = invitations.map((inv) => {
     const pInfo = inv.user_id ? profileMap.get(inv.user_id) : undefined;
+    const uid = inv.user_id;
+    const enneAnswered = uid ? enneagramAnsweredMap.get(uid) : undefined;
+    const discAnswered = uid ? discAnsweredMap.get(uid) : undefined;
+    const enneType = uid ? enneagramResultsMap.get(uid) : undefined;
+    const discType = uid ? discResultsMap.get(uid) : undefined;
+    const quizAnswered = enneAnswered ?? discAnswered ?? 0;
+    const quizCompleted = !!enneType || !!discType;
     return {
       ...inv,
       invited_by: inv.invited_by || "staff",
       attached_files: (inv.attached_files as unknown as AttachedFile[] | null) || null,
-      progress: inv.user_id
+      progress: uid
         ? {
             profile_completed: pInfo?.completed || false,
             onboarding_step: pInfo?.onboarding_step || 1,
-            quiz_answered: quizProgressMap.get(inv.user_id) || 0,
-            quiz_completed: resultsMap.has(inv.user_id),
-            disc_type: resultsMap.get(inv.user_id),
+            quiz_answered: quizAnswered,
+            quiz_completed: quizCompleted,
+            enneagram_type: enneType,
+            disc_type: discType,
           }
         : null,
     };
@@ -218,34 +251,55 @@ export async function getProgressForUser(userId: string): Promise<{
     .single();
   if (!candidateProfile?.candidate_id) return { success: false };
 
-  // 3 parallel queries for a single user
-  const [profileRes, responsesRes, resultsRes] = await Promise.all([
+  const [profileRes, enneResponsesRes, discResponsesRes, enneResultsRes, discResultsRes] = await Promise.all([
     adminClient.from("candidate_profiles")
       .select("completed, onboarding_step")
       .eq("user_id", userId)
       .single(),
+    adminClient.from("enneagram_responses")
+      .select("responses")
+      .eq("user_id", userId)
+      .maybeSingle(),
     adminClient.from("disc_responses")
       .select("responses")
       .eq("user_id", userId)
-      .single(),
+      .maybeSingle(),
+    adminClient.from("enneagram_results")
+      .select("primary_type, wing_type")
+      .eq("user_id", userId)
+      .maybeSingle(),
     adminClient.from("disc_results")
       .select("disc_type")
       .eq("user_id", userId)
-      .single(),
+      .maybeSingle(),
   ]);
 
   const profile = profileRes.data;
-  const responses = responsesRes.data;
-  const results = resultsRes.data;
+  const enneResponses = enneResponsesRes.data;
+  const discResponses = discResponsesRes.data;
+  const enneResults = enneResultsRes.data;
+  const discResults = discResultsRes.data;
+
+  const enneAnswered = enneResponses?.responses
+    ? Object.keys(enneResponses.responses as Record<string, unknown>).length
+    : undefined;
+  const discAnswered = discResponses?.responses
+    ? Object.keys(discResponses.responses as Record<string, unknown>).length
+    : undefined;
+
+  const enneType = enneResults
+    ? `Type ${enneResults.primary_type}${enneResults.wing_type ? `w${enneResults.wing_type}` : ""}`
+    : undefined;
 
   return {
     success: true,
     progress: {
       profile_completed: profile?.completed || false,
       onboarding_step: profile?.onboarding_step || 1,
-      quiz_answered: responses?.responses ? Object.keys(responses.responses).length : 0,
-      quiz_completed: !!results,
-      disc_type: results?.disc_type,
+      quiz_answered: enneAnswered ?? discAnswered ?? 0,
+      quiz_completed: !!enneResults || !!discResults,
+      enneagram_type: enneType,
+      disc_type: discResults?.disc_type,
     },
   };
 }
@@ -283,11 +337,11 @@ export async function resetApplication(invitationId: string) {
 
   const userId = invitation.user_id;
 
-  // Clear quiz data
+  await adminClient.from("enneagram_results").delete().eq("user_id", userId);
+  await adminClient.from("enneagram_responses").delete().eq("user_id", userId);
   await adminClient.from("disc_results").delete().eq("user_id", userId);
   await adminClient.from("disc_responses").delete().eq("user_id", userId);
 
-  // Reset profile to incomplete so candidate can re-edit and re-submit
   await adminClient.from("candidate_profiles")
     .update({ completed: false, onboarding_step: 1 })
     .eq("user_id", userId);
@@ -311,6 +365,8 @@ export async function resetQuiz(invitationId: string) {
 
   const userId = invitation.user_id;
 
+  await adminClient.from("enneagram_results").delete().eq("user_id", userId);
+  await adminClient.from("enneagram_responses").delete().eq("user_id", userId);
   await adminClient.from("disc_results").delete().eq("user_id", userId);
   await adminClient.from("disc_responses").delete().eq("user_id", userId);
 
@@ -336,18 +392,13 @@ export async function deleteCandidate(id: string) {
     if (invitation?.status === "pending") {
       // Allow — candidate hasn't accepted yet
     } else if (invitation?.status === "accepted" && invitation.user_id) {
-      // Block if application is fully completed (profile + DISC done)
-      const { data: discResult } = await adminClient
-        .from("disc_results")
-        .select("id")
-        .eq("user_id", invitation.user_id)
-        .maybeSingle();
-      const { data: profile } = await adminClient
-        .from("candidate_profiles")
-        .select("completed")
-        .eq("user_id", invitation.user_id)
-        .maybeSingle();
-      if (profile?.completed && discResult) {
+      // Block if application is fully completed (profile + personality quiz done)
+      const [{ data: enneagramResult }, { data: discResult }, { data: profile }] = await Promise.all([
+        adminClient.from("enneagram_results").select("id").eq("user_id", invitation.user_id).maybeSingle(),
+        adminClient.from("disc_results").select("id").eq("user_id", invitation.user_id).maybeSingle(),
+        adminClient.from("candidate_profiles").select("completed").eq("user_id", invitation.user_id).maybeSingle(),
+      ]);
+      if (profile?.completed && (enneagramResult || discResult)) {
         return { success: false, error: "Cannot delete completed applications. Contact a manager." };
       }
     } else {

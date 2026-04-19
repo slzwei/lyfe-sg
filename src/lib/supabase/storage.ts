@@ -10,7 +10,7 @@ const DOCS_BUCKET = "candidate-documents";
  */
 export async function uploadCandidatePdf(
   userId: string,
-  type: "application" | "disc-profile",
+  type: "application" | "disc-profile" | "enneagram-profile",
   pdfBuffer: Buffer
 ): Promise<string | null> {
   const admin = getAdminClient();

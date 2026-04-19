@@ -16,6 +16,7 @@ import ActivityTimeline from "./components/ActivityTimeline";
 import DocumentsSidebar from "./components/DocumentsSidebar";
 import InterviewsSection from "./components/InterviewsSection";
 import ProfileDetails from "./components/ProfileDetails";
+import ProgressionSections from "./components/ProgressionSections";
 
 export default function CandidateDetailClient({ candidateId }: { candidateId: string }) {
   const {
@@ -25,6 +26,9 @@ export default function CandidateDetailClient({ candidateId }: { candidateId: st
     setDocuments,
     profile,
     interviews,
+    paperAttempts,
+    milestones,
+    prepCourses,
     staffRole,
     staffId,
     loading,
@@ -159,8 +163,13 @@ export default function CandidateDetailClient({ candidateId }: { candidateId: st
               </svg>
             </Link>
             <h1 className="truncate text-xl font-bold text-stone-800 sm:text-2xl">{candidate.name}</h1>
-            {candidate.disc_type && (
+            {candidate.enneagram_type && (
               <span className="shrink-0 rounded bg-purple-50 px-2 py-0.5 text-sm font-semibold text-purple-600">
+                {candidate.enneagram_type}
+              </span>
+            )}
+            {!candidate.enneagram_type && candidate.disc_type && (
+              <span className="shrink-0 rounded bg-stone-100 px-2 py-0.5 text-sm font-semibold text-stone-600">
                 {candidate.disc_type}
               </span>
             )}
@@ -224,6 +233,14 @@ export default function CandidateDetailClient({ candidateId }: { candidateId: st
 
       {/* Profile details */}
       {profile && <ProfileDetails profile={profile} />}
+
+      {/* Progression: papers, milestones, prep courses (read-only on sg; writes
+          happen on mobile). Phase H. */}
+      <ProgressionSections
+        attempts={paperAttempts}
+        milestones={milestones}
+        prepCourses={prepCourses}
+      />
 
       {/* Interviews section */}
       <InterviewsSection

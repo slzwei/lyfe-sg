@@ -6,11 +6,13 @@ import type { Invitation } from "../actions";
 interface ProgressDisplayProps {
   invitation: Invitation;
   liveState?: CandidateState;
-  /** If provided, renders a download button next to the DISC result. */
-  onDownloadDiscPdf?: (path: string) => void;
+  /** If provided, renders a download button next to the personality result. */
+  onDownloadQuizPdf?: (path: string) => void;
 }
 
-export function ProgressDisplay({ invitation: inv, liveState, onDownloadDiscPdf }: ProgressDisplayProps) {
+const QUIZ_TOTAL = 36;
+
+export function ProgressDisplay({ invitation: inv, liveState, onDownloadQuizPdf }: ProgressDisplayProps) {
   const isExpired = inv.status === "pending" && new Date(inv.expires_at) < new Date();
 
   // Non-accepted: simple pill badge
@@ -44,8 +46,8 @@ export function ProgressDisplay({ invitation: inv, liveState, onDownloadDiscPdf 
   } else if (progress?.quiz_completed) {
     pct = 100; label = "Completed"; barColor = "bg-green-500"; textColor = "text-green-700";
   } else if (progress?.profile_completed && (quizInProgress || liveState === "quiz")) {
-    pct = 50 + Math.round(((progress.quiz_answered || 0) / 39) * 50);
-    label = "Quiz"; detail = `${progress.quiz_answered || 0}/39`;
+    pct = 50 + Math.round(((progress.quiz_answered || 0) / QUIZ_TOTAL) * 50);
+    label = "Quiz"; detail = `${progress.quiz_answered || 0}/${QUIZ_TOTAL}`;
     barColor = "bg-blue-500"; textColor = "text-blue-700";
   } else if (progress?.profile_completed) {
     pct = 50; label = "Form done"; detail = "Quiz not started";
@@ -57,6 +59,7 @@ export function ProgressDisplay({ invitation: inv, liveState, onDownloadDiscPdf 
     barColor = "bg-orange-400"; textColor = "text-stone-600";
   }
 
+  const enneagramType = progress?.enneagram_type;
   const discType = progress?.disc_type?.toUpperCase();
 
   return (
@@ -71,13 +74,28 @@ export function ProgressDisplay({ invitation: inv, liveState, onDownloadDiscPdf 
           style={{ width: `${pct}%` }}
         />
       </div>
-      {discType && (
+      {enneagramType && (
         <p className="mt-1 flex items-center gap-1 text-[10px] text-stone-400">
-          DISC{onDownloadDiscPdf ? " Result" : ""}: <span className="font-semibold text-stone-600">{discType}</span>
-          {onDownloadDiscPdf && inv.disc_pdf_path && (
+          Enneagram: <span className="font-semibold text-stone-600">{enneagramType}</span>
+          {onDownloadQuizPdf && inv.enneagram_pdf_path && (
             <button
               type="button"
-              onClick={() => onDownloadDiscPdf(inv.disc_pdf_path!)}
+              onClick={() => onDownloadQuizPdf(inv.enneagram_pdf_path!)}
+              title="Download Enneagram PDF"
+              className="ml-0.5 text-stone-300 transition-colors hover:text-purple-500"
+            >
+              <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
+            </button>
+          )}
+        </p>
+      )}
+      {!enneagramType && discType && (
+        <p className="mt-1 flex items-center gap-1 text-[10px] text-stone-400">
+          DISC{onDownloadQuizPdf ? " Result" : ""}: <span className="font-semibold text-stone-600">{discType}</span>
+          {onDownloadQuizPdf && inv.disc_pdf_path && (
+            <button
+              type="button"
+              onClick={() => onDownloadQuizPdf(inv.disc_pdf_path!)}
               title="Download DISC PDF"
               className="ml-0.5 text-stone-300 transition-colors hover:text-blue-500"
             >

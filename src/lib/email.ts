@@ -1,6 +1,6 @@
 import nodemailer from "nodemailer";
 import type { Transporter } from "nodemailer";
-import { generateProfilePdf, generateDiscPdf, type FullProfileData, type DiscPdfData } from "./pdf";
+import { generateProfilePdf, generateDiscPdf, generateEnneagramPdf, type FullProfileData, type DiscPdfData, type EnneagramPdfData, type EnneagramTypeInfoForPdf } from "./pdf";
 
 // ─── Transporter (cached) ────────────────────────────────────────────────────
 
@@ -858,4 +858,227 @@ export async function sendCandidateReassignedEmail({
     html: wrapHtml(body),
     text: `Hi ${managerName}, ${candidateName} has been reassigned to ${newManagerName} by ${reassignedBy}. View: ${link}`,
   });
+}
+
+// ─── Specialized: Enneagram Results ─────────────────────────────────────────
+
+interface EnneagramResultData {
+  full_name: string;
+  primary_type: number;
+  wing_type: number | null;
+  scores: Record<string, number> | Record<number, number>;
+  primaryInfo: EnneagramTypeInfoForPdf;
+  wingInfo: EnneagramTypeInfoForPdf | null;
+  results_email: string;
+  contact_number: string;
+  pdfBuffer?: Buffer;
+}
+
+function enneagramScoreBar(typeNum: number, name: string, score: number, maxScore: number, accent: string, isPrimary: boolean): string {
+  const pct = Math.round((score / Math.max(maxScore, 1)) * 100);
+  const color = isPrimary ? accent : "#a8a29e";
+  const labelColor = isPrimary ? accent : "#8A857D";
+  return `
+              <tr>
+                <td style="padding:6px 0;font-size:12px;color:${labelColor};font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;width:120px;vertical-align:middle;font-weight:${isPrimary ? 600 : 400};">
+                  ${typeNum} · ${esc(name)}
+                </td>
+                <td style="padding:6px 0;vertical-align:middle;">
+                  <div style="width:100%;height:8px;background-color:#F2F0ED;border-radius:4px;overflow:hidden;">
+                    <div style="width:${pct}%;height:8px;background-color:${color};border-radius:4px;"></div>
+                  </div>
+                </td>
+                <td style="padding:6px 0 6px 10px;font-size:12px;color:${labelColor};font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;width:32px;text-align:right;vertical-align:middle;font-weight:${isPrimary ? 600 : 400};">
+                  ${score}
+                </td>
+              </tr>`;
+}
+
+export async function sendEnneagramResultsEmail(result: EnneagramResultData) {
+  if (!NOTIFY_TO) {
+    console.warn("[email] Skipping Enneagram email — NOTIFY_EMAIL env var not set");
+    return;
+  }
+  if (!result.full_name) {
+    console.log("[email] Skipping Enneagram email — no candidate name");
+    return;
+  }
+
+  const accent = result.primaryInfo.color || "#f97316";
+  const bgTint = `${accent}0D`;
+  const borderTint = `${accent}33`;
+  const wingLabel = result.wing_type ? `${result.primary_type}w${result.wing_type}` : `Type ${result.primary_type}`;
+
+  console.log(`[email] Preparing Enneagram results email for ${result.full_name} (${wingLabel})`);
+
+  let pdfBuffer: Buffer | null = result.pdfBuffer || null;
+  if (!pdfBuffer) {
+    try {
+      pdfBuffer = await generateEnneagramPdf({
+        full_name: result.full_name,
+        primary_type: result.primary_type,
+        wing_type: result.wing_type,
+        scores: result.scores,
+        primaryInfo: result.primaryInfo,
+        wingInfo: result.wingInfo,
+      });
+      console.log(`[email] Enneagram PDF generated (${pdfBuffer.length} bytes)`);
+    } catch (err) {
+      console.error("[email] Enneagram PDF generation failed:", err);
+    }
+  }
+
+  const entries = Array.from({ length: 9 }, (_, i) => {
+    const t = i + 1;
+    const s = (result.scores as Record<string, number>)[String(t)] ?? 0;
+    return { type: t, score: s };
+  }).sort((a, b) => b.score - a.score);
+  const maxScore = Math.max(...entries.map((e) => e.score), 1);
+  const TYPE_NAMES_LOCAL: Record<number, string> = {
+    1: "Reformer", 2: "Helper", 3: "Achiever", 4: "Individualist",
+    5: "Investigator", 6: "Loyalist", 7: "Enthusiast", 8: "Challenger", 9: "Peacemaker",
+  };
+
+  const scoresTable = entries
+    .map((e) => enneagramScoreBar(e.type, TYPE_NAMES_LOCAL[e.type] || "", e.score, maxScore, accent, e.type === result.primary_type))
+    .join("");
+
+  const strengthsList = result.primaryInfo.strengths
+    .map((s) =>
+      `<tr><td style="padding:4px 0;vertical-align:top;width:16px;"><span style="display:inline-block;width:6px;height:6px;border-radius:3px;background-color:#34d399;margin-top:5px;"></span></td><td style="padding:4px 0;font-size:12px;color:#065f46;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;line-height:1.5;">${esc(s)}</td></tr>`
+    )
+    .join("");
+
+  const growthList = result.primaryInfo.growthEdges
+    .map((g) =>
+      `<tr><td style="padding:4px 0;vertical-align:top;width:16px;"><span style="display:inline-block;width:6px;height:6px;border-radius:3px;background-color:#fbbf24;margin-top:5px;"></span></td><td style="padding:4px 0;font-size:12px;color:#92400e;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;line-height:1.5;">${esc(g)}</td></tr>`
+    )
+    .join("");
+
+  const heroCard = `
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;">
+                <tr>
+                  <td style="padding:24px;background-color:${bgTint};border-radius:12px;border:1px solid ${borderTint};">
+                    <p style="margin:0 0 6px 0;font-size:22px;color:#2C2925;font-family:'Georgia','Times New Roman',serif;font-weight:normal;line-height:1.3;">
+                      ${esc(result.full_name)}
+                    </p>
+                    <table role="presentation" cellpadding="0" cellspacing="0" border="0">
+                      <tr>
+                        <td style="vertical-align:middle;padding-right:14px;">
+                          <div style="font-size:56px;font-weight:700;color:${accent};line-height:1;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">${result.primary_type}</div>
+                        </td>
+                        <td style="vertical-align:middle;">
+                          <div style="font-size:18px;color:${accent};font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;font-weight:700;">${esc(result.primaryInfo.name)}</div>
+                          <div style="font-size:12px;color:#A09B93;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;font-style:italic;margin-top:2px;">${esc(result.primaryInfo.epithet)}</div>
+                          ${result.wing_type ? `<div style="font-size:11px;color:${accent};font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;margin-top:4px;letter-spacing:0.3px;">${wingLabel} · with a ${esc(result.wingInfo?.name || "")} wing</div>` : ""}
+                        </td>
+                      </tr>
+                    </table>
+                    <p style="margin:14px 0 0 0;font-size:13px;color:#57534e;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;line-height:1.5;">
+                      ${esc(result.primaryInfo.summary)}
+                    </p>
+                  </td>
+                </tr>
+              </table>`;
+
+  const body = `
+              <p style="margin:0 0 6px 0;font-size:15px;color:#2C2925;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;font-weight:600;line-height:1.5;">
+                New personality assessment completed.
+              </p>
+              <p style="margin:0 0 28px 0;font-size:13px;color:#A09B93;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;font-weight:400;line-height:1.5;">
+                Enneagram profile results are ready for review.${pdfBuffer ? " Full report attached as PDF." : ""}
+              </p>
+
+              ${heroCard}
+
+              <p style="margin:28px 0 16px 0;font-size:11px;color:#A09B93;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;text-transform:uppercase;letter-spacing:1px;font-weight:600;">
+                Scores across all nine types
+              </p>
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;">
+                ${scoresTable}
+              </table>
+
+              ${result.contact_number ? `
+              <p style="margin:28px 0 4px 0;font-size:11px;color:#A09B93;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;text-transform:uppercase;letter-spacing:1px;font-weight:600;">Contact</p>
+              <p style="margin:0;font-size:13px;color:#2C2925;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">${esc(result.contact_number)}</p>
+              ` : ""}
+
+              ${pdfBuffer ? `
+              <p style="margin:24px 0 0 0;font-size:12px;color:#A09B93;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;text-align:center;font-style:italic;">
+                Full Enneagram personality profile report attached as PDF.
+              </p>
+              ` : ""}
+  `;
+
+  const attachments = pdfBuffer
+    ? [{
+        filename: `${result.full_name.replace(/\s+/g, "_")}_Enneagram_Profile.pdf`,
+        content: pdfBuffer,
+        contentType: "application/pdf",
+      }]
+    : undefined;
+
+  await sendEmail({
+    to: NOTIFY_TO,
+    bcc: NOTIFY_BCC,
+    subject: `Enneagram Result: ${result.full_name} — Type ${result.primary_type}${result.wing_type ? `w${result.wing_type}` : ""} (${result.primaryInfo.name})`,
+    html: wrapHtml(body),
+    text: `Enneagram quiz completed by ${result.full_name}. Type ${result.primary_type}${result.wing_type ? `w${result.wing_type}` : ""} — ${result.primaryInfo.name}.`,
+    attachments,
+  });
+
+  if (result.results_email) {
+    const candidateBody = `
+              <p style="margin:0 0 6px 0;font-size:15px;color:#2C2925;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;font-weight:600;line-height:1.5;">
+                Hi ${esc(result.full_name)}, here are your Enneagram results!
+              </p>
+              <p style="margin:0 0 28px 0;font-size:13px;color:#A09B93;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;font-weight:400;line-height:1.5;">
+                Thank you for completing the personality assessment.${pdfBuffer ? " Your full report is attached as a PDF." : ""}
+              </p>
+
+              ${heroCard}
+
+              <p style="margin:28px 0 16px 0;font-size:11px;color:#A09B93;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;text-transform:uppercase;letter-spacing:1px;font-weight:600;">
+                Your scores across all nine types
+              </p>
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;">
+                ${scoresTable}
+              </table>
+
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;margin-top:28px;">
+                <tr>
+                  <td width="48%" style="vertical-align:top;padding-right:8px;">
+                    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#ECFDF5;border-radius:10px;border:1px solid #D1FAE5;">
+                      <tr><td style="padding:14px 14px 10px 14px;">
+                        <p style="margin:0 0 8px 0;font-size:11px;color:#047857;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;text-transform:uppercase;letter-spacing:1px;font-weight:700;">At your best</p>
+                        <table role="presentation" cellpadding="0" cellspacing="0" border="0">${strengthsList}</table>
+                      </td></tr>
+                    </table>
+                  </td>
+                  <td width="48%" style="vertical-align:top;padding-left:8px;">
+                    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#FFFBEB;border-radius:10px;border:1px solid #FDE68A;">
+                      <tr><td style="padding:14px 14px 10px 14px;">
+                        <p style="margin:0 0 8px 0;font-size:11px;color:#b45309;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;text-transform:uppercase;letter-spacing:1px;font-weight:700;">Where you grow</p>
+                        <table role="presentation" cellpadding="0" cellspacing="0" border="0">${growthList}</table>
+                      </td></tr>
+                    </table>
+                  </td>
+                </tr>
+              </table>
+
+              ${pdfBuffer ? `
+              <p style="margin:24px 0 0 0;font-size:12px;color:#A09B93;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;text-align:center;font-style:italic;">
+                Full personality profile report attached as PDF.
+              </p>
+              ` : ""}
+    `;
+
+    await sendEmail({
+      to: result.results_email,
+      subject: `Your Enneagram Personality Profile — Type ${result.primary_type} ${result.primaryInfo.name}`,
+      html: wrapHtml(candidateBody),
+      text: `Hi ${result.full_name}, your Enneagram type is ${result.primary_type}${result.wing_type ? `w${result.wing_type}` : ""} — ${result.primaryInfo.name}.`,
+      attachments,
+    });
+  }
 }

@@ -69,6 +69,7 @@ function buildChain(finalData: unknown = null, finalError: unknown = null) {
     self[m] = vi.fn(() => self);
   }
   self.single = vi.fn(() => Promise.resolve({ data: finalData, error: finalError }));
+  self.maybeSingle = vi.fn(() => Promise.resolve({ data: finalData, error: finalError }));
   // insert/update/delete resolve directly
   self.insert = vi.fn(() => Promise.resolve({ data: finalData, error: finalError }));
   self.update = vi.fn(() => Object.assign(Promise.resolve({ data: finalData, error: finalError }), self));

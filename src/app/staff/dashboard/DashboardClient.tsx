@@ -87,24 +87,42 @@ export default function DashboardClient() {
       </div>
 
       <div className="grid gap-6 lg:grid-cols-2">
-        {/* DISC distribution */}
+        {/* Enneagram distribution */}
         <div className="rounded-2xl border border-stone-200 bg-white">
           <div className="border-b border-stone-100 px-5 py-4">
-            <h2 className="font-semibold text-stone-700">DISC Distribution</h2>
+            <h2 className="font-semibold text-stone-700">Enneagram Distribution</h2>
           </div>
           <div className="p-5">
-            {stats.discTypeDistribution.length === 0 ? (
+            {stats.enneagramTypeDistribution.length === 0 && stats.discTypeDistribution.length === 0 ? (
               <p className="text-sm text-stone-400">No assessments completed yet.</p>
             ) : (
-              <div className="flex flex-wrap gap-2">
-                {stats.discTypeDistribution.map((d) => (
-                  <Link key={d.type} href={`/staff/candidates?disc=${encodeURIComponent(d.type)}`}
-                    className="rounded-xl border border-purple-100 bg-purple-50 px-3 py-2 text-center transition-colors hover:border-purple-300 hover:bg-purple-100">
-                    <div className="text-lg font-bold text-purple-600">{d.type}</div>
-                    <div className="text-xs text-purple-400">{d.count}</div>
-                  </Link>
-                ))}
-              </div>
+              <>
+                {stats.enneagramTypeDistribution.length > 0 && (
+                  <div className="flex flex-wrap gap-2">
+                    {stats.enneagramTypeDistribution.map((d) => (
+                      <div key={d.type}
+                        className="rounded-xl border border-purple-100 bg-purple-50 px-3 py-2 text-center">
+                        <div className="text-lg font-bold text-purple-600">{d.type}</div>
+                        <div className="text-xs text-purple-400">{d.count}</div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+                {stats.discTypeDistribution.length > 0 && (
+                  <div className="mt-4 border-t border-stone-100 pt-4">
+                    <p className="mb-2 text-xs font-medium uppercase tracking-wider text-stone-400">Legacy DISC</p>
+                    <div className="flex flex-wrap gap-2">
+                      {stats.discTypeDistribution.map((d) => (
+                        <Link key={d.type} href={`/staff/candidates?disc=${encodeURIComponent(d.type)}`}
+                          className="rounded-xl border border-stone-200 bg-stone-50 px-3 py-2 text-center transition-colors hover:border-stone-300 hover:bg-stone-100">
+                          <div className="text-sm font-bold text-stone-600">{d.type}</div>
+                          <div className="text-xs text-stone-400">{d.count}</div>
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </>
             )}
           </div>
         </div>

@@ -95,7 +95,7 @@ export default function InviteClient() {
       <ProgressDisplay
         invitation={inv}
         liveState={inv.user_id ? liveStates[inv.user_id] : undefined}
-        onDownloadDiscPdf={handleDownloadPdf}
+        onDownloadQuizPdf={handleDownloadPdf}
       />
     );
   }

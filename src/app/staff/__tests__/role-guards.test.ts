@@ -67,6 +67,7 @@ vi.mock("@/lib/supabase/storage", () => ({
 vi.mock("@/lib/pdf", () => ({
   generateProfilePdf: vi.fn(() => Promise.resolve(Buffer.from("pdf"))),
   generateDiscPdf: vi.fn(() => Promise.resolve(Buffer.from("pdf"))),
+  generateEnneagramPdf: vi.fn(() => Promise.resolve(Buffer.from("pdf"))),
 }));
 
 vi.mock("@/app/candidate/disc-quiz/scoring", () => ({
@@ -112,12 +113,13 @@ function chainMock(resolvedData: unknown = null, error: unknown = null) {
       Promise.resolve(result).then(resolve, reject),
   };
   const methods = ["select", "eq", "in", "is", "not", "gt", "or", "order", "limit", "range",
-    "single", "insert", "update", "delete"];
+    "single", "maybeSingle", "insert", "update", "delete"];
   for (const m of methods) {
     chain[m] = vi.fn(() => Object.assign(thenable, chain));
   }
-  // single always returns a promise
+  // single / maybeSingle always return a promise
   chain.single = vi.fn(() => Promise.resolve(result));
+  chain.maybeSingle = vi.fn(() => Promise.resolve(result));
   return Object.assign(thenable, chain);
 }
 

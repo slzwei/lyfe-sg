@@ -936,6 +936,69 @@ export type Database = {
         }
         Relationships: []
       }
+      enneagram_responses: {
+        Row: {
+          created_at: string
+          id: string
+          responses: Json
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          responses?: Json
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          responses?: Json
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      enneagram_results: {
+        Row: {
+          created_at: string
+          duration_seconds: number | null
+          id: string
+          primary_type: number
+          results_email: string | null
+          scores: Json
+          total: number
+          updated_at: string
+          user_id: string
+          wing_type: number | null
+        }
+        Insert: {
+          created_at?: string
+          duration_seconds?: number | null
+          id?: string
+          primary_type: number
+          results_email?: string | null
+          scores: Json
+          total?: number
+          updated_at?: string
+          user_id: string
+          wing_type?: number | null
+        }
+        Update: {
+          created_at?: string
+          duration_seconds?: number | null
+          id?: string
+          primary_type?: number
+          results_email?: string | null
+          scores?: Json
+          total?: number
+          updated_at?: string
+          user_id?: string
+          wing_type?: number | null
+        }
+        Relationships: []
+      }
       event_attendees: {
         Row: {
           attendee_role: string
@@ -1327,6 +1390,7 @@ export type Database = {
           created_at: string
           disc_pdf_path: string | null
           email: string
+          enneagram_pdf_path: string | null
           expires_at: string
           id: string
           invited_by: string
@@ -1348,6 +1412,7 @@ export type Database = {
           created_at?: string
           disc_pdf_path?: string | null
           email: string
+          enneagram_pdf_path?: string | null
           expires_at?: string
           id?: string
           invited_by: string
@@ -1369,6 +1434,7 @@ export type Database = {
           created_at?: string
           disc_pdf_path?: string | null
           email?: string
+          enneagram_pdf_path?: string | null
           expires_at?: string
           id?: string
           invited_by?: string
@@ -2454,6 +2520,13 @@ export type Database = {
       delete_candidate: {
         Args: { p_invitation_id: string }
         Returns: undefined
+      }
+      fn_activate_agent: {
+        Args: { p_activated_by_user_id: string; p_candidate_id: string }
+        Returns: {
+          candidate_id: string
+          user_id: string
+        }[]
       }
       fn_all_papers_passed: { Args: { c: string }; Returns: boolean }
       get_enneagram_sampler_questions: {

@@ -81,7 +81,7 @@ export default function DocumentsSidebar({
           </form>
         )}
         {/* Generated PDFs */}
-        {(candidate.profile_pdf_path || candidate.disc_pdf_path) && (
+        {(candidate.profile_pdf_path || candidate.enneagram_pdf_path || candidate.disc_pdf_path) && (
           <div className="divide-y divide-stone-50 border-b border-stone-100">
             {candidate.profile_pdf_path && (
               <button
@@ -98,6 +98,23 @@ export default function DocumentsSidebar({
                 </svg>
               </button>
             )}
+            {candidate.enneagram_pdf_path && (
+              <button
+                type="button"
+                onClick={() => onDownloadPdf(candidate.enneagram_pdf_path!)}
+                className="flex w-full items-center justify-between px-5 py-3 text-left transition-colors hover:bg-stone-50"
+              >
+                <div>
+                  <div className="text-sm font-medium text-stone-700">Enneagram Profile</div>
+                  <div className="text-xs text-stone-400">
+                    Personality assessment PDF{candidate.enneagram_type ? ` · ${candidate.enneagram_type}` : ""}
+                  </div>
+                </div>
+                <svg className="h-4 w-4 text-stone-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                </svg>
+              </button>
+            )}
             {candidate.disc_pdf_path && (
               <button
                 type="button"
@@ -106,7 +123,7 @@ export default function DocumentsSidebar({
               >
                 <div>
                   <div className="text-sm font-medium text-stone-700">DISC Profile</div>
-                  <div className="text-xs text-stone-400">Personality assessment PDF</div>
+                  <div className="text-xs text-stone-400">Legacy personality PDF</div>
                 </div>
                 <svg className="h-4 w-4 text-stone-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
@@ -116,7 +133,7 @@ export default function DocumentsSidebar({
           </div>
         )}
         {/* Uploaded documents */}
-        {documents.length === 0 && !candidate.profile_pdf_path && !candidate.disc_pdf_path ? (
+        {documents.length === 0 && !candidate.profile_pdf_path && !candidate.enneagram_pdf_path && !candidate.disc_pdf_path ? (
           <div className="px-5 py-8 text-center text-sm text-stone-400">No documents.</div>
         ) : documents.length > 0 ? (
           <div className="divide-y divide-stone-50">

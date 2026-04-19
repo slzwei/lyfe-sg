@@ -21,7 +21,7 @@ export default async function OnboardingPage() {
 
   // If profile is completed, move to quiz
   if (profile?.completed) {
-    redirect("/candidate/disc-quiz");
+    redirect("/candidate/enneagram-quiz");
   }
 
   return (

@@ -194,7 +194,7 @@ export default function OnboardingForm({ userId, initialData, userEmail, userPho
         setErrors({ _form: result.error });
         setSubmitting(false);
       }
-      // On success, server action redirects to /candidate/disc-quiz
+      // On success, server action redirects to /candidate/enneagram-quiz
     }
   }
 

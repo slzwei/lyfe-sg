@@ -108,6 +108,8 @@ export async function updateSession(request: NextRequest) {
   // Protected routes — redirect to login if not authenticated OR not a candidate
   const protectedPaths = [
     "/candidate/onboarding",
+    "/candidate/enneagram-quiz",
+    "/candidate/enneagram-results",
     "/candidate/disc-quiz",
     "/candidate/disc-results",
   ];

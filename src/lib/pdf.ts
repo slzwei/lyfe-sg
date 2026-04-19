@@ -1228,3 +1228,329 @@ export async function generateDiscPdf(data: DiscPdfData): Promise<Buffer> {
     doc.end();
   });
 }
+
+// ─── Enneagram PDF ──────────────────────────────────────────────────────────
+
+export interface EnneagramTypeInfoForPdf {
+  num: string;
+  name: string;
+  epithet: string;
+  center: string;
+  triad: string;
+  summary: string;
+  longDesc: string;
+  strengths: string[];
+  growthEdges: string[];
+  careers: string;
+  relationships: string;
+  wings: Record<string, string>;
+  color: string;
+}
+
+export interface EnneagramPdfData {
+  full_name: string;
+  primary_type: number;
+  wing_type: number | null;
+  scores: Record<string, number> | Record<number, number>;
+  primaryInfo: EnneagramTypeInfoForPdf;
+  wingInfo: EnneagramTypeInfoForPdf | null;
+}
+
+export async function generateEnneagramPdf(data: EnneagramPdfData): Promise<Buffer> {
+  return new Promise((resolve, reject) => {
+    const doc = new PDFDocument({
+      size: "A4",
+      margins: { top: 40, bottom: 40, left: MARGIN, right: MARGIN },
+      info: {
+        Title: `Enneagram Profile - ${data.full_name}`,
+        Author: "Lyfe Candidate Portal",
+      },
+    });
+
+    const chunks: Uint8Array[] = [];
+    doc.on("data", (chunk: Uint8Array) => chunks.push(chunk));
+    doc.on("end", () => resolve(Buffer.concat(chunks)));
+    doc.on("error", reject);
+
+    const accent = data.primaryInfo.color || ORANGE;
+    let y = doc.y;
+
+    // ── Header ───────────────────────────────────────────────
+    doc.registerFont("Pacifico", PACIFICO_FONT);
+    const headerY = y;
+    doc.font("Pacifico").fontSize(22).fillColor(ORANGE).text("Lyfe", MARGIN, headerY);
+
+    const accentY = doc.y + 4;
+    doc
+      .moveTo(MARGIN, accentY)
+      .lineTo(MARGIN + 24, accentY)
+      .lineWidth(2)
+      .strokeColor(ORANGE)
+      .stroke();
+
+    doc
+      .font("Helvetica")
+      .fontSize(8)
+      .fillColor(MUTED)
+      .text("ENNEAGRAM PERSONALITY PROFILE", MARGIN, headerY + 8, {
+        width: CONTENT_W,
+        align: "right",
+        characterSpacing: 1.2,
+      });
+
+    y = accentY + 16;
+
+    // ── Hero: name, type number, name, wing ──────────────────
+    doc.font("Helvetica-Bold").fontSize(18).fillColor(DARK).text(data.full_name, MARGIN, y);
+    y = doc.y + 6;
+
+    const heroX = MARGIN;
+    const bigNumX = heroX;
+    const bigNumY = y;
+    doc
+      .font("Helvetica-Bold")
+      .fontSize(72)
+      .fillColor(accent)
+      .text(String(data.primary_type), bigNumX, bigNumY, { lineBreak: false });
+    const numWidth = doc.widthOfString(String(data.primary_type));
+
+    const rightX = bigNumX + numWidth + 14;
+    const rightW = CONTENT_W - numWidth - 14;
+    doc
+      .font("Helvetica-Bold")
+      .fontSize(16)
+      .fillColor(DARK)
+      .text(data.primaryInfo.name, rightX, bigNumY + 10, { width: rightW });
+
+    doc
+      .font("Helvetica-Oblique")
+      .fontSize(10)
+      .fillColor(MUTED)
+      .text(data.primaryInfo.epithet, rightX, doc.y + 2, { width: rightW });
+
+    if (data.wing_type && data.wingInfo) {
+      doc
+        .font("Helvetica")
+        .fontSize(9)
+        .fillColor(accent)
+        .text(
+          `Type ${data.primary_type}w${data.wing_type}  ·  with a ${data.wingInfo.name} wing`,
+          rightX,
+          doc.y + 4,
+          { width: rightW, characterSpacing: 0.4 }
+        );
+    }
+
+    y = Math.max(bigNumY + 80, doc.y) + 10;
+
+    // ── Center / Triad badges ────────────────────────────────
+    doc
+      .font("Helvetica")
+      .fontSize(8)
+      .fillColor(MUTED)
+      .text(
+        `CENTER · ${data.primaryInfo.center.toUpperCase()}    TRIAD · ${data.primaryInfo.triad.toUpperCase()}`,
+        MARGIN,
+        y,
+        { characterSpacing: 1 }
+      );
+    y = doc.y + 14;
+
+    // ── Summary bubble ────────────────────────────────────────
+    const bubblePad = 12;
+    doc.font("Helvetica").fontSize(9.5);
+    const summaryH = doc.heightOfString(data.primaryInfo.summary, {
+      width: CONTENT_W - bubblePad * 2,
+      lineGap: 2,
+    });
+    const bubbleH = summaryH + bubblePad * 2;
+    doc
+      .save()
+      .roundedRect(MARGIN, y, CONTENT_W, bubbleH, 6)
+      .fillColor(accent)
+      .opacity(0.06)
+      .fill()
+      .restore();
+    doc
+      .font("Helvetica")
+      .fontSize(9.5)
+      .fillColor(DARK)
+      .text(data.primaryInfo.summary, MARGIN + bubblePad, y + bubblePad, {
+        width: CONTENT_W - bubblePad * 2,
+        lineGap: 2,
+      });
+    y += bubbleH + 16;
+
+    // Helper: section heading
+    function sectionHeading(title: string) {
+      doc
+        .font("Helvetica-Bold")
+        .fontSize(9)
+        .fillColor(accent)
+        .text(title.toUpperCase(), MARGIN, y, { characterSpacing: 1.4 });
+      y = doc.y + 2;
+      doc
+        .moveTo(MARGIN, y)
+        .lineTo(MARGIN + CONTENT_W, y)
+        .lineWidth(0.5)
+        .strokeColor(LIGHT_LINE)
+        .stroke();
+      y += 8;
+    }
+
+    function ensureSpace(needed: number) {
+      if (y + needed > 760) {
+        doc.addPage();
+        y = 48;
+      }
+    }
+
+    // ── Long description ─────────────────────────────────────
+    sectionHeading(`What it is to be ${data.primaryInfo.name}`);
+    doc.font("Helvetica").fontSize(9.5).fillColor(DARK);
+    const longH = doc.heightOfString(data.primaryInfo.longDesc, { width: CONTENT_W, lineGap: 2 });
+    ensureSpace(longH);
+    doc.text(data.primaryInfo.longDesc, MARGIN, y, { width: CONTENT_W, lineGap: 2 });
+    y = doc.y + 16;
+
+    // ── Strengths & Growth edges (two cols) ──────────────────
+    ensureSpace(180);
+    const colGap = 12;
+    const colW = (CONTENT_W - colGap) / 2;
+    const strengthsX = MARGIN;
+    const growthX = MARGIN + colW + colGap;
+    const colTopY = y;
+
+    // Strengths
+    doc
+      .font("Helvetica-Bold")
+      .fontSize(9)
+      .fillColor("#059669")
+      .text("AT YOUR BEST", strengthsX, colTopY, { characterSpacing: 1.4, width: colW });
+    let sy = doc.y + 4;
+    for (const s of data.primaryInfo.strengths) {
+      doc.save().circle(strengthsX + 3, sy + 4, 1.8).fillColor("#10b981").fill().restore();
+      doc.font("Helvetica").fontSize(9).fillColor(DARK).text(s, strengthsX + 10, sy, { width: colW - 10, lineGap: 1 });
+      sy = doc.y + 3;
+    }
+
+    // Growth edges
+    doc
+      .font("Helvetica-Bold")
+      .fontSize(9)
+      .fillColor("#b45309")
+      .text("WHERE YOU GROW", growthX, colTopY, { characterSpacing: 1.4, width: colW });
+    let gy = doc.y + 4;
+    for (const g of data.primaryInfo.growthEdges) {
+      doc.save().circle(growthX + 3, gy + 4, 1.8).fillColor("#f59e0b").fill().restore();
+      doc.font("Helvetica").fontSize(9).fillColor(DARK).text(g, growthX + 10, gy, { width: colW - 10, lineGap: 1 });
+      gy = doc.y + 3;
+    }
+
+    y = Math.max(sy, gy) + 10;
+
+    // ── Scores across all nine ───────────────────────────────
+    ensureSpace(200);
+    sectionHeading("Your scores across all nine types");
+
+    const entries = Array.from({ length: 9 }, (_, i) => {
+      const t = (i + 1) as 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
+      const s = (data.scores as Record<string, number>)[String(t)] ?? 0;
+      return { type: t, score: s };
+    }).sort((a, b) => b.score - a.score);
+
+    const maxScore = Math.max(...entries.map((e) => e.score), 1);
+    const barStart = MARGIN + 90;
+    const barWidth = CONTENT_W - 140;
+
+    for (const e of entries) {
+      ensureSpace(18);
+      const isPrimary = e.type === data.primary_type;
+      doc
+        .font(isPrimary ? "Helvetica-Bold" : "Helvetica")
+        .fontSize(9)
+        .fillColor(isPrimary ? accent : MUTED)
+        .text(`Type ${e.type}`, MARGIN, y, { width: 80 });
+      // Bar
+      const w = (e.score / maxScore) * barWidth;
+      doc
+        .save()
+        .roundedRect(barStart, y + 2, barWidth, 8, 2)
+        .fillColor(LIGHT_LINE)
+        .fill()
+        .restore();
+      if (w > 0) {
+        doc
+          .save()
+          .roundedRect(barStart, y + 2, w, 8, 2)
+          .fillColor(isPrimary ? accent : "#a8a29e")
+          .fill()
+          .restore();
+      }
+      doc
+        .font(isPrimary ? "Helvetica-Bold" : "Helvetica")
+        .fontSize(9)
+        .fillColor(isPrimary ? accent : MUTED)
+        .text(String(e.score), barStart + barWidth + 8, y, { width: 30, align: "right" });
+      y += 16;
+    }
+    y += 10;
+
+    // ── Careers + Relationships ──────────────────────────────
+    ensureSpace(120);
+    sectionHeading("At work");
+    doc.font("Helvetica").fontSize(9.5).fillColor(DARK);
+    const careersH = doc.heightOfString(data.primaryInfo.careers, { width: CONTENT_W, lineGap: 2 });
+    ensureSpace(careersH + 16);
+    doc.text(data.primaryInfo.careers, MARGIN, y, { width: CONTENT_W, lineGap: 2 });
+    y = doc.y + 14;
+
+    sectionHeading("In relationships");
+    doc.font("Helvetica").fontSize(9.5).fillColor(DARK);
+    const relH = doc.heightOfString(data.primaryInfo.relationships, { width: CONTENT_W, lineGap: 2 });
+    ensureSpace(relH + 16);
+    doc.text(data.primaryInfo.relationships, MARGIN, y, { width: CONTENT_W, lineGap: 2 });
+    y = doc.y + 14;
+
+    // ── Wing note ────────────────────────────────────────────
+    if (data.wing_type && data.wingInfo) {
+      const wingKey = `w${data.wing_type}`;
+      const wingDesc = data.primaryInfo.wings[wingKey];
+      if (wingDesc) {
+        ensureSpace(80);
+        sectionHeading(`Your wing · ${data.primary_type}w${data.wing_type}`);
+        doc.font("Helvetica").fontSize(9.5).fillColor(DARK);
+        const text = `Your dominant type colors the room; your wing shades it. You lean on Type ${data.wing_type}, ${data.wingInfo.name} as a secondary source of energy and instinct. ${wingDesc}.`;
+        const h = doc.heightOfString(text, { width: CONTENT_W, lineGap: 2 });
+        ensureSpace(h + 10);
+        doc.text(text, MARGIN, y, { width: CONTENT_W, lineGap: 2 });
+        y = doc.y + 10;
+      }
+    }
+
+    // ── Footer ───────────────────────────────────────────────
+    if (y > 720) {
+      doc.addPage();
+      y = 48;
+    } else {
+      y = 780;
+    }
+    doc
+      .moveTo(MARGIN, y - 4)
+      .lineTo(MARGIN + CONTENT_W, y - 4)
+      .lineWidth(0.5)
+      .strokeColor(LIGHT_LINE)
+      .stroke();
+    doc
+      .fontSize(8)
+      .fillColor(MUTED)
+      .text(
+        "Lyfe Candidate Portal  ·  Enneagram Personality Profile  ·  Confidential",
+        MARGIN,
+        y,
+        { width: CONTENT_W, align: "center" }
+      );
+
+    doc.end();
+  });
+}

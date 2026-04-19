@@ -62,9 +62,14 @@ export interface CandidateDetail {
   assigned_manager_name?: string | null;
   disc_type?: string | null;
   disc_completed?: boolean;
+  enneagram_type?: string | null;
+  enneagram_primary?: number | null;
+  enneagram_wing?: number | null;
+  enneagram_completed?: boolean;
   profile_completed?: boolean;
   profile_pdf_path?: string | null;
   disc_pdf_path?: string | null;
+  enneagram_pdf_path?: string | null;
 }
 
 export interface Activity {
@@ -124,6 +129,7 @@ export interface SearchResult {
   status: string;
   position_applied: string | null;
   disc_type: string | null;
+  enneagram_type: string | null;
   created_at: string | null;
   // Progress fields for unified rendering
   user_id: string | null;
@@ -133,6 +139,7 @@ export interface SearchResult {
   quiz_completed: boolean;
   profile_pdf_path: string | null;
   disc_pdf_path: string | null;
+  enneagram_pdf_path: string | null;
   notes: string | null;
 }
 
@@ -184,7 +191,7 @@ export async function getCandidate(candidateId: string): Promise<{
       .eq("candidate_id", candidateId)
       .single(),
     admin.from("invitations")
-      .select("profile_pdf_path, disc_pdf_path")
+      .select("profile_pdf_path, disc_pdf_path, enneagram_pdf_path")
       .eq("candidate_record_id", candidateId)
       .single(),
     candidate.assigned_manager_id
@@ -192,14 +199,30 @@ export async function getCandidate(candidateId: string): Promise<{
       : Promise.resolve({ data: null }),
   ]);
 
-  // Get DISC type if profile is linked
+  // Get personality quiz results if profile is linked
   let discType: string | null = null;
   let discCompleted = false;
+  let enneagramType: string | null = null;
+  let enneagramPrimary: number | null = null;
+  let enneagramWing: number | null = null;
+  let enneagramCompleted = false;
   if (profileRes.data?.user_id) {
-    const { data: discResult } = await admin.from("disc_results")
-      .select("disc_type")
-      .eq("user_id", profileRes.data.user_id)
-      .single();
+    const [{ data: enneagramResult }, { data: discResult }] = await Promise.all([
+      admin.from("enneagram_results")
+        .select("primary_type, wing_type")
+        .eq("user_id", profileRes.data.user_id)
+        .maybeSingle(),
+      admin.from("disc_results")
+        .select("disc_type")
+        .eq("user_id", profileRes.data.user_id)
+        .maybeSingle(),
+    ]);
+    if (enneagramResult) {
+      enneagramPrimary = enneagramResult.primary_type;
+      enneagramWing = enneagramResult.wing_type;
+      enneagramType = `Type ${enneagramResult.primary_type}${enneagramResult.wing_type ? `w${enneagramResult.wing_type}` : ""}`;
+      enneagramCompleted = true;
+    }
     if (discResult) {
       discType = discResult.disc_type;
       discCompleted = true;
@@ -224,9 +247,14 @@ export async function getCandidate(candidateId: string): Promise<{
       assigned_manager_name: managerRes.data?.full_name || null,
       disc_type: discType,
       disc_completed: discCompleted,
+      enneagram_type: enneagramType,
+      enneagram_primary: enneagramPrimary,
+      enneagram_wing: enneagramWing,
+      enneagram_completed: enneagramCompleted,
       profile_completed: profileRes.data?.completed || false,
       profile_pdf_path: invitationRes.data?.profile_pdf_path || null,
       disc_pdf_path: invitationRes.data?.disc_pdf_path || null,
+      enneagram_pdf_path: invitationRes.data?.enneagram_pdf_path || null,
     },
     profile: profileRes.data ? {
       full_name: profileRes.data.full_name,
@@ -429,7 +457,7 @@ export async function searchCandidates(params: {
       .select("candidate_id, user_id, position_applied, completed, onboarding_step")
       .in("candidate_id", candidateIds),
     admin.from("invitations")
-      .select("candidate_record_id, profile_pdf_path, disc_pdf_path")
+      .select("candidate_record_id, profile_pdf_path, disc_pdf_path, enneagram_pdf_path")
       .in("candidate_record_id", candidateIds),
   ]);
 
@@ -444,36 +472,64 @@ export async function searchCandidates(params: {
   }
 
   // PDF paths from invitations
-  const pdfMap = new Map<string, { profile: string | null; disc: string | null }>();
+  const pdfMap = new Map<string, { profile: string | null; disc: string | null; enneagram: string | null }>();
   for (const inv of invPdfRes.data || []) {
     if (inv.candidate_record_id) {
-      pdfMap.set(inv.candidate_record_id, { profile: inv.profile_pdf_path, disc: inv.disc_pdf_path });
+      pdfMap.set(inv.candidate_record_id, {
+        profile: inv.profile_pdf_path,
+        disc: inv.disc_pdf_path,
+        enneagram: inv.enneagram_pdf_path,
+      });
     }
   }
 
-  // DISC types + quiz progress via profiles → results/responses
+  // Personality quiz types + quiz progress via profiles → results/responses
   const discMap = new Map<string, string>();
+  const enneagramMap = new Map<string, string>();
   const quizAnsweredMap = new Map<string, number>();
+  const quizCompletedMap = new Map<string, boolean>();
   const userIds = profiles.map((p) => p.user_id).filter(Boolean);
   if (userIds.length > 0) {
-    const [discRes, responsesRes] = await Promise.all([
+    const [enneResultsRes, discResultsRes, enneResponsesRes, discResponsesRes] = await Promise.all([
+      admin.from("enneagram_results").select("user_id, primary_type, wing_type").in("user_id", userIds),
       admin.from("disc_results").select("user_id, disc_type").in("user_id", userIds),
+      admin.from("enneagram_responses").select("user_id, responses").in("user_id", userIds),
       admin.from("disc_responses").select("user_id, responses").in("user_id", userIds),
     ]);
-    if (discRes.data) {
-      const userToDisc = new Map(discRes.data.map((r) => [r.user_id, r.disc_type]));
-      for (const p of profiles) {
-        const dt = userToDisc.get(p.user_id);
-        if (dt && p.candidate_id) discMap.set(p.candidate_id, dt);
-      }
+
+    const userToEnne = new Map(
+      (enneResultsRes.data || []).map((r) => [
+        r.user_id,
+        `Type ${r.primary_type}${r.wing_type ? `w${r.wing_type}` : ""}`,
+      ]),
+    );
+    const userToDisc = new Map((discResultsRes.data || []).map((r) => [r.user_id, r.disc_type]));
+
+    for (const p of profiles) {
+      if (!p.candidate_id) continue;
+      const et = userToEnne.get(p.user_id);
+      const dt = userToDisc.get(p.user_id);
+      if (et) enneagramMap.set(p.candidate_id, et);
+      if (dt) discMap.set(p.candidate_id, dt);
+      if (et || dt) quizCompletedMap.set(p.candidate_id, true);
     }
-    if (responsesRes.data) {
-      for (const r of responsesRes.data) {
-        const count = r.responses ? Object.keys(r.responses).length : 0;
-        // Map user_id back to candidate_id
-        const profile = profiles.find((p) => p.user_id === r.user_id);
-        if (profile?.candidate_id) quizAnsweredMap.set(profile.candidate_id, count);
-      }
+
+    const userToEnneAnswered = new Map<string, number>();
+    for (const r of enneResponsesRes.data || []) {
+      const count = r.responses ? Object.keys(r.responses as Record<string, unknown>).length : 0;
+      userToEnneAnswered.set(r.user_id, count);
+    }
+    const userToDiscAnswered = new Map<string, number>();
+    for (const r of discResponsesRes.data || []) {
+      const count = r.responses ? Object.keys(r.responses as Record<string, unknown>).length : 0;
+      userToDiscAnswered.set(r.user_id, count);
+    }
+
+    for (const p of profiles) {
+      if (!p.candidate_id) continue;
+      const ec = userToEnneAnswered.get(p.user_id);
+      const dc = userToDiscAnswered.get(p.user_id);
+      quizAnsweredMap.set(p.candidate_id, ec ?? dc ?? 0);
     }
   }
 
@@ -481,7 +537,6 @@ export async function searchCandidates(params: {
   let enriched: SearchResult[] = candidates.map((c) => {
     const prof = profileMap.get(c.id);
     const pdfs = pdfMap.get(c.id);
-    const hasDisc = discMap.has(c.id);
     return {
       id: c.id,
       name: c.name,
@@ -490,14 +545,16 @@ export async function searchCandidates(params: {
       status: c.status,
       position_applied: positionMap.get(c.id) || null,
       disc_type: discMap.get(c.id) || null,
+      enneagram_type: enneagramMap.get(c.id) || null,
       created_at: c.created_at,
       user_id: prof?.user_id || null,
       profile_completed: prof?.completed || false,
       onboarding_step: prof?.onboarding_step || 0,
       quiz_answered: quizAnsweredMap.get(c.id) || 0,
-      quiz_completed: hasDisc,
+      quiz_completed: quizCompletedMap.get(c.id) || false,
       profile_pdf_path: pdfs?.profile || null,
       disc_pdf_path: pdfs?.disc || null,
+      enneagram_pdf_path: pdfs?.enneagram || null,
       notes: c.notes,
     };
   });
@@ -973,6 +1030,7 @@ export async function deleteCandidateById(candidateId: string): Promise<{
       deletePdfFiles([
         `${profile.user_id}/application.pdf`,
         `${profile.user_id}/disc-profile.pdf`,
+        `${profile.user_id}/enneagram-profile.pdf`,
       ])
     );
   }
@@ -1006,6 +1064,8 @@ export async function deleteCandidateById(candidateId: string): Promise<{
 
   // Delete related records with NO ACTION FK constraints
   if (profile?.user_id) {
+    await admin.from("enneagram_results").delete().eq("user_id", profile.user_id);
+    await admin.from("enneagram_responses").delete().eq("user_id", profile.user_id);
     await admin.from("disc_results").delete().eq("user_id", profile.user_id);
     await admin.from("disc_responses").delete().eq("user_id", profile.user_id);
     await admin.from("candidate_profiles").delete().eq("candidate_id", candidateId);

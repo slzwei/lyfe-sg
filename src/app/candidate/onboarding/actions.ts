@@ -230,7 +230,7 @@ export async function saveProfile(formData: Record<string, unknown>) {
     }
   });
 
-  redirect("/candidate/disc-quiz");
+  redirect("/candidate/enneagram-quiz");
 }
 
 export async function saveDraft(formData: Record<string, unknown>, currentStep?: number) {

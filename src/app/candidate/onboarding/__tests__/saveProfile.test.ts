@@ -184,7 +184,7 @@ describe("saveProfile", () => {
     await expect(saveProfile(validFormData())).rejects.toThrow("NEXT_REDIRECT");
 
     expect(mockUpsert).toHaveBeenCalled();
-    expect(redirect).toHaveBeenCalledWith("/candidate/disc-quiz");
+    expect(redirect).toHaveBeenCalledWith("/candidate/enneagram-quiz");
   });
 
   it("returns DB error without redirecting when upsert fails", async () => {

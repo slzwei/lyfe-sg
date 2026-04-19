@@ -163,8 +163,13 @@ export default function CandidateDetailClient({ candidateId }: { candidateId: st
               </svg>
             </Link>
             <h1 className="truncate text-xl font-bold text-stone-800 sm:text-2xl">{candidate.name}</h1>
-            {candidate.disc_type && (
+            {candidate.enneagram_type && (
               <span className="shrink-0 rounded bg-purple-50 px-2 py-0.5 text-sm font-semibold text-purple-600">
+                {candidate.enneagram_type}
+              </span>
+            )}
+            {!candidate.enneagram_type && candidate.disc_type && (
+              <span className="shrink-0 rounded bg-stone-100 px-2 py-0.5 text-sm font-semibold text-stone-600">
                 {candidate.disc_type}
               </span>
             )}

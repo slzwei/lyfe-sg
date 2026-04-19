@@ -79,8 +79,10 @@ export function UserDialog({ open, onOpenChange, user, allUsers }: UserDialogPro
     }
   };
 
-  // Exclude the current user from the reports_to options
-  const reportOptions = allUsers.filter((u) => u.id !== user?.id);
+  // Only managers and directors can be uplines — admins, PAs, agents, candidates cannot hold downlines.
+  const reportOptions = allUsers.filter(
+    (u) => u.id !== user?.id && (u.role === 'manager' || u.role === 'director'),
+  );
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>

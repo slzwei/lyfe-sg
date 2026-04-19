@@ -6,6 +6,7 @@ import { getAdminClient } from "@/lib/supabase/admin";
 import { sendCandidateAssignedEmail } from "@/lib/email";
 import { redirect } from "next/navigation";
 import { checkRateLimitAsync } from "@/lib/rate-limit";
+import { resolveAssignedManagerId } from "@/lib/invitations/resolve-manager";
 
 // ── Validate invite token (used by acceptInvite internally) ─────────────────
 
@@ -210,6 +211,16 @@ export async function acceptInvite(token: string): Promise<{
       createdByRecovery = fb?.id ?? null;
     }
     if (createdByRecovery) {
+      const resolvedRecovery = await resolveAssignedManagerId(
+        admin,
+        invitation.invited_by_user_id,
+        invitation.assigned_manager_id
+      );
+      if (!resolvedRecovery.ok) {
+        console.error("[acceptInvite] recovery: manager resolution failed:", resolvedRecovery.error);
+        return { success: false, error: resolvedRecovery.error };
+      }
+
       // Find or create candidates row
       let candidateId = invitation.candidate_record_id;
       if (!candidateId) {
@@ -218,7 +229,7 @@ export async function acceptInvite(token: string): Promise<{
           phone: null,
           email: invitation.email,
           status: "applied",
-          assigned_manager_id: invitation.assigned_manager_id || createdByRecovery,
+          assigned_manager_id: resolvedRecovery.managerId,
           created_by_id: createdByRecovery,
         }).select("id").single();
         if (cr) {
@@ -286,6 +297,16 @@ export async function acceptInvite(token: string): Promise<{
     return { success: false, error: "Account setup failed. Please contact us." };
   }
 
+  const resolvedManager = await resolveAssignedManagerId(
+    admin,
+    invitation.invited_by_user_id,
+    invitation.assigned_manager_id
+  );
+  if (!resolvedManager.ok) {
+    console.error("[acceptInvite] manager resolution failed:", resolvedManager.error);
+    return { success: false, error: resolvedManager.error };
+  }
+
   const candidateName = invitation.candidate_name || invitation.email || "Unknown";
   const now = new Date().toISOString();
 
@@ -308,7 +329,7 @@ export async function acceptInvite(token: string): Promise<{
     job_id: invitation.job_id || null,
     current_stage_id: stageId,
     stage_entered_at: stageId ? now : null,
-    assigned_manager_id: invitation.assigned_manager_id || createdBy,
+    assigned_manager_id: resolvedManager.managerId,
     created_by_id: createdBy,
   }).select("id").single();
 
@@ -344,7 +365,7 @@ export async function acceptInvite(token: string): Promise<{
   }
 
   // Non-critical: notify manager + bridge files (fire-and-forget)
-  const managerId = invitation.assigned_manager_id || createdBy;
+  const managerId = resolvedManager.managerId;
   const { data: manager } = await admin.from("users")
     .select("full_name, email")
     .eq("id", managerId)

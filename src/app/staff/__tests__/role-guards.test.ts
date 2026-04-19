@@ -462,6 +462,21 @@ describe("Guarded destructive actions", () => {
       const result = await deleteCandidate("inv-1");
       expect(result.success).toBe(true);
     });
+
+    it("succeeds for PA deleting a completed application (profile + quiz done)", async () => {
+      mockAuthUser("pa");
+      mockAdminRpc.mockResolvedValue({ error: null });
+      setupAdminFrom({
+        users: { data: { id: "pa-1", full_name: "PA User", email: "pa@a.com", role: "pa" } },
+        invitations: { data: { user_id: "user-done", status: "accepted" } },
+        enneagram_results: { data: { id: "enn-1" } },
+        disc_results: { data: { id: "disc-1" } },
+        candidate_profiles: { data: { completed: true } },
+      });
+      const result = await deleteCandidate("inv-1");
+      expect(result.success).toBe(true);
+      expect(result.error).toBeUndefined();
+    });
   });
 });
 

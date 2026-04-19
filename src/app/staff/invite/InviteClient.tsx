@@ -79,7 +79,7 @@ export default function InviteClient() {
   // ─── Hooks ──────────────────────────────────────────────────────────────────
 
   const inviteForm = useInviteForm({ onRefresh: fetchInvitations });
-  const inviteActions = useInviteActions({ onRefresh: fetchInvitations, staffRole });
+  const inviteActions = useInviteActions({ onRefresh: fetchInvitations });
 
   // ─── Helpers ────────────────────────────────────────────────────────────────
 

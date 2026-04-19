@@ -481,10 +481,11 @@ describe("Guarded destructive actions", () => {
 });
 
 describe("Non-destructive actions accessible to PA", () => {
-  it("sendInvite works for PA", async () => {
+  it("sendInvite works for PA with manager assignment", async () => {
     mockAuthUser("pa");
     mockAdminFrom.mockImplementation((table: string) => {
-      if (table === "users") return chainMock({ id: "pa-1", full_name: "PA User", email: "pa@test.com", role: "pa" });
+      if (table === "users") return chainMock({ id: "pa-1", full_name: "PA User", email: "pa@test.com", role: "pa", is_active: true });
+      if (table === "pa_manager_assignments") return chainMock({ manager_id: "mgr-assigned" });
       if (table === "invitations") {
         const c = chainMock();
         // Duplicate check returns empty
@@ -502,6 +503,25 @@ describe("Non-destructive actions accessible to PA", () => {
     });
     const result = await sendInvite({ email: "candidate@test.com" });
     expect(result.success).toBe(true);
+  });
+
+  it("sendInvite fails for PA without a manager assignment", async () => {
+    mockAuthUser("pa");
+    mockAdminFrom.mockImplementation((table: string) => {
+      if (table === "users") return chainMock({ id: "pa-unassigned", full_name: "PA", email: "pa@test.com", role: "pa", is_active: true });
+      if (table === "pa_manager_assignments") return chainMock(null); // no assignment
+      if (table === "invitations") {
+        const c = chainMock();
+        (c.limit as ReturnType<typeof vi.fn>).mockImplementation(() =>
+          Object.assign(Promise.resolve({ data: [], error: null }), c)
+        );
+        return c;
+      }
+      return chainMock();
+    });
+    const result = await sendInvite({ email: "candidate@test.com" });
+    expect(result.success).toBe(false);
+    expect(result.error).toContain("not assigned to a manager");
   });
 
   it("listInvitations works for PA", async () => {

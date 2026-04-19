@@ -7,6 +7,7 @@ import { sendInvitationEmail } from "@/lib/email";
 import { deleteResumeFiles } from "@/lib/supabase/storage";
 import { checkRateLimitAsync } from "@/lib/rate-limit";
 import { requireStaff } from "./auth";
+import { resolveAssignedManagerId } from "@/lib/invitations/resolve-manager";
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 
@@ -92,6 +93,15 @@ export async function sendInvite(data: {
     return { success: false, error: "An invitation for this email already exists." };
   }
 
+  const resolved = await resolveAssignedManagerId(
+    adminClient,
+    staff.id !== "legacy" ? staff.id : null,
+    data.assignedManagerId ?? null
+  );
+  if (!resolved.ok) {
+    return { success: false, error: resolved.error };
+  }
+
   const token = randomBytes(32).toString("base64url");
 
   const { data: inserted, error } = await adminClient.from("invitations").insert({
@@ -102,7 +112,7 @@ export async function sendInvite(data: {
     invited_by: staff.full_name,
     invited_by_user_id: staff.id !== "legacy" ? staff.id : null,
     job_id: data.jobId || null,
-    assigned_manager_id: data.assignedManagerId || null,
+    assigned_manager_id: resolved.managerId,
   }).select("id").single();
 
   if (error || !inserted) {

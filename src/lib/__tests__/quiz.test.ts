@@ -8,6 +8,12 @@ import {
   getQuizList,
   getClientQuiz,
   gradeQuizAnswers,
+  parseChapter,
+  getChaptersForModule,
+  getTutorialQuestions,
+  isValidChapterKey,
+  findTutorialItem,
+  UNCATEGORISED_KEY,
 } from "@/lib/quiz";
 
 describe("quiz module registry", () => {
@@ -205,5 +211,162 @@ describe("shared passage grouping", () => {
     expect(passageQs.length).toBe(6);
     expect(passageQs[0].question_number).toBe(117);
     expect(passageQs[5].question_number).toBe(122);
+  });
+});
+
+describe("parseChapter", () => {
+  it.each([
+    ["C9", "9"],
+    ["C14", "14"],
+    ["C14/8.15(ii)", "14"],
+    ["C23/2.5", "23"],
+    ["C3/5.3", "3"],
+    ["C27", "27"],
+    ["C1/10.42", "1"],
+  ])("parses %s to %s", (ref, expected) => {
+    expect(parseChapter(ref)).toBe(expected);
+  });
+
+  it.each([
+    [""],
+    ["   "],
+    [null],
+    [undefined],
+    ["C.14/8.15(ii)"], // leading dot — not a valid chapter pattern, should be normalised upstream
+    ["4/3.3"], // missing C prefix — should be normalised upstream
+    ["Chapter 9"],
+    ["random"],
+  ])("returns uncat for %o", (ref) => {
+    expect(parseChapter(ref as string | null | undefined)).toBe(
+      UNCATEGORISED_KEY
+    );
+  });
+});
+
+describe("getChaptersForModule", () => {
+  it.each(MODULE_IDS)("%s returns metas that sum to the module's pool", (id) => {
+    const mod = getModuleDef(id);
+    const chapters = getChaptersForModule(id);
+    const expectedTotal = mod.questionCount * mod.quizIds.length;
+    const sum = chapters.reduce((s, c) => s + c.questionCount, 0);
+    expect(sum).toBe(expectedTotal);
+  });
+
+  it("pins Uncategorised last", () => {
+    for (const id of MODULE_IDS) {
+      const chapters = getChaptersForModule(id);
+      const uncatIdx = chapters.findIndex((c) => c.key === UNCATEGORISED_KEY);
+      if (uncatIdx !== -1) {
+        expect(uncatIdx).toBe(chapters.length - 1);
+      }
+    }
+  });
+
+  it("sorts numeric chapters ascending", () => {
+    const chapters = getChaptersForModule("m9").filter(
+      (c) => c.key !== UNCATEGORISED_KEY
+    );
+    const nums = chapters.map((c) => Number(c.key));
+    const sorted = [...nums].sort((a, b) => a - b);
+    expect(nums).toEqual(sorted);
+  });
+
+  it("m9a has chapters 1-6 only, no Uncategorised", () => {
+    const chapters = getChaptersForModule("m9a");
+    expect(chapters.map((c) => c.key)).toEqual(["1", "2", "3", "4", "5", "6"]);
+  });
+
+  it("hi has only Uncategorised (references not yet backfilled)", () => {
+    const chapters = getChaptersForModule("hi");
+    expect(chapters).toHaveLength(1);
+    expect(chapters[0].key).toBe(UNCATEGORISED_KEY);
+    expect(chapters[0].questionCount).toBe(200);
+  });
+
+  it("m9 Uncategorised holds exactly the 5 known unlabelled questions", () => {
+    const chapters = getChaptersForModule("m9");
+    const uncat = chapters.find((c) => c.key === UNCATEGORISED_KEY);
+    expect(uncat).toBeDefined();
+    expect(uncat!.questionCount).toBe(5);
+  });
+
+  it("labels are human-readable", () => {
+    const chapters = getChaptersForModule("m9");
+    for (const c of chapters) {
+      if (c.key === UNCATEGORISED_KEY) {
+        expect(c.label).toBe("Uncategorised");
+      } else {
+        expect(c.label).toBe(`Chapter ${c.key}`);
+      }
+    }
+  });
+});
+
+describe("getTutorialQuestions", () => {
+  it("returns items with correct answers embedded", () => {
+    const items = getTutorialQuestions("m9", "9");
+    expect(items.length).toBeGreaterThan(0);
+    for (const item of items) {
+      expect(item.correct_answer_letter).toMatch(/^[A-E]$/);
+      expect(item.correct_answer).toBeTruthy();
+      expect(item.question_key).toMatch(/^[a-z0-9-]+:\d+$/);
+    }
+  });
+
+  it("keeps shared-passage groups contiguous", () => {
+    const items = getTutorialQuestions("res5", "23");
+    // RES5 Mock 2 Q117-122 all share a passage and all belong to C23.
+    const passageItems = items.filter(
+      (i) => i.shared_passage && i.quiz_id === "mock-2"
+    );
+    expect(passageItems.length).toBe(6);
+    const nums = passageItems.map((i) => i.question_number);
+    expect(nums).toEqual([117, 118, 119, 120, 121, 122]);
+  });
+
+  it("shared-passage group with mixed labelling inherits the labelled chapter", () => {
+    // M9 SetA Q96 (C9), Q97 (backfilled C9), Q98 (backfilled C9) share a passage.
+    const items = getTutorialQuestions("m9", "9");
+    const setaPassageQs = items
+      .filter((i) => i.quiz_id === "set-a" && i.shared_passage)
+      .map((i) => i.question_number);
+    expect(setaPassageQs).toEqual([96, 97, 98]);
+  });
+
+  it("returns empty array for unknown chapter", () => {
+    expect(getTutorialQuestions("m9", "999")).toEqual([]);
+  });
+
+  it("returns empty array for unknown module + chapter combo", () => {
+    // @ts-expect-error intentionally passing wrong module id to test robustness
+    expect(getTutorialQuestions("fake", "1")).toEqual([]);
+  });
+});
+
+describe("isValidChapterKey", () => {
+  it("accepts known chapter keys", () => {
+    expect(isValidChapterKey("m9", "9")).toBe(true);
+    expect(isValidChapterKey("m9a", "1")).toBe(true);
+    expect(isValidChapterKey("hi", UNCATEGORISED_KEY)).toBe(true);
+  });
+
+  it("rejects unknown chapter keys", () => {
+    expect(isValidChapterKey("m9", "999")).toBe(false);
+    expect(isValidChapterKey("m9a", "99")).toBe(false);
+    expect(isValidChapterKey("m9", "")).toBe(false);
+  });
+});
+
+describe("findTutorialItem", () => {
+  it("finds a known question by key", () => {
+    const item = findTutorialItem("m9", "set-a:96");
+    expect(item).toBeTruthy();
+    expect(item!.question_number).toBe(96);
+    expect(item!.quiz_id).toBe("set-a");
+  });
+
+  it("returns null for unknown key", () => {
+    expect(findTutorialItem("m9", "set-a:9999")).toBeNull();
+    expect(findTutorialItem("m9", "bogus:1")).toBeNull();
   });
 });

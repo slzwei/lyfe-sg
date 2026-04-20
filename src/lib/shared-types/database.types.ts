@@ -936,6 +936,39 @@ export type Database = {
         }
         Relationships: []
       }
+      emock_tutorial_progress: {
+        Row: {
+          answered_at: string
+          chapter_key: string
+          id: string
+          is_correct: boolean
+          module_id: string
+          question_key: string
+          selected_letter: string
+          user_id: string
+        }
+        Insert: {
+          answered_at?: string
+          chapter_key: string
+          id?: string
+          is_correct: boolean
+          module_id: string
+          question_key: string
+          selected_letter: string
+          user_id: string
+        }
+        Update: {
+          answered_at?: string
+          chapter_key?: string
+          id?: string
+          is_correct?: boolean
+          module_id?: string
+          question_key?: string
+          selected_letter?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       enneagram_responses: {
         Row: {
           created_at: string

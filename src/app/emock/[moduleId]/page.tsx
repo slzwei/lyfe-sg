@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { isValidModuleId, getModuleDef, getQuizList } from "@/lib/quiz";
 import { getAttempts, getInProgressQuizIds } from "../actions";
+import ModeTabs from "./ModeTabs";
 
 function formatDuration(seconds: number): string {
   const m = Math.floor(seconds / 60);
@@ -54,10 +55,12 @@ export default async function ModuleQuizPage({
       <h1 className="text-2xl font-bold text-stone-900 mb-1">
         {mod.code}: {mod.title}
       </h1>
-      <p className="text-stone-500 mb-8">
+      <p className="text-stone-500 mb-6">
         {mod.questionCount} MCQs per quiz &middot; {mod.duration} minutes
         &middot; {mod.passingGrade}
       </p>
+
+      <ModeTabs moduleId={moduleId} active="exam" />
 
       <div className="space-y-3">
         {quizzes.map((q) => {

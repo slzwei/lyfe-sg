@@ -895,7 +895,7 @@
     {
       "question_number": 69,
       "question": "Mary would like to purchase a life insurance policy with the following features: It covers her for life; It has a Total and Permanent Disability (TPD) benefit attached as part of the basic policy; and It provides her with bonuses in addition to the sum assured. Which one of the following life insurance policies should Mary purchase?",
-      "reference": "4/3.3 (last bullet Pt)",
+      "reference": "C4/3.3",
       "options": [
         "Term Insurance",
         "Universal Life Insurance",

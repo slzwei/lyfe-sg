@@ -327,3 +327,172 @@ export function gradeQuizAnswers(
     ...(parts ? { parts } : {}),
   };
 }
+
+// ── Tutorial mode: chapter-organised question pool ──
+
+export const UNCATEGORISED_KEY = "uncat";
+export type ChapterKey = string; // numeric string like "9" or UNCATEGORISED_KEY
+
+export interface ChapterMeta {
+  key: ChapterKey;
+  label: string;
+  questionCount: number;
+}
+
+export interface TutorialItem {
+  question_key: string; // "{quizId}:{question_number}" — stable across sessions
+  quiz_id: string;
+  question_number: number;
+  question: string;
+  reference: string;
+  options: string[];
+  correct_answer_letter: string;
+  correct_answer: string;
+  shared_passage?: string;
+}
+
+/** Extract chapter key from a reference string. Empty or malformed → UNCATEGORISED_KEY. */
+export function parseChapter(reference: string | null | undefined): ChapterKey {
+  const ref = (reference ?? "").trim();
+  if (!ref) return UNCATEGORISED_KEY;
+  const m = /^C(\d+)/.exec(ref);
+  return m ? m[1] : UNCATEGORISED_KEY;
+}
+
+function chapterLabel(key: ChapterKey): string {
+  return key === UNCATEGORISED_KEY ? "Uncategorised" : `Chapter ${key}`;
+}
+
+function toTutorialItem(quizId: string, q: QuizQuestion): TutorialItem {
+  return {
+    question_key: `${quizId}:${q.question_number}`,
+    quiz_id: quizId,
+    question_number: q.question_number,
+    question: q.question,
+    reference: q.reference,
+    options: q.options,
+    correct_answer_letter: q.correct_answer_letter,
+    correct_answer: q.correct_answer,
+    ...(q.shared_passage ? { shared_passage: q.shared_passage } : {}),
+  };
+}
+
+/**
+ * Bucket every question in every quiz of a module by chapter.
+ *
+ * Shared-passage invariant: a consecutive run of questions sharing the same
+ * passage within a quiz is treated as one unit. The unit's chapter is taken
+ * from the first labelled question in the run; if none is labelled, the whole
+ * run goes to UNCATEGORISED_KEY. This guarantees a passage is never split
+ * across chapters in tutorial mode.
+ */
+function bucketize(moduleId: ModuleId): Map<ChapterKey, TutorialItem[]> {
+  const buckets = new Map<ChapterKey, TutorialItem[]>();
+  const mod = MODULE_DEFS[moduleId];
+  if (!mod) return buckets;
+
+  const push = (key: ChapterKey, item: TutorialItem) => {
+    const arr = buckets.get(key);
+    if (arr) arr.push(item);
+    else buckets.set(key, [item]);
+  };
+
+  for (const quizId of mod.quizIds) {
+    const quiz = QUIZ_DATA[`${moduleId}/${quizId}`];
+    if (!quiz) continue;
+    const qs = quiz.questions;
+    let i = 0;
+    while (i < qs.length) {
+      const first = qs[i];
+      if (first.shared_passage) {
+        const passage = first.shared_passage;
+        const group: QuizQuestion[] = [];
+        while (i < qs.length && qs[i].shared_passage === passage) {
+          group.push(qs[i]);
+          i++;
+        }
+        const labelled = group.find(
+          (q) => parseChapter(q.reference) !== UNCATEGORISED_KEY
+        );
+        const chapter = labelled
+          ? parseChapter(labelled.reference)
+          : UNCATEGORISED_KEY;
+        for (const gq of group) push(chapter, toTutorialItem(quizId, gq));
+      } else {
+        push(parseChapter(first.reference), toTutorialItem(quizId, first));
+        i++;
+      }
+    }
+  }
+  return buckets;
+}
+
+const bucketsCache = new Map<ModuleId, Map<ChapterKey, TutorialItem[]>>();
+function getBuckets(moduleId: ModuleId): Map<ChapterKey, TutorialItem[]> {
+  const cached = bucketsCache.get(moduleId);
+  if (cached) return cached;
+  const fresh = bucketize(moduleId);
+  bucketsCache.set(moduleId, fresh);
+  return fresh;
+}
+
+/** List chapters for a module's tutorial, sorted numeric asc with Uncategorised last. */
+export function getChaptersForModule(moduleId: ModuleId): ChapterMeta[] {
+  const buckets = getBuckets(moduleId);
+  const metas: ChapterMeta[] = [];
+  for (const [key, items] of buckets.entries()) {
+    metas.push({ key, label: chapterLabel(key), questionCount: items.length });
+  }
+  metas.sort((a, b) => {
+    if (a.key === UNCATEGORISED_KEY) return 1;
+    if (b.key === UNCATEGORISED_KEY) return -1;
+    return Number(a.key) - Number(b.key);
+  });
+  return metas;
+}
+
+/** Tutorial-mode question payload including correct answers. Safe: only served behind auth on tutorial route. */
+export function getTutorialQuestions(
+  moduleId: ModuleId,
+  chapterKey: ChapterKey
+): TutorialItem[] {
+  return getBuckets(moduleId).get(chapterKey) ?? [];
+}
+
+export function isValidChapterKey(
+  moduleId: ModuleId,
+  chapterKey: string
+): boolean {
+  return getBuckets(moduleId).has(chapterKey);
+}
+
+/**
+ * Look up a single tutorial item by moduleId + questionKey. Used server-side
+ * by saveTutorialAnswer to grade without trusting client data.
+ */
+export function findTutorialItem(
+  moduleId: ModuleId,
+  questionKey: string
+): TutorialItem | null {
+  const buckets = getBuckets(moduleId);
+  for (const items of buckets.values()) {
+    const hit = items.find((i) => i.question_key === questionKey);
+    if (hit) return hit;
+  }
+  return null;
+}
+
+/**
+ * Like findTutorialItem but also asserts the question is actually bucketed
+ * into the claimed chapter. Prevents forged chapter assignments in progress
+ * rows (which would skew chapter stats).
+ */
+export function findTutorialItemInChapter(
+  moduleId: ModuleId,
+  chapterKey: ChapterKey,
+  questionKey: string
+): TutorialItem | null {
+  const items = getBuckets(moduleId).get(chapterKey);
+  if (!items) return null;
+  return items.find((i) => i.question_key === questionKey) ?? null;
+}

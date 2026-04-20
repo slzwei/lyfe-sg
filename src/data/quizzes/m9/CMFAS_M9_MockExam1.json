@@ -991,7 +991,7 @@
     {
       "question_number": 75,
       "question": "Jenny's premium for her life policy was due on 1 Jan 2010. She did not receive any premium notices from the insurer. By the time she realized and paid the premium it was already 28 Feb 2010. What is likely to happen?",
-      "reference": "C.14/8.15(ii)",
+      "reference": "C14/8.15(ii)",
       "options": [
         "She needs to pay interest on overdue premium calculated from premium due date.",
         "She needs to pay interest on overdue premium calculated from end of grace period.",
@@ -1318,7 +1318,7 @@
     {
       "question_number": 100,
       "question": "Michael has regular premium ILP that's pays a death benefit, which is the higher value of units or $80,000. If the annual rate of cost of life cover is $1.00 per thousand. What is the monthly mortality cost if there are 2,000 units in the account? The Bid and Offer price at that time are $1.52 and $1.60 respectively.",
-      "reference": "",
+      "reference": "C9",
       "options": [
         "$3.91/ month",
         "$6.41/month",

@@ -1276,7 +1276,7 @@
     {
       "question_number": 97,
       "question": "The client wants to withdraw $8,500 seven years later. How many units will be cancelled?",
-      "reference": "",
+      "reference": "C9",
       "options": [
         "3,972 units",
         "9,775 units",
@@ -1290,7 +1290,7 @@
     {
       "question_number": 98,
       "question": "The client wants to surrender the plan at the end of the 15th year. What is the surrender value, assuming he has 13,246 units?",
-      "reference": "",
+      "reference": "C9",
       "options": [
         "$51,130",
         "$48,613",
